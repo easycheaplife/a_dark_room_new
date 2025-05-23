@@ -1,0 +1,53 @@
+{
+  "title": "A Dark Room",
+  "fire": {
+    "dead": "dead",
+    "smoldering": "smoldering",
+    "flickering": "flickering",
+    "burning": "burning",
+    "roaring": "roaring"
+  },
+  "temperature": {
+    "freezing": "freezing",
+    "cold": "cold",
+    "mild": "mild",
+    "warm": "warm",
+    "hot": "hot"
+  },
+  "room": {
+    "title": "A Dark Room",
+    "lightFire": "light fire",
+    "stokeFire": "stoke fire",
+    "fireDescription": "the fire is {0}",
+    "temperatureDescription": "the room is {0}",
+    "strangerArrives": "a ragged stranger stumbles through the door and collapses in the corner",
+    "strangerShivers": "the stranger shivers, and mumbles quietly. her words are unintelligible.",
+    "strangerCalms": "the stranger in the corner stops shivering. her breathing calms.",
+    "strangerHelps": "the stranger is standing by the fire. she says she can help. says she builds things.",
+    "needWood": "the wood is running out",
+    "outOfWood": "the wood has run out",
+    "notEnoughWood": "not enough wood to get the fire going",
+    "lightFromFire": "the light from the fire spills from the windows, out into the dark",
+    "windHowls": "the wind howls outside"
+  },
+  "outside": {
+    "title": "Outside",
+    "description": "the sky is grey and the wind blows relentlessly",
+    "gatherWood": "gather wood",
+    "checkTraps": "check traps",
+    "goHunting": "go hunting"
+  },
+  "path": {
+    "title": "Path",
+    "description": "a dusty path leads through the forest",
+    "compassPoints": "the compass points east"
+  },
+  "fabricator": {
+    "title": "Fabricator",
+    "description": "the fabricator whirs and hums"
+  },
+  "ship": {
+    "title": "Ship",
+    "description": "the ship's systems hum quietly"
+  }
+}
