@@ -5,12 +5,11 @@ import '../core/audio_engine.dart';
 import '../core/audio_library.dart';
 import '../core/notifications.dart';
 import '../core/engine.dart';
-import '../core/localization.dart';
 import '../widgets/button.dart';
 import 'outside.dart';
 import 'path.dart';
 
-/// Room is the starting module of the game
+/// Room 是游戏的起始模块
 class Room with ChangeNotifier {
   static final Room _instance = Room._internal();
 
@@ -20,33 +19,33 @@ class Room with ChangeNotifier {
 
   Room._internal();
 
-  // Constants
-  static const int _FIRE_COOL_DELAY = 5 * 60 * 1000;
-  static const int _ROOM_WARM_DELAY = 30 * 1000;
-  static const int _BUILDER_STATE_DELAY = 30 * 1000; // 0.5分钟
-  static const int _STOKE_COOLDOWN = 10;
-  static const int _NEED_WOOD_DELAY = 15 * 1000;
+  // 常量（时间单位：毫秒）
+  static const int _fireCoolDelay = 5 * 60 * 1000; // 火焰冷却延迟
+  static const int _roomWarmDelay = 30 * 1000; // 房间温度更新延迟
+  static const int _builderStateDelay = 30 * 1000; // 建造者状态更新延迟
+  static const int _stokeCooldown = 10; // 添柴冷却时间
+  static const int _needWoodDelay = 15 * 1000; // 需要木材的延迟
 
-  // Module name
+  // 模块名称
   final String name = "Room";
 
-  // UI elements
+  // UI元素
   late Widget panel;
   late Widget tab;
 
-  // Buttons
+  // 按钮
   Map<String, GameButton> buttons = {};
 
-  // Timers
+  // 计时器
   Timer? _fireTimer;
   Timer? _tempTimer;
   Timer? _builderTimer;
 
-  // State
+  // 状态
   bool changed = false;
   bool pathDiscovery = false;
 
-  // Craftables
+  // 可制作物品
   final Map<String, Map<String, dynamic>> craftables = {
     'trap': {
       'name': 'trap',
@@ -78,7 +77,7 @@ class Room with ChangeNotifier {
     // Additional craftables would be defined here
   };
 
-  // Trade goods
+  // 交易物品
   final Map<String, Map<String, dynamic>> tradeGoods = {
     'scales': {
       'type': 'good',
@@ -97,8 +96,8 @@ class Room with ChangeNotifier {
     // Additional trade goods would be defined here
   };
 
-  // Temperature enum
-  static const Map<String, Map<String, dynamic>> TempEnum = {
+  // 温度枚举
+  static const Map<String, Map<String, dynamic>> tempEnum = {
     'Freezing': {'value': 0, 'text': 'freezing'},
     'Cold': {'value': 1, 'text': 'cold'},
     'Mild': {'value': 2, 'text': 'mild'},
@@ -106,8 +105,8 @@ class Room with ChangeNotifier {
     'Hot': {'value': 4, 'text': 'hot'},
   };
 
-  // Fire enum
-  static const Map<String, Map<String, dynamic>> FireEnum = {
+  // 火焰枚举
+  static const Map<String, Map<String, dynamic>> fireEnum = {
     'Dead': {'value': 0, 'text': 'dead'},
     'Smoldering': {'value': 1, 'text': 'smoldering'},
     'Flickering': {'value': 2, 'text': 'flickering'},
@@ -115,7 +114,7 @@ class Room with ChangeNotifier {
     'Roaring': {'value': 4, 'text': 'roaring'},
   };
 
-  // Initialize the room
+  // 初始化房间
   Future<void> init() async {
     final sm = StateManager();
 
@@ -125,35 +124,35 @@ class Room with ChangeNotifier {
       sm.set('game.builder.level', -1);
     }
 
-    // Set initial temperature and fire state
+    // 设置初始温度和火焰状态
     if (sm.get('game.temperature.value') == null) {
-      sm.set('game.temperature', TempEnum['Freezing']!['value']);
+      sm.set('game.temperature', tempEnum['Freezing']!['value']);
     }
 
     if (sm.get('game.fire.value') == null) {
-      sm.set('game.fire', FireEnum['Dead']!['value']);
+      sm.set('game.fire', fireEnum['Dead']!['value']);
     }
 
     // Set up path discovery
     pathDiscovery = sm.get('stores.compass', true) != null &&
         sm.get('stores.compass', true) > 0;
 
-    // Start timers
-    _fireTimer = Engine().setTimeout(() => coolFire(), _FIRE_COOL_DELAY);
-    _tempTimer = Engine().setTimeout(() => adjustTemp(), _ROOM_WARM_DELAY);
+    // 启动计时器
+    _fireTimer = Engine().setTimeout(() => coolFire(), _fireCoolDelay);
+    _tempTimer = Engine().setTimeout(() => adjustTemp(), _roomWarmDelay);
 
     // Check builder state
     final builderLevel = sm.get('game.builder.level');
     if (builderLevel != null && builderLevel >= 0 && builderLevel < 3) {
       _builderTimer =
-          Engine().setTimeout(() => updateBuilderState(), _BUILDER_STATE_DELAY);
+          Engine().setTimeout(() => updateBuilderState(), _builderStateDelay);
     }
 
-    // Check if we need to unlock the forest
+    // 检查是否需要解锁森林
     if (builderLevel == 1 &&
         sm.get('stores.wood', true) != null &&
         sm.get('stores.wood', true) < 0) {
-      Engine().setTimeout(() => unlockForest(), _NEED_WOOD_DELAY);
+      Engine().setTimeout(() => unlockForest(), _needWoodDelay);
     }
 
     // Notify about room state
@@ -163,14 +162,14 @@ class Room with ChangeNotifier {
     String tempText = '';
     String fireText = '';
 
-    for (final entry in TempEnum.entries) {
+    for (final entry in tempEnum.entries) {
       if (entry.value['value'] == tempValue) {
         tempText = entry.value['text'] as String;
         break;
       }
     }
 
-    for (final entry in FireEnum.entries) {
+    for (final entry in fireEnum.entries) {
       if (entry.value['value'] == fireValue) {
         fireText = entry.value['text'] as String;
         break;
@@ -195,14 +194,14 @@ class Room with ChangeNotifier {
       String tempText = '';
       String fireText = '';
 
-      for (final entry in TempEnum.entries) {
+      for (final entry in tempEnum.entries) {
         if (entry.value['value'] == tempValue) {
           tempText = entry.value['text'] as String;
           break;
         }
       }
 
-      for (final entry in FireEnum.entries) {
+      for (final entry in fireEnum.entries) {
         if (entry.value['value'] == fireValue) {
           fireText = entry.value['text'] as String;
           break;
@@ -255,7 +254,7 @@ class Room with ChangeNotifier {
     }
 
     sm.set('stores.wood', wood - 5);
-    sm.set('game.fire', FireEnum['Burning']!['value']);
+    sm.set('game.fire', fireEnum['Burning']!['value']);
     AudioEngine().playSound(AudioLibrary.LIGHT_FIRE);
     onFireChange();
   }
@@ -292,7 +291,7 @@ class Room with ChangeNotifier {
     final fireValue = sm.get('game.fire.value');
 
     String fireText = '';
-    for (final entry in FireEnum.entries) {
+    for (final entry in fireEnum.entries) {
       if (entry.value['value'] == fireValue) {
         fireText = entry.value['text'] as String;
         break;
@@ -307,11 +306,11 @@ class Room with ChangeNotifier {
           'the light from the fire spills from the windows, out into the dark');
       _builderTimer?.cancel();
       _builderTimer =
-          Engine().setTimeout(() => updateBuilderState(), _BUILDER_STATE_DELAY);
+          Engine().setTimeout(() => updateBuilderState(), _builderStateDelay);
     }
 
     _fireTimer?.cancel();
-    _fireTimer = Engine().setTimeout(() => coolFire(), _FIRE_COOL_DELAY);
+    _fireTimer = Engine().setTimeout(() => coolFire(), _fireCoolDelay);
 
     setTitle();
 
@@ -330,7 +329,7 @@ class Room with ChangeNotifier {
     final fireValue = sm.get('game.fire.value');
     final builderLevel = sm.get('game.builder.level');
 
-    if (fireValue <= FireEnum['Flickering']!['value'] &&
+    if (fireValue <= fireEnum['Flickering']!['value'] &&
         builderLevel > 3 &&
         wood > 0) {
       NotificationManager()
@@ -341,7 +340,7 @@ class Room with ChangeNotifier {
 
     if (fireValue > 0) {
       sm.set('game.fire', fireValue - 1);
-      _fireTimer = Engine().setTimeout(() => coolFire(), _FIRE_COOL_DELAY);
+      _fireTimer = Engine().setTimeout(() => coolFire(), _fireCoolDelay);
       onFireChange();
     }
   }
@@ -356,7 +355,7 @@ class Room with ChangeNotifier {
       sm.set('game.temperature', tempValue - 1);
 
       String tempText = '';
-      for (final entry in TempEnum.entries) {
+      for (final entry in tempEnum.entries) {
         if (entry.value['value'] == tempValue - 1) {
           tempText = entry.value['text'] as String;
           break;
@@ -371,7 +370,7 @@ class Room with ChangeNotifier {
       sm.set('game.temperature', tempValue + 1);
 
       String tempText = '';
-      for (final entry in TempEnum.entries) {
+      for (final entry in tempEnum.entries) {
         if (entry.value['value'] == tempValue + 1) {
           tempText = entry.value['text'] as String;
           break;
@@ -386,7 +385,7 @@ class Room with ChangeNotifier {
       changed = true;
     }
 
-    _tempTimer = Engine().setTimeout(() => adjustTemp(), _ROOM_WARM_DELAY);
+    _tempTimer = Engine().setTimeout(() => adjustTemp(), _roomWarmDelay);
   }
 
   // Unlock the forest location
@@ -408,9 +407,9 @@ class Room with ChangeNotifier {
       NotificationManager().notify(name,
           'a ragged stranger stumbles through the door and collapses in the corner');
       sm.set('game.builder.level', 1);
-      Engine().setTimeout(() => unlockForest(), _NEED_WOOD_DELAY);
+      Engine().setTimeout(() => unlockForest(), _needWoodDelay);
     } else if (builderLevel < 3 &&
-        sm.get('game.temperature.value') >= TempEnum['Warm']!['value']) {
+        sm.get('game.temperature.value') >= tempEnum['Warm']!['value']) {
       String msg = '';
 
       switch (builderLevel) {
@@ -433,7 +432,7 @@ class Room with ChangeNotifier {
 
     if (builderLevel < 3) {
       _builderTimer =
-          Engine().setTimeout(() => updateBuilderState(), _BUILDER_STATE_DELAY);
+          Engine().setTimeout(() => updateBuilderState(), _builderStateDelay);
     }
 
     Engine().saveGame();
