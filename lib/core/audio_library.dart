@@ -1,17 +1,17 @@
-/// AudioLibrary contains constants for all audio files used in the game
+/// AudioLibrary 包含游戏中使用的所有音频文件的常量
 class AudioLibrary {
-  // Music
+  // 背景音乐
   static const String MUSIC_FIRE_DEAD = 'music_fire_dead';
   static const String MUSIC_FIRE_SMOLDERING = 'music_fire_smoldering';
   static const String MUSIC_FIRE_FLICKERING = 'music_fire_flickering';
   static const String MUSIC_FIRE_BURNING = 'music_fire_burning';
   static const String MUSIC_FIRE_ROARING = 'music_fire_roaring';
-  
-  // Fire sounds
+
+  // 火焰音效
   static const String LIGHT_FIRE = 'fire_light';
   static const String STOKE_FIRE = 'fire_stoke';
-  
-  // Building sounds
+
+  // 建造音效
   static const String BUILD = 'build';
   static const String BUILD_TRAP = 'build_trap';
   static const String BUILD_CART = 'build_cart';
@@ -23,8 +23,8 @@ class AudioLibrary {
   static const String BUILD_WORKSHOP = 'build_workshop';
   static const String BUILD_STEELWORKS = 'build_steelworks';
   static const String BUILD_ARMOURY = 'build_armoury';
-  
-  // Crafting sounds
+
+  // 制作音效
   static const String CRAFT = 'craft';
   static const String CRAFT_TORCH = 'craft_torch';
   static const String CRAFT_WATERSKIN = 'craft_waterskin';
@@ -40,8 +40,8 @@ class AudioLibrary {
   static const String CRAFT_IRON_SWORD = 'craft_iron_sword';
   static const String CRAFT_STEEL_SWORD = 'craft_steel_sword';
   static const String CRAFT_RIFLE = 'craft_rifle';
-  
-  // Trading sounds
+
+  // 交易音效
   static const String BUY = 'buy';
   static const String BUY_SCALES = 'buy_scales';
   static const String BUY_TEETH = 'buy_teeth';
@@ -56,8 +56,8 @@ class AudioLibrary {
   static const String BUY_BAYONET = 'buy_bayonet';
   static const String BUY_ALIEN_ALLOY = 'buy_alien_alloy';
   static const String BUY_COMPASS = 'buy_compass';
-  
-  // Event sounds
+
+  // 事件音效
   static const String EVENT_ENCOUNTER = 'event_encounter';
   static const String EVENT_FIGHT = 'event_fight';
   static const String EVENT_VICTORY = 'event_victory';

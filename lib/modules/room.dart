@@ -74,7 +74,60 @@ class Room with ChangeNotifier {
       },
       'audio': AudioLibrary.BUILD_CART,
     },
-    // Additional craftables would be defined here
+    'hut': {
+      'name': 'hut',
+      'button': null,
+      'maximum': 20,
+      'availableMsg':
+          "builder says there are more wanderers. says they'll work, too.",
+      'buildMsg':
+          'builder puts up a hut, out in the forest. says word will get around.',
+      'maxMsg': 'no more room for huts.',
+      'type': 'building',
+      'cost': (StateManager sm) {
+        final n = sm.get('game.buildings["hut"]', true) ?? 0;
+        return {'wood': 100 + (n * 50)};
+      },
+      'audio': AudioLibrary.BUILD_HUT,
+    },
+    'lodge': {
+      'name': 'lodge',
+      'button': null,
+      'maximum': 1,
+      'availableMsg': 'villagers could help hunt, given the means',
+      'buildMsg': 'the hunting lodge stands in the forest, a ways out of town',
+      'type': 'building',
+      'cost': (StateManager sm) {
+        return {'wood': 200, 'fur': 10, 'meat': 5};
+      },
+      'audio': AudioLibrary.BUILD_LODGE,
+    },
+    'trading post': {
+      'name': 'trading post',
+      'button': null,
+      'maximum': 1,
+      'availableMsg': "a trading post would make commerce easier",
+      'buildMsg':
+          "now the nomads have a place to set up shop, they might stick around a while",
+      'type': 'building',
+      'cost': (StateManager sm) {
+        return {'wood': 400, 'fur': 100};
+      },
+      'audio': AudioLibrary.BUILD_TRADING_POST,
+    },
+    'tannery': {
+      'name': 'tannery',
+      'button': null,
+      'maximum': 1,
+      'availableMsg':
+          "builder says leather could be useful. says the villagers could make it.",
+      'buildMsg': 'tannery goes up quick, on the edge of the village',
+      'type': 'building',
+      'cost': (StateManager sm) {
+        return {'wood': 500, 'fur': 50};
+      },
+      'audio': AudioLibrary.BUILD_TANNERY,
+    }
   };
 
   // 交易物品
@@ -93,7 +146,63 @@ class Room with ChangeNotifier {
       },
       'audio': AudioLibrary.BUY_TEETH,
     },
-    // Additional trade goods would be defined here
+    'iron': {
+      'type': 'good',
+      'cost': (StateManager sm) {
+        return {'fur': 150, 'scales': 50};
+      },
+      'audio': AudioLibrary.BUY_IRON,
+    },
+    'coal': {
+      'type': 'good',
+      'cost': (StateManager sm) {
+        return {'fur': 200, 'teeth': 50};
+      },
+      'audio': AudioLibrary.BUY_COAL,
+    },
+    'steel': {
+      'type': 'good',
+      'cost': (StateManager sm) {
+        return {'fur': 300, 'scales': 50, 'teeth': 50};
+      },
+      'audio': AudioLibrary.BUY_STEEL,
+    },
+    'medicine': {
+      'type': 'good',
+      'cost': (StateManager sm) {
+        return {'scales': 50, 'teeth': 30};
+      },
+      'audio': AudioLibrary.BUY_MEDICINE,
+    },
+    'bullets': {
+      'type': 'good',
+      'cost': (StateManager sm) {
+        return {'scales': 10};
+      },
+      'audio': AudioLibrary.BUY_BULLETS,
+    },
+    'energy cell': {
+      'type': 'good',
+      'cost': (StateManager sm) {
+        return {'scales': 10, 'teeth': 10};
+      },
+      'audio': AudioLibrary.BUY_ENERGY_CELL,
+    },
+    'bolas': {
+      'type': 'weapon',
+      'cost': (StateManager sm) {
+        return {'teeth': 10};
+      },
+      'audio': AudioLibrary.BUY_BOLAS,
+    },
+    'compass': {
+      'type': 'special',
+      'maximum': 1,
+      'cost': (StateManager sm) {
+        return {'fur': 400, 'scales': 20, 'teeth': 10};
+      },
+      'audio': AudioLibrary.BUY_COMPASS,
+    }
   };
 
   // 温度枚举
@@ -133,9 +242,17 @@ class Room with ChangeNotifier {
       sm.set('game.fire', fireEnum['Dead']!['value']);
     }
 
-    // Set up path discovery
+    // 设置路径发现
     pathDiscovery = sm.get('stores.compass', true) != null &&
         sm.get('stores.compass', true) > 0;
+
+    // 如果有指南针，打开路径
+    if (pathDiscovery) {
+      Path().init();
+
+      // 在原始游戏中，这会调用 Path.openPath()
+      // Path.openPath();
+    }
 
     // 启动计时器
     _fireTimer = Engine().setTimeout(() => coolFire(), _fireCoolDelay);
@@ -182,7 +299,7 @@ class Room with ChangeNotifier {
     notifyListeners();
   }
 
-  // Called when arriving at this module
+  // 当到达此模块时调用
   void onArrival(int transitionDiff) {
     setTitle();
 
@@ -229,19 +346,19 @@ class Room with ChangeNotifier {
     notifyListeners();
   }
 
-  // Set the title based on fire state
+  // 根据火焰状态设置标题
   void setTitle() {
-    final sm = StateManager();
-    final fireValue = sm.get('game.fire.value');
+    // 在原始游戏中，这会设置文档标题
+    // 对于Flutter，我们只需更新UI
+    // 在实际应用中，可以将title传递给UI组件
+    // final sm = StateManager();
+    // final fireValue = sm.get('game.fire.value');
+    // String title = fireValue < 2 ? '黑暗房间' : '火光房间';
 
-    final title = fireValue < 2 ? 'A Dark Room' : 'A Firelit Room';
-
-    // In the original game, this would set the document title
-    // For Flutter, we'll just update the UI
     notifyListeners();
   }
 
-  // Light the fire
+  // 点燃火堆
   void lightFire() {
     final sm = StateManager();
     final wood = sm.get('stores.wood');
@@ -259,7 +376,7 @@ class Room with ChangeNotifier {
     onFireChange();
   }
 
-  // Stoke the fire
+  // 添柴
   void stokeFire() {
     final sm = StateManager();
     final wood = sm.get('stores.wood');
@@ -281,7 +398,7 @@ class Room with ChangeNotifier {
     onFireChange();
   }
 
-  // Handle fire state changes
+  // 处理火焰状态变化
   void onFireChange() {
     if (Engine().activeModule != this) {
       changed = true;
@@ -322,7 +439,7 @@ class Room with ChangeNotifier {
     notifyListeners();
   }
 
-  // Cool the fire over time
+  // 随时间冷却火焰
   void coolFire() {
     final sm = StateManager();
     final wood = sm.get('stores.wood');
@@ -345,7 +462,7 @@ class Room with ChangeNotifier {
     }
   }
 
-  // Adjust room temperature based on fire
+  // 根据火焰调整房间温度
   void adjustTemp() {
     final sm = StateManager();
     final tempValue = sm.get('game.temperature.value');
@@ -388,7 +505,7 @@ class Room with ChangeNotifier {
     _tempTimer = Engine().setTimeout(() => adjustTemp(), _roomWarmDelay);
   }
 
-  // Unlock the forest location
+  // 解锁森林位置
   void unlockForest() {
     final sm = StateManager();
     sm.set('stores.wood', 4);
@@ -398,7 +515,7 @@ class Room with ChangeNotifier {
     Engine().event('progress', 'outside');
   }
 
-  // Update the builder state
+  // 更新建造者状态
   void updateBuilderState() {
     final sm = StateManager();
     final builderLevel = sm.get('game.builder.level');
@@ -438,7 +555,7 @@ class Room with ChangeNotifier {
     Engine().saveGame();
   }
 
-  // Set music based on fire level
+  // 根据火焰级别设置音乐
   void setMusic() {
     // 暂时禁用背景音乐，直到我们有音频文件
     /*
