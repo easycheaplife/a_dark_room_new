@@ -14,8 +14,15 @@ import 'widgets/stores_display.dart';
 import 'modules/room.dart';
 import 'modules/outside.dart';
 import 'modules/path.dart';
+import 'modules/world.dart';
 import 'modules/fabricator.dart';
 import 'modules/ship.dart';
+import 'screens/room_screen.dart';
+import 'screens/outside_screen.dart';
+import 'screens/path_screen.dart';
+import 'screens/world_screen.dart';
+import 'screens/fabricator_screen.dart';
+import 'screens/ship_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +50,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => Room()),
         ChangeNotifierProvider(create: (_) => Outside()),
         ChangeNotifierProvider(create: (_) => Path()),
+        ChangeNotifierProvider(create: (_) => World()),
         ChangeNotifierProvider(create: (_) => Fabricator()),
         ChangeNotifierProvider(create: (_) => Ship()),
       ],
@@ -169,16 +177,32 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Widget _buildActiveModulePanel(Engine engine) {
-    // This would render the active module's panel
-    // For now, we'll just show a placeholder
-    return Center(
-      child: Text(
-        'Module: ${engine.activeModule?.name ?? "None"}',
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 24,
-        ),
-      ),
-    );
+    // 根据当前活跃模块显示对应的UI
+    final activeModuleName = engine.activeModule?.name ?? 'Room';
+
+    switch (activeModuleName) {
+      case 'Room':
+        return const RoomScreen();
+      case 'Outside':
+        return const OutsideScreen();
+      case 'Path':
+        return const PathScreen();
+      case 'World':
+        return const WorldScreen();
+      case 'Fabricator':
+        return const FabricatorScreen();
+      case 'Ship':
+        return const ShipScreen();
+      default:
+        return Center(
+          child: Text(
+            'Module: $activeModuleName',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+            ),
+          ),
+        );
+    }
   }
 }
