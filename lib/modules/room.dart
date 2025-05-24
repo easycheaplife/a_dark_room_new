@@ -60,7 +60,7 @@ class Room with ChangeNotifier {
         final n = sm.get('game.buildings["trap"]', true) ?? 0;
         return {'wood': 10 + (n * 10)};
       },
-      'audio': AudioLibrary.buildTrap,
+      'audio': AudioLibrary.build,
     },
     'cart': {
       'name': 'cart',
@@ -72,7 +72,7 @@ class Room with ChangeNotifier {
       'cost': (StateManager sm) {
         return {'wood': 30};
       },
-      'audio': AudioLibrary.buildCart,
+      'audio': AudioLibrary.build,
     },
     'hut': {
       'name': 'hut',
@@ -88,7 +88,7 @@ class Room with ChangeNotifier {
         final n = sm.get('game.buildings["hut"]', true) ?? 0;
         return {'wood': 100 + (n * 50)};
       },
-      'audio': AudioLibrary.buildHut,
+      'audio': AudioLibrary.build,
     },
     'lodge': {
       'name': 'lodge',
@@ -100,7 +100,7 @@ class Room with ChangeNotifier {
       'cost': (StateManager sm) {
         return {'wood': 200, 'fur': 10, 'meat': 5};
       },
-      'audio': AudioLibrary.buildLodge,
+      'audio': AudioLibrary.build,
     },
     'trading post': {
       'name': 'trading post',
@@ -113,7 +113,7 @@ class Room with ChangeNotifier {
       'cost': (StateManager sm) {
         return {'wood': 400, 'fur': 100};
       },
-      'audio': AudioLibrary.buildTradingPost,
+      'audio': AudioLibrary.build,
     },
     'tannery': {
       'name': 'tannery',
@@ -126,7 +126,7 @@ class Room with ChangeNotifier {
       'cost': (StateManager sm) {
         return {'wood': 500, 'fur': 50};
       },
-      'audio': AudioLibrary.buildTannery,
+      'audio': AudioLibrary.build,
     }
   };
 
@@ -137,63 +137,63 @@ class Room with ChangeNotifier {
       'cost': (StateManager sm) {
         return {'fur': 150};
       },
-      'audio': AudioLibrary.buyScales,
+      'audio': AudioLibrary.buy,
     },
     'teeth': {
       'type': 'good',
       'cost': (StateManager sm) {
         return {'fur': 300};
       },
-      'audio': AudioLibrary.buyTeeth,
+      'audio': AudioLibrary.buy,
     },
     'iron': {
       'type': 'good',
       'cost': (StateManager sm) {
         return {'fur': 150, 'scales': 50};
       },
-      'audio': AudioLibrary.buyIron,
+      'audio': AudioLibrary.buy,
     },
     'coal': {
       'type': 'good',
       'cost': (StateManager sm) {
         return {'fur': 200, 'teeth': 50};
       },
-      'audio': AudioLibrary.buyCoal,
+      'audio': AudioLibrary.buy,
     },
     'steel': {
       'type': 'good',
       'cost': (StateManager sm) {
         return {'fur': 300, 'scales': 50, 'teeth': 50};
       },
-      'audio': AudioLibrary.buySteel,
+      'audio': AudioLibrary.buy,
     },
     'medicine': {
       'type': 'good',
       'cost': (StateManager sm) {
         return {'scales': 50, 'teeth': 30};
       },
-      'audio': AudioLibrary.buyMedicine,
+      'audio': AudioLibrary.buy,
     },
     'bullets': {
       'type': 'good',
       'cost': (StateManager sm) {
         return {'scales': 10};
       },
-      'audio': AudioLibrary.buyBullets,
+      'audio': AudioLibrary.buy,
     },
     'energy cell': {
       'type': 'good',
       'cost': (StateManager sm) {
         return {'scales': 10, 'teeth': 10};
       },
-      'audio': AudioLibrary.buyEnergyCell,
+      'audio': AudioLibrary.buy,
     },
     'bolas': {
       'type': 'weapon',
       'cost': (StateManager sm) {
         return {'teeth': 10};
       },
-      'audio': AudioLibrary.buyBolas,
+      'audio': AudioLibrary.buy,
     },
     'compass': {
       'type': 'special',
@@ -201,7 +201,7 @@ class Room with ChangeNotifier {
       'cost': (StateManager sm) {
         return {'fur': 400, 'scales': 20, 'teeth': 10};
       },
-      'audio': AudioLibrary.buyCompass,
+      'audio': AudioLibrary.buy,
     }
   };
 

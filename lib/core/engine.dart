@@ -104,23 +104,23 @@ class Engine with ChangeNotifier {
 
     // 检查是否应该初始化外部
     if (sm.get('stores.wood') != null) {
-      await Outside().init();
+      Outside().init();
     }
 
     // 检查是否应该初始化路径
     if (sm.get('stores.compass', true) != null &&
         sm.get('stores.compass', true) > 0) {
-      await Path().init();
+      Path().init();
     }
 
     // 检查是否应该初始化制造机
     if (sm.get('features.location.fabricator', true) == true) {
-      await Fabricator().init();
+      Fabricator().init();
     }
 
     // 检查是否应该初始化飞船
     if (sm.get('features.location.spaceShip', true) == true) {
-      await Ship().init();
+      Ship().init();
     }
 
     // 设置保存计时器
