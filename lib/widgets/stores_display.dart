@@ -4,7 +4,7 @@ import '../core/state_manager.dart';
 
 /// StoresDisplay shows the player's resources
 class StoresDisplay extends StatelessWidget {
-  const StoresDisplay({Key? key}) : super(key: key);
+  const StoresDisplay({super.key});
 
   @override
   Widget build(BuildContext context) {

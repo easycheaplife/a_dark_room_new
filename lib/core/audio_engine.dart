@@ -1,8 +1,9 @@
-import 'package:just_audio/just_audio.dart';
+// import 'package:just_audio/just_audio.dart';  // 暂时注释掉
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 
 /// AudioEngine handles all sound effects and music in the game
+/// 暂时简化版本，不依赖音频包
 class AudioEngine {
   static final AudioEngine _instance = AudioEngine._internal();
 
@@ -12,10 +13,6 @@ class AudioEngine {
 
   AudioEngine._internal();
 
-  // Audio players
-  final AudioPlayer _musicPlayer = AudioPlayer();
-  final Map<String, AudioPlayer> _soundPlayers = {};
-
   // Volume settings
   double _masterVolume = 1.0;
   bool _isAudioContextRunning = false;
@@ -24,13 +21,9 @@ class AudioEngine {
   Future<void> init() async {
     try {
       _isAudioContextRunning = true;
-
-      // 暂时禁用音频预加载，直到我们有音频文件
-      // await loadAudioFile('fire_light');
-      // await loadAudioFile('fire_stoke');
-
-      // Set up music player
-      _musicPlayer.setLoopMode(LoopMode.one);
+      if (kDebugMode) {
+        print('AudioEngine initialized (placeholder mode)');
+      }
     } catch (e) {
       if (kDebugMode) {
         print('Error initializing audio engine: $e');
@@ -39,81 +32,32 @@ class AudioEngine {
     }
   }
 
-  // Load an audio file
+  // Load an audio file (placeholder)
   Future<void> loadAudioFile(String name) async {
-    try {
-      final player = AudioPlayer();
-      await player.setAsset('assets/audio/$name.mp3');
-      _soundPlayers[name] = player;
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error loading audio file $name: $e');
-      }
+    if (kDebugMode) {
+      print('Loading audio file: $name (placeholder)');
     }
   }
 
-  // Play a sound effect
+  // Play a sound effect (placeholder)
   Future<void> playSound(String name) async {
-    if (!_isAudioContextRunning || _masterVolume <= 0) return;
-
-    try {
-      if (!_soundPlayers.containsKey(name)) {
-        await loadAudioFile(name);
-      }
-
-      final player = _soundPlayers[name];
-      if (player != null) {
-        await player.setVolume(_masterVolume);
-        await player.seek(Duration.zero);
-        await player.play();
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error playing sound $name: $e');
-      }
+    if (kDebugMode) {
+      print('Playing sound: $name (placeholder)');
     }
   }
 
-  // Play background music
+  // Play background music (placeholder)
   Future<void> playBackgroundMusic(String name) async {
-    if (!_isAudioContextRunning || _masterVolume <= 0) return;
-
-    try {
-      // Stop current music if playing
-      await _musicPlayer.stop();
-
-      // Load and play new music
-      await _musicPlayer.setAsset('assets/audio/$name.mp3');
-      await _musicPlayer.setVolume(
-          _masterVolume * 0.7); // Music slightly quieter than effects
-      await _musicPlayer.play();
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error playing background music $name: $e');
-      }
+    if (kDebugMode) {
+      print('Playing background music: $name (placeholder)');
     }
   }
 
-  // Set master volume
+  // Set master volume (placeholder)
   Future<void> setMasterVolume(double volume, [int fadeTime = 500]) async {
     _masterVolume = volume.clamp(0.0, 1.0);
-
-    try {
-      // Fade music volume
-      if (_musicPlayer.playing) {
-        await _musicPlayer.setVolume(_masterVolume * 0.7);
-      }
-
-      // Update all sound players
-      for (final player in _soundPlayers.values) {
-        if (player.playing) {
-          await player.setVolume(_masterVolume);
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error setting master volume: $e');
-      }
+    if (kDebugMode) {
+      print('Setting master volume to: $_masterVolume (placeholder)');
     }
   }
 
@@ -122,34 +66,18 @@ class AudioEngine {
     return _isAudioContextRunning;
   }
 
-  // Try to resume audio context (for mobile browsers)
+  // Try to resume audio context (placeholder)
   Future<void> tryResumingAudioContext() async {
-    if (!_isAudioContextRunning) {
-      try {
-        await _musicPlayer.play();
-        await _musicPlayer.pause();
-        _isAudioContextRunning = true;
-      } catch (e) {
-        if (kDebugMode) {
-          print('Error resuming audio context: $e');
-        }
-      }
+    _isAudioContextRunning = true;
+    if (kDebugMode) {
+      print('Resuming audio context (placeholder)');
     }
   }
 
-  // Dispose all audio resources
+  // Dispose all audio resources (placeholder)
   Future<void> dispose() async {
-    try {
-      await _musicPlayer.dispose();
-
-      for (final player in _soundPlayers.values) {
-        await player.dispose();
-      }
-      _soundPlayers.clear();
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error disposing audio engine: $e');
-      }
+    if (kDebugMode) {
+      print('Disposing audio engine (placeholder)');
     }
   }
 }

@@ -4,14 +4,14 @@ import '../core/notifications.dart';
 
 /// NotificationDisplay shows game notifications to the player
 class NotificationDisplay extends StatelessWidget {
-  const NotificationDisplay({Key? key}) : super(key: key);
+  const NotificationDisplay({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<NotificationManager>(
       builder: (context, notificationManager, child) {
         final notifications = notificationManager.getAllNotifications();
-        
+
         return Container(
           height: 200,
           color: Colors.black,
@@ -19,7 +19,7 @@ class NotificationDisplay extends StatelessWidget {
             itemCount: notifications.length,
             itemBuilder: (context, index) {
               final notification = notifications[index];
-              
+
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                 child: Text(

@@ -21,9 +21,9 @@ class Room with ChangeNotifier {
 
   // 常量（时间单位：毫秒）
   static const int _fireCoolDelay = 5 * 60 * 1000; // 火焰冷却延迟
-  static const int _roomWarmDelay = 30 * 1000; // 房间温度更新延迟
+  // static const int _roomWarmDelay = 30 * 1000; // 房间温度更新延迟 - 暂时未使用
   static const int _builderStateDelay = 30 * 1000; // 建造者状态更新延迟
-  static const int _stokeCooldown = 10; // 添柴冷却时间
+  // static const int _stokeCooldown = 10; // 添柴冷却时间 - 暂时未使用
   static const int _needWoodDelay = 15 * 1000; // 需要木材的延迟
 
   // 模块名称
@@ -38,7 +38,7 @@ class Room with ChangeNotifier {
 
   // 计时器
   Timer? _fireTimer;
-  Timer? _tempTimer;
+  // Timer? _tempTimer; // 暂时未使用
   Timer? _builderTimer;
 
   // 状态
@@ -60,7 +60,7 @@ class Room with ChangeNotifier {
         final n = sm.get('game.buildings["trap"]', true) ?? 0;
         return {'wood': 10 + (n * 10)};
       },
-      'audio': AudioLibrary.BUILD_TRAP,
+      'audio': AudioLibrary.buildTrap,
     },
     'cart': {
       'name': 'cart',
@@ -72,7 +72,7 @@ class Room with ChangeNotifier {
       'cost': (StateManager sm) {
         return {'wood': 30};
       },
-      'audio': AudioLibrary.BUILD_CART,
+      'audio': AudioLibrary.buildCart,
     },
     'hut': {
       'name': 'hut',
@@ -88,7 +88,7 @@ class Room with ChangeNotifier {
         final n = sm.get('game.buildings["hut"]', true) ?? 0;
         return {'wood': 100 + (n * 50)};
       },
-      'audio': AudioLibrary.BUILD_HUT,
+      'audio': AudioLibrary.buildHut,
     },
     'lodge': {
       'name': 'lodge',
@@ -100,7 +100,7 @@ class Room with ChangeNotifier {
       'cost': (StateManager sm) {
         return {'wood': 200, 'fur': 10, 'meat': 5};
       },
-      'audio': AudioLibrary.BUILD_LODGE,
+      'audio': AudioLibrary.buildLodge,
     },
     'trading post': {
       'name': 'trading post',
@@ -113,7 +113,7 @@ class Room with ChangeNotifier {
       'cost': (StateManager sm) {
         return {'wood': 400, 'fur': 100};
       },
-      'audio': AudioLibrary.BUILD_TRADING_POST,
+      'audio': AudioLibrary.buildTradingPost,
     },
     'tannery': {
       'name': 'tannery',
@@ -126,7 +126,7 @@ class Room with ChangeNotifier {
       'cost': (StateManager sm) {
         return {'wood': 500, 'fur': 50};
       },
-      'audio': AudioLibrary.BUILD_TANNERY,
+      'audio': AudioLibrary.buildTannery,
     }
   };
 
@@ -137,63 +137,63 @@ class Room with ChangeNotifier {
       'cost': (StateManager sm) {
         return {'fur': 150};
       },
-      'audio': AudioLibrary.BUY_SCALES,
+      'audio': AudioLibrary.buyScales,
     },
     'teeth': {
       'type': 'good',
       'cost': (StateManager sm) {
         return {'fur': 300};
       },
-      'audio': AudioLibrary.BUY_TEETH,
+      'audio': AudioLibrary.buyTeeth,
     },
     'iron': {
       'type': 'good',
       'cost': (StateManager sm) {
         return {'fur': 150, 'scales': 50};
       },
-      'audio': AudioLibrary.BUY_IRON,
+      'audio': AudioLibrary.buyIron,
     },
     'coal': {
       'type': 'good',
       'cost': (StateManager sm) {
         return {'fur': 200, 'teeth': 50};
       },
-      'audio': AudioLibrary.BUY_COAL,
+      'audio': AudioLibrary.buyCoal,
     },
     'steel': {
       'type': 'good',
       'cost': (StateManager sm) {
         return {'fur': 300, 'scales': 50, 'teeth': 50};
       },
-      'audio': AudioLibrary.BUY_STEEL,
+      'audio': AudioLibrary.buySteel,
     },
     'medicine': {
       'type': 'good',
       'cost': (StateManager sm) {
         return {'scales': 50, 'teeth': 30};
       },
-      'audio': AudioLibrary.BUY_MEDICINE,
+      'audio': AudioLibrary.buyMedicine,
     },
     'bullets': {
       'type': 'good',
       'cost': (StateManager sm) {
         return {'scales': 10};
       },
-      'audio': AudioLibrary.BUY_BULLETS,
+      'audio': AudioLibrary.buyBullets,
     },
     'energy cell': {
       'type': 'good',
       'cost': (StateManager sm) {
         return {'scales': 10, 'teeth': 10};
       },
-      'audio': AudioLibrary.BUY_ENERGY_CELL,
+      'audio': AudioLibrary.buyEnergyCell,
     },
     'bolas': {
       'type': 'weapon',
       'cost': (StateManager sm) {
         return {'teeth': 10};
       },
-      'audio': AudioLibrary.BUY_BOLAS,
+      'audio': AudioLibrary.buyBolas,
     },
     'compass': {
       'type': 'special',
@@ -201,7 +201,7 @@ class Room with ChangeNotifier {
       'cost': (StateManager sm) {
         return {'fur': 400, 'scales': 20, 'teeth': 10};
       },
-      'audio': AudioLibrary.BUY_COMPASS,
+      'audio': AudioLibrary.buyCompass,
     }
   };
 
@@ -256,7 +256,7 @@ class Room with ChangeNotifier {
 
     // 启动计时器
     _fireTimer = Engine().setTimeout(() => coolFire(), _fireCoolDelay);
-    _tempTimer = Engine().setTimeout(() => adjustTemp(), _roomWarmDelay);
+    // _tempTimer = Engine().setTimeout(() => adjustTemp(), _roomWarmDelay); // 暂时注释掉
 
     // Check builder state
     final builderLevel = sm.get('game.builder.level');
@@ -372,7 +372,7 @@ class Room with ChangeNotifier {
 
     sm.set('stores.wood', wood - 5);
     sm.set('game.fire', fireEnum['Burning']!['value']);
-    AudioEngine().playSound(AudioLibrary.LIGHT_FIRE);
+    AudioEngine().playSound(AudioLibrary.lightFire);
     onFireChange();
   }
 
@@ -394,7 +394,7 @@ class Room with ChangeNotifier {
       sm.set('game.fire', fireValue + 1);
     }
 
-    AudioEngine().playSound(AudioLibrary.STOKE_FIRE);
+    AudioEngine().playSound(AudioLibrary.stokeFire);
     onFireChange();
   }
 
@@ -502,7 +502,7 @@ class Room with ChangeNotifier {
       changed = true;
     }
 
-    _tempTimer = Engine().setTimeout(() => adjustTemp(), _roomWarmDelay);
+    // _tempTimer = Engine().setTimeout(() => adjustTemp(), _roomWarmDelay); // 暂时注释掉
   }
 
   // 解锁森林位置
@@ -555,6 +555,161 @@ class Room with ChangeNotifier {
     Engine().saveGame();
   }
 
+  // 更新商店视图
+  void updateStoresView() {
+    final sm = StateManager();
+    final stores = sm.get('stores');
+
+    if (stores == null) return;
+
+    // 检查是否有指南针并且还没有发现路径
+    if (sm.get('stores.compass') != null && !pathDiscovery) {
+      pathDiscovery = true;
+      // Path.openPath(); // 当Path模块实现后取消注释
+    }
+
+    // 检查盗贼
+    for (final entry in stores.entries) {
+      final num = entry.value;
+      if (sm.get('game.thieves') == null &&
+          num > 5000 &&
+          sm.get('features.location.world') == true) {
+        sm.startThieves();
+      }
+    }
+
+    notifyListeners();
+  }
+
+  // 更新收入视图
+  void updateIncomeView() {
+    final sm = StateManager();
+    final income = sm.get('income');
+
+    if (income == null) return;
+
+    // 计算总收入
+    final Map<String, Map<String, dynamic>> totalIncome = {};
+
+    for (final incomeSource in income.keys) {
+      final incomeData = income[incomeSource];
+      if (incomeData['stores'] != null) {
+        for (final store in incomeData['stores'].keys) {
+          final storeIncome = incomeData['stores'][store];
+          if (storeIncome != 0) {
+            if (!totalIncome.containsKey(store)) {
+              totalIncome[store] = {'income': 0, 'delay': incomeData['delay']};
+            }
+            totalIncome[store]!['income'] += storeIncome;
+          }
+        }
+      }
+    }
+
+    notifyListeners();
+  }
+
+  // 购买物品
+  bool buy(String thing) {
+    final good = tradeGoods[thing];
+    if (good == null) return false;
+
+    final sm = StateManager();
+    final numThings = sm.get('stores["$thing"]', true) ?? 0;
+
+    if (good['maximum'] != null && good['maximum'] <= numThings) {
+      return false;
+    }
+
+    final cost = good['cost']();
+    final Map<String, dynamic> storeMod = {};
+
+    // 检查是否有足够的资源
+    for (final entry in cost.entries) {
+      final have = sm.get('stores["${entry.key}"]', true) ?? 0;
+      if (have < entry.value) {
+        NotificationManager().notify(name, 'not enough ${entry.key}');
+        return false;
+      } else {
+        storeMod[entry.key] = have - entry.value;
+      }
+    }
+
+    // 扣除资源
+    sm.setM('stores', storeMod);
+
+    // 添加物品
+    sm.add('stores["$thing"]', 1);
+
+    // 显示消息
+    if (good['buildMsg'] != null) {
+      NotificationManager().notify(name, good['buildMsg']);
+    }
+
+    // 播放音频
+    if (good['audio'] != null) {
+      AudioEngine().playSound(good['audio']);
+    }
+
+    return true;
+  }
+
+  // 建造物品
+  bool build(String thing) {
+    final craftable = craftables[thing];
+    if (craftable == null) return false;
+
+    final sm = StateManager();
+    final numThings = sm.get('game.buildings["$thing"]', true) ?? 0;
+
+    if (craftable['maximum'] != null && craftable['maximum'] <= numThings) {
+      return false;
+    }
+
+    final cost = craftable['cost']();
+    final Map<String, dynamic> storeMod = {};
+
+    // 检查是否有足够的资源
+    for (final entry in cost.entries) {
+      final have = sm.get('stores["${entry.key}"]', true) ?? 0;
+      if (have < entry.value) {
+        NotificationManager().notify(name, 'not enough ${entry.key}');
+        return false;
+      } else {
+        storeMod[entry.key] = have - entry.value;
+      }
+    }
+
+    // 扣除资源
+    sm.setM('stores', storeMod);
+
+    // 添加建筑
+    if (craftable['type'] == 'building') {
+      sm.add('game.buildings["$thing"]', 1);
+    } else {
+      sm.add('stores["$thing"]', 1);
+    }
+
+    // 显示消息
+    if (craftable['buildMsg'] != null) {
+      NotificationManager().notify(name, craftable['buildMsg']);
+    }
+
+    // 播放音频
+    if (craftable['audio'] != null) {
+      AudioEngine().playSound(craftable['audio']);
+    }
+
+    return true;
+  }
+
+  // 更新建造按钮
+  void updateBuildButtons() {
+    // 这个方法在Flutter中可能不需要，因为UI会自动更新
+    // 保留作为接口兼容性
+    notifyListeners();
+  }
+
   // 根据火焰级别设置音乐
   void setMusic() {
     // 暂时禁用背景音乐，直到我们有音频文件
@@ -580,5 +735,37 @@ class Room with ChangeNotifier {
         break;
     }
     */
+  }
+
+  // 处理状态更新
+  void handleStateUpdates(Map<String, dynamic> event) {
+    // 处理状态更新事件
+    notifyListeners();
+  }
+
+  // 按键处理
+  void keyDown(dynamic event) {
+    // 在原始游戏中，房间模块不处理按键
+  }
+
+  void keyUp(dynamic event) {
+    // 在原始游戏中，房间模块不处理按键
+  }
+
+  // 滑动处理
+  void swipeLeft() {
+    // 在原始游戏中，房间模块不处理滑动
+  }
+
+  void swipeRight() {
+    // 在原始游戏中，房间模块不处理滑动
+  }
+
+  void swipeUp() {
+    // 在原始游戏中，房间模块不处理滑动
+  }
+
+  void swipeDown() {
+    // 在原始游戏中，房间模块不处理滑动
   }
 }

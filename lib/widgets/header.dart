@@ -4,7 +4,7 @@ import '../core/engine.dart';
 
 /// Header displays the navigation tabs for different game modules
 class Header extends StatelessWidget {
-  const Header({Key? key}) : super(key: key);
+  const Header({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class Header extends StatelessWidget {
                 _buildTab(context, 'A Dark Room', false, onTap: () {
                   // Navigate to Room
                 }),
-              
+
               // Outside tab
               if (Provider.of<Engine>(context, listen: false).activeModule?.name == 'Outside')
                 _buildTab(context, 'Outside', true)
@@ -30,7 +30,7 @@ class Header extends StatelessWidget {
                 _buildTab(context, 'Outside', false, onTap: () {
                   // Navigate to Outside
                 }),
-              
+
               // Path tab
               if (Provider.of<Engine>(context, listen: false).activeModule?.name == 'Path')
                 _buildTab(context, 'Path', true)
@@ -38,7 +38,7 @@ class Header extends StatelessWidget {
                 _buildTab(context, 'Path', false, onTap: () {
                   // Navigate to Path
                 }),
-              
+
               // Fabricator tab
               if (Provider.of<Engine>(context, listen: false).activeModule?.name == 'Fabricator')
                 _buildTab(context, 'Fabricator', true)
@@ -46,7 +46,7 @@ class Header extends StatelessWidget {
                 _buildTab(context, 'Fabricator', false, onTap: () {
                   // Navigate to Fabricator
                 }),
-              
+
               // Ship tab
               if (Provider.of<Engine>(context, listen: false).activeModule?.name == 'Ship')
                 _buildTab(context, 'Ship', true)
@@ -60,7 +60,7 @@ class Header extends StatelessWidget {
       },
     );
   }
-  
+
   Widget _buildTab(BuildContext context, String title, bool isSelected, {VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
@@ -85,7 +85,7 @@ class Header extends StatelessWidget {
       ),
     );
   }
-  
+
   // Add a location tab
   static Widget addLocation(String title, String name, dynamic module) {
     // This would create a tab for a module

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
 import '../core/state_manager.dart';
 import '../core/audio_engine.dart';
-import '../core/audio_library.dart';
 
 /// GameButton is a custom button widget that mimics the behavior of buttons in the original game
 class GameButton extends StatefulWidget {
@@ -15,9 +15,11 @@ class GameButton extends StatefulWidget {
   final String? tooltipPosition;
   final bool disabled;
   final bool free;
-  
+  final bool Function()? boosted; // 用于检查是否有加速效果
+  final bool saveCooldown; // 是否保存冷却时间到状态
+
   const GameButton({
-    Key? key,
+    super.key,
     required this.id,
     required this.text,
     this.onClick,
@@ -27,7 +29,9 @@ class GameButton extends StatefulWidget {
     this.tooltipPosition,
     this.disabled = false,
     this.free = false,
-  }) : super(key: key);
+    this.boosted,
+    this.saveCooldown = true,
+  });
 
   @override
   State<GameButton> createState() => _GameButtonState();
@@ -38,38 +42,41 @@ class _GameButtonState extends State<GameButton> with SingleTickerProviderStateM
   bool _isCoolingDown = false;
   late AnimationController _cooldownController;
   late Animation<double> _cooldownAnimation;
-  
+  Timer? _countdownTimer;
+
   @override
   void initState() {
     super.initState();
     _isDisabled = widget.disabled;
-    
+
     // Set up cooldown animation
     _cooldownController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: widget.cooldown),
     );
-    
+
     _cooldownAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 1.0, // 从满开始，逐渐减少到0
+      end: 0.0,
     ).animate(_cooldownController);
-    
+
     _cooldownController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        setState(() {
-          _isCoolingDown = false;
-        });
+        _clearCooldown(true);
       }
     });
+
+    // 检查是否有残留的冷却时间
+    _checkResidualCooldown();
   }
-  
+
   @override
   void dispose() {
     _cooldownController.dispose();
+    _countdownTimer?.cancel();
     super.dispose();
   }
-  
+
   @override
   void didUpdateWidget(GameButton oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -79,65 +86,121 @@ class _GameButtonState extends State<GameButton> with SingleTickerProviderStateM
       });
     }
   }
-  
-  void _startCooldown() {
-    if (widget.cooldown > 0) {
-      setState(() {
-        _isCoolingDown = true;
-      });
-      _cooldownController.reset();
-      _cooldownController.forward();
+
+  // 检查残留的冷却时间
+  void _checkResidualCooldown() {
+    if (widget.cooldown <= 0) return;
+
+    final sm = StateManager();
+    final cooldownId = 'cooldown.${widget.id}';
+    final residualTime = sm.get(cooldownId, true) ?? 0;
+
+    if (residualTime > 0) {
+      _startCooldown((residualTime * 1000).round()); // 转换回毫秒
     }
   }
-  
-  void _clearCooldown() {
+
+  void _startCooldown([int? customDuration]) {
+    if (widget.cooldown <= 0) return;
+
+    int cd = customDuration ?? widget.cooldown;
+
+    // 检查是否有加速效果
+    if (widget.boosted?.call() == true) {
+      cd = (cd / 2).round();
+    }
+
+    setState(() {
+      _isCoolingDown = true;
+    });
+
+    // 保存冷却时间到状态
+    if (widget.saveCooldown) {
+      final sm = StateManager();
+      final cooldownId = 'cooldown.${widget.id}';
+      sm.set(cooldownId, cd / 1000); // 转换为秒
+
+      // 每0.5秒减少冷却时间
+      _countdownTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+        final remaining = (sm.get(cooldownId, true) ?? 0) - 0.5;
+        if (remaining <= 0) {
+          timer.cancel();
+          sm.remove(cooldownId);
+        } else {
+          sm.set(cooldownId, remaining, true); // true 表示 noNotify
+        }
+      });
+    }
+
+    // 设置动画持续时间
+    _cooldownController.duration = Duration(milliseconds: cd);
+    _cooldownController.reset();
+    _cooldownController.forward();
+  }
+
+  void _clearCooldown([bool cooldownEnded = false]) {
     setState(() {
       _isCoolingDown = false;
     });
+
+    if (!cooldownEnded) {
+      _cooldownController.stop();
+    }
+
     _cooldownController.reset();
+
+    // 清理计时器和状态
+    _countdownTimer?.cancel();
+    _countdownTimer = null;
+
+    if (widget.saveCooldown) {
+      final sm = StateManager();
+      final cooldownId = 'cooldown.${widget.id}';
+      sm.remove(cooldownId);
+    }
   }
-  
+
   bool _canAfford(BuildContext context) {
     if (widget.cost == null || widget.free) return true;
-    
+
     final sm = Provider.of<StateManager>(context, listen: false);
-    
+
     for (final entry in widget.cost!.entries) {
       final have = sm.get('stores["${entry.key}"]', true) ?? 0;
       if (have < entry.value) {
         return false;
       }
     }
-    
+
     return true;
   }
-  
+
   void _handleClick() {
     if (_isDisabled || _isCoolingDown) return;
-    
+
     if (!_canAfford(context)) {
       // Play "can't afford" sound
       AudioEngine().playSound('cant_afford');
       return;
     }
-    
+
     // Start cooldown
     _startCooldown();
-    
+
     // Call onClick handler
     if (widget.onClick != null) {
       widget.onClick!();
     }
-    
+
     // Play click sound
     AudioEngine().playSound('click');
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final bool canAfford = _canAfford(context);
     final bool isActive = !_isDisabled && !_isCoolingDown && canAfford;
-    
+
     return Tooltip(
       message: _buildTooltipText(),
       preferBelow: widget.tooltipPosition?.contains('bottom') ?? true,
@@ -164,12 +227,12 @@ class _GameButtonState extends State<GameButton> with SingleTickerProviderStateM
                     widthFactor: 1.0 - _cooldownAnimation.value,
                     alignment: Alignment.centerLeft,
                     child: Container(
-                      color: Colors.grey.withOpacity(0.5),
+                      color: Colors.grey.withValues(alpha: 0.5),
                     ),
                   );
                 },
               ),
-            
+
             // Button text
             Center(
               child: Text(
@@ -180,7 +243,7 @@ class _GameButtonState extends State<GameButton> with SingleTickerProviderStateM
                 ),
               ),
             ),
-            
+
             // Clickable area
             Material(
               color: Colors.transparent,
@@ -195,7 +258,7 @@ class _GameButtonState extends State<GameButton> with SingleTickerProviderStateM
       ),
     );
   }
-  
+
   Color _getButtonColor(bool isActive) {
     if (_isDisabled) {
       return Colors.grey.shade800;
@@ -207,42 +270,22 @@ class _GameButtonState extends State<GameButton> with SingleTickerProviderStateM
       return Colors.grey.shade500;
     }
   }
-  
+
   String _buildTooltipText() {
     if (widget.cost == null || widget.cost!.isEmpty) {
       return '';
     }
-    
+
     final StringBuffer buffer = StringBuffer();
-    
+
     for (final entry in widget.cost!.entries) {
       buffer.writeln('${entry.key}: ${entry.value}');
     }
-    
+
     return buffer.toString().trim();
   }
-  
-  // Static methods for external control
-  static void setDisabled(GameButton button, bool disabled) {
-    if (button.key != null) {
-      final state = button.key as GlobalKey<_GameButtonState>;
-      state.currentState?.setState(() {
-        state.currentState?._isDisabled = disabled;
-      });
-    }
-  }
-  
-  static void cooldown(GameButton button) {
-    if (button.key != null) {
-      final state = button.key as GlobalKey<_GameButtonState>;
-      state.currentState?._startCooldown();
-    }
-  }
-  
-  static void clearCooldown(GameButton button) {
-    if (button.key != null) {
-      final state = button.key as GlobalKey<_GameButtonState>;
-      state.currentState?._clearCooldown();
-    }
-  }
+
+  // 静态方法用于外部控制（如果需要的话）
+  // 在Flutter中，通常通过GlobalKey或者状态管理来控制Widget
+  // 这些方法保留作为接口兼容性，但在实际使用中可能不需要
 }
