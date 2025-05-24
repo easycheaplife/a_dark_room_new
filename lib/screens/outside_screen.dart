@@ -10,31 +10,144 @@ class OutsideScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 村庄状态区域
-          _VillageSection(),
+    return Consumer2<Outside, StateManager>(
+      builder: (context, outside, stateManager, child) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 收集区域
+              _GatheringSection(outside: outside, stateManager: stateManager),
 
-          SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-          // 建筑区域
-          _BuildingSection(),
+              // 村庄状态区域
+              _VillageSection(outside: outside, stateManager: stateManager),
 
-          SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-          // 工人管理区域
-          _WorkersSection(),
-        ],
+              // 建筑区域
+              _BuildingSection(outside: outside, stateManager: stateManager),
+
+              const SizedBox(height: 24),
+
+              // 工人管理区域
+              _WorkersSection(outside: outside, stateManager: stateManager),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _GatheringSection extends StatelessWidget {
+  final Outside outside;
+  final StateManager stateManager;
+
+  const _GatheringSection({
+    required this.outside,
+    required this.stateManager,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.grey[900],
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '🌲 收集',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 12),
+
+            // 收集木材
+            Row(
+              children: [
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '收集木材',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        '干燥的灌木和枯枝散落在森林地面上',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SimpleButton(
+                  text: '收集',
+                  onPressed: () {
+                    outside.gatherWood();
+                  },
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 16),
+
+            // 检查陷阱
+            Row(
+              children: [
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '检查陷阱',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        '查看陷阱是否捕获了什么',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SimpleButton(
+                  text: '检查',
+                  onPressed: () {
+                    outside.checkTraps();
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class _VillageSection extends StatelessWidget {
-  const _VillageSection();
+  final Outside outside;
+  final StateManager stateManager;
+
+  const _VillageSection({
+    required this.outside,
+    required this.stateManager,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +203,13 @@ class _VillageSection extends StatelessWidget {
 }
 
 class _BuildingSection extends StatelessWidget {
-  const _BuildingSection();
+  final Outside outside;
+  final StateManager stateManager;
+
+  const _BuildingSection({
+    required this.outside,
+    required this.stateManager,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +266,13 @@ class _BuildingSection extends StatelessWidget {
 }
 
 class _WorkersSection extends StatelessWidget {
-  const _WorkersSection();
+  final Outside outside;
+  final StateManager stateManager;
+
+  const _WorkersSection({
+    required this.outside,
+    required this.stateManager,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -201,13 +326,17 @@ class _WorkersSection extends StatelessWidget {
                   children: [
                     SimpleButton(
                       text: '-',
-                      onPressed: null,
+                      onPressed: () {
+                        outside.decreaseWorker('gatherer', 1);
+                      },
                       width: 40,
                     ),
                     const SizedBox(width: 8),
                     SimpleButton(
                       text: '+',
-                      onPressed: null,
+                      onPressed: () {
+                        outside.increaseWorker('gatherer', 1);
+                      },
                       width: 40,
                     ),
                   ],

@@ -10,16 +10,63 @@ class StoresDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StateManager>(
       builder: (context, stateManager, child) {
-        // 暂时使用空的资源列表，直到我们解决类型问题
+        // 从StateManager获取实际的资源数据
+        final storesData = stateManager.get('stores');
+        final stores = storesData != null ? Map<String, dynamic>.from(storesData) : <String, dynamic>{};
+
         final resources = <String, num>{};
         final weapons = <String, num>{};
         final special = <String, num>{};
 
-        // 添加一些测试数据
-        resources['wood'] = 10;
-        resources['fur'] = 5;
-        weapons['iron sword'] = 1;
-        special['compass'] = 1;
+        // 分类资源
+        for (final entry in stores.entries) {
+          final value = entry.value as num? ?? 0;
+          // 显示所有资源，包括0值的资源（玩家需要看到当前状态）
+
+          switch (entry.key) {
+            case 'wood':
+            case 'fur':
+            case 'meat':
+            case 'bait':
+            case 'leather':
+            case 'cured meat':
+            case 'iron':
+            case 'coal':
+            case 'sulphur':
+            case 'steel':
+            case 'bullets':
+            case 'scales':
+            case 'teeth':
+            case 'medicine':
+            case 'energy cell':
+            case 'alien alloy':
+              resources[entry.key] = value;
+              break;
+            case 'iron sword':
+            case 'steel sword':
+            case 'rifle':
+            case 'bone spear':
+            case 'bolas':
+            case 'grenade':
+            case 'bayonet':
+            case 'laser rifle':
+              weapons[entry.key] = value;
+              break;
+            case 'compass':
+            case 'torch':
+            case 'waterskin':
+            case 'cask':
+            case 'water tank':
+            case 'rucksack':
+            case 'wagon':
+            case 'convoy':
+            case 'l armour':
+            case 'i armour':
+            case 's armour':
+              special[entry.key] = value;
+              break;
+          }
+        }
 
         return Container(
           width: 200,

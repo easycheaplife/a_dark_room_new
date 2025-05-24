@@ -57,7 +57,7 @@ class Room with ChangeNotifier {
       'maxMsg': "more traps won't help now",
       'type': 'building',
       'cost': (StateManager sm) {
-        final n = sm.get('game.buildings["trap"]', true) ?? 0;
+        final n = sm.get('game.buildings.trap', true) ?? 0;
         return {'wood': 10 + (n * 10)};
       },
       'audio': AudioLibrary.build,
@@ -85,7 +85,7 @@ class Room with ChangeNotifier {
       'maxMsg': 'no more room for huts.',
       'type': 'building',
       'cost': (StateManager sm) {
-        final n = sm.get('game.buildings["hut"]', true) ?? 0;
+        final n = sm.get('game.buildings.hut', true) ?? 0;
         return {'wood': 100 + (n * 50)};
       },
       'audio': AudioLibrary.build,
@@ -125,6 +125,207 @@ class Room with ChangeNotifier {
       'type': 'building',
       'cost': (StateManager sm) {
         return {'wood': 500, 'fur': 50};
+      },
+      'audio': AudioLibrary.build,
+    },
+    'smokehouse': {
+      'name': 'smokehouse',
+      'button': null,
+      'maximum': 1,
+      'availableMsg':
+          "should cure the meat, or it'll spoil. builder says she can fix something up.",
+      'buildMsg': 'builder finishes the smokehouse. she looks hungry.',
+      'type': 'building',
+      'cost': (StateManager sm) {
+        return {'wood': 600, 'meat': 50};
+      },
+      'audio': AudioLibrary.build,
+    },
+    'workshop': {
+      'name': 'workshop',
+      'button': null,
+      'maximum': 1,
+      'availableMsg':
+          "builder says she could make finer things, if she had the tools",
+      'buildMsg': "workshop's finally ready. builder's excited to get to it",
+      'type': 'building',
+      'cost': (StateManager sm) {
+        return {'wood': 800, 'leather': 100, 'scales': 10};
+      },
+      'audio': AudioLibrary.build,
+    },
+    'steelworks': {
+      'name': 'steelworks',
+      'button': null,
+      'maximum': 1,
+      'availableMsg':
+          "builder says the villagers could make steel, given the tools",
+      'buildMsg': "a haze falls over the village as the steelworks fires up",
+      'type': 'building',
+      'cost': (StateManager sm) {
+        return {'wood': 1500, 'iron': 100, 'coal': 100};
+      },
+      'audio': AudioLibrary.build,
+    },
+    'armoury': {
+      'name': 'armoury',
+      'button': null,
+      'maximum': 1,
+      'availableMsg':
+          "builder says it'd be useful to have a steady source of bullets",
+      'buildMsg': "armoury's done, welcoming back the weapons of the past.",
+      'type': 'building',
+      'cost': (StateManager sm) {
+        return {'wood': 3000, 'steel': 100, 'sulphur': 50};
+      },
+      'audio': AudioLibrary.build,
+    },
+    // 工具类
+    'torch': {
+      'name': 'torch',
+      'button': null,
+      'type': 'tool',
+      'buildMsg': 'a torch to keep the dark away',
+      'cost': (StateManager sm) {
+        return {'wood': 1, 'cloth': 1};
+      },
+      'audio': AudioLibrary.build,
+    },
+    // 升级类
+    'waterskin': {
+      'name': 'waterskin',
+      'button': null,
+      'type': 'upgrade',
+      'maximum': 1,
+      'buildMsg': "this waterskin'll hold a bit of water, at least",
+      'cost': (StateManager sm) {
+        return {'leather': 50};
+      },
+      'audio': AudioLibrary.build,
+    },
+    'cask': {
+      'name': 'cask',
+      'button': null,
+      'type': 'upgrade',
+      'maximum': 1,
+      'buildMsg': 'the cask holds enough water for longer expeditions',
+      'cost': (StateManager sm) {
+        return {'leather': 100, 'iron': 20};
+      },
+      'audio': AudioLibrary.build,
+    },
+    'water tank': {
+      'name': 'water tank',
+      'button': null,
+      'type': 'upgrade',
+      'maximum': 1,
+      'buildMsg': 'never go thirsty again',
+      'cost': (StateManager sm) {
+        return {'iron': 100, 'steel': 50};
+      },
+      'audio': AudioLibrary.build,
+    },
+    'rucksack': {
+      'name': 'rucksack',
+      'button': null,
+      'type': 'upgrade',
+      'maximum': 1,
+      'buildMsg': 'carrying more means longer expeditions to the wilds',
+      'cost': (StateManager sm) {
+        return {'leather': 200};
+      },
+      'audio': AudioLibrary.build,
+    },
+    'wagon': {
+      'name': 'wagon',
+      'button': null,
+      'type': 'upgrade',
+      'maximum': 1,
+      'buildMsg': 'the wagon can carry a lot of supplies',
+      'cost': (StateManager sm) {
+        return {'wood': 500, 'iron': 100};
+      },
+      'audio': AudioLibrary.build,
+    },
+    'convoy': {
+      'name': 'convoy',
+      'button': null,
+      'type': 'upgrade',
+      'maximum': 1,
+      'buildMsg': 'the convoy can haul mostly everything',
+      'cost': (StateManager sm) {
+        return {'wood': 1000, 'iron': 200, 'steel': 100};
+      },
+      'audio': AudioLibrary.build,
+    },
+    // 武器类
+    'bone spear': {
+      'name': 'bone spear',
+      'button': null,
+      'type': 'weapon',
+      'buildMsg': "this spear's not elegant, but it's pretty good at stabbing",
+      'cost': (StateManager sm) {
+        return {'wood': 100, 'teeth': 5};
+      },
+      'audio': AudioLibrary.build,
+    },
+    'iron sword': {
+      'name': 'iron sword',
+      'button': null,
+      'type': 'weapon',
+      'buildMsg': "sword is sharp. good protection out in the wilds.",
+      'cost': (StateManager sm) {
+        return {'wood': 200, 'leather': 50, 'iron': 20};
+      },
+      'audio': AudioLibrary.build,
+    },
+    'steel sword': {
+      'name': 'steel sword',
+      'button': null,
+      'type': 'weapon',
+      'buildMsg': "the steel is strong, and the blade true.",
+      'cost': (StateManager sm) {
+        return {'wood': 500, 'leather': 100, 'steel': 20};
+      },
+      'audio': AudioLibrary.build,
+    },
+    'rifle': {
+      'name': 'rifle',
+      'type': 'weapon',
+      'buildMsg': "black powder and bullets, like the old days.",
+      'cost': (StateManager sm) {
+        return {'wood': 200, 'steel': 50, 'sulphur': 50};
+      },
+      'audio': AudioLibrary.build,
+    },
+    // 护甲类
+    'l armour': {
+      'name': 'l armour',
+      'type': 'upgrade',
+      'maximum': 1,
+      'buildMsg': "leather's not strong. better than rags, though.",
+      'cost': (StateManager sm) {
+        return {'leather': 200, 'scales': 20};
+      },
+      'audio': AudioLibrary.build,
+    },
+    'i armour': {
+      'name': 'i armour',
+      'type': 'upgrade',
+      'maximum': 1,
+      'buildMsg': "iron's stronger than leather",
+      'cost': (StateManager sm) {
+        return {'leather': 200, 'iron': 100};
+      },
+      'audio': AudioLibrary.build,
+    },
+    's armour': {
+      'name': 's armour',
+      'type': 'upgrade',
+      'maximum': 1,
+      'buildMsg': "steel's stronger than iron",
+      'cost': (StateManager sm) {
+        return {'leather': 200, 'steel': 100};
       },
       'audio': AudioLibrary.build,
     }
@@ -192,6 +393,27 @@ class Room with ChangeNotifier {
       'type': 'weapon',
       'cost': (StateManager sm) {
         return {'teeth': 10};
+      },
+      'audio': AudioLibrary.buy,
+    },
+    'grenade': {
+      'type': 'weapon',
+      'cost': (StateManager sm) {
+        return {'scales': 100, 'teeth': 50};
+      },
+      'audio': AudioLibrary.buy,
+    },
+    'bayonet': {
+      'type': 'weapon',
+      'cost': (StateManager sm) {
+        return {'scales': 500, 'teeth': 250};
+      },
+      'audio': AudioLibrary.buy,
+    },
+    'alien alloy': {
+      'type': 'good',
+      'cost': (StateManager sm) {
+        return {'fur': 1500, 'scales': 750, 'teeth': 300};
       },
       'audio': AudioLibrary.buy,
     },
@@ -361,37 +583,61 @@ class Room with ChangeNotifier {
   // 点燃火堆
   void lightFire() {
     final sm = StateManager();
-    final wood = sm.get('stores.wood');
+    final wood = sm.get('stores.wood', true) ?? 0;
 
-    if (wood < 5) {
-      NotificationManager()
-          .notify(name, 'not enough wood to get the fire going');
-      // Clear button cooldown
+    // 调试信息
+    print('🔥 lightFire called');
+    print('🪵 Current wood: $wood');
+    print('📊 Full stores state: ${sm.get('stores')}');
+
+    // 按照原始游戏逻辑：如果没有木材，点火是免费的！
+    if (wood == 0) {
+      print('🆓 Free fire lighting (no wood available)');
+      sm.set('game.fire.value', fireEnum['Burning']!['value']);
+      AudioEngine().playSound(AudioLibrary.lightFire);
+      onFireChange();
       return;
     }
 
+    // 如果有木材但不足5个，显示错误
+    if (wood < 5) {
+      NotificationManager()
+          .notify(name, 'not enough wood to get the fire going');
+      print('❌ Not enough wood: need 5, have $wood');
+      return;
+    }
+
+    // 如果有足够木材，消耗5个
     sm.set('stores.wood', wood - 5);
-    sm.set('game.fire', fireEnum['Burning']!['value']);
+    sm.set('game.fire.value', fireEnum['Burning']!['value']);
     AudioEngine().playSound(AudioLibrary.lightFire);
+    print('✅ Fire lit successfully! Wood remaining: ${wood - 5}');
     onFireChange();
   }
 
   // 添柴
   void stokeFire() {
     final sm = StateManager();
-    final wood = sm.get('stores.wood');
+    final wood = sm.get('stores.wood', true) ?? 0;
 
+    // 按照原始游戏逻辑：如果没有木材，添柴是免费的！
     if (wood == 0) {
-      NotificationManager().notify(name, 'the wood has run out');
-      // Clear button cooldown
+      print('🆓 Free stoke (no wood available)');
+      final currentFire = sm.get('game.fire.value', true) ?? 0;
+      if (currentFire < fireEnum['Roaring']!['value']!) {
+        sm.set('game.fire.value', currentFire + 1);
+      }
+      AudioEngine().playSound(AudioLibrary.stokeFire);
+      onFireChange();
       return;
     }
 
+    // 如果有木材，消耗1个
     sm.set('stores.wood', wood - 1);
 
-    final fireValue = sm.get('game.fire.value');
+    final fireValue = sm.get('game.fire.value', true) ?? 0;
     if (fireValue < 4) {
-      sm.set('game.fire', fireValue + 1);
+      sm.set('game.fire.value', fireValue + 1);
     }
 
     AudioEngine().playSound(AudioLibrary.stokeFire);
@@ -405,7 +651,7 @@ class Room with ChangeNotifier {
     }
 
     final sm = StateManager();
-    final fireValue = sm.get('game.fire.value');
+    final fireValue = sm.get('game.fire.value', true) ?? 0;
 
     String fireText = '';
     for (final entry in fireEnum.entries) {
@@ -442,9 +688,9 @@ class Room with ChangeNotifier {
   // 随时间冷却火焰
   void coolFire() {
     final sm = StateManager();
-    final wood = sm.get('stores.wood');
-    final fireValue = sm.get('game.fire.value');
-    final builderLevel = sm.get('game.builder.level');
+    final wood = sm.get('stores.wood', true) ?? 0;
+    final fireValue = sm.get('game.fire.value', true) ?? 0;
+    final builderLevel = sm.get('game.builder.level', true) ?? -1;
 
     if (fireValue <= fireEnum['Flickering']!['value'] &&
         builderLevel > 3 &&
@@ -452,11 +698,11 @@ class Room with ChangeNotifier {
       NotificationManager()
           .notify(name, 'builder stokes the fire', noQueue: true);
       sm.set('stores.wood', wood - 1);
-      sm.set('game.fire', fireValue + 1);
+      sm.set('game.fire.value', fireValue + 1);
     }
 
     if (fireValue > 0) {
-      sm.set('game.fire', fireValue - 1);
+      sm.set('game.fire.value', fireValue - 1);
       _fireTimer = Engine().setTimeout(() => coolFire(), _fireCoolDelay);
       onFireChange();
     }
@@ -465,11 +711,11 @@ class Room with ChangeNotifier {
   // 根据火焰调整房间温度
   void adjustTemp() {
     final sm = StateManager();
-    final tempValue = sm.get('game.temperature.value');
-    final fireValue = sm.get('game.fire.value');
+    final tempValue = sm.get('game.temperature.value', true) ?? 0;
+    final fireValue = sm.get('game.fire.value', true) ?? 0;
 
     if (tempValue > 0 && tempValue > fireValue) {
-      sm.set('game.temperature', tempValue - 1);
+      sm.set('game.temperature.value', tempValue - 1);
 
       String tempText = '';
       for (final entry in tempEnum.entries) {
@@ -484,7 +730,7 @@ class Room with ChangeNotifier {
     }
 
     if (tempValue < 4 && tempValue < fireValue) {
-      sm.set('game.temperature', tempValue + 1);
+      sm.set('game.temperature.value', tempValue + 1);
 
       String tempText = '';
       for (final entry in tempEnum.entries) {
@@ -498,7 +744,7 @@ class Room with ChangeNotifier {
           .notify(name, 'the room is $tempText', noQueue: true);
     }
 
-    if (tempValue != sm.get('game.temperature.value')) {
+    if (tempValue != sm.get('game.temperature.value', true)) {
       changed = true;
     }
 
@@ -518,7 +764,7 @@ class Room with ChangeNotifier {
   // 更新建造者状态
   void updateBuilderState() {
     final sm = StateManager();
-    final builderLevel = sm.get('game.builder.level');
+    final builderLevel = sm.get('game.builder.level', true) ?? -1;
 
     if (builderLevel == 0) {
       NotificationManager().notify(name,
@@ -526,7 +772,7 @@ class Room with ChangeNotifier {
       sm.set('game.builder.level', 1);
       Engine().setTimeout(() => unlockForest(), _needWoodDelay);
     } else if (builderLevel < 3 &&
-        sm.get('game.temperature.value') >= tempEnum['Warm']!['value']) {
+        (sm.get('game.temperature.value', true) ?? 0) >= tempEnum['Warm']!['value']) {
       String msg = '';
 
       switch (builderLevel) {
@@ -563,7 +809,7 @@ class Room with ChangeNotifier {
     if (stores == null) return;
 
     // 检查是否有指南针并且还没有发现路径
-    if (sm.get('stores.compass') != null && !pathDiscovery) {
+    if (sm.get('stores.compass', true) != null && !pathDiscovery) {
       pathDiscovery = true;
       // Path.openPath(); // 当Path模块实现后取消注释
     }
@@ -571,9 +817,9 @@ class Room with ChangeNotifier {
     // 检查盗贼
     for (final entry in stores.entries) {
       final num = entry.value;
-      if (sm.get('game.thieves') == null &&
+      if (sm.get('game.thieves', true) == null &&
           num > 5000 &&
-          sm.get('features.location.world') == true) {
+          sm.get('features.location.world', true) == true) {
         sm.startThieves();
       }
     }
@@ -615,18 +861,18 @@ class Room with ChangeNotifier {
     if (good == null) return false;
 
     final sm = StateManager();
-    final numThings = sm.get('stores["$thing"]', true) ?? 0;
+    final numThings = sm.get('stores.$thing', true) ?? 0;
 
     if (good['maximum'] != null && good['maximum'] <= numThings) {
       return false;
     }
 
-    final cost = good['cost']();
+    final cost = good['cost'](sm);
     final Map<String, dynamic> storeMod = {};
 
     // 检查是否有足够的资源
     for (final entry in cost.entries) {
-      final have = sm.get('stores["${entry.key}"]', true) ?? 0;
+      final have = sm.get('stores.${entry.key}', true) ?? 0;
       if (have < entry.value) {
         NotificationManager().notify(name, 'not enough ${entry.key}');
         return false;
@@ -639,7 +885,7 @@ class Room with ChangeNotifier {
     sm.setM('stores', storeMod);
 
     // 添加物品
-    sm.add('stores["$thing"]', 1);
+    sm.add('stores.$thing', 1);
 
     // 显示消息
     if (good['buildMsg'] != null) {
@@ -660,18 +906,18 @@ class Room with ChangeNotifier {
     if (craftable == null) return false;
 
     final sm = StateManager();
-    final numThings = sm.get('game.buildings["$thing"]', true) ?? 0;
+    final numThings = sm.get('game.buildings.$thing', true) ?? 0;
 
     if (craftable['maximum'] != null && craftable['maximum'] <= numThings) {
       return false;
     }
 
-    final cost = craftable['cost']();
+    final cost = craftable['cost'](sm);
     final Map<String, dynamic> storeMod = {};
 
     // 检查是否有足够的资源
     for (final entry in cost.entries) {
-      final have = sm.get('stores["${entry.key}"]', true) ?? 0;
+      final have = sm.get('stores.${entry.key}', true) ?? 0;
       if (have < entry.value) {
         NotificationManager().notify(name, 'not enough ${entry.key}');
         return false;
@@ -685,9 +931,9 @@ class Room with ChangeNotifier {
 
     // 添加建筑
     if (craftable['type'] == 'building') {
-      sm.add('game.buildings["$thing"]', 1);
+      sm.add('game.buildings.$thing', 1);
     } else {
-      sm.add('stores["$thing"]', 1);
+      sm.add('stores.$thing', 1);
     }
 
     // 显示消息
@@ -703,10 +949,71 @@ class Room with ChangeNotifier {
     return true;
   }
 
+  // 更新按钮状态
+  void updateButton() {
+    // 在Flutter版本中，按钮状态通过UI状态管理自动更新
+    notifyListeners();
+  }
+
+  // 检查制作是否解锁
+  bool craftUnlocked(String thing) {
+    final sm = StateManager();
+
+    if (sm.get('game.builder.level', true) < 4) return false;
+
+    final craftable = craftables[thing];
+    if (craftable == null) return false;
+
+    if (needsWorkshop(craftable['type']) &&
+        (sm.get('game.buildings.workshop', true) ?? 0) == 0) {
+      return false;
+    }
+
+    final cost = craftable['cost'](sm);
+
+    // 如果已经建造过，显示按钮
+    if ((sm.get('game.buildings.$thing', true) ?? 0) > 0) {
+      return true;
+    }
+
+    // 如果有至少一半的木材，并且所有其他组件都见过，显示按钮
+    if ((sm.get('stores.wood', true) ?? 0) < (cost['wood'] ?? 0) * 0.5) {
+      return false;
+    }
+
+    for (final entry in cost.entries) {
+      if ((sm.get('stores.${entry.key}', true) ?? 0) == 0) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  // 检查购买是否解锁
+  bool buyUnlocked(String thing) {
+    final sm = StateManager();
+
+    if ((sm.get('game.buildings["trading post"]', true) ?? 0) > 0) {
+      if (thing == 'compass' ||
+          (sm.get('stores.$thing', true) ?? 0) > 0) {
+        // 一旦见过就允许购买
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // 检查是否需要工作坊
+  bool needsWorkshop(String type) {
+    return type == 'weapon' || type == 'upgrade' || type == 'tool';
+  }
+
   // 更新建造按钮
   void updateBuildButtons() {
-    // 这个方法在Flutter中可能不需要，因为UI会自动更新
-    // 保留作为接口兼容性
+    // 在Flutter版本中，建造按钮通过UI状态管理自动更新
+    // 这个方法保留作为接口兼容性
     notifyListeners();
   }
 
@@ -737,9 +1044,91 @@ class Room with ChangeNotifier {
     */
   }
 
+  // 获取可用的制作物品列表
+  List<String> getAvailableCraftables() {
+    final List<String> available = [];
+
+    for (final entry in craftables.entries) {
+      if (craftUnlocked(entry.key)) {
+        available.add(entry.key);
+      }
+    }
+
+    return available;
+  }
+
+  // 获取可用的交易物品列表
+  List<String> getAvailableTradeGoods() {
+    final List<String> available = [];
+
+    for (final entry in tradeGoods.entries) {
+      if (buyUnlocked(entry.key)) {
+        available.add(entry.key);
+      }
+    }
+
+    return available;
+  }
+
+  // 获取物品的本地化名称
+  String getLocalizedName(String itemName) {
+    // 这里可以添加本地化逻辑
+    switch (itemName) {
+      case 'trap': return '陷阱';
+      case 'cart': return '手推车';
+      case 'hut': return '小屋';
+      case 'lodge': return '旅馆';
+      case 'trading post': return '贸易站';
+      case 'tannery': return '制革厂';
+      case 'smokehouse': return '熏制房';
+      case 'workshop': return '工作坊';
+      case 'steelworks': return '钢铁厂';
+      case 'armoury': return '军械库';
+      case 'torch': return '火把';
+      case 'waterskin': return '水袋';
+      case 'cask': return '水桶';
+      case 'water tank': return '水箱';
+      case 'rucksack': return '背包';
+      case 'wagon': return '马车';
+      case 'convoy': return '车队';
+      case 'bone spear': return '骨矛';
+      case 'iron sword': return '铁剑';
+      case 'steel sword': return '钢剑';
+      case 'rifle': return '步枪';
+      case 'l armour': return '皮甲';
+      case 'i armour': return '铁甲';
+      case 's armour': return '钢甲';
+      case 'scales': return '鳞片';
+      case 'teeth': return '牙齿';
+      case 'bolas': return '流星锤';
+      case 'grenade': return '手榴弹';
+      case 'bayonet': return '刺刀';
+      case 'alien alloy': return '外星合金';
+      case 'compass': return '指南针';
+      default: return itemName;
+    }
+  }
+
   // 处理状态更新
   void handleStateUpdates(Map<String, dynamic> event) {
-    // 处理状态更新事件
+    final sm = StateManager();
+
+    // 检查建造者状态
+    final builderLevel = sm.get('game.builder.level', true) ?? -1;
+    if (builderLevel >= 0 && builderLevel < 3) {
+      updateBuilderState();
+    }
+
+    // 检查火焰状态
+    final fireValue = sm.get('game.fire.value', true) ?? 0;
+    if (fireValue > 0) {
+      onFireChange();
+    }
+
+    // 更新商店和收入视图
+    updateStoresView();
+    updateIncomeView();
+
     notifyListeners();
   }
 

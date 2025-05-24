@@ -22,9 +22,12 @@ class StateManager with ChangeNotifier {
   // 初始化状态管理器
   void init() {
     if (_state.isEmpty) {
+      print('🎮 StateManager: Initializing new game state');
       _state = {
         'version': 1.3,
-        'stores': {},
+        'stores': {
+          'wood': 0, // 原始游戏从0个木材开始，点火是免费的
+        },
         'income': {},
         'character': {
           'perks': {},
@@ -56,7 +59,10 @@ class StateManager with ChangeNotifier {
         'previous': {},
         'timers': {},
       };
+      print('✅ StateManager: Initial state created with wood: ${_state['stores']['wood']}');
       notifyListeners();
+    } else {
+      print('🔄 StateManager: Using existing state with wood: ${_state['stores']?['wood']}');
     }
   }
 
@@ -192,7 +198,7 @@ class StateManager with ChangeNotifier {
   // 一次设置多个值
   void setM(String path, Map<String, dynamic> values, [bool noNotify = false]) {
     for (String key in values.keys) {
-      set('$path["$key"]', values[key], true);
+      set('$path.$key', values[key], true);
     }
 
     if (!noNotify) {
@@ -203,9 +209,9 @@ class StateManager with ChangeNotifier {
   // 从状态中获取数值
   double getNum(String path, dynamic object) {
     if (object != null && object.type == 'building') {
-      return (get('game.buildings["$path"]', true) ?? 0).toDouble();
+      return (get('game.buildings.$path', true) ?? 0).toDouble();
     }
-    return (get('stores["$path"]', true) ?? 0).toDouble();
+    return (get('stores.$path', true) ?? 0).toDouble();
   }
 
   // 设置资源的收入
@@ -227,7 +233,7 @@ class StateManager with ChangeNotifier {
 
       if (income['stores'] != null) {
         for (String store in income['stores'].keys) {
-          add('stores["$store"]', income['stores'][store]);
+          add('stores.$store', income['stores'][store]);
         }
       }
     }
@@ -253,10 +259,15 @@ class StateManager with ChangeNotifier {
       final jsonState = prefs.getString('gameState');
 
       if (jsonState != null) {
+        print('💾 StateManager: Loading saved game state');
         _state = jsonDecode(jsonState);
+        print('📊 StateManager: Loaded state with wood: ${_state['stores']?['wood']}');
         notifyListeners();
+      } else {
+        print('🆕 StateManager: No saved game found, using initial state');
       }
     } catch (e) {
+      print('❌ StateManager: Error loading game: $e');
       if (kDebugMode) {
         print('Error loading game: $e');
       }
@@ -440,26 +451,26 @@ class StateManager with ChangeNotifier {
 
   // 添加技能
   void addPerk(String name) {
-    set('character.perks["$name"]', true);
+    set('character.perks.$name', true);
     // 在原始游戏中，这会显示通知
     // Notifications.notify(null, Engine.Perks[name].notify);
   }
 
   // 检查是否有技能
   bool hasPerk(String name) {
-    return get('character.perks["$name"]') == true;
+    return get('character.perks.$name') == true;
   }
 
   // 添加被盗物品
   void addStolen(Map<String, dynamic> stores) {
     for (var k in stores.keys) {
-      var old = get('stores["$k"]', true) ?? 0;
+      var old = get('stores.$k', true) ?? 0;
       var short = old + stores[k];
       // 如果他们会偷走比实际拥有的更多
       if (short < 0) {
-        add('game.stolen["$k"]', (stores[k] * -1) + short);
+        add('game.stolen.$k', (stores[k] * -1) + short);
       } else {
-        add('game.stolen["$k"]', stores[k] * -1);
+        add('game.stolen.$k', stores[k] * -1);
       }
     }
   }

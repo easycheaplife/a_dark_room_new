@@ -37,6 +37,50 @@ class RoomScreen extends StatelessWidget {
   }
 
   Widget _buildFireSection(BuildContext context, Room room, StateManager stateManager) {
+    // 获取当前火焰状态
+    final fireValue = stateManager.get('game.fire.value', true) ?? 0;
+    final tempValue = stateManager.get('game.temperature.value', true) ?? 0;
+
+    // 获取火焰状态文本
+    String fireText = '熄灭';
+    Color fireColor = Colors.grey;
+
+    for (final entry in Room.fireEnum.entries) {
+      if (entry.value['value'] == fireValue) {
+        fireText = entry.value['text'] as String;
+        break;
+      }
+    }
+
+    // 根据火焰状态设置颜色
+    switch (fireValue) {
+      case 0: fireColor = Colors.grey; break;
+      case 1: fireColor = Colors.orange[300]!; break;
+      case 2: fireColor = Colors.orange[500]!; break;
+      case 3: fireColor = Colors.orange[700]!; break;
+      case 4: fireColor = Colors.red; break;
+    }
+
+    // 获取温度状态文本
+    String tempText = '冰冷';
+    Color tempColor = Colors.blue;
+
+    for (final entry in Room.tempEnum.entries) {
+      if (entry.value['value'] == tempValue) {
+        tempText = entry.value['text'] as String;
+        break;
+      }
+    }
+
+    // 根据温度设置颜色
+    switch (tempValue) {
+      case 0: tempColor = Colors.blue[300]!; break;
+      case 1: tempColor = Colors.blue[200]!; break;
+      case 2: tempColor = Colors.green[300]!; break;
+      case 3: tempColor = Colors.orange[300]!; break;
+      case 4: tempColor = Colors.red[300]!; break;
+    }
+
     return Card(
       color: Colors.grey[900],
       child: Padding(
@@ -51,10 +95,10 @@ class RoomScreen extends StatelessWidget {
             const SizedBox(height: 12),
 
             // 火焰状态描述
-            const Text(
-              '火已熄灭。',
+            Text(
+              '火$fireText。',
               style: TextStyle(
-                color: Colors.orange,
+                color: fireColor,
                 fontSize: 16,
               ),
             ),
@@ -62,10 +106,10 @@ class RoomScreen extends StatelessWidget {
             const SizedBox(height: 8),
 
             // 温度描述
-            const Text(
-              '房间里很冷。',
+            Text(
+              '房间$tempText。',
               style: TextStyle(
-                color: Colors.blue,
+                color: tempColor,
                 fontSize: 14,
               ),
             ),
@@ -78,14 +122,14 @@ class RoomScreen extends StatelessWidget {
                 SimpleButton(
                   text: '点火',
                   onPressed: () {
-                    // TODO: 实现点火功能
+                    room.lightFire();
                   },
                 ),
                 const SizedBox(width: 12),
                 SimpleButton(
-                  text: '收集木材',
+                  text: '添柴',
                   onPressed: () {
-                    // TODO: 实现收集木材功能
+                    room.stokeFire();
                   },
                 ),
               ],
@@ -137,7 +181,7 @@ class RoomScreen extends StatelessWidget {
                 SimpleButton(
                   text: '建造',
                   onPressed: () {
-                    // TODO: 实现建造功能
+                    room.build('trap');
                   },
                 ),
               ],
@@ -189,7 +233,7 @@ class RoomScreen extends StatelessWidget {
                 SimpleButton(
                   text: '购买',
                   onPressed: () {
-                    // TODO: 实现购买功能
+                    room.buy('scales');
                   },
                 ),
               ],

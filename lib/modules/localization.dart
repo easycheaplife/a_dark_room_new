@@ -247,11 +247,6 @@ class Localization extends ChangeNotifier {
     return translated;
   }
 
-  /// 简化的翻译函数（模拟原始游戏的_()函数）
-  String _(String key, [List<dynamic>? args]) {
-    return translate(key, args);
-  }
-
   /// 获取支持的语言列表
   List<String> getSupportedLanguages() {
     return _translations.keys.toList();
