@@ -184,6 +184,7 @@ class _GameScreenState extends State<GameScreen> {
       case 'Room':
         return const RoomScreen();
       case 'Outside':
+      case '外部': // 支持中文模块名
         return const OutsideScreen();
       case 'Path':
         return const PathScreen();

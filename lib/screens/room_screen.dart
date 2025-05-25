@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../modules/room.dart';
 import '../core/state_manager.dart';
+import '../core/localization.dart';
 import '../widgets/simple_button.dart';
 
 /// 房间界面 - 显示火焰状态、建筑和交易
@@ -10,25 +11,25 @@ class RoomScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<Room, StateManager>(
-      builder: (context, room, stateManager, child) {
+    return Consumer3<Room, StateManager, Localization>(
+      builder: (context, room, stateManager, localization, child) {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 火焰状态区域
-              _buildFireSection(context, room, stateManager),
+              _buildFireSection(context, room, stateManager, localization),
 
               const SizedBox(height: 24),
 
               // 建筑区域
-              _buildBuildingSection(context, room, stateManager),
+              _buildBuildingSection(context, room, stateManager, localization),
 
               const SizedBox(height: 24),
 
               // 交易区域
-              _buildTradingSection(context, room, stateManager),
+              _buildTradingSection(context, room, stateManager, localization),
             ],
           ),
         );
@@ -36,21 +37,24 @@ class RoomScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFireSection(BuildContext context, Room room, StateManager stateManager) {
+  Widget _buildFireSection(BuildContext context, Room room, StateManager stateManager, Localization localization) {
     // 获取当前火焰状态
     final fireValue = stateManager.get('game.fire.value', true) ?? 0;
     final tempValue = stateManager.get('game.temperature.value', true) ?? 0;
 
     // 获取火焰状态文本
-    String fireText = '熄灭';
+    String fireText = 'dead';
     Color fireColor = Colors.grey;
 
     for (final entry in Room.fireEnum.entries) {
       if (entry.value['value'] == fireValue) {
-        fireText = entry.value['text'] as String;
+        fireText = entry.key; // 使用key作为翻译键
         break;
       }
     }
+
+    // 本地化火焰状态文本
+    final localizedFireText = localization.translate('fire.$fireText');
 
     // 根据火焰状态设置颜色
     switch (fireValue) {
@@ -62,15 +66,18 @@ class RoomScreen extends StatelessWidget {
     }
 
     // 获取温度状态文本
-    String tempText = '冰冷';
+    String tempText = 'freezing';
     Color tempColor = Colors.blue;
 
     for (final entry in Room.tempEnum.entries) {
       if (entry.value['value'] == tempValue) {
-        tempText = entry.value['text'] as String;
+        tempText = entry.key; // 使用key作为翻译键
         break;
       }
     }
+
+    // 本地化温度状态文本
+    final localizedTempText = localization.translate('temperature.$tempText');
 
     // 根据温度设置颜色
     switch (tempValue) {
@@ -89,14 +96,14 @@ class RoomScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '🔥 火焰',
+              '🔥 ${localization.translate('ui.fire')}',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 12),
 
             // 火焰状态描述
             Text(
-              '火$fireText。',
+              '火$localizedFireText。',
               style: TextStyle(
                 color: fireColor,
                 fontSize: 16,
@@ -107,7 +114,7 @@ class RoomScreen extends StatelessWidget {
 
             // 温度描述
             Text(
-              '房间$tempText。',
+              '房间$localizedTempText。',
               style: TextStyle(
                 color: tempColor,
                 fontSize: 14,
@@ -116,31 +123,51 @@ class RoomScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // 火焰控制按钮
-            Row(
-              children: [
-                SimpleButton(
-                  text: '点火',
-                  onPressed: () {
-                    room.lightFire();
-                  },
-                ),
-                const SizedBox(width: 12),
-                SimpleButton(
-                  text: '添柴',
-                  onPressed: () {
-                    room.stokeFire();
-                  },
-                ),
-              ],
-            ),
+            // 火焰控制按钮 - 根据火焰状态显示不同按钮
+            _buildFireButtons(context, room, stateManager, fireValue, localization),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBuildingSection(BuildContext context, Room room, StateManager stateManager) {
+  Widget _buildFireButtons(BuildContext context, Room room, StateManager stateManager, int fireValue, Localization localization) {
+    final wood = stateManager.get('stores.wood', true) ?? 0;
+    final bool isFree = wood == 0;
+
+    // 根据原始游戏逻辑：火焰熄灭时显示点火按钮，否则显示添柴按钮
+    if (fireValue == Room.fireEnum['Dead']!['value']) {
+      // 火焰熄灭 - 显示点火按钮
+      return Row(
+        children: [
+          SimpleButton(
+            text: isFree
+              ? localization.translate('room.lightFireFree')
+              : localization.translate('room.lightFire'),
+            onPressed: () {
+              room.lightFire();
+            },
+          ),
+        ],
+      );
+    } else {
+      // 火焰燃烧 - 显示添柴按钮
+      return Row(
+        children: [
+          SimpleButton(
+            text: isFree
+              ? localization.translate('room.stokeFireFree')
+              : localization.translate('room.stokeFire'),
+            onPressed: () {
+              room.stokeFire();
+            },
+          ),
+        ],
+      );
+    }
+  }
+
+  Widget _buildBuildingSection(BuildContext context, Room room, StateManager stateManager, Localization localization) {
     return Card(
       color: Colors.grey[900],
       child: Padding(
@@ -149,7 +176,7 @@ class RoomScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '🏗️ 建筑',
+              '🏗️ ${localization.translate('buildings.title')}',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 12),
@@ -157,20 +184,20 @@ class RoomScreen extends StatelessWidget {
             // 建筑示例
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '陷阱',
-                        style: TextStyle(
+                        localization.translate('buildings.trap'),
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
                       Text(
-                        '需要: 木材 10',
-                        style: TextStyle(
+                        localization.translate('buildings.costs.trap'),
+                        style: const TextStyle(
                           color: Colors.green,
                           fontSize: 12,
                         ),
@@ -179,7 +206,7 @@ class RoomScreen extends StatelessWidget {
                   ),
                 ),
                 SimpleButton(
-                  text: '建造',
+                  text: localization.translate('actions.build'),
                   onPressed: () {
                     room.build('trap');
                   },
@@ -192,7 +219,7 @@ class RoomScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTradingSection(BuildContext context, Room room, StateManager stateManager) {
+  Widget _buildTradingSection(BuildContext context, Room room, StateManager stateManager, Localization localization) {
     return Card(
       color: Colors.grey[900],
       child: Padding(
@@ -201,7 +228,7 @@ class RoomScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '🛒 交易',
+              '🛒 ${localization.translate('ui.trading')}',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 12),
@@ -209,20 +236,20 @@ class RoomScreen extends StatelessWidget {
             // 商品示例
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '鳞片',
-                        style: TextStyle(
+                        localization.translate('resources.scales'),
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
                       Text(
-                        '需要: 毛皮 150',
-                        style: TextStyle(
+                        localization.translate('formats.cost_format', ['${localization.translate('resources.fur')} 150']),
+                        style: const TextStyle(
                           color: Colors.green,
                           fontSize: 12,
                         ),
@@ -231,7 +258,7 @@ class RoomScreen extends StatelessWidget {
                   ),
                 ),
                 SimpleButton(
-                  text: '购买',
+                  text: localization.translate('actions.buy'),
                   onPressed: () {
                     room.buy('scales');
                   },

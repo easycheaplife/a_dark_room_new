@@ -1,17 +1,27 @@
 {
   "title": "A Dark Room",
   "fire": {
+    "Dead": "dead",
     "dead": "dead",
+    "Smoldering": "smoldering",
     "smoldering": "smoldering",
+    "Flickering": "flickering",
     "flickering": "flickering",
+    "Burning": "burning",
     "burning": "burning",
+    "Roaring": "roaring",
     "roaring": "roaring"
   },
   "temperature": {
+    "Freezing": "freezing",
     "freezing": "freezing",
+    "Cold": "cold",
     "cold": "cold",
+    "Mild": "mild",
     "mild": "mild",
+    "Warm": "warm",
     "warm": "warm",
+    "Hot": "hot",
     "hot": "hot"
   },
   "room": {
@@ -49,5 +59,103 @@
   "ship": {
     "title": "Ship",
     "description": "the ship's systems hum quietly"
+  },
+
+  "resources": {
+    "title": "Resources",
+    "wood": "wood",
+    "meat": "meat",
+    "bait": "bait",
+    "fur": "fur",
+    "leather": "leather",
+    "cured meat": "cured meat",
+    "cured_meat": "cured meat",
+    "iron": "iron",
+    "coal": "coal",
+    "sulphur": "sulphur",
+    "steel": "steel",
+    "bullets": "bullets",
+    "scales": "scales",
+    "teeth": "teeth",
+    "medicine": "medicine",
+    "compass": "compass",
+    "torch": "torch",
+    "knife": "knife",
+    "rifle": "rifle",
+    "iron sword": "iron sword",
+    "steel sword": "steel sword",
+    "bone spear": "bone spear",
+    "bolas": "bolas",
+    "grenade": "grenade",
+    "bayonet": "bayonet",
+    "laser rifle": "laser rifle",
+    "waterskin": "waterskin",
+    "cask": "cask",
+    "water tank": "water tank",
+    "rucksack": "rucksack",
+    "wagon": "wagon",
+    "convoy": "convoy",
+    "l armour": "leather armour",
+    "i armour": "iron armour",
+    "s armour": "steel armour",
+    "energy cell": "energy cell",
+    "energy_cell": "energy cell",
+    "alien alloy": "alien alloy",
+    "alien_alloy": "alien alloy"
+  },
+
+  "buildings": {
+    "title": "Buildings",
+    "trap": "trap",
+    "cart": "cart",
+    "hut": "hut",
+    "lodge": "lodge",
+    "trading_post": "trading post",
+    "tannery": "tannery",
+    "smokehouse": "smokehouse",
+    "workshop": "workshop",
+    "steelworks": "steelworks",
+    "armoury": "armoury",
+    "descriptions": {
+      "trap": "catch small creatures",
+      "cart": "carry more wood",
+      "hut": "provide shelter for villagers"
+    },
+    "costs": {
+      "trap": "cost: wood 10",
+      "cart": "cost: wood 30",
+      "hut": "cost: wood 100"
+    }
+  },
+
+  "actions": {
+    "build": "build",
+    "craft": "craft",
+    "buy": "buy",
+    "sell": "sell",
+    "gather": "gather",
+    "check": "check",
+    "hunt": "hunt",
+    "explore": "explore"
+  },
+
+  "notifications": {
+    "the_fire_is": "the fire is",
+    "the_room_is": "the room is",
+    "builder_just_shivers": "the builder just shivers",
+    "not_enough": "not enough",
+    "dry_brush": "dry brush and dead branches litter the forest floor",
+    "traps_yield": "the traps contain {0}",
+    "nothing_in_traps": "the traps are empty",
+    "gained_wood": "gained {0} wood",
+    "gained_meat": "gained {0} meat",
+    "gained_fur": "gained {0} fur"
+  },
+
+  "formats": {
+    "cost_format": "cost: {0}",
+    "have_format": "have: {0}",
+    "and": "and",
+    "or": "or"
   }
 }

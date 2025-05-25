@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/state_manager.dart';
+import '../core/localization.dart';
 
 /// StoresDisplay shows the player's resources
 class StoresDisplay extends StatelessWidget {
@@ -8,8 +9,8 @@ class StoresDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<StateManager>(
-      builder: (context, stateManager, child) {
+    return Consumer2<StateManager, Localization>(
+      builder: (context, stateManager, localization, child) {
         // 从StateManager获取实际的资源数据
         final storesData = stateManager.get('stores');
         final stores = storesData != null ? Map<String, dynamic>.from(storesData) : <String, dynamic>{};
@@ -76,18 +77,18 @@ class StoresDisplay extends StatelessWidget {
             children: [
               // Resources
               if (resources.isNotEmpty) ...[
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'Resources',
-                    style: TextStyle(
+                    localization.translate('resources.title'),
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 ...resources.entries
-                    .map((entry) => _buildResourceRow(entry.key, entry.value)),
+                    .map((entry) => _buildResourceRow(entry.key, entry.value, localization)),
               ],
 
               // Special items
@@ -95,7 +96,7 @@ class StoresDisplay extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Text(
-                    'Special',
+                    '特殊物品',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -103,7 +104,7 @@ class StoresDisplay extends StatelessWidget {
                   ),
                 ),
                 ...special.entries
-                    .map((entry) => _buildResourceRow(entry.key, entry.value)),
+                    .map((entry) => _buildResourceRow(entry.key, entry.value, localization)),
               ],
 
               // Weapons
@@ -111,7 +112,7 @@ class StoresDisplay extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Text(
-                    'Weapons',
+                    '武器',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -119,7 +120,7 @@ class StoresDisplay extends StatelessWidget {
                   ),
                 ),
                 ...weapons.entries
-                    .map((entry) => _buildResourceRow(entry.key, entry.value)),
+                    .map((entry) => _buildResourceRow(entry.key, entry.value, localization)),
               ],
             ],
           ),
@@ -128,14 +129,21 @@ class StoresDisplay extends StatelessWidget {
     );
   }
 
-  Widget _buildResourceRow(String name, num value) {
+  Widget _buildResourceRow(String name, num value, Localization localization) {
+    // 获取本地化的资源名称
+    String localizedName = localization.translate('resources.$name');
+    if (localizedName == 'resources.$name') {
+      // 如果没有找到翻译，使用原名称
+      localizedName = name;
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            name,
+            localizedName,
             style: const TextStyle(
               color: Colors.white,
             ),

@@ -206,6 +206,17 @@ class StateManager with ChangeNotifier {
     }
   }
 
+  // 一次添加多个值
+  void addM(String path, Map<String, dynamic> values, [bool noNotify = false]) {
+    for (String key in values.keys) {
+      add('$path.$key', values[key], true);
+    }
+
+    if (!noNotify) {
+      notifyListeners();
+    }
+  }
+
   // 从状态中获取数值
   double getNum(String path, dynamic object) {
     if (object != null && object.type == 'building') {

@@ -5,6 +5,7 @@ import '../core/audio_engine.dart';
 import '../core/audio_library.dart';
 import '../core/notifications.dart';
 import '../core/engine.dart';
+import '../core/localization.dart';
 import '../widgets/button.dart';
 import 'outside.dart';
 import 'path.dart';
@@ -21,9 +22,9 @@ class Room with ChangeNotifier {
 
   // 常量（时间单位：毫秒）
   static const int _fireCoolDelay = 5 * 60 * 1000; // 火焰冷却延迟
-  // static const int _roomWarmDelay = 30 * 1000; // 房间温度更新延迟 - 暂时未使用
+  static const int _roomWarmDelay = 30 * 1000; // 房间温度更新延迟
   static const int _builderStateDelay = 30 * 1000; // 建造者状态更新延迟
-  // static const int _stokeCooldown = 10; // 添柴冷却时间 - 暂时未使用
+  static const int _stokeCooldown = 10; // 添柴冷却时间
   static const int _needWoodDelay = 15 * 1000; // 需要木材的延迟
 
   // 模块名称
@@ -38,12 +39,15 @@ class Room with ChangeNotifier {
 
   // 计时器
   Timer? _fireTimer;
-  // Timer? _tempTimer; // 暂时未使用
+  Timer? _tempTimer;
   Timer? _builderTimer;
 
   // 状态
   bool changed = false;
   bool pathDiscovery = false;
+
+  // 本地化实例 - 使用getter确保总是获取最新状态
+  Localization get _localization => Localization();
 
   // 可制作物品
   final Map<String, Map<String, dynamic>> craftables = {
@@ -449,6 +453,8 @@ class Room with ChangeNotifier {
   Future<void> init() async {
     final sm = StateManager();
 
+    // 本地化实例通过getter自动获取
+
     // Set up initial state if not already set
     if (sm.get('features.location.room') == null) {
       sm.set('features.location.room', true);
@@ -478,7 +484,7 @@ class Room with ChangeNotifier {
 
     // 启动计时器
     _fireTimer = Engine().setTimeout(() => coolFire(), _fireCoolDelay);
-    // _tempTimer = Engine().setTimeout(() => adjustTemp(), _roomWarmDelay); // 暂时注释掉
+    _tempTimer = Engine().setTimeout(() => adjustTemp(), _roomWarmDelay);
 
     // Check builder state
     final builderLevel = sm.get('game.builder.level');
@@ -515,8 +521,13 @@ class Room with ChangeNotifier {
       }
     }
 
-    NotificationManager().notify(name, 'the room is $tempText');
-    NotificationManager().notify(name, 'the fire is $fireText');
+    final localizedTempText = _localization.translate('temperature.$tempText');
+    final localizedFireText = _localization.translate('fire.$fireText');
+    NotificationManager().notify(name, '${_localization.translate('notifications.the_room_is')} $localizedTempText');
+    NotificationManager().notify(name, '${_localization.translate('notifications.the_fire_is')} $localizedFireText');
+
+    // 启动收入系统
+    Engine().setTimeout(() => sm.collectIncome(), 1000);
 
     notifyListeners();
   }
@@ -547,8 +558,10 @@ class Room with ChangeNotifier {
         }
       }
 
-      NotificationManager().notify(name, 'the room is $tempText');
-      NotificationManager().notify(name, 'the fire is $fireText');
+      final localizedTempText = _localization.translate('temperature.$tempText');
+      final localizedFireText = _localization.translate('fire.$fireText');
+      NotificationManager().notify(name, '${_localization.translate('notifications.the_room_is')} $localizedTempText');
+      NotificationManager().notify(name, '${_localization.translate('notifications.the_fire_is')} $localizedFireText');
       changed = false;
     }
 
@@ -561,7 +574,7 @@ class Room with ChangeNotifier {
       });
 
       NotificationManager().notify(name,
-          'the stranger is standing by the fire. she says she can help. says she builds things.');
+          _localization.translate('room.strangerHelps'));
     }
 
     setMusic();
@@ -602,7 +615,7 @@ class Room with ChangeNotifier {
     // 如果有木材但不足5个，显示错误
     if (wood < 5) {
       NotificationManager()
-          .notify(name, 'not enough wood to get the fire going');
+          .notify(name, _localization.translate('room.notEnoughWood'));
       print('❌ Not enough wood: need 5, have $wood');
       return;
     }
@@ -661,12 +674,13 @@ class Room with ChangeNotifier {
       }
     }
 
-    NotificationManager().notify(name, 'the fire is $fireText', noQueue: true);
+    final localizedFireText = _localization.translate('fire.$fireText');
+    NotificationManager().notify(name, '${_localization.translate('notifications.the_fire_is')} $localizedFireText', noQueue: true);
 
     if (fireValue > 1 && sm.get('game.builder.level') < 0) {
       sm.set('game.builder.level', 0);
       NotificationManager().notify(name,
-          'the light from the fire spills from the windows, out into the dark');
+          _localization.translate('room.lightFromFire'));
       _builderTimer?.cancel();
       _builderTimer =
           Engine().setTimeout(() => updateBuilderState(), _builderStateDelay);
@@ -696,7 +710,7 @@ class Room with ChangeNotifier {
         builderLevel > 3 &&
         wood > 0) {
       NotificationManager()
-          .notify(name, 'builder stokes the fire', noQueue: true);
+          .notify(name, _localization.translate('room.builderStokes'), noQueue: true);
       sm.set('stores.wood', wood - 1);
       sm.set('game.fire.value', fireValue + 1);
     }
@@ -711,54 +725,64 @@ class Room with ChangeNotifier {
   // 根据火焰调整房间温度
   void adjustTemp() {
     final sm = StateManager();
-    final tempValue = sm.get('game.temperature.value', true) ?? 0;
+    final oldTempValue = sm.get('game.temperature.value', true) ?? 0;
     final fireValue = sm.get('game.fire.value', true) ?? 0;
 
-    if (tempValue > 0 && tempValue > fireValue) {
-      sm.set('game.temperature.value', tempValue - 1);
+    if (oldTempValue > 0 && oldTempValue > fireValue) {
+      final newTempValue = oldTempValue - 1;
+      sm.set('game.temperature.value', newTempValue);
 
       String tempText = '';
       for (final entry in tempEnum.entries) {
-        if (entry.value['value'] == tempValue - 1) {
+        if (entry.value['value'] == newTempValue) {
           tempText = entry.value['text'] as String;
           break;
         }
       }
 
+      final localizedTempText = _localization.translate('temperature.$tempText');
       NotificationManager()
-          .notify(name, 'the room is $tempText', noQueue: true);
+          .notify(name, '${_localization.translate('notifications.the_room_is')} $localizedTempText', noQueue: true);
     }
 
-    if (tempValue < 4 && tempValue < fireValue) {
-      sm.set('game.temperature.value', tempValue + 1);
+    if (oldTempValue < 4 && oldTempValue < fireValue) {
+      final newTempValue = oldTempValue + 1;
+      sm.set('game.temperature.value', newTempValue);
 
       String tempText = '';
       for (final entry in tempEnum.entries) {
-        if (entry.value['value'] == tempValue + 1) {
+        if (entry.value['value'] == newTempValue) {
           tempText = entry.value['text'] as String;
           break;
         }
       }
 
+      final localizedTempText = _localization.translate('temperature.$tempText');
       NotificationManager()
-          .notify(name, 'the room is $tempText', noQueue: true);
+          .notify(name, '${_localization.translate('notifications.the_room_is')} $localizedTempText', noQueue: true);
     }
 
-    if (tempValue != sm.get('game.temperature.value', true)) {
+    final newTempValue = sm.get('game.temperature.value', true) ?? 0;
+    if (oldTempValue != newTempValue) {
       changed = true;
     }
 
-    // _tempTimer = Engine().setTimeout(() => adjustTemp(), _roomWarmDelay); // 暂时注释掉
+    _tempTimer = Engine().setTimeout(() => adjustTemp(), _roomWarmDelay);
   }
 
   // 解锁森林位置
   void unlockForest() {
     final sm = StateManager();
     sm.set('stores.wood', 4);
+    sm.set('features.location.outside', true); // 设置森林解锁标志
     Outside().init();
-    NotificationManager().notify(name, 'the wind howls outside');
-    NotificationManager().notify(name, 'the wood is running out');
+    NotificationManager().notify(name, _localization.translate('room.windHowls'));
+    NotificationManager().notify(name, _localization.translate('room.needWood'));
     Engine().event('progress', 'outside');
+    print('🌲 Forest unlocked! Wood set to 4');
+
+    // 自动切换到Outside模块
+    Engine().travelTo(Outside());
   }
 
   // 更新建造者状态
@@ -768,7 +792,7 @@ class Room with ChangeNotifier {
 
     if (builderLevel == 0) {
       NotificationManager().notify(name,
-          'a ragged stranger stumbles through the door and collapses in the corner');
+          _localization.translate('room.strangerArrives'));
       sm.set('game.builder.level', 1);
       Engine().setTimeout(() => unlockForest(), _needWoodDelay);
     } else if (builderLevel < 3 &&
@@ -777,12 +801,10 @@ class Room with ChangeNotifier {
 
       switch (builderLevel) {
         case 1:
-          msg =
-              'the stranger shivers, and mumbles quietly. her words are unintelligible.';
+          msg = _localization.translate('room.strangerShivers');
           break;
         case 2:
-          msg =
-              'the stranger in the corner stops shivering. her breathing calms.';
+          msg = _localization.translate('room.strangerCalms');
           break;
       }
 
@@ -874,7 +896,7 @@ class Room with ChangeNotifier {
     for (final entry in cost.entries) {
       final have = sm.get('stores.${entry.key}', true) ?? 0;
       if (have < entry.value) {
-        NotificationManager().notify(name, 'not enough ${entry.key}');
+        NotificationManager().notify(name, '${_localization.translate('notifications.not_enough')} ${_localization.translate('resources.${entry.key}')}');
         return false;
       } else {
         storeMod[entry.key] = have - entry.value;
@@ -902,10 +924,17 @@ class Room with ChangeNotifier {
 
   // 建造物品
   bool build(String thing) {
+    final sm = StateManager();
+
+    // 检查温度 - 建造者在太冷时会拒绝工作
+    if ((sm.get('game.temperature.value', true) ?? 0) <= tempEnum['Cold']!['value']) {
+      NotificationManager().notify(name, _localization.translate('room.builderShivers'));
+      return false;
+    }
+
     final craftable = craftables[thing];
     if (craftable == null) return false;
 
-    final sm = StateManager();
     final numThings = sm.get('game.buildings.$thing', true) ?? 0;
 
     if (craftable['maximum'] != null && craftable['maximum'] <= numThings) {
@@ -919,7 +948,7 @@ class Room with ChangeNotifier {
     for (final entry in cost.entries) {
       final have = sm.get('stores.${entry.key}', true) ?? 0;
       if (have < entry.value) {
-        NotificationManager().notify(name, 'not enough ${entry.key}');
+        NotificationManager().notify(name, '${_localization.translate('notifications.not_enough')} ${_localization.translate('resources.${entry.key}')}');
         return false;
       } else {
         storeMod[entry.key] = have - entry.value;
@@ -959,7 +988,10 @@ class Room with ChangeNotifier {
   bool craftUnlocked(String thing) {
     final sm = StateManager();
 
-    if (sm.get('game.builder.level', true) < 4) return false;
+    final builderLevel = sm.get('game.builder.level', true);
+    print('🔨 Checking craft unlock for $thing: builderLevel=$builderLevel');
+
+    if (builderLevel < 4) return false;
 
     final craftable = craftables[thing];
     if (craftable == null) return false;

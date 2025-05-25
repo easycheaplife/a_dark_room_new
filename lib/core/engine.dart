@@ -104,6 +104,9 @@ class Engine with ChangeNotifier {
 
     // 检查是否应该初始化外部
     if (sm.get('stores.wood') != null) {
+      print('🌲 Wood found: ${sm.get('stores.wood')}, initializing Outside module');
+      sm.set('features.location.outside', true); // 确保设置外部解锁标志
+      print('🌲 Outside location flag set: ${sm.get('features.location.outside')}');
       Outside().init();
     }
 

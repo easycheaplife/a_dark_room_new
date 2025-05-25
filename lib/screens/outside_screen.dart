@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../modules/outside.dart';
 import '../core/state_manager.dart';
+import '../core/localization.dart';
 import '../widgets/simple_button.dart';
 
 /// 外部界面 - 显示村庄状态、建筑和工人管理
@@ -10,30 +11,30 @@ class OutsideScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<Outside, StateManager>(
-      builder: (context, outside, stateManager, child) {
+    return Consumer3<Outside, StateManager, Localization>(
+      builder: (context, outside, stateManager, localization, child) {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 收集区域
-              _GatheringSection(outside: outside, stateManager: stateManager),
+              _GatheringSection(outside: outside, stateManager: stateManager, localization: localization),
 
               const SizedBox(height: 24),
 
               // 村庄状态区域
-              _VillageSection(outside: outside, stateManager: stateManager),
+              _VillageSection(outside: outside, stateManager: stateManager, localization: localization),
 
               const SizedBox(height: 24),
 
               // 建筑区域
-              _BuildingSection(outside: outside, stateManager: stateManager),
+              _BuildingSection(outside: outside, stateManager: stateManager, localization: localization),
 
               const SizedBox(height: 24),
 
               // 工人管理区域
-              _WorkersSection(outside: outside, stateManager: stateManager),
+              _WorkersSection(outside: outside, stateManager: stateManager, localization: localization),
             ],
           ),
         );
@@ -45,10 +46,12 @@ class OutsideScreen extends StatelessWidget {
 class _GatheringSection extends StatelessWidget {
   final Outside outside;
   final StateManager stateManager;
+  final Localization localization;
 
   const _GatheringSection({
     required this.outside,
     required this.stateManager,
+    required this.localization,
   });
 
   @override
@@ -61,7 +64,7 @@ class _GatheringSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '🌲 收集',
+              '🌲 ${localization.translate('outside.gatherWood')}',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 12),
@@ -69,20 +72,20 @@ class _GatheringSection extends StatelessWidget {
             // 收集木材
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '收集木材',
-                        style: TextStyle(
+                        localization.translate('outside.gatherWood'),
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
                       Text(
-                        '干燥的灌木和枯枝散落在森林地面上',
-                        style: TextStyle(
+                        localization.translate('outside.gatherWoodDesc'),
+                        style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
                         ),
@@ -91,7 +94,7 @@ class _GatheringSection extends StatelessWidget {
                   ),
                 ),
                 SimpleButton(
-                  text: '收集',
+                  text: localization.translate('actions.gather'),
                   onPressed: () {
                     outside.gatherWood();
                   },
@@ -104,20 +107,20 @@ class _GatheringSection extends StatelessWidget {
             // 检查陷阱
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '检查陷阱',
-                        style: TextStyle(
+                        localization.translate('outside.checkTraps'),
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
                       Text(
-                        '查看陷阱是否捕获了什么',
-                        style: TextStyle(
+                        localization.translate('outside.checkTrapsDesc'),
+                        style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
                         ),
@@ -126,7 +129,7 @@ class _GatheringSection extends StatelessWidget {
                   ),
                 ),
                 SimpleButton(
-                  text: '检查',
+                  text: localization.translate('actions.check'),
                   onPressed: () {
                     outside.checkTraps();
                   },
@@ -143,10 +146,12 @@ class _GatheringSection extends StatelessWidget {
 class _VillageSection extends StatelessWidget {
   final Outside outside;
   final StateManager stateManager;
+  final Localization localization;
 
   const _VillageSection({
     required this.outside,
     required this.stateManager,
+    required this.localization,
   });
 
   @override
@@ -205,10 +210,12 @@ class _VillageSection extends StatelessWidget {
 class _BuildingSection extends StatelessWidget {
   final Outside outside;
   final StateManager stateManager;
+  final Localization localization;
 
   const _BuildingSection({
     required this.outside,
     required this.stateManager,
+    required this.localization,
   });
 
   @override
@@ -268,10 +275,12 @@ class _BuildingSection extends StatelessWidget {
 class _WorkersSection extends StatelessWidget {
   final Outside outside;
   final StateManager stateManager;
+  final Localization localization;
 
   const _WorkersSection({
     required this.outside,
     required this.stateManager,
+    required this.localization,
   });
 
   @override

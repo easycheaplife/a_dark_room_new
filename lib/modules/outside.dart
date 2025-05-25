@@ -5,6 +5,7 @@ import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/audio_engine.dart';
 import '../core/engine.dart';
+import '../core/localization.dart';
 
 /// 外部区域模块 - 注册户外功能
 /// 包括村庄建设、工人管理、陷阱检查等功能
@@ -522,7 +523,8 @@ class Outside extends ChangeNotifier {
   /// 采集木材
   void gatherWood() {
     final sm = StateManager();
-    NotificationManager().notify(name, "干燥的灌木和枯枝散落在森林地面上");
+    final localization = Localization();
+    NotificationManager().notify(name, localization.translate('notifications.dry_brush'));
     final gatherAmt = (sm.get('game.buildings["cart"]', true) ?? 0) > 0 ? 50 : 10;
     sm.add('stores.wood', gatherAmt);
     AudioEngine().playSound('gather_wood');
@@ -537,6 +539,10 @@ class Outside extends ChangeNotifier {
     final numBait = (sm.get('stores.bait', true) ?? 0) as int;
     final numDrops = numTraps + min<int>(numBait, numTraps);
     final random = Random();
+
+    // 调试信息
+    print('🪤 Checking traps: numTraps=$numTraps, numBait=$numBait, numDrops=$numDrops');
+    print('🏗️ Buildings: ${sm.get('game.buildings')}');
 
     for (var i = 0; i < numDrops; i++) {
       final roll = random.nextDouble();
@@ -555,21 +561,28 @@ class Outside extends ChangeNotifier {
     }
 
     // 构建消息
-    var s = '陷阱里有 ';
-    for (var l = 0; l < msg.length; l++) {
-      if (msg.length > 1 && l > 0 && l < msg.length - 1) {
-        s += ", ";
-      } else if (msg.length > 1 && l == msg.length - 1) {
-        s += " 和 ";
+    final localization = Localization();
+    if (msg.isEmpty) {
+      NotificationManager().notify(name, localization.translate('notifications.nothing_in_traps'));
+    } else {
+      var s = '';
+      for (var l = 0; l < msg.length; l++) {
+        if (msg.length > 1 && l > 0 && l < msg.length - 1) {
+          s += ", ";
+        } else if (msg.length > 1 && l == msg.length - 1) {
+          s += " ${localization.translate('formats.and')} ";
+        }
+        s += msg[l];
       }
-      s += msg[l];
+      NotificationManager().notify(name, localization.translate('notifications.traps_yield', [s]));
     }
 
     final baitUsed = min<int>(numBait, numTraps);
     drops['bait'] = -baitUsed;
 
-    NotificationManager().notify(name, s);
-    // sm.addM('stores', drops); // 当StateManager有addM方法时取消注释
+    // 将掉落物品添加到库存中
+    sm.addM('stores', drops);
+
     AudioEngine().playSound('check_traps');
   }
 
