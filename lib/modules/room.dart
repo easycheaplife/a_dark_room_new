@@ -789,9 +789,6 @@ class Room with ChangeNotifier {
     final builderLevel = sm.get('game.builder.level', true) ?? -1;
     final outsideUnlocked = sm.get('features.location.outside');
 
-    print(
-        '🌲 NEW VERSION unlockForest called: builderLevel=$builderLevel, outsideUnlocked=$outsideUnlocked');
-
     // 只有在建造者状态为1且森林未解锁时才解锁
     if (builderLevel >= 1 &&
         (outsideUnlocked == null ||
@@ -805,13 +802,9 @@ class Room with ChangeNotifier {
       NotificationManager()
           .notify(name, _localization.translate('room.needWood'));
       Engine().event('progress', 'outside');
-      print('🌲 Forest unlocked! Wood set to 4');
 
       // 自动切换到Outside模块
       Engine().travelTo(Outside());
-    } else {
-      print(
-          '🌲 NEW VERSION Forest unlock conditions not met: builderLevel=$builderLevel, outsideUnlocked=$outsideUnlocked');
     }
   }
 
@@ -824,8 +817,6 @@ class Room with ChangeNotifier {
       NotificationManager()
           .notify(name, _localization.translate('room.strangerArrives'));
       sm.set('game.builder.level', 1);
-      print(
-          '🔨 Builder level upgraded to 1, scheduling forest unlock in ${_needWoodDelay}ms');
       // 在建造者状态为1且木材不足时解锁森林
       Engine().setTimeout(() => unlockForest(), _needWoodDelay);
     } else if (builderLevel < 3 &&
@@ -1027,7 +1018,6 @@ class Room with ChangeNotifier {
     final sm = StateManager();
 
     final builderLevel = sm.get('game.builder.level', true);
-    print('🔨 Checking craft unlock for $thing: builderLevel=$builderLevel');
 
     if (builderLevel < 4) return false;
 

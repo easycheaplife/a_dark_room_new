@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 import '../modules/outside.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
-import '../widgets/simple_button.dart';
+import '../widgets/game_button.dart';
+import '../widgets/progress_button.dart';
 
 /// 外部界面 - 显示村庄状态、建筑和工人管理
+/// 使用与房间界面一致的UI风格
 class OutsideScreen extends StatelessWidget {
   const OutsideScreen({super.key});
 
@@ -13,369 +15,282 @@ class OutsideScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer3<Outside, StateManager, Localization>(
       builder: (context, outside, stateManager, localization, child) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+        return Container(
+          width: 700,
+          height: 700,
+          color: Colors.white, // 与房间界面一致的白色背景
+          padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 收集区域
-              _GatheringSection(
-                  outside: outside,
-                  stateManager: stateManager,
-                  localization: localization),
+              // 收集木材按钮区域
+              _buildGatheringButtons(outside, stateManager),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               // 村庄状态区域
-              _VillageSection(
-                  outside: outside,
-                  stateManager: stateManager,
-                  localization: localization),
+              _buildVillageStatus(outside, stateManager),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
-              // 建筑区域
-              _BuildingSection(
-                  outside: outside,
-                  stateManager: stateManager,
-                  localization: localization),
+              // 主要按钮区域 - 水平布局
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 建筑按钮区域
+                  _buildBuildingButtons(outside, stateManager),
 
-              const SizedBox(height: 24),
+                  const SizedBox(width: 20),
 
-              // 工人管理区域
-              _WorkersSection(
-                  outside: outside,
-                  stateManager: stateManager,
-                  localization: localization),
+                  // 工人管理区域
+                  _buildWorkersButtons(outside, stateManager),
+
+                  const Spacer(),
+
+                  // 资源存储区域 - 右侧
+                  _buildStoresContainer(stateManager),
+                ],
+              ),
             ],
           ),
         );
       },
     );
   }
-}
 
-class _GatheringSection extends StatelessWidget {
-  final Outside outside;
-  final StateManager stateManager;
-  final Localization localization;
-
-  const _GatheringSection({
-    required this.outside,
-    required this.stateManager,
-    required this.localization,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.grey[900],
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '🌲 收集木材',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 12),
-
-            // 收集木材
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        '收集木材',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(
-                        '干燥的灌木和技条散落在森林地面上',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SimpleButton(
-                  text: '收集',
-                  onPressed: () {
-                    outside.gatherWood();
-                  },
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            // 检查陷阱 - 只有在有陷阱时才显示
-            if (_hasTraps())
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          '检查陷阱',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const Text(
-                          '查看陷阱里捕获了什么',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SimpleButton(
-                    text: '检查',
-                    onPressed: () {
-                      outside.checkTraps();
-                    },
-                  ),
-                ],
-              ),
-          ],
-        ),
-      ),
+  // 收集木材按钮区域
+  Widget _buildGatheringButtons(Outside outside, StateManager stateManager) {
+    return ProgressButton(
+      text: '收集木材',
+      onPressed: () => outside.gatherWood(),
+      width: 100,
+      progressDuration: 1000, // 1秒收集时间
     );
   }
 
-  bool _hasTraps() {
-    return (stateManager.get('game.buildings["trap"]', true) ?? 0) > 0;
-  }
-}
-
-class _VillageSection extends StatelessWidget {
-  final Outside outside;
-  final StateManager stateManager;
-  final Localization localization;
-
-  const _VillageSection({
-    required this.outside,
-    required this.stateManager,
-    required this.localization,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  // 村庄状态区域
+  Widget _buildVillageStatus(Outside outside, StateManager stateManager) {
     final population = stateManager.get('game.population', true) ?? 0;
     final maxPopulation = outside.getMaxPopulation();
     final villageTitle = outside.getTitle();
 
-    return Card(
-      color: Colors.grey[900],
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '🏘️ $villageTitle',
-              style: Theme.of(context).textTheme.titleLarge,
+    return Container(
+      width: 300,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '🏘️ $villageTitle',
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+              fontFamily: 'Times New Roman',
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 12),
-
-            // 人口信息
-            Row(
-              children: [
-                const Icon(Icons.people, color: Colors.blue),
-                const SizedBox(width: 8),
-                Text(
-                  '人口: $population / $maxPopulation',
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            '👥 人口: $population / $maxPopulation',
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+              fontFamily: 'Times New Roman',
             ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            '状态: $villageTitle',
+            style: const TextStyle(
+              color: Colors.green,
+              fontSize: 14,
+              fontFamily: 'Times New Roman',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-            const SizedBox(height: 8),
-
-            // 村庄状态
-            Text(
-              '状态: $villageTitle',
-              style: const TextStyle(
-                color: Colors.green,
-                fontSize: 14,
+  // 建筑按钮区域
+  Widget _buildBuildingButtons(Outside outside, StateManager stateManager) {
+    return Container(
+      width: 140,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 标题
+          Container(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: const Text(
+              '建筑',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontFamily: 'Times New Roman',
+                fontWeight: FontWeight.bold,
               ),
             ),
+          ),
 
-            const SizedBox(height: 16),
-
-            // 人口进度条
-            LinearProgressIndicator(
-              value: maxPopulation > 0 ? population / maxPopulation : 0.0,
-              backgroundColor: Colors.grey[700],
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
-            ),
-          ],
-        ),
+          // 建筑按钮列表
+          _buildBuildingButton('小屋', {'wood': 100}, outside, stateManager),
+          _buildBuildingButton('陷阱', {'wood': 10}, outside, stateManager),
+        ],
       ),
     );
   }
-}
 
-class _BuildingSection extends StatelessWidget {
-  final Outside outside;
-  final StateManager stateManager;
-  final Localization localization;
-
-  const _BuildingSection({
-    required this.outside,
-    required this.stateManager,
-    required this.localization,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.grey[900],
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '🏗️ 建筑',
-              style: Theme.of(context).textTheme.titleLarge,
+  // 工人管理区域
+  Widget _buildWorkersButtons(Outside outside, StateManager stateManager) {
+    return Container(
+      width: 140,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 标题
+          Container(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: const Text(
+              '工人',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontFamily: 'Times New Roman',
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: 12),
+          ),
 
-            // 建筑示例
-            Row(
-              children: [
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '小屋',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(
-                        '需要: 木材 100',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SimpleButton(
-                  text: '建造',
-                  onPressed: () {
-                    // TODO: 实现建造功能
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
+          // 工人管理按钮
+          _buildWorkerButton('收集者', 'gatherer', outside, stateManager),
+        ],
       ),
     );
   }
-}
 
-class _WorkersSection extends StatelessWidget {
-  final Outside outside;
-  final StateManager stateManager;
-  final Localization localization;
-
-  const _WorkersSection({
-    required this.outside,
-    required this.stateManager,
-    required this.localization,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.grey[900],
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  '👷 工人管理',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const Spacer(),
-                const Text(
-                  '可用人口: 0',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
+  // 资源存储区域
+  Widget _buildStoresContainer(StateManager stateManager) {
+    return Container(
+      width: 200,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '资源',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+              fontFamily: 'Times New Roman',
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 12),
+          ),
+          const SizedBox(height: 10),
 
-            // 工人示例
-            Row(
-              children: [
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '收集者',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+          // 显示所有资源
+          ...stateManager
+                  .get('stores', true)
+                  ?.entries
+                  .map((entry) => Text(
+                        '${entry.key}: ${entry.value}',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontFamily: 'Times New Roman',
                         ),
-                      ),
-                      Text(
-                        '当前工人: 0',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
-                  children: [
-                    SimpleButton(
-                      text: '-',
-                      onPressed: () {
-                        outside.decreaseWorker('gatherer', 1);
-                      },
-                      width: 40,
-                    ),
-                    const SizedBox(width: 8),
-                    SimpleButton(
-                      text: '+',
-                      onPressed: () {
-                        outside.increaseWorker('gatherer', 1);
-                      },
-                      width: 40,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
+                      ))
+                  .toList() ??
+              [],
+        ],
       ),
     );
+  }
+
+  // 构建建筑按钮
+  Widget _buildBuildingButton(String name, Map<String, int> cost,
+      Outside outside, StateManager stateManager) {
+    // 检查是否有足够资源
+    bool canAfford = true;
+    for (var k in cost.keys) {
+      final have = stateManager.get('stores["$k"]', true) ?? 0;
+      if (have < cost[k]!) {
+        canAfford = false;
+        break;
+      }
+    }
+
+    return GameButton(
+      text: name,
+      onPressed: canAfford
+          ? () => _buildBuilding(name, cost, outside, stateManager)
+          : null,
+      cost: cost,
+      width: 130,
+      disabled: !canAfford,
+    );
+  }
+
+  // 构建工人按钮
+  Widget _buildWorkerButton(
+      String name, String type, Outside outside, StateManager stateManager) {
+    final currentWorkers = stateManager.get('game.workers["$type"]', true) ?? 0;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 5),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              '$name: $currentWorkers',
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 14,
+                fontFamily: 'Times New Roman',
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              GameButton(
+                text: '-',
+                onPressed: () => outside.decreaseWorker(type, 1),
+                width: 30,
+              ),
+              const SizedBox(width: 5),
+              GameButton(
+                text: '+',
+                onPressed: () => outside.increaseWorker(type, 1),
+                width: 30,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 建造建筑
+  void _buildBuilding(String name, Map<String, int> cost, Outside outside,
+      StateManager stateManager) {
+    // 扣除资源
+    for (var k in cost.keys) {
+      final current = stateManager.get('stores["$k"]', true) ?? 0;
+      stateManager.set('stores["$k"]', current - cost[k]!);
+    }
+
+    // 增加建筑数量
+    final buildingKey = name.toLowerCase();
+    final current =
+        stateManager.get('game.buildings["$buildingKey"]', true) ?? 0;
+    stateManager.set('game.buildings["$buildingKey"]', current + 1);
   }
 }

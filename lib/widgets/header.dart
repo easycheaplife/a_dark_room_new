@@ -11,6 +11,7 @@ import '../modules/fabricator.dart';
 import '../modules/ship.dart';
 
 /// Header displays the navigation tabs for different game modules
+/// 基于原始游戏的header.js实现
 class Header extends StatelessWidget {
   const Header({super.key});
 
@@ -20,69 +21,79 @@ class Header extends StatelessWidget {
       builder: (context, engine, stateManager, localization, child) {
         final activeModuleName = engine.activeModule?.name ?? 'Room';
 
+        // 构建可用的页签列表
+        List<Widget> tabs = [];
+
+        // Room tab - 总是显示，根据火焰状态显示不同标题
+        tabs.add(_buildTab(
+          context,
+          _getRoomTitle(stateManager),
+          activeModuleName == 'Room',
+          onTap: () => _navigateToModule(context, 'Room'),
+          isFirst: true, // 第一个页签
+        ));
+
+        // Outside tab - 只有在解锁森林后才显示
+        if (_isOutsideUnlocked(stateManager)) {
+          tabs.add(_buildTab(
+            context,
+            '静谧森林',
+            activeModuleName == 'Outside',
+            onTap: () => _navigateToModule(context, 'Outside'),
+          ));
+        }
+
+        // Path tab - 只有在获得指南针后才显示
+        if (_isPathUnlocked(stateManager)) {
+          tabs.add(_buildTab(
+            context,
+            '尘土飞扬的小径',
+            activeModuleName == 'Path',
+            onTap: () => _navigateToModule(context, 'Path'),
+          ));
+        }
+
+        // World tab - 只有在解锁世界后才显示
+        if (_isWorldUnlocked(stateManager)) {
+          tabs.add(_buildTab(
+            context,
+            '世界',
+            activeModuleName == 'World',
+            onTap: () => _navigateToModule(context, 'World'),
+          ));
+        }
+
+        // Fabricator tab - 只有在解锁制造器后才显示
+        if (_isFabricatorUnlocked(stateManager)) {
+          tabs.add(_buildTab(
+            context,
+            '嗡嗡作响的制造器',
+            activeModuleName == 'Fabricator',
+            onTap: () => _navigateToModule(context, 'Fabricator'),
+          ));
+        }
+
+        // Ship tab - 只有在解锁飞船后才显示
+        if (_isShipUnlocked(stateManager)) {
+          tabs.add(_buildTab(
+            context,
+            '飞船',
+            activeModuleName == 'Ship',
+            onTap: () => _navigateToModule(context, 'Ship'),
+          ));
+        }
+
         return Container(
           height: 40, // 原游戏header高度
           padding: const EdgeInsets.only(bottom: 20),
           decoration: const BoxDecoration(
             color: Colors.white,
-            border: Border(
-              bottom: BorderSide(color: Colors.black, width: 1),
-            ),
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Room tab - 总是显示，根据火焰状态显示不同标题
-              _buildTab(
-                context,
-                _getRoomTitle(stateManager),
-                activeModuleName == 'Room',
-                onTap: () => _navigateToModule(context, 'Room'),
-              ),
-
-              // Outside tab - 只有在解锁森林后才显示
-              if (_isOutsideUnlocked(stateManager))
-                _buildTab(
-                  context,
-                  '静谧森林',
-                  activeModuleName == 'Outside',
-                  onTap: () => _navigateToModule(context, 'Outside'),
-                ),
-
-              // Path tab - 只有在获得指南针后才显示
-              if (_isPathUnlocked(stateManager))
-                _buildTab(
-                  context,
-                  '尘土飞扬的小径',
-                  activeModuleName == 'Path',
-                  onTap: () => _navigateToModule(context, 'Path'),
-                ),
-
-              // World tab - 只有在解锁世界后才显示
-              if (_isWorldUnlocked(stateManager))
-                _buildTab(
-                  context,
-                  '世界',
-                  activeModuleName == 'World',
-                  onTap: () => _navigateToModule(context, 'World'),
-                ),
-
-              // Fabricator tab - 只有在解锁制造器后才显示
-              if (_isFabricatorUnlocked(stateManager))
-                _buildTab(
-                  context,
-                  '嗡嗡作响的制造器',
-                  activeModuleName == 'Fabricator',
-                  onTap: () => _navigateToModule(context, 'Fabricator'),
-                ),
-
-              // Ship tab - 只有在解锁飞船后才显示
-              if (_isShipUnlocked(stateManager))
-                _buildTab(
-                  context,
-                  '飞船',
-                  activeModuleName == 'Ship',
-                  onTap: () => _navigateToModule(context, 'Ship'),
-                ),
+              // 页签列表
+              ...tabs,
 
               // 语言切换按钮
               const Spacer(),
@@ -152,23 +163,25 @@ class Header extends StatelessWidget {
   }
 
   Widget _buildTab(BuildContext context, String title, bool isSelected,
-      {VoidCallback? onTap}) {
+      {VoidCallback? onTap, bool isFirst = false}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        margin: const EdgeInsets.only(left: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+        margin: EdgeInsets.only(left: isFirst ? 0 : 10),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border(
-            left: const BorderSide(color: Colors.black, width: 1),
+            left: isFirst
+                ? BorderSide.none
+                : const BorderSide(color: Colors.black, width: 1),
           ),
         ),
         child: Text(
           title,
           style: TextStyle(
             color: Colors.black,
-            fontSize: 17,
+            fontSize: 17, // 原游戏字体大小
             fontFamily: 'Times New Roman',
             decoration: isSelected ? TextDecoration.underline : null,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -182,7 +195,7 @@ class Header extends StatelessWidget {
     return PopupMenuButton<String>(
       icon: const Icon(
         Icons.language,
-        color: Colors.white,
+        color: Colors.black,
       ),
       onSelected: (String languageCode) {
         localization.switchLanguage(languageCode);
