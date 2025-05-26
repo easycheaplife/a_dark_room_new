@@ -83,6 +83,9 @@ class Engine with ChangeNotifier {
   Future<void> init({Map<String, dynamic>? options}) async {
     this.options = {...this.options, ...?options};
 
+    // 临时：清除保存状态以确保从干净状态开始
+    await clearSaveForDebug();
+
     // 初始化状态管理器
     final sm = StateManager();
     sm.init();
@@ -102,11 +105,9 @@ class Engine with ChangeNotifier {
     // 初始化模块
     await Room().init();
 
-    // 检查是否应该初始化外部
-    if (sm.get('stores.wood') != null) {
-      print('🌲 Wood found: ${sm.get('stores.wood')}, initializing Outside module');
-      sm.set('features.location.outside', true); // 确保设置外部解锁标志
-      print('🌲 Outside location flag set: ${sm.get('features.location.outside')}');
+    // 检查是否应该初始化外部 - 只有在森林已解锁时才初始化
+    if (sm.get('features.location.outside') == true) {
+      print('🌲 Forest already unlocked, initializing Outside module');
       Outside().init();
     }
 
@@ -179,6 +180,7 @@ class Engine with ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.clear();
+      print('🗑️ 游戏保存状态已清除');
 
       if (!noReload) {
         // 在Web上下文中，这会重新加载页面
@@ -190,6 +192,13 @@ class Engine with ChangeNotifier {
         print('删除保存时出错: $e');
       }
     }
+  }
+
+  // 临时方法：清除保存状态用于调试
+  Future<void> clearSaveForDebug() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    print('🗑️ 调试：游戏保存状态已清除');
   }
 
   // 前往不同的模块

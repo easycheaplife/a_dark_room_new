@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../modules/room.dart';
+import '../modules/outside.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
-import '../widgets/simple_button.dart';
+import '../widgets/game_button.dart';
+import '../widgets/progress_button.dart';
 
 /// 房间界面 - 显示火焰状态、建筑和交易
 class RoomScreen extends StatelessWidget {
@@ -13,23 +15,47 @@ class RoomScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer3<Room, StateManager, Localization>(
       builder: (context, room, stateManager, localization, child) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+        return Container(
+          width: 700,
+          height: 700,
+          color: Colors.white,
+          padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 火焰状态区域
-              _buildFireSection(context, room, stateManager, localization),
+              // 火焰控制按钮区域
+              _buildFireButtons(room, stateManager),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 10),
 
-              // 建筑区域
-              _buildBuildingSection(context, room, stateManager, localization),
+              // 伐木按钮区域（如果森林已解锁）
+              _buildGatherButtons(room, stateManager),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
-              // 交易区域
-              _buildTradingSection(context, room, stateManager, localization),
+              // 主要按钮区域 - 水平布局
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 建筑按钮区域
+                  _buildBuildButtons(room, stateManager),
+
+                  const SizedBox(width: 20),
+
+                  // 制作按钮区域
+                  _buildCraftButtons(room, stateManager),
+
+                  const SizedBox(width: 20),
+
+                  // 购买按钮区域
+                  _buildBuyButtons(room, stateManager),
+
+                  const Spacer(),
+
+                  // 资源存储区域 - 右侧
+                  _buildStoresContainer(stateManager),
+                ],
+              ),
             ],
           ),
         );
@@ -37,237 +63,239 @@ class RoomScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFireSection(BuildContext context, Room room, StateManager stateManager, Localization localization) {
-    // 获取当前火焰状态
+  // 火焰控制按钮
+  Widget _buildFireButtons(Room room, StateManager stateManager) {
     final fireValue = stateManager.get('game.fire.value', true) ?? 0;
-    final tempValue = stateManager.get('game.temperature.value', true) ?? 0;
-
-    // 获取火焰状态文本
-    String fireText = 'dead';
-    Color fireColor = Colors.grey;
-
-    for (final entry in Room.fireEnum.entries) {
-      if (entry.value['value'] == fireValue) {
-        fireText = entry.key; // 使用key作为翻译键
-        break;
-      }
-    }
-
-    // 本地化火焰状态文本
-    final localizedFireText = localization.translate('fire.$fireText');
-
-    // 根据火焰状态设置颜色
-    switch (fireValue) {
-      case 0: fireColor = Colors.grey; break;
-      case 1: fireColor = Colors.orange[300]!; break;
-      case 2: fireColor = Colors.orange[500]!; break;
-      case 3: fireColor = Colors.orange[700]!; break;
-      case 4: fireColor = Colors.red; break;
-    }
-
-    // 获取温度状态文本
-    String tempText = 'freezing';
-    Color tempColor = Colors.blue;
-
-    for (final entry in Room.tempEnum.entries) {
-      if (entry.value['value'] == tempValue) {
-        tempText = entry.key; // 使用key作为翻译键
-        break;
-      }
-    }
-
-    // 本地化温度状态文本
-    final localizedTempText = localization.translate('temperature.$tempText');
-
-    // 根据温度设置颜色
-    switch (tempValue) {
-      case 0: tempColor = Colors.blue[300]!; break;
-      case 1: tempColor = Colors.blue[200]!; break;
-      case 2: tempColor = Colors.green[300]!; break;
-      case 3: tempColor = Colors.orange[300]!; break;
-      case 4: tempColor = Colors.red[300]!; break;
-    }
-
-    return Card(
-      color: Colors.grey[900],
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '🔥 ${localization.translate('ui.fire')}',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 12),
-
-            // 火焰状态描述
-            Text(
-              '火$localizedFireText。',
-              style: TextStyle(
-                color: fireColor,
-                fontSize: 16,
-              ),
-            ),
-
-            const SizedBox(height: 8),
-
-            // 温度描述
-            Text(
-              '房间$localizedTempText。',
-              style: TextStyle(
-                color: tempColor,
-                fontSize: 14,
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // 火焰控制按钮 - 根据火焰状态显示不同按钮
-            _buildFireButtons(context, room, stateManager, fireValue, localization),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFireButtons(BuildContext context, Room room, StateManager stateManager, int fireValue, Localization localization) {
     final wood = stateManager.get('stores.wood', true) ?? 0;
     final bool isFree = wood == 0;
 
     // 根据原始游戏逻辑：火焰熄灭时显示点火按钮，否则显示添柴按钮
     if (fireValue == Room.fireEnum['Dead']!['value']) {
       // 火焰熄灭 - 显示点火按钮
-      return Row(
-        children: [
-          SimpleButton(
-            text: isFree
-              ? localization.translate('room.lightFireFree')
-              : localization.translate('room.lightFire'),
-            onPressed: () {
-              room.lightFire();
-            },
-          ),
-        ],
+      return ProgressButton(
+        text: '点燃火堆',
+        onPressed: () => room.lightFire(),
+        cost: isFree ? null : {'wood': 5},
+        width: 80,
+        free: isFree,
+        progressDuration: 1000, // 1秒点火时间
       );
     } else {
       // 火焰燃烧 - 显示添柴按钮
-      return Row(
-        children: [
-          SimpleButton(
-            text: isFree
-              ? localization.translate('room.stokeFireFree')
-              : localization.translate('room.stokeFire'),
-            onPressed: () {
-              room.stokeFire();
-            },
-          ),
-        ],
+      return ProgressButton(
+        text: '添柴',
+        onPressed: () => room.stokeFire(),
+        cost: isFree ? null : {'wood': 1},
+        width: 80,
+        free: isFree,
+        progressDuration: 500, // 0.5秒添柴时间
       );
     }
   }
 
-  Widget _buildBuildingSection(BuildContext context, Room room, StateManager stateManager, Localization localization) {
-    return Card(
-      color: Colors.grey[900],
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '🏗️ ${localization.translate('buildings.title')}',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 12),
+  // 伐木按钮区域 - 移除，因为伐木功能应该在Outside模块中
+  Widget _buildGatherButtons(Room room, StateManager stateManager) {
+    // 在房间模块中不显示伐木按钮
+    // 伐木功能应该在Outside模块中实现
+    return const SizedBox.shrink();
+  }
 
-            // 建筑示例
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        localization.translate('buildings.trap'),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(
-                        localization.translate('buildings.costs.trap'),
-                        style: const TextStyle(
-                          color: Colors.green,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SimpleButton(
-                  text: localization.translate('actions.build'),
-                  onPressed: () {
-                    room.build('trap');
-                  },
-                ),
-              ],
+  // 建筑按钮区域
+  Widget _buildBuildButtons(Room room, StateManager stateManager) {
+    return Container(
+      width: 140,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 标题
+          Container(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: const Text(
+              '建筑',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontFamily: 'Times New Roman',
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ],
-        ),
+          ),
+
+          // 建筑按钮列表
+          ...room.craftables.entries
+              .where((entry) => entry.value['type'] == 'building')
+              .map((entry) => _buildCraftableButton(
+                  entry.key, entry.value, room, stateManager))
+              .toList(),
+        ],
       ),
     );
   }
 
-  Widget _buildTradingSection(BuildContext context, Room room, StateManager stateManager, Localization localization) {
-    return Card(
-      color: Colors.grey[900],
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '🛒 ${localization.translate('ui.trading')}',
-              style: Theme.of(context).textTheme.titleLarge,
+  // 制作按钮区域
+  Widget _buildCraftButtons(Room room, StateManager stateManager) {
+    return Container(
+      width: 140,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 标题
+          Container(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: const Text(
+              '制作',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontFamily: 'Times New Roman',
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: 12),
+          ),
 
-            // 商品示例
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        localization.translate('resources.scales'),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(
-                        localization.translate('formats.cost_format', ['${localization.translate('resources.fur')} 150']),
-                        style: const TextStyle(
-                          color: Colors.green,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SimpleButton(
-                  text: localization.translate('actions.buy'),
-                  onPressed: () {
-                    room.buy('scales');
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
+          // 制作按钮列表
+          ...room.craftables.entries
+              .where((entry) => entry.value['type'] != 'building')
+              .map((entry) => _buildCraftableButton(
+                  entry.key, entry.value, room, stateManager))
+              .toList(),
+        ],
       ),
+    );
+  }
+
+  // 购买按钮区域
+  Widget _buildBuyButtons(Room room, StateManager stateManager) {
+    return Container(
+      width: 140,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 标题
+          Container(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: const Text(
+              '购买',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontFamily: 'Times New Roman',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+
+          // 购买按钮列表
+          ...room.tradeGoods.entries
+              .map((entry) =>
+                  _buildTradeButton(entry.key, entry.value, room, stateManager))
+              .toList(),
+        ],
+      ),
+    );
+  }
+
+  // 资源存储区域
+  Widget _buildStoresContainer(StateManager stateManager) {
+    return Container(
+      width: 200,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '资源',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+              fontFamily: 'Times New Roman',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          // 显示所有资源
+          ...stateManager
+                  .get('stores', true)
+                  ?.entries
+                  .map((entry) => Text(
+                        '${entry.key}: ${entry.value}',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontFamily: 'Times New Roman',
+                        ),
+                      ))
+                  .toList() ??
+              [],
+        ],
+      ),
+    );
+  }
+
+  // 构建可制作物品按钮
+  Widget _buildCraftableButton(String key, Map<String, dynamic> item, Room room,
+      StateManager stateManager) {
+    // 检查是否解锁
+    final isUnlocked = room.craftUnlocked(key);
+    if (!isUnlocked) return const SizedBox.shrink();
+
+    // 计算成本
+    final costFunction = item['cost'] as Function(StateManager);
+    final costResult = costFunction(stateManager);
+    final cost = Map<String, int>.from(costResult);
+
+    // 检查是否有足够资源
+    bool canAfford = true;
+    for (var k in cost.keys) {
+      final have = stateManager.get('stores["$k"]', true) ?? 0;
+      if (have < cost[k]!) {
+        canAfford = false;
+        break;
+      }
+    }
+
+    return GameButton(
+      text: item['name'] ?? key,
+      onPressed: canAfford ? () => room.buildItem(key) : null,
+      cost: cost,
+      width: 130,
+      disabled: !canAfford,
+    );
+  }
+
+  // 构建交易物品按钮
+  Widget _buildTradeButton(String key, Map<String, dynamic> item, Room room,
+      StateManager stateManager) {
+    // 检查是否解锁
+    final isUnlocked = room.buyUnlocked(key);
+    if (!isUnlocked) return const SizedBox.shrink();
+
+    // 计算成本
+    final costFunction = item['cost'] as Function(StateManager);
+    final costResult = costFunction(stateManager);
+    final cost = Map<String, int>.from(costResult);
+
+    // 检查是否有足够资源
+    bool canAfford = true;
+    for (var k in cost.keys) {
+      final have = stateManager.get('stores["$k"]', true) ?? 0;
+      if (have < cost[k]!) {
+        canAfford = false;
+        break;
+      }
+    }
+
+    return GameButton(
+      text: key,
+      onPressed: canAfford ? () => room.buyItem(key) : null,
+      cost: cost,
+      width: 130,
+      disabled: !canAfford,
     );
   }
 }

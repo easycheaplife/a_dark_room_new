@@ -19,22 +19,34 @@ class OutsideScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 收集区域
-              _GatheringSection(outside: outside, stateManager: stateManager, localization: localization),
+              _GatheringSection(
+                  outside: outside,
+                  stateManager: stateManager,
+                  localization: localization),
 
               const SizedBox(height: 24),
 
               // 村庄状态区域
-              _VillageSection(outside: outside, stateManager: stateManager, localization: localization),
+              _VillageSection(
+                  outside: outside,
+                  stateManager: stateManager,
+                  localization: localization),
 
               const SizedBox(height: 24),
 
               // 建筑区域
-              _BuildingSection(outside: outside, stateManager: stateManager, localization: localization),
+              _BuildingSection(
+                  outside: outside,
+                  stateManager: stateManager,
+                  localization: localization),
 
               const SizedBox(height: 24),
 
               // 工人管理区域
-              _WorkersSection(outside: outside, stateManager: stateManager, localization: localization),
+              _WorkersSection(
+                  outside: outside,
+                  stateManager: stateManager,
+                  localization: localization),
             ],
           ),
         );
@@ -64,7 +76,7 @@ class _GatheringSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '🌲 ${localization.translate('outside.gatherWood')}',
+              '🌲 收集木材',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 12),
@@ -76,15 +88,15 @@ class _GatheringSection extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        localization.translate('outside.gatherWood'),
-                        style: const TextStyle(
+                      const Text(
+                        '收集木材',
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
                       Text(
-                        localization.translate('outside.gatherWoodDesc'),
+                        '干燥的灌木和技条散落在森林地面上',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
@@ -94,7 +106,7 @@ class _GatheringSection extends StatelessWidget {
                   ),
                 ),
                 SimpleButton(
-                  text: localization.translate('actions.gather'),
+                  text: '收集',
                   onPressed: () {
                     outside.gatherWood();
                   },
@@ -104,42 +116,47 @@ class _GatheringSection extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // 检查陷阱
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        localization.translate('outside.checkTraps'),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+            // 检查陷阱 - 只有在有陷阱时才显示
+            if (_hasTraps())
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          '检查陷阱',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                      Text(
-                        localization.translate('outside.checkTrapsDesc'),
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
+                        const Text(
+                          '查看陷阱里捕获了什么',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SimpleButton(
-                  text: localization.translate('actions.check'),
-                  onPressed: () {
-                    outside.checkTraps();
-                  },
-                ),
-              ],
-            ),
+                  SimpleButton(
+                    text: '检查',
+                    onPressed: () {
+                      outside.checkTraps();
+                    },
+                  ),
+                ],
+              ),
           ],
         ),
       ),
     );
+  }
+
+  bool _hasTraps() {
+    return (stateManager.get('game.buildings["trap"]', true) ?? 0) > 0;
   }
 }
 
@@ -156,6 +173,10 @@ class _VillageSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final population = stateManager.get('game.population', true) ?? 0;
+    final maxPopulation = outside.getMaxPopulation();
+    final villageTitle = outside.getTitle();
+
     return Card(
       color: Colors.grey[900],
       child: Padding(
@@ -164,19 +185,19 @@ class _VillageSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '🏘️ 村庄',
+              '🏘️ $villageTitle',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 12),
 
             // 人口信息
-            const Row(
+            Row(
               children: [
-                Icon(Icons.people, color: Colors.blue),
-                SizedBox(width: 8),
+                const Icon(Icons.people, color: Colors.blue),
+                const SizedBox(width: 8),
                 Text(
-                  '人口: 0 / 20',
-                  style: TextStyle(fontSize: 16),
+                  '人口: $population / $maxPopulation',
+                  style: const TextStyle(fontSize: 16),
                 ),
               ],
             ),
@@ -184,9 +205,9 @@ class _VillageSection extends StatelessWidget {
             const SizedBox(height: 8),
 
             // 村庄状态
-            const Text(
-              '状态: 一个孤独的小屋',
-              style: TextStyle(
+            Text(
+              '状态: $villageTitle',
+              style: const TextStyle(
                 color: Colors.green,
                 fontSize: 14,
               ),
@@ -196,7 +217,7 @@ class _VillageSection extends StatelessWidget {
 
             // 人口进度条
             LinearProgressIndicator(
-              value: 0.0,
+              value: maxPopulation > 0 ? population / maxPopulation : 0.0,
               backgroundColor: Colors.grey[700],
               valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
             ),

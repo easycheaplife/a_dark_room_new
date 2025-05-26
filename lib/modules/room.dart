@@ -494,9 +494,7 @@ class Room with ChangeNotifier {
     }
 
     // 检查是否需要解锁森林
-    if (builderLevel == 1 &&
-        sm.get('stores.wood', true) != null &&
-        sm.get('stores.wood', true) < 0) {
+    if (builderLevel == 1 && (sm.get('stores.wood', true) ?? 0) <= 0) {
       Engine().setTimeout(() => unlockForest(), _needWoodDelay);
     }
 
@@ -523,8 +521,10 @@ class Room with ChangeNotifier {
 
     final localizedTempText = _localization.translate('temperature.$tempText');
     final localizedFireText = _localization.translate('fire.$fireText');
-    NotificationManager().notify(name, '${_localization.translate('notifications.the_room_is')} $localizedTempText');
-    NotificationManager().notify(name, '${_localization.translate('notifications.the_fire_is')} $localizedFireText');
+    NotificationManager().notify(name,
+        '${_localization.translate('notifications.the_room_is')} $localizedTempText');
+    NotificationManager().notify(name,
+        '${_localization.translate('notifications.the_fire_is')} $localizedFireText');
 
     // 启动收入系统
     Engine().setTimeout(() => sm.collectIncome(), 1000);
@@ -558,10 +558,13 @@ class Room with ChangeNotifier {
         }
       }
 
-      final localizedTempText = _localization.translate('temperature.$tempText');
+      final localizedTempText =
+          _localization.translate('temperature.$tempText');
       final localizedFireText = _localization.translate('fire.$fireText');
-      NotificationManager().notify(name, '${_localization.translate('notifications.the_room_is')} $localizedTempText');
-      NotificationManager().notify(name, '${_localization.translate('notifications.the_fire_is')} $localizedFireText');
+      NotificationManager().notify(name,
+          '${_localization.translate('notifications.the_room_is')} $localizedTempText');
+      NotificationManager().notify(name,
+          '${_localization.translate('notifications.the_fire_is')} $localizedFireText');
       changed = false;
     }
 
@@ -573,8 +576,8 @@ class Room with ChangeNotifier {
         'stores': {'wood': 2},
       });
 
-      NotificationManager().notify(name,
-          _localization.translate('room.strangerHelps'));
+      NotificationManager()
+          .notify(name, _localization.translate('room.strangerHelps'));
     }
 
     setMusic();
@@ -640,6 +643,7 @@ class Room with ChangeNotifier {
       if (currentFire < fireEnum['Roaring']!['value']!) {
         sm.set('game.fire.value', currentFire + 1);
       }
+
       AudioEngine().playSound(AudioLibrary.stokeFire);
       onFireChange();
       return;
@@ -652,6 +656,8 @@ class Room with ChangeNotifier {
     if (fireValue < 4) {
       sm.set('game.fire.value', fireValue + 1);
     }
+
+    // 移除添柴计数器逻辑 - 森林解锁应该通过建造者状态触发
 
     AudioEngine().playSound(AudioLibrary.stokeFire);
     onFireChange();
@@ -675,12 +681,14 @@ class Room with ChangeNotifier {
     }
 
     final localizedFireText = _localization.translate('fire.$fireText');
-    NotificationManager().notify(name, '${_localization.translate('notifications.the_fire_is')} $localizedFireText', noQueue: true);
+    NotificationManager().notify(name,
+        '${_localization.translate('notifications.the_fire_is')} $localizedFireText',
+        noQueue: true);
 
     if (fireValue > 1 && sm.get('game.builder.level') < 0) {
       sm.set('game.builder.level', 0);
-      NotificationManager().notify(name,
-          _localization.translate('room.lightFromFire'));
+      NotificationManager()
+          .notify(name, _localization.translate('room.lightFromFire'));
       _builderTimer?.cancel();
       _builderTimer =
           Engine().setTimeout(() => updateBuilderState(), _builderStateDelay);
@@ -709,8 +717,9 @@ class Room with ChangeNotifier {
     if (fireValue <= fireEnum['Flickering']!['value'] &&
         builderLevel > 3 &&
         wood > 0) {
-      NotificationManager()
-          .notify(name, _localization.translate('room.builderStokes'), noQueue: true);
+      NotificationManager().notify(
+          name, _localization.translate('room.builderStokes'),
+          noQueue: true);
       sm.set('stores.wood', wood - 1);
       sm.set('game.fire.value', fireValue + 1);
     }
@@ -740,9 +749,11 @@ class Room with ChangeNotifier {
         }
       }
 
-      final localizedTempText = _localization.translate('temperature.$tempText');
-      NotificationManager()
-          .notify(name, '${_localization.translate('notifications.the_room_is')} $localizedTempText', noQueue: true);
+      final localizedTempText =
+          _localization.translate('temperature.$tempText');
+      NotificationManager().notify(name,
+          '${_localization.translate('notifications.the_room_is')} $localizedTempText',
+          noQueue: true);
     }
 
     if (oldTempValue < 4 && oldTempValue < fireValue) {
@@ -757,9 +768,11 @@ class Room with ChangeNotifier {
         }
       }
 
-      final localizedTempText = _localization.translate('temperature.$tempText');
-      NotificationManager()
-          .notify(name, '${_localization.translate('notifications.the_room_is')} $localizedTempText', noQueue: true);
+      final localizedTempText =
+          _localization.translate('temperature.$tempText');
+      NotificationManager().notify(name,
+          '${_localization.translate('notifications.the_room_is')} $localizedTempText',
+          noQueue: true);
     }
 
     final newTempValue = sm.get('game.temperature.value', true) ?? 0;
@@ -773,16 +786,33 @@ class Room with ChangeNotifier {
   // 解锁森林位置
   void unlockForest() {
     final sm = StateManager();
-    sm.set('stores.wood', 4);
-    sm.set('features.location.outside', true); // 设置森林解锁标志
-    Outside().init();
-    NotificationManager().notify(name, _localization.translate('room.windHowls'));
-    NotificationManager().notify(name, _localization.translate('room.needWood'));
-    Engine().event('progress', 'outside');
-    print('🌲 Forest unlocked! Wood set to 4');
+    final builderLevel = sm.get('game.builder.level', true) ?? -1;
+    final outsideUnlocked = sm.get('features.location.outside');
 
-    // 自动切换到Outside模块
-    Engine().travelTo(Outside());
+    print(
+        '🌲 NEW VERSION unlockForest called: builderLevel=$builderLevel, outsideUnlocked=$outsideUnlocked');
+
+    // 只有在建造者状态为1且森林未解锁时才解锁
+    if (builderLevel >= 1 &&
+        (outsideUnlocked == null ||
+            outsideUnlocked == false ||
+            outsideUnlocked == 0)) {
+      sm.set('stores.wood', 4);
+      sm.set('features.location.outside', true); // 设置森林解锁标志
+      Outside().init();
+      NotificationManager()
+          .notify(name, _localization.translate('room.windHowls'));
+      NotificationManager()
+          .notify(name, _localization.translate('room.needWood'));
+      Engine().event('progress', 'outside');
+      print('🌲 Forest unlocked! Wood set to 4');
+
+      // 自动切换到Outside模块
+      Engine().travelTo(Outside());
+    } else {
+      print(
+          '🌲 NEW VERSION Forest unlock conditions not met: builderLevel=$builderLevel, outsideUnlocked=$outsideUnlocked');
+    }
   }
 
   // 更新建造者状态
@@ -791,12 +821,16 @@ class Room with ChangeNotifier {
     final builderLevel = sm.get('game.builder.level', true) ?? -1;
 
     if (builderLevel == 0) {
-      NotificationManager().notify(name,
-          _localization.translate('room.strangerArrives'));
+      NotificationManager()
+          .notify(name, _localization.translate('room.strangerArrives'));
       sm.set('game.builder.level', 1);
+      print(
+          '🔨 Builder level upgraded to 1, scheduling forest unlock in ${_needWoodDelay}ms');
+      // 在建造者状态为1且木材不足时解锁森林
       Engine().setTimeout(() => unlockForest(), _needWoodDelay);
     } else if (builderLevel < 3 &&
-        (sm.get('game.temperature.value', true) ?? 0) >= tempEnum['Warm']!['value']) {
+        (sm.get('game.temperature.value', true) ?? 0) >=
+            tempEnum['Warm']!['value']) {
       String msg = '';
 
       switch (builderLevel) {
@@ -896,7 +930,8 @@ class Room with ChangeNotifier {
     for (final entry in cost.entries) {
       final have = sm.get('stores.${entry.key}', true) ?? 0;
       if (have < entry.value) {
-        NotificationManager().notify(name, '${_localization.translate('notifications.not_enough')} ${_localization.translate('resources.${entry.key}')}');
+        NotificationManager().notify(name,
+            '${_localization.translate('notifications.not_enough')} ${_localization.translate('resources.${entry.key}')}');
         return false;
       } else {
         storeMod[entry.key] = have - entry.value;
@@ -927,8 +962,10 @@ class Room with ChangeNotifier {
     final sm = StateManager();
 
     // 检查温度 - 建造者在太冷时会拒绝工作
-    if ((sm.get('game.temperature.value', true) ?? 0) <= tempEnum['Cold']!['value']) {
-      NotificationManager().notify(name, _localization.translate('room.builderShivers'));
+    if ((sm.get('game.temperature.value', true) ?? 0) <=
+        tempEnum['Cold']!['value']) {
+      NotificationManager()
+          .notify(name, _localization.translate('room.builderShivers'));
       return false;
     }
 
@@ -948,7 +985,8 @@ class Room with ChangeNotifier {
     for (final entry in cost.entries) {
       final have = sm.get('stores.${entry.key}', true) ?? 0;
       if (have < entry.value) {
-        NotificationManager().notify(name, '${_localization.translate('notifications.not_enough')} ${_localization.translate('resources.${entry.key}')}');
+        NotificationManager().notify(name,
+            '${_localization.translate('notifications.not_enough')} ${_localization.translate('resources.${entry.key}')}');
         return false;
       } else {
         storeMod[entry.key] = have - entry.value;
@@ -1027,8 +1065,7 @@ class Room with ChangeNotifier {
     final sm = StateManager();
 
     if ((sm.get('game.buildings["trading post"]', true) ?? 0) > 0) {
-      if (thing == 'compass' ||
-          (sm.get('stores.$thing', true) ?? 0) > 0) {
+      if (thing == 'compass' || (sm.get('stores.$thing', true) ?? 0) > 0) {
         // 一旦见过就允许购买
         return true;
       }
@@ -1106,38 +1143,70 @@ class Room with ChangeNotifier {
   String getLocalizedName(String itemName) {
     // 这里可以添加本地化逻辑
     switch (itemName) {
-      case 'trap': return '陷阱';
-      case 'cart': return '手推车';
-      case 'hut': return '小屋';
-      case 'lodge': return '旅馆';
-      case 'trading post': return '贸易站';
-      case 'tannery': return '制革厂';
-      case 'smokehouse': return '熏制房';
-      case 'workshop': return '工作坊';
-      case 'steelworks': return '钢铁厂';
-      case 'armoury': return '军械库';
-      case 'torch': return '火把';
-      case 'waterskin': return '水袋';
-      case 'cask': return '水桶';
-      case 'water tank': return '水箱';
-      case 'rucksack': return '背包';
-      case 'wagon': return '马车';
-      case 'convoy': return '车队';
-      case 'bone spear': return '骨矛';
-      case 'iron sword': return '铁剑';
-      case 'steel sword': return '钢剑';
-      case 'rifle': return '步枪';
-      case 'l armour': return '皮甲';
-      case 'i armour': return '铁甲';
-      case 's armour': return '钢甲';
-      case 'scales': return '鳞片';
-      case 'teeth': return '牙齿';
-      case 'bolas': return '流星锤';
-      case 'grenade': return '手榴弹';
-      case 'bayonet': return '刺刀';
-      case 'alien alloy': return '外星合金';
-      case 'compass': return '指南针';
-      default: return itemName;
+      case 'trap':
+        return '陷阱';
+      case 'cart':
+        return '手推车';
+      case 'hut':
+        return '小屋';
+      case 'lodge':
+        return '旅馆';
+      case 'trading post':
+        return '贸易站';
+      case 'tannery':
+        return '制革厂';
+      case 'smokehouse':
+        return '熏制房';
+      case 'workshop':
+        return '工作坊';
+      case 'steelworks':
+        return '钢铁厂';
+      case 'armoury':
+        return '军械库';
+      case 'torch':
+        return '火把';
+      case 'waterskin':
+        return '水袋';
+      case 'cask':
+        return '水桶';
+      case 'water tank':
+        return '水箱';
+      case 'rucksack':
+        return '背包';
+      case 'wagon':
+        return '马车';
+      case 'convoy':
+        return '车队';
+      case 'bone spear':
+        return '骨矛';
+      case 'iron sword':
+        return '铁剑';
+      case 'steel sword':
+        return '钢剑';
+      case 'rifle':
+        return '步枪';
+      case 'l armour':
+        return '皮甲';
+      case 'i armour':
+        return '铁甲';
+      case 's armour':
+        return '钢甲';
+      case 'scales':
+        return '鳞片';
+      case 'teeth':
+        return '牙齿';
+      case 'bolas':
+        return '流星锤';
+      case 'grenade':
+        return '手榴弹';
+      case 'bayonet':
+        return '刺刀';
+      case 'alien alloy':
+        return '外星合金';
+      case 'compass':
+        return '指南针';
+      default:
+        return itemName;
     }
   }
 
@@ -1188,5 +1257,146 @@ class Room with ChangeNotifier {
 
   void swipeDown() {
     // 在原始游戏中，房间模块不处理滑动
+  }
+
+  // 建造功能
+  void buildItem(String thing) {
+    final sm = StateManager();
+
+    // 检查温度是否足够
+    if (sm.get('game.temperature.value') <= tempEnum['Cold']!['value']) {
+      NotificationManager().notify(name, '建造者只是在发抖');
+      return;
+    }
+
+    final craftable = craftables[thing];
+    if (craftable == null) return;
+
+    // 获取当前数量
+    int numThings = 0;
+    switch (craftable['type']) {
+      case 'good':
+      case 'weapon':
+      case 'tool':
+      case 'upgrade':
+        numThings = sm.get('stores["$thing"]', true) ?? 0;
+        break;
+      case 'building':
+        numThings = sm.get('game.buildings["$thing"]', true) ?? 0;
+        break;
+    }
+
+    if (numThings < 0) numThings = 0;
+
+    // 检查是否达到最大数量
+    final maximum = craftable['maximum'] ?? 999999;
+    if (maximum <= numThings) {
+      if (craftable['maxMsg'] != null) {
+        NotificationManager().notify(name, craftable['maxMsg']);
+      }
+      return;
+    }
+
+    // 计算成本
+    final costFunction = craftable['cost'] as Function(StateManager);
+    final cost = costFunction(sm) as Map<String, int>;
+
+    // 检查资源是否足够
+    Map<String, int> storeMod = {};
+    for (var k in cost.keys) {
+      final have = sm.get('stores["$k"]', true) ?? 0;
+      if (have < cost[k]!) {
+        NotificationManager().notify(name, '没有足够的 $k');
+        return;
+      } else {
+        storeMod[k] = have - cost[k]!;
+      }
+    }
+
+    // 扣除资源
+    for (var k in storeMod.keys) {
+      sm.set('stores["$k"]', storeMod[k]);
+    }
+
+    // 显示建造消息
+    if (craftable['buildMsg'] != null) {
+      NotificationManager().notify(name, craftable['buildMsg']);
+    }
+
+    // 增加物品数量
+    switch (craftable['type']) {
+      case 'good':
+      case 'weapon':
+      case 'upgrade':
+      case 'tool':
+        sm.add('stores["$thing"]', 1);
+        break;
+      case 'building':
+        sm.add('game.buildings["$thing"]', 1);
+        break;
+    }
+
+    // 播放音效
+    switch (craftable['type']) {
+      case 'weapon':
+      case 'upgrade':
+      case 'tool':
+        AudioEngine().playSound(AudioLibrary.craft);
+        break;
+      case 'building':
+        AudioEngine().playSound(AudioLibrary.build);
+        break;
+    }
+
+    notifyListeners();
+  }
+
+  // 购买功能
+  void buyItem(String thing) {
+    final sm = StateManager();
+
+    final good = tradeGoods[thing];
+    if (good == null) return;
+
+    final numThings = sm.get('stores["$thing"]', true) ?? 0;
+    final maximum = good['maximum'] ?? 999999;
+
+    if (maximum <= numThings) {
+      return;
+    }
+
+    // 计算成本
+    final costFunction = good['cost'] as Function(StateManager);
+    final cost = costFunction(sm) as Map<String, int>;
+
+    // 检查资源是否足够
+    Map<String, int> storeMod = {};
+    for (var k in cost.keys) {
+      final have = sm.get('stores["$k"]', true) ?? 0;
+      if (have < cost[k]!) {
+        NotificationManager().notify(name, '没有足够的 $k');
+        return;
+      } else {
+        storeMod[k] = have - cost[k]!;
+      }
+    }
+
+    // 扣除资源
+    for (var k in storeMod.keys) {
+      sm.set('stores["$k"]', storeMod[k]);
+    }
+
+    // 显示购买消息
+    if (good['buildMsg'] != null) {
+      NotificationManager().notify(name, good['buildMsg']);
+    }
+
+    // 增加物品数量
+    sm.add('stores["$thing"]', 1);
+
+    // 播放音效
+    AudioEngine().playSound(AudioLibrary.buy);
+
+    notifyListeners();
   }
 }

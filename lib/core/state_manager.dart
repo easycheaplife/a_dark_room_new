@@ -41,6 +41,7 @@ class StateManager with ChangeNotifier {
           'population': 0,
           'thieves': false,
           'stolen': {},
+          'stokeCount': 0, // 添柴次数计数器
         },
         'features': {
           'location': {
@@ -59,10 +60,12 @@ class StateManager with ChangeNotifier {
         'previous': {},
         'timers': {},
       };
-      print('✅ StateManager: Initial state created with wood: ${_state['stores']['wood']}');
+      print(
+          '✅ StateManager: Initial state created with wood: ${_state['stores']['wood']}');
       notifyListeners();
     } else {
-      print('🔄 StateManager: Using existing state with wood: ${_state['stores']?['wood']}');
+      print(
+          '🔄 StateManager: Using existing state with wood: ${_state['stores']?['wood']}');
     }
   }
 
@@ -272,7 +275,8 @@ class StateManager with ChangeNotifier {
       if (jsonState != null) {
         print('💾 StateManager: Loading saved game state');
         _state = jsonDecode(jsonState);
-        print('📊 StateManager: Loaded state with wood: ${_state['stores']?['wood']}');
+        print(
+            '📊 StateManager: Loaded state with wood: ${_state['stores']?['wood']}');
         notifyListeners();
       } else {
         print('🆕 StateManager: No saved game found, using initial state');

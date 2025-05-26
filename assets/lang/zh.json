@@ -45,7 +45,11 @@
     "lightFromFire": "火光从窗户洒出，照进黑暗",
     "windHowls": "外面风声呼啸",
     "builderShivers": "建造者只是颤抖",
-    "builderStokes": "建造者添了柴"
+    "builderStokes": "建造者添了柴",
+    "stokeProgress": "添柴进度",
+    "continueStokingToUnlockForest": "继续添柴解锁森林",
+    "gatherWood": "伐木",
+    "silentForest": "静谧森林"
   },
 
   "outside": {

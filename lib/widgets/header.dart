@@ -21,14 +21,20 @@ class Header extends StatelessWidget {
         final activeModuleName = engine.activeModule?.name ?? 'Room';
 
         return Container(
-          height: 50,
-          color: Colors.black,
+          height: 40, // 原游戏header高度
+          padding: const EdgeInsets.only(bottom: 20),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            border: Border(
+              bottom: BorderSide(color: Colors.black, width: 1),
+            ),
+          ),
           child: Row(
             children: [
-              // Room tab - 总是显示
+              // Room tab - 总是显示，根据火焰状态显示不同标题
               _buildTab(
                 context,
-                localization.translate('room.title'),
+                _getRoomTitle(stateManager),
                 activeModuleName == 'Room',
                 onTap: () => _navigateToModule(context, 'Room'),
               ),
@@ -37,7 +43,7 @@ class Header extends StatelessWidget {
               if (_isOutsideUnlocked(stateManager))
                 _buildTab(
                   context,
-                  localization.translate('outside.title'),
+                  '静谧森林',
                   activeModuleName == 'Outside',
                   onTap: () => _navigateToModule(context, 'Outside'),
                 ),
@@ -46,7 +52,7 @@ class Header extends StatelessWidget {
               if (_isPathUnlocked(stateManager))
                 _buildTab(
                   context,
-                  localization.translate('path.title'),
+                  '尘土飞扬的小径',
                   activeModuleName == 'Path',
                   onTap: () => _navigateToModule(context, 'Path'),
                 ),
@@ -55,7 +61,7 @@ class Header extends StatelessWidget {
               if (_isWorldUnlocked(stateManager))
                 _buildTab(
                   context,
-                  localization.translate('world.title'),
+                  '世界',
                   activeModuleName == 'World',
                   onTap: () => _navigateToModule(context, 'World'),
                 ),
@@ -64,7 +70,7 @@ class Header extends StatelessWidget {
               if (_isFabricatorUnlocked(stateManager))
                 _buildTab(
                   context,
-                  localization.translate('fabricator.title'),
+                  '嗡嗡作响的制造器',
                   activeModuleName == 'Fabricator',
                   onTap: () => _navigateToModule(context, 'Fabricator'),
                 ),
@@ -73,7 +79,7 @@ class Header extends StatelessWidget {
               if (_isShipUnlocked(stateManager))
                 _buildTab(
                   context,
-                  localization.translate('ship.title'),
+                  '飞船',
                   activeModuleName == 'Ship',
                   onTap: () => _navigateToModule(context, 'Ship'),
                 ),
@@ -139,24 +145,32 @@ class Header extends StatelessWidget {
     return stateManager.get('features.location.ship') == true;
   }
 
-  Widget _buildTab(BuildContext context, String title, bool isSelected, {VoidCallback? onTap}) {
+  // 获取房间标题（根据火焰状态）
+  String _getRoomTitle(StateManager stateManager) {
+    final fireValue = stateManager.get('game.fire.value', true) ?? 0;
+    return fireValue < 2 ? '黑暗房间' : '火光房间';
+  }
+
+  Widget _buildTab(BuildContext context, String title, bool isSelected,
+      {VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        margin: const EdgeInsets.only(left: 10),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.grey.shade800 : Colors.black,
+          color: Colors.white,
           border: Border(
-            bottom: BorderSide(
-              color: isSelected ? Colors.white : Colors.transparent,
-              width: 2,
-            ),
+            left: const BorderSide(color: Colors.black, width: 1),
           ),
         ),
         child: Text(
           title,
           style: TextStyle(
-            color: isSelected ? Colors.white : Colors.grey,
+            color: Colors.black,
+            fontSize: 17,
+            fontFamily: 'Times New Roman',
+            decoration: isSelected ? TextDecoration.underline : null,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),

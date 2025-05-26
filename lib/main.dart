@@ -10,7 +10,7 @@ import 'core/notifications.dart';
 import 'core/localization.dart';
 import 'widgets/header.dart';
 import 'widgets/notification_display.dart';
-import 'widgets/stores_display.dart';
+
 import 'modules/room.dart';
 import 'modules/outside.dart';
 import 'modules/path.dart';
@@ -125,6 +125,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // 原游戏使用白色背景
       body: KeyboardListener(
         focusNode: FocusNode(),
         onKeyEvent: (KeyEvent event) {
@@ -135,41 +136,80 @@ class _GameScreenState extends State<GameScreen> {
           }
         },
         child: SafeArea(
-          child: Column(
-            children: [
-              // Header with navigation tabs
-              const Header(),
-
-              // Main content area
-              Expanded(
-                child: Consumer<Engine>(
-                  builder: (context, engine, child) {
-                    // Show the active module's panel
-                    if (engine.activeModule == null) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+          child: Container(
+            // 模拟原游戏的wrapper布局
+            width: double.infinity,
+            height: double.infinity,
+            child: Stack(
+              children: [
+                // 主内容区域
+                Positioned(
+                  left: 220, // 为通知区域留出空间
+                  top: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    width: 700, // 原游戏的固定宽度
+                    child: Column(
                       children: [
-                        // Main content
+                        // Header导航
+                        const Header(),
+
+                        // 主面板区域
                         Expanded(
-                          child: _buildActiveModulePanel(engine),
+                          child: Consumer<Engine>(
+                            builder: (context, engine, child) {
+                              if (engine.activeModule == null) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              return _buildActiveModulePanel(engine);
+                            },
+                          ),
                         ),
-
-                        // Stores display (resources)
-                        const StoresDisplay(),
                       ],
-                    );
-                  },
+                    ),
+                  ),
                 ),
-              ),
 
-              // Notification area
-              const NotificationDisplay(),
-            ],
+                // 通知区域 - 左侧固定位置
+                const Positioned(
+                  left: 0,
+                  top: 20,
+                  width: 200,
+                  height: 700,
+                  child: NotificationDisplay(),
+                ),
+
+                // 保存通知 - 右上角
+                Positioned(
+                  top: 10,
+                  right: 20,
+                  child: Consumer<StateManager>(
+                    builder: (context, stateManager, child) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.black),
+                        ),
+                        child: const Text(
+                          '已保存',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
