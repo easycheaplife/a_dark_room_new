@@ -78,6 +78,7 @@ class RoomScreen extends StatelessWidget {
         width: 80,
         free: isFree,
         progressDuration: 10000, // 10秒点火时间，与原游戏一致
+        tooltip: isFree ? '点燃火堆 (免费)' : '点燃火堆 (消耗 5 木材)',
       );
     } else {
       // 火焰燃烧 - 显示添柴按钮
@@ -88,6 +89,7 @@ class RoomScreen extends StatelessWidget {
         width: 80,
         free: isFree,
         progressDuration: 10000, // 10秒添柴时间，与原游戏一致
+        tooltip: isFree ? '添柴 (免费)' : '添柴 (消耗 1 木材)',
       );
     }
   }
@@ -270,7 +272,7 @@ class RoomScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      entry.key,
+                      _getLocalizedResourceName(entry.key),
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,
@@ -344,7 +346,7 @@ class RoomScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      entry.key,
+                      _getLocalizedWeaponName(entry.key),
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,
@@ -380,6 +382,50 @@ class RoomScreen extends StatelessWidget {
       'laser rifle'
     ];
     return weapons.contains(itemName);
+  }
+
+  // 获取本地化资源名称
+  String _getLocalizedResourceName(String resourceKey) {
+    const resourceNames = {
+      'wood': '木材',
+      'fur': '毛皮',
+      'meat': '肉类',
+      'bait': '诱饵',
+      'leather': '皮革',
+      'cured meat': '腌肉',
+      'iron': '铁',
+      'coal': '煤炭',
+      'sulphur': '硫磺',
+      'steel': '钢铁',
+      'bullets': '子弹',
+      'cloth': '布料',
+      'teeth': '牙齿',
+      'scales': '鳞片',
+      'bone': '骨头',
+      'alien alloy': '外星合金',
+      'energy cell': '能量电池',
+      'torch': '火把',
+      'waterskin': '水袋',
+      'cask': '水桶',
+      'water tank': '水箱',
+      'compass': '指南针',
+    };
+    return resourceNames[resourceKey] ?? resourceKey;
+  }
+
+  // 获取本地化武器名称
+  String _getLocalizedWeaponName(String weaponKey) {
+    const weaponNames = {
+      'bone spear': '骨矛',
+      'iron sword': '铁剑',
+      'steel sword': '钢剑',
+      'rifle': '步枪',
+      'bolas': '流星锤',
+      'grenade': '手榴弹',
+      'bayonet': '刺刀',
+      'laser rifle': '激光步枪',
+    };
+    return weaponNames[weaponKey] ?? weaponKey;
   }
 
   // 构建可制作物品按钮

@@ -130,6 +130,9 @@ class Engine with ChangeNotifier {
     // 设置保存计时器
     _saveTimer = Timer.periodic(const Duration(minutes: 1), (_) => saveGame());
 
+    // 启动自动保存功能
+    sm.startAutoSave();
+
     // 设置初始模块
     travelTo(Room());
 

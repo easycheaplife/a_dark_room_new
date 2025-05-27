@@ -10,6 +10,7 @@ class ProgressButton extends StatefulWidget {
   final bool disabled;
   final bool free;
   final int progressDuration; // 进度持续时间（毫秒）
+  final String? tooltip; // 悬停提示
 
   const ProgressButton({
     super.key,
@@ -20,6 +21,7 @@ class ProgressButton extends StatefulWidget {
     this.disabled = false,
     this.free = false,
     this.progressDuration = 2000, // 默认2秒
+    this.tooltip,
   });
 
   @override
@@ -81,7 +83,7 @@ class _ProgressButtonState extends State<ProgressButton>
   Widget build(BuildContext context) {
     final bool isDisabled = widget.disabled || _isProgressing;
 
-    return Container(
+    Widget buttonWidget = Container(
       width: widget.width,
       height: 40,
       margin: const EdgeInsets.only(bottom: 5),
@@ -197,7 +199,7 @@ class _ProgressButtonState extends State<ProgressButton>
                       Container(
                         width: widget.width * _progressAnimation.value,
                         height: double.infinity,
-                        color: Colors.blue[300]?.withOpacity(0.7),
+                        color: Colors.blue[300]?.withValues(alpha: 0.7),
                       ),
                       // 进度文本
                       Center(
@@ -219,5 +221,15 @@ class _ProgressButtonState extends State<ProgressButton>
         ],
       ),
     );
+
+    // 如果有tooltip，包装在Tooltip中
+    if (widget.tooltip != null) {
+      return Tooltip(
+        message: widget.tooltip!,
+        child: buttonWidget,
+      );
+    }
+
+    return buttonWidget;
   }
 }

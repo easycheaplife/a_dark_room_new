@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 
@@ -259,11 +260,26 @@ class StateManager with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final jsonState = jsonEncode(_state);
       await prefs.setString('gameState', jsonState);
+
+      // 同时保存时间戳
+      await prefs.setInt(
+          'gameStateTimestamp', DateTime.now().millisecondsSinceEpoch);
+
+      if (kDebugMode) {
+        print('💾 游戏状态已保存');
+      }
     } catch (e) {
       if (kDebugMode) {
-        print('Error saving game: $e');
+        print('❌ 保存游戏失败: $e');
       }
     }
+  }
+
+  // 自动保存游戏状态（每30秒）
+  void startAutoSave() {
+    Timer.periodic(const Duration(seconds: 30), (timer) {
+      saveGame();
+    });
   }
 
   // 加载游戏状态
@@ -497,5 +513,146 @@ class StateManager with ChangeNotifier {
       'delay': 10,
       'stores': {'wood': -10, 'fur': -5, 'meat': -5}
     });
+  }
+
+  // 导出游戏状态为JSON字符串
+  String exportGameState() {
+    try {
+      // 添加导出时间戳
+      final exportData = Map<String, dynamic>.from(_state);
+      exportData['exportTimestamp'] = DateTime.now().millisecondsSinceEpoch;
+      exportData['exportVersion'] = '1.0';
+
+      return jsonEncode(exportData);
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ 导出游戏状态失败: $e');
+      }
+      rethrow;
+    }
+  }
+
+  // 从JSON字符串导入游戏状态
+  Future<bool> importGameState(String jsonData) async {
+    try {
+      final importedData = jsonDecode(jsonData) as Map<String, dynamic>;
+
+      // 验证导入数据的基本结构
+      if (!_validateImportData(importedData)) {
+        if (kDebugMode) {
+          print('❌ 导入数据格式无效');
+        }
+        return false;
+      }
+
+      // 移除导出相关的元数据
+      importedData.remove('exportTimestamp');
+      importedData.remove('exportVersion');
+
+      // 备份当前状态
+      final backupState = Map<String, dynamic>.from(_state);
+
+      try {
+        // 导入新状态
+        _state = importedData;
+
+        // 更新旧状态格式（如果需要）
+        updateOldState();
+
+        // 保存导入的状态
+        await saveGame();
+
+        // 通知监听器
+        notifyListeners();
+
+        if (kDebugMode) {
+          print('✅ 游戏状态导入成功');
+        }
+
+        return true;
+      } catch (e) {
+        // 如果导入失败，恢复备份状态
+        _state = backupState;
+        notifyListeners();
+
+        if (kDebugMode) {
+          print('❌ 导入失败，已恢复原状态: $e');
+        }
+        return false;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ 解析导入数据失败: $e');
+      }
+      return false;
+    }
+  }
+
+  // 验证导入数据的基本结构
+  bool _validateImportData(Map<String, dynamic> data) {
+    // 检查必要的字段
+    if (!data.containsKey('version')) return false;
+    if (!data.containsKey('stores')) return false;
+    if (!data.containsKey('game')) return false;
+
+    // 检查版本兼容性
+    final version = data['version'];
+    if (version is! num || version < 1.0 || version > 1.3) {
+      return false;
+    }
+
+    return true;
+  }
+
+  // 获取保存时间信息
+  Future<String?> getSaveTimeInfo() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final timestamp = prefs.getInt('gameStateTimestamp');
+
+      if (timestamp != null) {
+        final saveTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+        final now = DateTime.now();
+        final difference = now.difference(saveTime);
+
+        if (difference.inDays > 0) {
+          return '${difference.inDays}天前';
+        } else if (difference.inHours > 0) {
+          return '${difference.inHours}小时前';
+        } else if (difference.inMinutes > 0) {
+          return '${difference.inMinutes}分钟前';
+        } else {
+          return '刚刚';
+        }
+      }
+
+      return null;
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ 获取保存时间失败: $e');
+      }
+      return null;
+    }
+  }
+
+  // 清除游戏数据
+  Future<void> clearGameData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('gameState');
+      await prefs.remove('gameStateTimestamp');
+
+      // 重置为初始状态
+      _state.clear();
+      init();
+
+      if (kDebugMode) {
+        print('🗑️ 游戏数据已清除');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ 清除游戏数据失败: $e');
+      }
+    }
   }
 }

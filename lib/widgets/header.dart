@@ -9,6 +9,7 @@ import '../modules/path.dart';
 import '../modules/world.dart';
 import '../modules/fabricator.dart';
 import '../modules/ship.dart';
+import '../screens/settings_screen.dart';
 
 /// Header displays the navigation tabs for different game modules
 /// 基于原始游戏的header.js实现
@@ -93,6 +94,23 @@ class Header extends StatelessWidget {
             children: [
               // 页签列表
               ...tabs,
+
+              // 右侧空间填充
+              const Spacer(),
+
+              // 设置按钮
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                child: IconButton(
+                  onPressed: () => _openSettings(context),
+                  icon: const Icon(
+                    Icons.settings,
+                    color: Colors.black,
+                    size: 20,
+                  ),
+                  tooltip: '游戏设置',
+                ),
+              ),
             ],
           ),
         );
@@ -124,6 +142,15 @@ class Header extends StatelessWidget {
         engine.travelTo(Provider.of<Ship>(context, listen: false));
         break;
     }
+  }
+
+  // 打开设置页面
+  void _openSettings(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const SettingsScreen(),
+      ),
+    );
   }
 
   // 检查森林是否解锁
