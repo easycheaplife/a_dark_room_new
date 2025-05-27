@@ -20,36 +20,37 @@ class OutsideScreen extends StatelessWidget {
           height: 700,
           color: Colors.white,
           child: SingleChildScrollView(
-            child: SizedBox(
-              width: 700,
-              height: 1000, // 增加高度以容纳更多内容
-              child: Stack(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 收集木材按钮区域 - 左上角
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    child: _buildGatheringButtons(outside, stateManager),
+                  // 顶部行：收集按钮、工人管理、村庄状态
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 收集木材按钮区域
+                      _buildGatheringButtons(outside, stateManager),
+
+                      const SizedBox(width: 20),
+
+                      // 工人管理区域
+                      Expanded(
+                        child: _buildWorkersButtons(outside, stateManager),
+                      ),
+
+                      const SizedBox(width: 20),
+
+                      // 村庄状态区域
+                      _buildVillageStatus(outside, stateManager),
+                    ],
                   ),
 
-                  // 村庄状态区域 - 原游戏位置: top: 0px, right: 0px
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    child: _buildVillageStatus(outside, stateManager),
-                  ),
+                  const SizedBox(height: 20),
 
-                  // 工人管理区域 - 原游戏位置: top: -4px, left: 160px
-                  Positioned(
-                    left: 160,
-                    top: -4,
-                    child: _buildWorkersButtons(outside, stateManager),
-                  ),
-
-                  // 库存容器 - 原游戏中在Outside模块也显示，位置动态调整
-                  Positioned(
-                    right: 0,
-                    top: _calculateStoresTop(outside, stateManager),
+                  // 底部：库存容器
+                  Align(
+                    alignment: Alignment.centerRight,
                     child: _buildStoresContainer(stateManager),
                   ),
                 ],
@@ -152,13 +153,50 @@ class OutsideScreen extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    // 获取工人的生产/消耗信息
+    final workerInfo = _getWorkerInfo(type, currentWorkers, availableWorkers);
+
     // 对于伐木者，显示剩余人口数量，不显示调整按钮
     if (type == 'gatherer') {
       return Container(
         margin: const EdgeInsets.only(bottom: 10),
+        child: Tooltip(
+          message: workerInfo,
+          child: Row(
+            children: [
+              // 工人名称
+              Expanded(
+                child: Text(
+                  name,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontFamily: 'Times New Roman',
+                  ),
+                ),
+              ),
+              // 显示剩余人口数量（伐木者数量）
+              Text(
+                '$availableWorkers',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Tooltip(
+        message: workerInfo,
         child: Row(
           children: [
-            // 工人名称
+            // 工人名称和数量
             Expanded(
               child: Text(
                 name,
@@ -169,70 +207,42 @@ class OutsideScreen extends StatelessWidget {
                 ),
               ),
             ),
-            // 显示剩余人口数量（伐木者数量）
-            Text(
-              '$availableWorkers',
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontFamily: 'Times New Roman',
-              ),
+
+            // 工人数量和控制按钮
+            Row(
+              children: [
+                Text(
+                  '$currentWorkers',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontFamily: 'Times New Roman',
+                  ),
+                ),
+
+                const SizedBox(width: 5),
+
+                // 减少按钮
+                _buildWorkerControlButton(
+                  '▼',
+                  currentWorkers > 0
+                      ? () => outside.decreaseWorker(type, 1)
+                      : null,
+                ),
+
+                const SizedBox(width: 2),
+
+                // 增加按钮
+                _buildWorkerControlButton(
+                  '▲',
+                  availableWorkers > 0
+                      ? () => outside.increaseWorker(type, 1)
+                      : null,
+                ),
+              ],
             ),
           ],
         ),
-      );
-    }
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          // 工人名称和数量
-          Expanded(
-            child: Text(
-              name,
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontFamily: 'Times New Roman',
-              ),
-            ),
-          ),
-
-          // 工人数量和控制按钮
-          Row(
-            children: [
-              Text(
-                '$currentWorkers',
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontFamily: 'Times New Roman',
-                ),
-              ),
-
-              const SizedBox(width: 5),
-
-              // 减少按钮
-              _buildWorkerControlButton(
-                '▼',
-                currentWorkers > 0
-                    ? () => outside.decreaseWorker(type, 1)
-                    : null,
-              ),
-
-              const SizedBox(width: 2),
-
-              // 增加按钮
-              _buildWorkerControlButton(
-                '▲',
-                availableWorkers > 0
-                    ? () => outside.increaseWorker(type, 1)
-                    : null,
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -280,19 +290,95 @@ class OutsideScreen extends StatelessWidget {
     }
   }
 
-  // 计算库存容器的顶部位置 - 模拟原游戏的动态定位
-  double _calculateStoresTop(Outside outside, StateManager stateManager) {
-    final numHuts = stateManager.get('game.buildings.hut', true) ?? 0;
+  // 获取工人的生产/消耗信息
+  String _getWorkerInfo(String type, int currentWorkers, int availableWorkers) {
+    // 基于原游戏的收入配置
+    const incomeConfig = {
+      'gatherer': {
+        'name': '伐木者',
+        'delay': 10,
+        'stores': {'wood': 1}
+      },
+      'hunter': {
+        'name': '猎人',
+        'delay': 10,
+        'stores': {'fur': 0.5, 'meat': 0.5}
+      },
+      'tanner': {
+        'name': '制革工',
+        'delay': 10,
+        'stores': {'fur': -5, 'leather': 1}
+      },
+      'steelworker': {
+        'name': '钢铁工',
+        'delay': 10,
+        'stores': {'coal': -1, 'iron': -1, 'steel': 1}
+      },
+    };
 
-    if (numHuts == 0) {
-      // 没有村庄时，库存容器在默认位置
-      return 0;
+    final config = incomeConfig[type];
+    if (config == null) return '';
+
+    final stores = config['stores'] as Map<String, dynamic>;
+    final delay = config['delay'] as int;
+
+    List<String> effects = [];
+
+    // 计算当前工人的效果
+    if (type == 'gatherer') {
+      final totalProduction = availableWorkers * (stores['wood'] as num);
+      if (totalProduction > 0) {
+        effects.add('生产: +${totalProduction.toStringAsFixed(1)} 木材 每${delay}秒');
+      }
     } else {
-      // 有村庄时，库存容器在村庄下方
-      // 原游戏使用: village.height() + 26 + Outside._STORES_OFFSET
-      // 我们估算村庄高度约为 150px，加上间距
-      return 150 + 26;
+      for (final entry in stores.entries) {
+        final resource = entry.key;
+        final rate = entry.value as num;
+        final totalRate = currentWorkers * rate;
+
+        if (totalRate != 0) {
+          final resourceName = _getLocalizedResourceName(resource);
+          final prefix = totalRate > 0 ? '+' : '';
+          effects.add(
+              '${totalRate > 0 ? '生产' : '消耗'}: $prefix${totalRate.toStringAsFixed(1)} $resourceName 每${delay}秒');
+        }
+      }
     }
+
+    if (effects.isEmpty) {
+      return '当前无生产/消耗';
+    }
+
+    return effects.join('\n');
+  }
+
+  // 获取本地化资源名称
+  String _getLocalizedResourceName(String resourceKey) {
+    const resourceNames = {
+      'wood': '木材',
+      'fur': '毛皮',
+      'meat': '肉类',
+      'bait': '诱饵',
+      'leather': '皮革',
+      'cured meat': '腌肉',
+      'iron': '铁',
+      'coal': '煤炭',
+      'sulphur': '硫磺',
+      'steel': '钢铁',
+      'bullets': '子弹',
+      'cloth': '布料',
+      'teeth': '牙齿',
+      'scales': '鳞片',
+      'bone': '骨头',
+      'alien alloy': '外星合金',
+      'energy cell': '能量电池',
+      'torch': '火把',
+      'waterskin': '水袋',
+      'cask': '水桶',
+      'water tank': '水箱',
+      'compass': '指南针',
+    };
+    return resourceNames[resourceKey] ?? resourceKey;
   }
 
   // 库存容器 - 模拟原游戏的 storesContainer，支持折叠显示
@@ -406,26 +492,29 @@ class _StoresWidgetState extends State<_StoresWidget> {
                 children: resourceStores.entries
                     .map((entry) => Padding(
                           padding: const EdgeInsets.only(bottom: 2),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                _getLocalizedResourceName(entry.key),
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontFamily: 'Times New Roman',
+                          child: Tooltip(
+                            message: _getResourceIncomeInfo(entry.key),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  _getLocalizedResourceName(entry.key),
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontFamily: 'Times New Roman',
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                '${entry.value}',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontFamily: 'Times New Roman',
+                                Text(
+                                  '${entry.value}',
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontFamily: 'Times New Roman',
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ))
                     .toList(),
@@ -479,6 +568,65 @@ class _StoresWidgetState extends State<_StoresWidget> {
       'compass': '指南针',
     };
     return resourceNames[resourceKey] ?? resourceKey;
+  }
+
+  // 获取资源的收入信息
+  String _getResourceIncomeInfo(String resourceKey) {
+    final income = widget.stateManager.get('income', true) ?? {};
+    List<String> effects = [];
+
+    // 遍历所有收入来源，查找影响此资源的
+    for (final entry in income.entries) {
+      final sourceName = entry.key;
+      final incomeData = entry.value;
+      final stores = incomeData['stores'] as Map<String, dynamic>? ?? {};
+      final delay = incomeData['delay'] as int? ?? 10;
+
+      if (stores.containsKey(resourceKey)) {
+        final rate = stores[resourceKey] as num;
+        if (rate != 0) {
+          final sourceDisplayName = _getWorkerDisplayName(sourceName);
+          final prefix = rate > 0 ? '+' : '';
+          effects.add(
+              '$sourceDisplayName: $prefix${rate.toStringAsFixed(1)} 每${delay}秒');
+        }
+      }
+    }
+
+    if (effects.isEmpty) {
+      return '无生产/消耗';
+    }
+
+    // 计算总计
+    double totalRate = 0;
+    int commonDelay = 10;
+    for (final entry in income.entries) {
+      final incomeData = entry.value;
+      final stores = incomeData['stores'] as Map<String, dynamic>? ?? {};
+      if (stores.containsKey(resourceKey)) {
+        totalRate += (stores[resourceKey] as num).toDouble();
+      }
+    }
+
+    if (totalRate != 0) {
+      final prefix = totalRate > 0 ? '+' : '';
+      effects
+          .add('总计: $prefix${totalRate.toStringAsFixed(1)} 每${commonDelay}秒');
+    }
+
+    return effects.join('\n');
+  }
+
+  // 获取工人显示名称
+  String _getWorkerDisplayName(String workerKey) {
+    const workerNames = {
+      'gatherer': '伐木者',
+      'hunter': '猎人',
+      'tanner': '制革工',
+      'steelworker': '钢铁工',
+      'thieves': '小偷',
+    };
+    return workerNames[workerKey] ?? workerKey;
   }
 }
 
