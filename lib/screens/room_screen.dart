@@ -450,15 +450,37 @@ class RoomScreen extends StatelessWidget {
       }
     }
 
+    // 检查是否达到最大数量限制
+    bool hasReachedMaximum = false;
+    final maximum = item['maximum'];
+    if (maximum != null) {
+      int currentCount = 0;
+      switch (item['type']) {
+        case 'building':
+          currentCount = stateManager.get('game.buildings["$key"]', true) ?? 0;
+          break;
+        case 'good':
+        case 'weapon':
+        case 'tool':
+        case 'upgrade':
+          currentCount = stateManager.get('stores["$key"]', true) ?? 0;
+          break;
+      }
+      hasReachedMaximum = currentCount >= maximum;
+    }
+
     // 获取本地化名称
     String localizedName = room.getLocalizedName(key);
 
+    // 按钮只有在有足够资源且未达到最大数量时才可用
+    final isEnabled = canAfford && !hasReachedMaximum;
+
     return GameButton(
       text: localizedName,
-      onPressed: canAfford ? () => room.buildItem(key) : null,
+      onPressed: isEnabled ? () => room.buildItem(key) : null,
       cost: cost,
       width: 130,
-      disabled: !canAfford,
+      disabled: !isEnabled,
     );
   }
 
@@ -484,12 +506,26 @@ class RoomScreen extends StatelessWidget {
       }
     }
 
+    // 检查是否达到最大数量限制
+    bool hasReachedMaximum = false;
+    final maximum = item['maximum'];
+    if (maximum != null) {
+      final currentCount = stateManager.get('stores["$key"]', true) ?? 0;
+      hasReachedMaximum = currentCount >= maximum;
+    }
+
+    // 获取本地化名称
+    String localizedName = _getLocalizedResourceName(key);
+
+    // 按钮只有在有足够资源且未达到最大数量时才可用
+    final isEnabled = canAfford && !hasReachedMaximum;
+
     return GameButton(
-      text: key,
-      onPressed: canAfford ? () => room.buyItem(key) : null,
+      text: localizedName,
+      onPressed: isEnabled ? () => room.buyItem(key) : null,
       cost: cost,
       width: 130,
-      disabled: !canAfford,
+      disabled: !isEnabled,
     );
   }
 }
