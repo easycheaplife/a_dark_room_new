@@ -24,7 +24,7 @@ class Room with ChangeNotifier {
   static const int _fireCoolDelay = 5 * 60 * 1000; // 火焰冷却延迟
   static const int _roomWarmDelay = 30 * 1000; // 房间温度更新延迟
   static const int _builderStateDelay = 30 * 1000; // 建造者状态更新延迟
-  static const int _stokeCooldown = 10; // 添柴冷却时间
+  static const int _stokeCooldown = 10 * 1000; // 添柴冷却时间（10秒）
   static const int _needWoodDelay = 15 * 1000; // 需要木材的延迟
 
   // 模块名称
@@ -570,7 +570,7 @@ class Room with ChangeNotifier {
 
     final sm = StateManager();
     if (sm.get('game.builder.level') == 3) {
-      sm.add('game.builder.level', 1);
+      sm.set('game.builder.level', 4); // 直接设置为4，而不是加1
       sm.setIncome('builder', {
         'delay': 10,
         'stores': {'wood': 2},
@@ -591,7 +591,7 @@ class Room with ChangeNotifier {
     // 在实际应用中，可以将title传递给UI组件
     // final sm = StateManager();
     // final fireValue = sm.get('game.fire.value');
-    // String title = fireValue < 2 ? '黑暗房间' : '火光房间';
+    // String title = fireValue < 2 ? '小黑屋' : '生火间';
 
     notifyListeners();
   }
@@ -1042,10 +1042,15 @@ class Room with ChangeNotifier {
     }
 
     for (final entry in cost.entries) {
-      if ((sm.get('stores.${entry.key}', true) ?? 0) == 0) {
+      // 检查是否见过这种材料（即使数量为0也算见过）
+      final storeValue = sm.get('stores.${entry.key}', true);
+      if (storeValue == null) {
         return false;
       }
     }
+
+    // 注意：不在这里显示可用消息，因为这个函数在UI构建过程中被调用
+    // 可用消息应该在实际解锁时显示，而不是在检查解锁状态时显示
 
     return true;
   }
@@ -1136,11 +1141,11 @@ class Room with ChangeNotifier {
       case 'trap':
         return '陷阱';
       case 'cart':
-        return '手推车';
+        return '货车';
       case 'hut':
         return '小屋';
       case 'lodge':
-        return '旅馆';
+        return '狩猎小屋';
       case 'trading post':
         return '贸易站';
       case 'tannery':
@@ -1289,7 +1294,13 @@ class Room with ChangeNotifier {
 
     // 计算成本
     final costFunction = craftable['cost'] as Function(StateManager);
-    final cost = costFunction(sm) as Map<String, int>;
+    final costResult = costFunction(sm);
+    final cost = <String, int>{};
+    if (costResult is Map<String, dynamic>) {
+      for (final entry in costResult.entries) {
+        cost[entry.key] = (entry.value as num).toInt();
+      }
+    }
 
     // 检查资源是否足够
     Map<String, int> storeMod = {};
@@ -1357,7 +1368,13 @@ class Room with ChangeNotifier {
 
     // 计算成本
     final costFunction = good['cost'] as Function(StateManager);
-    final cost = costFunction(sm) as Map<String, int>;
+    final costResult = costFunction(sm);
+    final cost = <String, int>{};
+    if (costResult is Map<String, dynamic>) {
+      for (final entry in costResult.entries) {
+        cost[entry.key] = (entry.value as num).toInt();
+      }
+    }
 
     // 检查资源是否足够
     Map<String, int> storeMod = {};

@@ -19,42 +19,41 @@ class RoomScreen extends StatelessWidget {
           width: 700,
           height: 700,
           color: Colors.white,
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              // 火焰控制按钮区域
-              _buildFireButtons(room, stateManager),
+              // 火焰控制按钮 - 左上角
+              Positioned(
+                left: 0,
+                top: 0,
+                child: _buildFireButtons(room, stateManager),
+              ),
 
-              const SizedBox(height: 10),
+              // 建造按钮区域 - 原游戏位置: top: 50px, left: 0px
+              Positioned(
+                left: 0,
+                top: 50,
+                child: _buildBuildButtons(room, stateManager),
+              ),
 
-              // 伐木按钮区域（如果森林已解锁）
-              _buildGatherButtons(room, stateManager),
+              // 制作按钮区域 - 原游戏位置: top: 50px, left: 150px
+              Positioned(
+                left: 150,
+                top: 50,
+                child: _buildCraftButtons(room, stateManager),
+              ),
 
-              const SizedBox(height: 20),
+              // 购买按钮区域 - 原游戏位置: top: 50px, left: 300px
+              Positioned(
+                left: 300,
+                top: 50,
+                child: _buildBuyButtons(room, stateManager),
+              ),
 
-              // 主要按钮区域 - 水平布局
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 建筑按钮区域
-                  _buildBuildButtons(room, stateManager),
-
-                  const SizedBox(width: 20),
-
-                  // 制作按钮区域
-                  _buildCraftButtons(room, stateManager),
-
-                  const SizedBox(width: 20),
-
-                  // 购买按钮区域
-                  _buildBuyButtons(room, stateManager),
-
-                  const Spacer(),
-
-                  // 资源存储区域 - 右侧
-                  _buildStoresContainer(stateManager),
-                ],
+              // 库存容器 - 原游戏位置: top: 0px, right: 0px
+              Positioned(
+                right: 0,
+                top: 0,
+                child: _buildStoresContainer(stateManager),
               ),
             ],
           ),
@@ -78,7 +77,7 @@ class RoomScreen extends StatelessWidget {
         cost: isFree ? null : {'wood': 5},
         width: 80,
         free: isFree,
-        progressDuration: 1000, // 1秒点火时间
+        progressDuration: 10000, // 10秒点火时间，与原游戏一致
       );
     } else {
       // 火焰燃烧 - 显示添柴按钮
@@ -88,45 +87,42 @@ class RoomScreen extends StatelessWidget {
         cost: isFree ? null : {'wood': 1},
         width: 80,
         free: isFree,
-        progressDuration: 500, // 0.5秒添柴时间
+        progressDuration: 10000, // 10秒添柴时间，与原游戏一致
       );
     }
   }
 
-  // 伐木按钮区域 - 移除，因为伐木功能应该在Outside模块中
-  Widget _buildGatherButtons(Room room, StateManager stateManager) {
-    // 在房间模块中不显示伐木按钮
-    // 伐木功能应该在Outside模块中实现
-    return const SizedBox.shrink();
-  }
-
   // 建筑按钮区域
   Widget _buildBuildButtons(Room room, StateManager stateManager) {
-    return Container(
+    final builderLevel = stateManager.get('game.builder.level', true) ?? -1;
+
+    // 只有当建造者等级 >= 4 时才显示建造按钮
+    if (builderLevel < 4) {
+      return const SizedBox.shrink();
+    }
+
+    return SizedBox(
       width: 140,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 标题
-          Container(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: const Text(
-              '建筑',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontFamily: 'Times New Roman',
-                fontWeight: FontWeight.bold,
-              ),
+          // 标题 - 模拟原游戏的 data-legend 属性
+          const Text(
+            '建造:',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+              fontFamily: 'Times New Roman',
             ),
           ),
+
+          const SizedBox(height: 5),
 
           // 建筑按钮列表
           ...room.craftables.entries
               .where((entry) => entry.value['type'] == 'building')
               .map((entry) => _buildCraftableButton(
-                  entry.key, entry.value, room, stateManager))
-              .toList(),
+                  entry.key, entry.value, room, stateManager)),
         ],
       ),
     );
@@ -134,31 +130,36 @@ class RoomScreen extends StatelessWidget {
 
   // 制作按钮区域
   Widget _buildCraftButtons(Room room, StateManager stateManager) {
-    return Container(
+    final hasWorkshop =
+        (stateManager.get('game.buildings.workshop', true) ?? 0) > 0;
+
+    // 只有当有工作坊时才显示制作按钮
+    if (!hasWorkshop) {
+      return const SizedBox.shrink();
+    }
+
+    return SizedBox(
       width: 140,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 标题
-          Container(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: const Text(
-              '制作',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontFamily: 'Times New Roman',
-                fontWeight: FontWeight.bold,
-              ),
+          // 标题 - 模拟原游戏的 data-legend 属性
+          const Text(
+            '制作:',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+              fontFamily: 'Times New Roman',
             ),
           ),
 
-          // 制作按钮列表
+          const SizedBox(height: 5),
+
+          // 制作按钮列表 - 只显示需要工作坊的物品
           ...room.craftables.entries
-              .where((entry) => entry.value['type'] != 'building')
+              .where((entry) => room.needsWorkshop(entry.value['type']))
               .map((entry) => _buildCraftableButton(
-                  entry.key, entry.value, room, stateManager))
-              .toList(),
+                  entry.key, entry.value, room, stateManager)),
         ],
       ),
     );
@@ -166,30 +167,34 @@ class RoomScreen extends StatelessWidget {
 
   // 购买按钮区域
   Widget _buildBuyButtons(Room room, StateManager stateManager) {
-    return Container(
+    final hasTradingPost =
+        (stateManager.get('game.buildings.trading post', true) ?? 0) > 0;
+
+    // 只有当有贸易站时才显示购买按钮
+    if (!hasTradingPost) {
+      return const SizedBox.shrink();
+    }
+
+    return SizedBox(
       width: 140,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 标题
-          Container(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: const Text(
-              '购买',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontFamily: 'Times New Roman',
-                fontWeight: FontWeight.bold,
-              ),
+          // 标题 - 模拟原游戏的 data-legend 属性
+          const Text(
+            '购买:',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+              fontFamily: 'Times New Roman',
             ),
           ),
 
+          const SizedBox(height: 5),
+
           // 购买按钮列表
-          ...room.tradeGoods.entries
-              .map((entry) =>
-                  _buildTradeButton(entry.key, entry.value, room, stateManager))
-              .toList(),
+          ...room.tradeGoods.entries.map((entry) =>
+              _buildTradeButton(entry.key, entry.value, room, stateManager)),
         ],
       ),
     );
@@ -197,6 +202,40 @@ class RoomScreen extends StatelessWidget {
 
   // 资源存储区域
   Widget _buildStoresContainer(StateManager stateManager) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 库存区域
+        _buildStoresDisplay(stateManager),
+
+        const SizedBox(height: 15),
+
+        // 武器区域
+        _buildWeaponsDisplay(stateManager),
+      ],
+    );
+  }
+
+  // 库存显示 - 模拟原游戏的 stores 容器
+  Widget _buildStoresDisplay(StateManager stateManager) {
+    final stores = stateManager.get('stores', true) ?? {};
+    final resourceStores = <String, dynamic>{};
+
+    // 过滤出资源类物品（非武器、非升级、非建筑）
+    for (var entry in stores.entries) {
+      final key = entry.key;
+      if (key.contains('blueprint')) continue; // 跳过蓝图
+
+      // 这里需要根据物品类型分类，暂时显示所有非武器物品
+      if (!_isWeapon(key)) {
+        resourceStores[key] = entry.value;
+      }
+    }
+
+    if (resourceStores.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
       width: 200,
       padding: const EdgeInsets.all(10),
@@ -207,34 +246,140 @@ class RoomScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '资源',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 16,
-              fontFamily: 'Times New Roman',
-              fontWeight: FontWeight.bold,
+          // 标题 - 模拟原游戏的 data-legend 属性
+          Container(
+            transform: Matrix4.translationValues(8, -13, 0),
+            child: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: const Text(
+                '库存',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 10),
 
-          // 显示所有资源
-          ...stateManager
-                  .get('stores', true)
-                  ?.entries
-                  .map((entry) => Text(
-                        '${entry.key}: ${entry.value}',
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
-                          fontFamily: 'Times New Roman',
-                        ),
-                      ))
-                  .toList() ??
-              [],
+          // 资源列表
+          ...resourceStores.entries.map((entry) => Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      entry.key,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontFamily: 'Times New Roman',
+                      ),
+                    ),
+                    Text(
+                      '${entry.value}',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontFamily: 'Times New Roman',
+                      ),
+                    ),
+                  ],
+                ),
+              )),
         ],
       ),
     );
+  }
+
+  // 武器显示 - 模拟原游戏的 weapons 容器
+  Widget _buildWeaponsDisplay(StateManager stateManager) {
+    final stores = stateManager.get('stores', true) ?? {};
+    final weaponStores = <String, dynamic>{};
+
+    // 过滤出武器类物品
+    for (var entry in stores.entries) {
+      final key = entry.key;
+      if (_isWeapon(key)) {
+        weaponStores[key] = entry.value;
+      }
+    }
+
+    if (weaponStores.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      width: 200,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 标题 - 模拟原游戏的 data-legend 属性
+          Container(
+            transform: Matrix4.translationValues(8, -13, 0),
+            child: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: const Text(
+                '武器',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
+            ),
+          ),
+
+          // 武器列表
+          ...weaponStores.entries.map((entry) => Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      entry.key,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontFamily: 'Times New Roman',
+                      ),
+                    ),
+                    Text(
+                      '${entry.value}',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontFamily: 'Times New Roman',
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
+  // 判断是否为武器
+  bool _isWeapon(String itemName) {
+    const weapons = [
+      'bone spear',
+      'iron sword',
+      'steel sword',
+      'rifle',
+      'bolas',
+      'grenade',
+      'bayonet',
+      'laser rifle'
+    ];
+    return weapons.contains(itemName);
   }
 
   // 构建可制作物品按钮
@@ -259,8 +404,11 @@ class RoomScreen extends StatelessWidget {
       }
     }
 
+    // 获取本地化名称
+    String localizedName = room.getLocalizedName(key);
+
     return GameButton(
-      text: item['name'] ?? key,
+      text: localizedName,
       onPressed: canAfford ? () => room.buildItem(key) : null,
       cost: cost,
       width: 130,

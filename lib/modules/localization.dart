@@ -126,7 +126,7 @@ class Localization extends ChangeNotifier {
 
       // 建筑描述
       'trap': '陷阱',
-      'cart': '手推车',
+      'cart': '货车',
       'hut': '小屋',
       'lodge': '小屋',
       'trading post': '贸易站',
@@ -285,7 +285,8 @@ class Localization extends ChangeNotifier {
 
     for (final language in _translations.keys) {
       final languageMap = _translations[language]!;
-      final missingKeys = allKeys.where((key) => !languageMap.containsKey(key)).toList();
+      final missingKeys =
+          allKeys.where((key) => !languageMap.containsKey(key)).toList();
       if (missingKeys.isNotEmpty) {
         missing[language] = missingKeys;
       }

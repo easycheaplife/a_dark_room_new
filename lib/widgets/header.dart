@@ -37,7 +37,7 @@ class Header extends StatelessWidget {
         if (_isOutsideUnlocked(stateManager)) {
           tabs.add(_buildTab(
             context,
-            '静谧森林',
+            _getOutsideTitle(stateManager),
             activeModuleName == 'Outside',
             onTap: () => _navigateToModule(context, 'Outside'),
           ));
@@ -85,12 +85,11 @@ class Header extends StatelessWidget {
 
         return Container(
           height: 40, // 原游戏header高度
-          padding: const EdgeInsets.only(bottom: 20),
           decoration: const BoxDecoration(
             color: Colors.white,
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // 页签列表
               ...tabs,
@@ -159,7 +158,27 @@ class Header extends StatelessWidget {
   // 获取房间标题（根据火焰状态）
   String _getRoomTitle(StateManager stateManager) {
     final fireValue = stateManager.get('game.fire.value', true) ?? 0;
-    return fireValue < 2 ? '黑暗房间' : '火光房间';
+    return fireValue < 2 ? '小黑屋' : '生火间';
+  }
+
+  // 获取外部区域标题（根据小屋数量）
+  String _getOutsideTitle(StateManager stateManager) {
+    final numHuts =
+        (stateManager.get('game.buildings["hut"]', true) ?? 0) as int;
+
+    if (numHuts == 0) {
+      return "静谧森林";
+    } else if (numHuts == 1) {
+      return "孤独小屋";
+    } else if (numHuts <= 4) {
+      return "小型村落";
+    } else if (numHuts <= 8) {
+      return "中型村落";
+    } else if (numHuts <= 14) {
+      return "大型村落";
+    } else {
+      return "喧嚣小镇";
+    }
   }
 
   Widget _buildTab(BuildContext context, String title, bool isSelected,
@@ -167,7 +186,7 @@ class Header extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         margin: EdgeInsets.only(left: isFirst ? 0 : 10),
         decoration: BoxDecoration(
           color: Colors.white,

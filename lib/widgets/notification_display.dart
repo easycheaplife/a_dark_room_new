@@ -15,46 +15,58 @@ class NotificationDisplay extends StatelessWidget {
         return Container(
           width: 200,
           height: 700,
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.black, width: 1),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          padding: const EdgeInsets.all(0), // 原游戏没有内边距
+          child: Stack(
             children: [
-              // 通知标题
-              const Text(
-                '通知',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontFamily: 'Times New Roman',
-                  fontWeight: FontWeight.bold,
-                ),
+              // 通知列表 - 最新的在顶部
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 通知列表
+                  Expanded(
+                    child: ListView.builder(
+                      reverse: false, // 最新的通知在顶部
+                      itemCount: notifications.length,
+                      itemBuilder: (context, index) {
+                        // 反转索引，让最新的通知显示在顶部
+                        final reversedIndex = notifications.length - 1 - index;
+                        final notification = notifications[reversedIndex];
+
+                        return Padding(
+                          padding:
+                              const EdgeInsets.only(bottom: 10), // 原游戏使用10px间距
+                          child: Text(
+                            notification.message,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 16, // 原游戏使用16px字体
+                              fontFamily: 'Times New Roman',
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 10),
 
-              // 通知列表
-              Expanded(
-                child: ListView.builder(
-                  reverse: true, // 最新的通知在底部
-                  itemCount: notifications.length,
-                  itemBuilder: (context, index) {
-                    final notification = notifications[index];
-
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 5),
-                      child: Text(
-                        notification.message,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 12,
-                          fontFamily: 'Times New Roman',
-                        ),
-                      ),
-                    );
-                  },
+              // 渐变遮罩 - 模拟原游戏的notifyGradient效果
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 100,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color.fromRGBO(255, 255, 255, 0), // 透明
+                        Color.fromRGBO(255, 255, 255, 1), // 白色
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],

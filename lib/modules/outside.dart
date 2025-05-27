@@ -35,119 +35,63 @@ class Outside extends ChangeNotifier {
     'gatherer': {
       'name': '采集者',
       'delay': 10,
-      'stores': {
-        'wood': 1
-      }
+      'stores': {'wood': 1}
     },
     'hunter': {
       'name': '猎人',
       'delay': 10,
-      'stores': {
-        'fur': 0.5,
-        'meat': 0.5
-      }
+      'stores': {'fur': 0.5, 'meat': 0.5}
     },
     'trapper': {
       'name': '陷阱师',
       'delay': 10,
-      'stores': {
-        'meat': -1,
-        'bait': 1
-      }
+      'stores': {'meat': -1, 'bait': 1}
     },
     'tanner': {
       'name': '制革工',
       'delay': 10,
-      'stores': {
-        'fur': -5,
-        'leather': 1
-      }
+      'stores': {'fur': -5, 'leather': 1}
     },
     'charcutier': {
       'name': '腌肉师',
       'delay': 10,
-      'stores': {
-        'meat': -5,
-        'wood': -5,
-        'cured meat': 1
-      }
+      'stores': {'meat': -5, 'wood': -5, 'cured meat': 1}
     },
     'iron miner': {
       'name': '铁矿工',
       'delay': 10,
-      'stores': {
-        'cured meat': -1,
-        'iron': 1
-      }
+      'stores': {'cured meat': -1, 'iron': 1}
     },
     'coal miner': {
       'name': '煤矿工',
       'delay': 10,
-      'stores': {
-        'cured meat': -1,
-        'coal': 1
-      }
+      'stores': {'cured meat': -1, 'coal': 1}
     },
     'sulphur miner': {
       'name': '硫磺矿工',
       'delay': 10,
-      'stores': {
-        'cured meat': -1,
-        'sulphur': 1
-      }
+      'stores': {'cured meat': -1, 'sulphur': 1}
     },
     'steelworker': {
       'name': '钢铁工',
       'delay': 10,
-      'stores': {
-        'iron': -1,
-        'coal': -1,
-        'steel': 1
-      }
+      'stores': {'iron': -1, 'coal': -1, 'steel': 1}
     },
     'armourer': {
       'name': '军械师',
       'delay': 10,
-      'stores': {
-        'steel': -1,
-        'sulphur': -1,
-        'bullets': 1
-      }
+      'stores': {'steel': -1, 'sulphur': -1, 'bullets': 1}
     }
   };
 
   // 陷阱掉落物配置
   static const List<Map<String, dynamic>> trapDrops = [
-    {
-      'rollUnder': 0.5,
-      'name': 'fur',
-      'message': '毛皮碎片'
-    },
-    {
-      'rollUnder': 0.75,
-      'name': 'meat',
-      'message': '肉块'
-    },
-    {
-      'rollUnder': 0.85,
-      'name': 'scales',
-      'message': '奇怪的鳞片'
-    },
-    {
-      'rollUnder': 0.93,
-      'name': 'teeth',
-      'message': '散落的牙齿'
-    },
-    {
-      'rollUnder': 0.995,
-      'name': 'cloth',
-      'message': '破烂的布料'
-    },
-    {
-      'rollUnder': 1.0,
-      'name': 'charm',
-      'message': '粗制的护身符'
-    }
+    {'rollUnder': 0.5, 'name': 'fur', 'message': '毛皮碎片'},
+    {'rollUnder': 0.75, 'name': 'meat', 'message': '肉块'},
+    {'rollUnder': 0.85, 'name': 'scales', 'message': '奇怪的鳞片'},
+    {'rollUnder': 0.93, 'name': 'teeth', 'message': '散落的牙齿'},
+    {'rollUnder': 0.995, 'name': 'cloth', 'message': '破烂的布料'},
+    {'rollUnder': 1.0, 'name': 'charm', 'message': '粗制的护身符'}
   ];
 
   // 状态变量
@@ -257,7 +201,9 @@ class Outside extends ChangeNotifier {
       final full = rate.floor();
       // 默认情况下用于摧毁满的或半满的小屋
       // 传递 allowEmpty 以在末日中包括空小屋
-      final huts = allowEmpty ? (sm.get('game.buildings["hut"]', true) ?? 0) : rate.ceil();
+      final huts = allowEmpty
+          ? (sm.get('game.buildings["hut"]', true) ?? 0)
+          : rate.ceil();
       if (huts == 0) {
         break;
       }
@@ -271,7 +217,8 @@ class Outside extends ChangeNotifier {
         inhabitants = population % _hutRoom;
       }
 
-      sm.set('game.buildings["hut"]', (sm.get('game.buildings["hut"]', true) ?? 0) - 1);
+      sm.set('game.buildings["hut"]',
+          (sm.get('game.buildings["hut"]', true) ?? 0) - 1);
       if (inhabitants > 0) {
         killVillagers(inhabitants);
         dead += inhabitants;
@@ -284,9 +231,12 @@ class Outside extends ChangeNotifier {
   /// 安排人口增长
   void schedulePopIncrease() {
     final random = Random();
-    final nextIncrease = (random.nextDouble() * (_popDelay[1] - _popDelay[0]) + _popDelay[0]);
+    final nextIncrease =
+        (random.nextDouble() * (_popDelay[1] - _popDelay[0]) + _popDelay[0]);
     // Engine().log('下次人口增长安排在 $nextIncrease 分钟后'); // 暂时注释掉
-    _popTimeout = Timer(Duration(milliseconds: (nextIncrease * 60 * 1000).round()), increasePopulation);
+    _popTimeout = Timer(
+        Duration(milliseconds: (nextIncrease * 60 * 1000).round()),
+        increasePopulation);
   }
 
   /// 更新工人视图
@@ -332,7 +282,8 @@ class Outside extends ChangeNotifier {
   /// 减少工人
   void decreaseWorker(String worker, int amount) {
     final sm = StateManager();
-    final currentWorkers = (sm.get('game.workers["$worker"]', true) ?? 0) as int;
+    final currentWorkers =
+        (sm.get('game.workers["$worker"]', true) ?? 0) as int;
     if (currentWorkers > 0) {
       final decreaseAmt = min<int>(currentWorkers, amount);
       // Engine().log('减少 $worker $decreaseAmt'); // 暂时注释掉
@@ -412,7 +363,9 @@ class Outside extends ChangeNotifier {
 
     for (final worker in _income.keys) {
       final income = _income[worker]!;
-      final num = worker == 'gatherer' ? getNumGatherers() : ((sm.get('game.workers["$worker"]', true) ?? 0) as int);
+      final num = worker == 'gatherer'
+          ? getNumGatherers()
+          : ((sm.get('game.workers["$worker"]', true) ?? 0) as int);
 
       if (num >= 0) {
         final stores = <String, dynamic>{};
@@ -423,10 +376,7 @@ class Outside extends ChangeNotifier {
         }
 
         // 设置收入
-        sm.setIncome(worker, {
-          'delay': income['delay'],
-          'stores': stores
-        });
+        sm.setIncome(worker, {'delay': income['delay'], 'stores': stores});
       }
     }
 
@@ -474,17 +424,17 @@ class Outside extends ChangeNotifier {
     final numHuts = (sm.get('game.buildings["hut"]', true) ?? 0) as int;
 
     if (numHuts == 0) {
-      return "寂静的森林";
+      return "静谧森林";
     } else if (numHuts == 1) {
-      return "孤独的小屋";
+      return "孤独小屋";
     } else if (numHuts <= 4) {
-      return "小村庄";
+      return "小型村落";
     } else if (numHuts <= 8) {
-      return "中等村庄";
+      return "中型村落";
     } else if (numHuts <= 14) {
-      return "大村庄";
+      return "大型村落";
     } else {
-      return "喧闹的村庄";
+      return "喧嚣小镇";
     }
   }
 
@@ -524,8 +474,10 @@ class Outside extends ChangeNotifier {
   void gatherWood() {
     final sm = StateManager();
     final localization = Localization();
-    NotificationManager().notify(name, localization.translate('notifications.dry_brush'));
-    final gatherAmt = (sm.get('game.buildings["cart"]', true) ?? 0) > 0 ? 50 : 10;
+    NotificationManager()
+        .notify(name, localization.translate('notifications.dry_brush'));
+    final gatherAmt =
+        (sm.get('game.buildings["cart"]', true) ?? 0) > 0 ? 50 : 10;
     sm.add('stores.wood', gatherAmt);
     AudioEngine().playSound('gather_wood');
   }
@@ -541,7 +493,8 @@ class Outside extends ChangeNotifier {
     final random = Random();
 
     // 调试信息
-    print('🪤 Checking traps: numTraps=$numTraps, numBait=$numBait, numDrops=$numDrops');
+    print(
+        '🪤 Checking traps: numTraps=$numTraps, numBait=$numBait, numDrops=$numDrops');
     print('🏗️ Buildings: ${sm.get('game.buildings')}');
 
     for (var i = 0; i < numDrops; i++) {
@@ -563,7 +516,8 @@ class Outside extends ChangeNotifier {
     // 构建消息
     final localization = Localization();
     if (msg.isEmpty) {
-      NotificationManager().notify(name, localization.translate('notifications.nothing_in_traps'));
+      NotificationManager().notify(
+          name, localization.translate('notifications.nothing_in_traps'));
     } else {
       var s = '';
       for (var l = 0; l < msg.length; l++) {
@@ -574,7 +528,8 @@ class Outside extends ChangeNotifier {
         }
         s += msg[l];
       }
-      NotificationManager().notify(name, localization.translate('notifications.traps_yield', [s]));
+      NotificationManager().notify(
+          name, localization.translate('notifications.traps_yield', [s]));
     }
 
     final baitUsed = min<int>(numBait, numTraps);
@@ -594,7 +549,7 @@ class Outside extends ChangeNotifier {
     if (category == 'stores') {
       updateVillage();
     } else if (stateName?.toString().startsWith('game.workers') == true ||
-               stateName?.toString().startsWith('game.population') == true) {
+        stateName?.toString().startsWith('game.population') == true) {
       updateVillage();
       updateWorkersView();
       updateVillageIncome();

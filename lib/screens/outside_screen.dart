@@ -18,38 +18,28 @@ class OutsideScreen extends StatelessWidget {
         return Container(
           width: 700,
           height: 700,
-          color: Colors.white, // 与房间界面一致的白色背景
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          color: Colors.white,
+          child: Stack(
             children: [
-              // 收集木材按钮区域
-              _buildGatheringButtons(outside, stateManager),
+              // 收集木材按钮区域 - 左上角
+              Positioned(
+                left: 0,
+                top: 0,
+                child: _buildGatheringButtons(outside, stateManager),
+              ),
 
-              const SizedBox(height: 20),
+              // 村庄状态区域 - 原游戏位置: top: 0px, right: 0px
+              Positioned(
+                right: 0,
+                top: 0,
+                child: _buildVillageStatus(outside, stateManager),
+              ),
 
-              // 村庄状态区域
-              _buildVillageStatus(outside, stateManager),
-
-              const SizedBox(height: 20),
-
-              // 主要按钮区域 - 水平布局
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 建筑按钮区域
-                  _buildBuildingButtons(outside, stateManager),
-
-                  const SizedBox(width: 20),
-
-                  // 工人管理区域
-                  _buildWorkersButtons(outside, stateManager),
-
-                  const Spacer(),
-
-                  // 资源存储区域 - 右侧
-                  _buildStoresContainer(stateManager),
-                ],
+              // 工人管理区域 - 原游戏位置: top: -4px, left: 160px
+              Positioned(
+                left: 160,
+                top: -4,
+                child: _buildWorkersButtons(outside, stateManager),
               ),
             ],
           ),
@@ -60,121 +50,42 @@ class OutsideScreen extends StatelessWidget {
 
   // 收集木材按钮区域
   Widget _buildGatheringButtons(Outside outside, StateManager stateManager) {
-    return ProgressButton(
-      text: '收集木材',
-      onPressed: () => outside.gatherWood(),
-      width: 100,
-      progressDuration: 1000, // 1秒收集时间
+    final numTraps = stateManager.get('game.buildings.trap', true) ?? 0;
+
+    return Row(
+      children: [
+        ProgressButton(
+          text: '伐木',
+          onPressed: () => outside.gatherWood(),
+          width: 100,
+          progressDuration: 1000, // 1秒收集时间
+        ),
+
+        // 如果有陷阱，显示检查陷阱按钮
+        if (numTraps > 0) ...[
+          const SizedBox(width: 10),
+          ProgressButton(
+            text: '查看陷阱',
+            onPressed: () => outside.checkTraps(),
+            width: 100,
+            progressDuration: 1500, // 1.5秒检查时间
+          ),
+        ],
+      ],
     );
   }
 
-  // 村庄状态区域
+  // 村庄状态区域 - 模拟原游戏的 village 容器
   Widget _buildVillageStatus(Outside outside, StateManager stateManager) {
     final population = stateManager.get('game.population', true) ?? 0;
-    final maxPopulation = outside.getMaxPopulation();
-    final villageTitle = outside.getTitle();
+    final villageTitle = outside.getTitle(); // 这会根据小屋数量动态变化
+    final numHuts = stateManager.get('game.buildings.hut', true) ?? 0;
 
-    return Container(
-      width: 300,
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.black),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '🏘️ $villageTitle',
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 16,
-              fontFamily: 'Times New Roman',
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            '👥 人口: $population / $maxPopulation',
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 14,
-              fontFamily: 'Times New Roman',
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            '状态: $villageTitle',
-            style: const TextStyle(
-              color: Colors.green,
-              fontSize: 14,
-              fontFamily: 'Times New Roman',
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+    // 如果没有小屋，不显示村庄状态
+    if (numHuts == 0) {
+      return const SizedBox.shrink();
+    }
 
-  // 建筑按钮区域
-  Widget _buildBuildingButtons(Outside outside, StateManager stateManager) {
-    return Container(
-      width: 140,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题
-          Container(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: const Text(
-              '建筑',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontFamily: 'Times New Roman',
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-
-          // 建筑按钮列表
-          _buildBuildingButton('小屋', {'wood': 100}, outside, stateManager),
-          _buildBuildingButton('陷阱', {'wood': 10}, outside, stateManager),
-        ],
-      ),
-    );
-  }
-
-  // 工人管理区域
-  Widget _buildWorkersButtons(Outside outside, StateManager stateManager) {
-    return Container(
-      width: 140,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题
-          Container(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: const Text(
-              '工人',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontFamily: 'Times New Roman',
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-
-          // 工人管理按钮
-          _buildWorkerButton('收集者', 'gatherer', outside, stateManager),
-        ],
-      ),
-    );
-  }
-
-  // 资源存储区域
-  Widget _buildStoresContainer(StateManager stateManager) {
     return Container(
       width: 200,
       padding: const EdgeInsets.all(10),
@@ -185,91 +96,234 @@ class OutsideScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '资源',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 16,
-              fontFamily: 'Times New Roman',
-              fontWeight: FontWeight.bold,
+          // 村庄标题 - 模拟原游戏的 data-legend 属性
+          Container(
+            transform: Matrix4.translationValues(8, -13, 0),
+            child: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: Text(
+                villageTitle,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
             ),
           ),
+
+          // 人口显示 - 模拟原游戏的 population 容器
+          Container(
+            transform: Matrix4.translationValues(10, -13, 0),
+            child: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: Text(
+                '人口 $population',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
+            ),
+          ),
+
           const SizedBox(height: 10),
 
-          // 显示所有资源
-          ...stateManager
-                  .get('stores', true)
-                  ?.entries
-                  .map((entry) => Text(
-                        '${entry.key}: ${entry.value}',
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
-                          fontFamily: 'Times New Roman',
-                        ),
-                      ))
-                  .toList() ??
-              [],
+          // 显示建筑物状态
+          ..._buildBuildingsList(stateManager),
         ],
       ),
     );
   }
 
-  // 构建建筑按钮
-  Widget _buildBuildingButton(String name, Map<String, int> cost,
-      Outside outside, StateManager stateManager) {
-    // 检查是否有足够资源
-    bool canAfford = true;
-    for (var k in cost.keys) {
-      final have = stateManager.get('stores["$k"]', true) ?? 0;
-      if (have < cost[k]!) {
-        canAfford = false;
-        break;
+  // 构建建筑物列表
+  List<Widget> _buildBuildingsList(StateManager stateManager) {
+    final List<Widget> buildings = [];
+    final gameBuildings = stateManager.get('game.buildings', true) ?? {};
+
+    for (final entry in gameBuildings.entries) {
+      final buildingName = entry.key;
+      final buildingCount = entry.value as int;
+
+      if (buildingCount > 0) {
+        if (buildingName == 'trap') {
+          // 陷阱特殊处理：显示有饵料和无饵料的陷阱
+          final numBait = stateManager.get('stores.bait', true) ?? 0;
+          final baitedTraps =
+              (numBait < buildingCount) ? numBait : buildingCount;
+          final unbaitedTraps = buildingCount - baitedTraps;
+
+          if (unbaitedTraps > 0) {
+            buildings.add(
+              Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Text(
+                  '陷阱: $unbaitedTraps',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: 'Times New Roman',
+                  ),
+                ),
+              ),
+            );
+          }
+
+          if (baitedTraps > 0) {
+            buildings.add(
+              Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Text(
+                  '有饵陷阱: $baitedTraps',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: 'Times New Roman',
+                  ),
+                ),
+              ),
+            );
+          }
+        } else {
+          // 其他建筑物的显示
+          String localizedName = _getBuildingLocalizedName(buildingName);
+          buildings.add(
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: Text(
+                '$localizedName: $buildingCount',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
+            ),
+          );
+        }
       }
     }
 
-    return GameButton(
-      text: name,
-      onPressed: canAfford
-          ? () => _buildBuilding(name, cost, outside, stateManager)
-          : null,
-      cost: cost,
-      width: 130,
-      disabled: !canAfford,
+    return buildings;
+  }
+
+  // 获取建筑物的本地化名称
+  String _getBuildingLocalizedName(String buildingName) {
+    switch (buildingName) {
+      case 'hut':
+        return '小屋';
+      case 'cart':
+        return '手推车';
+      case 'lodge':
+        return '狩猎小屋';
+      case 'trading post':
+        return '贸易站';
+      case 'tannery':
+        return '制革厂';
+      case 'smokehouse':
+        return '熏制房';
+      case 'workshop':
+        return '工作坊';
+      case 'steelworks':
+        return '钢铁厂';
+      case 'armoury':
+        return '军械库';
+      default:
+        return buildingName;
+    }
+  }
+
+  // 工人管理区域 - 模拟原游戏的 workers 容器
+  Widget _buildWorkersButtons(Outside outside, StateManager stateManager) {
+    final population = stateManager.get('game.population', true) ?? 0;
+
+    // 如果没有人口，不显示工人管理
+    if (population == 0) {
+      return const SizedBox.shrink();
+    }
+
+    return SizedBox(
+      width: 150,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 工人管理按钮
+          _buildWorkerButton('收集者', 'gatherer', outside, stateManager),
+          _buildWorkerButton('猎人', 'hunter', outside, stateManager),
+          _buildWorkerButton('制革工', 'tanner', outside, stateManager),
+          _buildWorkerButton('制钢工', 'steelworker', outside, stateManager),
+        ],
+      ),
     );
   }
 
-  // 构建工人按钮
+  // 构建工人按钮 - 模拟原游戏的 workerRow 样式
   Widget _buildWorkerButton(
       String name, String type, Outside outside, StateManager stateManager) {
     final currentWorkers = stateManager.get('game.workers["$type"]', true) ?? 0;
+    final population = stateManager.get('game.population', true) ?? 0;
+    final totalWorkers = stateManager
+            .get('game.workers', true)
+            ?.values
+            .fold(0, (sum, count) => sum + count) ??
+        0;
+    final availableWorkers = population - totalWorkers;
+
+    // 检查是否有相应的建筑物解锁此工人类型
+    bool isUnlocked = _isWorkerUnlocked(type, stateManager);
+    if (!isUnlocked) {
+      return const SizedBox.shrink();
+    }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 5),
+      margin: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
+          // 工人名称和数量
           Expanded(
             child: Text(
-              '$name: $currentWorkers',
+              name,
               style: const TextStyle(
                 color: Colors.black,
-                fontSize: 14,
+                fontSize: 16,
                 fontFamily: 'Times New Roman',
               ),
             ),
           ),
+
+          // 工人数量和控制按钮
           Row(
             children: [
-              GameButton(
-                text: '-',
-                onPressed: () => outside.decreaseWorker(type, 1),
-                width: 30,
+              Text(
+                '$currentWorkers',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: 'Times New Roman',
+                ),
               ),
+
               const SizedBox(width: 5),
-              GameButton(
-                text: '+',
-                onPressed: () => outside.increaseWorker(type, 1),
-                width: 30,
+
+              // 减少按钮
+              _buildWorkerControlButton(
+                '▼',
+                currentWorkers > 0
+                    ? () => outside.decreaseWorker(type, 1)
+                    : null,
+              ),
+
+              const SizedBox(width: 2),
+
+              // 增加按钮
+              _buildWorkerControlButton(
+                '▲',
+                availableWorkers > 0
+                    ? () => outside.increaseWorker(type, 1)
+                    : null,
               ),
             ],
           ),
@@ -278,19 +332,46 @@ class OutsideScreen extends StatelessWidget {
     );
   }
 
-  // 建造建筑
-  void _buildBuilding(String name, Map<String, int> cost, Outside outside,
-      StateManager stateManager) {
-    // 扣除资源
-    for (var k in cost.keys) {
-      final current = stateManager.get('stores["$k"]', true) ?? 0;
-      stateManager.set('stores["$k"]', current - cost[k]!);
-    }
+  // 构建工人控制按钮 - 模拟原游戏的上下箭头按钮
+  Widget _buildWorkerControlButton(String text, VoidCallback? onPressed) {
+    return Container(
+      width: 14,
+      height: 12,
+      child: InkWell(
+        onTap: onPressed,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+                color: onPressed != null ? Colors.black : Colors.grey),
+          ),
+          child: Center(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: onPressed != null ? Colors.black : Colors.grey,
+                fontSize: 8,
+                fontFamily: 'Times New Roman',
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
-    // 增加建筑数量
-    final buildingKey = name.toLowerCase();
-    final current =
-        stateManager.get('game.buildings["$buildingKey"]', true) ?? 0;
-    stateManager.set('game.buildings["$buildingKey"]', current + 1);
+  // 检查工人类型是否已解锁
+  bool _isWorkerUnlocked(String type, StateManager stateManager) {
+    switch (type) {
+      case 'gatherer':
+        return true; // 收集者总是可用
+      case 'hunter':
+        return (stateManager.get('game.buildings.lodge', true) ?? 0) > 0;
+      case 'tanner':
+        return (stateManager.get('game.buildings.tannery', true) ?? 0) > 0;
+      case 'steelworker':
+        return (stateManager.get('game.buildings.steelworks', true) ?? 0) > 0;
+      default:
+        return false;
+    }
   }
 }
