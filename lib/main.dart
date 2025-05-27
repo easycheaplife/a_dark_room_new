@@ -181,33 +181,6 @@ class _GameScreenState extends State<GameScreen> {
                   height: 700,
                   child: NotificationDisplay(),
                 ),
-
-                // 保存通知 - 右上角
-                Positioned(
-                  top: 10,
-                  right: 20,
-                  child: Consumer<StateManager>(
-                    builder: (context, stateManager, child) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.black),
-                        ),
-                        child: const Text(
-                          '已保存',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 12,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
               ],
             ),
           ),

@@ -93,10 +93,6 @@ class Header extends StatelessWidget {
             children: [
               // 页签列表
               ...tabs,
-
-              // 语言切换按钮
-              const Spacer(),
-              _buildLanguageButton(context, localization),
             ],
           ),
         );
@@ -207,28 +203,6 @@ class Header extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildLanguageButton(BuildContext context, Localization localization) {
-    return PopupMenuButton<String>(
-      icon: const Icon(
-        Icons.language,
-        color: Colors.black,
-      ),
-      onSelected: (String languageCode) {
-        localization.switchLanguage(languageCode);
-      },
-      itemBuilder: (BuildContext context) => [
-        const PopupMenuItem<String>(
-          value: 'zh',
-          child: Text('中文'),
-        ),
-        const PopupMenuItem<String>(
-          value: 'en',
-          child: Text('English'),
-        ),
-      ],
     );
   }
 

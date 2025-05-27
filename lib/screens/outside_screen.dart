@@ -102,17 +102,44 @@ class OutsideScreen extends StatelessWidget {
         color: Colors.white,
         border: Border.all(color: Colors.black),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          // 村庄标题 - 模拟原游戏的 data-legend 属性
-          Container(
-            transform: Matrix4.translationValues(8, -13, 0),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 村庄标题 - 模拟原游戏的 data-legend 属性
+              Container(
+                transform: Matrix4.translationValues(-8, -13, 0),
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: Text(
+                    villageTitle,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontFamily: 'Times New Roman',
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              // 显示建筑物状态
+              ..._buildBuildingsList(stateManager),
+            ],
+          ),
+
+          // 人口显示 - 模拟原游戏的 population 容器，右上角位置
+          Positioned(
+            top: -13,
+            right: -10,
             child: Container(
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 2),
               child: Text(
-                villageTitle,
+                '人口 $population/${outside.getMaxPopulation()}',
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 16,
@@ -121,28 +148,6 @@ class OutsideScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // 人口显示 - 模拟原游戏的 population 容器
-          Container(
-            transform: Matrix4.translationValues(10, -13, 0),
-            child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: Text(
-                '人口 $population',
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontFamily: 'Times New Roman',
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          // 显示建筑物状态
-          ..._buildBuildingsList(stateManager),
         ],
       ),
     );
@@ -285,6 +290,37 @@ class OutsideScreen extends StatelessWidget {
     bool isUnlocked = _isWorkerUnlocked(type, stateManager);
     if (!isUnlocked) {
       return const SizedBox.shrink();
+    }
+
+    // 对于伐木者，显示剩余人口数量，不显示调整按钮
+    if (type == 'gatherer') {
+      return Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        child: Row(
+          children: [
+            // 工人名称
+            Expanded(
+              child: Text(
+                name,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
+            ),
+            // 显示剩余人口数量（伐木者数量）
+            Text(
+              '$availableWorkers',
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontFamily: 'Times New Roman',
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
     return Container(
