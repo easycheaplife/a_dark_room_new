@@ -41,6 +41,13 @@ class OutsideScreen extends StatelessWidget {
                 top: -4,
                 child: _buildWorkersButtons(outside, stateManager),
               ),
+
+              // 库存容器 - 原游戏中在Outside模块也显示，位置动态调整
+              Positioned(
+                right: 0,
+                top: _calculateStoresTop(outside, stateManager),
+                child: _buildStoresContainer(stateManager),
+              ),
             ],
           ),
         );
@@ -52,8 +59,10 @@ class OutsideScreen extends StatelessWidget {
   Widget _buildGatheringButtons(Outside outside, StateManager stateManager) {
     final numTraps = stateManager.get('game.buildings.trap', true) ?? 0;
 
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // 伐木按钮
         ProgressButton(
           text: '伐木',
           onPressed: () => outside.gatherWood(),
@@ -63,7 +72,7 @@ class OutsideScreen extends StatelessWidget {
 
         // 如果有陷阱，显示检查陷阱按钮
         if (numTraps > 0) ...[
-          const SizedBox(width: 10),
+          const SizedBox(height: 10), // 垂直间距
           ProgressButton(
             text: '查看陷阱',
             onPressed: () => outside.checkTraps(),
@@ -251,7 +260,7 @@ class OutsideScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 工人管理按钮
-          _buildWorkerButton('收集者', 'gatherer', outside, stateManager),
+          _buildWorkerButton('伐木者', 'gatherer', outside, stateManager),
           _buildWorkerButton('猎人', 'hunter', outside, stateManager),
           _buildWorkerButton('制革工', 'tanner', outside, stateManager),
           _buildWorkerButton('制钢工', 'steelworker', outside, stateManager),
@@ -363,7 +372,7 @@ class OutsideScreen extends StatelessWidget {
   bool _isWorkerUnlocked(String type, StateManager stateManager) {
     switch (type) {
       case 'gatherer':
-        return true; // 收集者总是可用
+        return true; // 伐木者总是可用
       case 'hunter':
         return (stateManager.get('game.buildings.lodge', true) ?? 0) > 0;
       case 'tanner':
@@ -373,5 +382,112 @@ class OutsideScreen extends StatelessWidget {
       default:
         return false;
     }
+  }
+
+  // 计算库存容器的顶部位置 - 模拟原游戏的动态定位
+  double _calculateStoresTop(Outside outside, StateManager stateManager) {
+    final numHuts = stateManager.get('game.buildings.hut', true) ?? 0;
+
+    if (numHuts == 0) {
+      // 没有村庄时，库存容器在默认位置
+      return 0;
+    } else {
+      // 有村庄时，库存容器在村庄下方
+      // 原游戏使用: village.height() + 26 + Outside._STORES_OFFSET
+      // 我们估算村庄高度约为 150px，加上间距
+      return 150 + 26;
+    }
+  }
+
+  // 库存容器 - 模拟原游戏的 storesContainer
+  Widget _buildStoresContainer(StateManager stateManager) {
+    final stores = stateManager.get('stores', true) ?? {};
+    final resourceStores = <String, dynamic>{};
+
+    // 过滤出资源类物品（非武器、非升级、非建筑）
+    for (var entry in stores.entries) {
+      final key = entry.key;
+      if (key.contains('blueprint')) continue; // 跳过蓝图
+
+      // 这里需要根据物品类型分类，暂时显示所有非武器物品
+      if (!_isWeapon(key)) {
+        resourceStores[key] = entry.value;
+      }
+    }
+
+    if (resourceStores.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      width: 200,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 标题 - 模拟原游戏的 data-legend 属性
+          Container(
+            transform: Matrix4.translationValues(8, -13, 0),
+            child: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: const Text(
+                '库存',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
+            ),
+          ),
+
+          // 资源列表
+          ...resourceStores.entries.map((entry) => Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      entry.key,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontFamily: 'Times New Roman',
+                      ),
+                    ),
+                    Text(
+                      '${entry.value}',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontFamily: 'Times New Roman',
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
+  // 判断是否为武器
+  bool _isWeapon(String itemName) {
+    const weapons = [
+      'bone spear',
+      'iron sword',
+      'steel sword',
+      'rifle',
+      'bolas',
+      'grenade',
+      'bayonet',
+      'laser rifle'
+    ];
+    return weapons.contains(itemName);
   }
 }

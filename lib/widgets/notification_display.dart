@@ -28,9 +28,8 @@ class NotificationDisplay extends StatelessWidget {
                       reverse: false, // 最新的通知在顶部
                       itemCount: notifications.length,
                       itemBuilder: (context, index) {
-                        // 反转索引，让最新的通知显示在顶部
-                        final reversedIndex = notifications.length - 1 - index;
-                        final notification = notifications[reversedIndex];
+                        // getAllNotifications() 已经返回了反转的列表，所以直接使用index
+                        final notification = notifications[index];
 
                         return Padding(
                           padding:
