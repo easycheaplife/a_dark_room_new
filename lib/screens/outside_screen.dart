@@ -128,7 +128,9 @@ class OutsideScreen extends StatelessWidget {
           // 工人管理按钮
           _buildWorkerButton('伐木者', 'gatherer', outside, stateManager),
           _buildWorkerButton('猎人', 'hunter', outside, stateManager),
+          _buildWorkerButton('陷阱师', 'trapper', outside, stateManager),
           _buildWorkerButton('制革工', 'tanner', outside, stateManager),
+          _buildWorkerButton('腌肉师', 'charcutier', outside, stateManager),
           _buildWorkerButton('制钢工', 'steelworker', outside, stateManager),
         ],
       ),
@@ -281,8 +283,14 @@ class OutsideScreen extends StatelessWidget {
         return true; // 伐木者总是可用
       case 'hunter':
         return (stateManager.get('game.buildings.lodge', true) ?? 0) > 0;
+      case 'trapper':
+        return (stateManager.get('game.buildings.lodge', true) ?? 0) >
+            0; // 陷阱师也由狩猎小屋解锁
       case 'tanner':
         return (stateManager.get('game.buildings.tannery', true) ?? 0) > 0;
+      case 'charcutier':
+        return (stateManager.get('game.buildings.smokehouse', true) ?? 0) >
+            0; // 腌肉师由熏制房解锁
       case 'steelworker':
         return (stateManager.get('game.buildings.steelworks', true) ?? 0) > 0;
       default:
@@ -304,10 +312,20 @@ class OutsideScreen extends StatelessWidget {
         'delay': 10,
         'stores': {'fur': 0.5, 'meat': 0.5}
       },
+      'trapper': {
+        'name': '陷阱师',
+        'delay': 10,
+        'stores': {'meat': -1, 'bait': 1}
+      },
       'tanner': {
         'name': '制革工',
         'delay': 10,
         'stores': {'fur': -5, 'leather': 1}
+      },
+      'charcutier': {
+        'name': '腌肉师',
+        'delay': 10,
+        'stores': {'meat': -5, 'wood': -5, 'cured meat': 1}
       },
       'steelworker': {
         'name': '钢铁工',
@@ -622,7 +640,9 @@ class _StoresWidgetState extends State<_StoresWidget> {
     const workerNames = {
       'gatherer': '伐木者',
       'hunter': '猎人',
+      'trapper': '陷阱师',
       'tanner': '制革工',
+      'charcutier': '腌肉师',
       'steelworker': '钢铁工',
       'thieves': '小偷',
     };
