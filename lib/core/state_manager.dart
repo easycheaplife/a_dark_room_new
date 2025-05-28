@@ -22,51 +22,119 @@ class StateManager with ChangeNotifier {
 
   // 初始化状态管理器
   void init() {
+    // 如果状态为空，创建初始状态
     if (_state.isEmpty) {
       print('🎮 StateManager: Initializing new game state');
-      _state = {
-        'version': 1.3,
-        'stores': {
-          'wood': 0, // 原始游戏从0个木材开始，点火是免费的
-        },
-        'income': {},
-        'character': {
-          'perks': {},
-        },
-        'game': {
-          'fire': {'value': 0},
-          'temperature': {'value': 0},
-          'builder': {'level': -1},
-          'buildings': {},
-          'workers': {},
-          'population': 0,
-          'thieves': false,
-          'stolen': {},
-          'stokeCount': 0, // 添柴次数计数器
-        },
-        'features': {
-          'location': {
-            'room': true,
-          },
-        },
-        'playStats': {},
-        'config': {
-          'lightsOff': false,
-          'hyperMode': false,
-          'soundOn': true,
-        },
-        'cooldown': {},
-        'wait': {},
-        'outfit': {},
-        'previous': {},
-        'timers': {},
-      };
+      _initializeNewGameState();
       print(
           '✅ StateManager: Initial state created with wood: ${_state['stores']['wood']}');
       notifyListeners();
     } else {
       print(
           '🔄 StateManager: Using existing state with wood: ${_state['stores']?['wood']}');
+      // 确保已加载的状态有所有必需的字段
+      _ensureRequiredFields();
+    }
+  }
+
+  // 初始化新游戏状态
+  void _initializeNewGameState() {
+    _state = {
+      'version': 1.3,
+      'stores': {
+        'wood': 0, // 原始游戏从0个木材开始，点火是免费的
+      },
+      'income': {},
+      'character': {
+        'perks': {},
+      },
+      'game': {
+        'fire': {'value': 0},
+        'temperature': {'value': 0},
+        'builder': {'level': -1},
+        'buildings': {},
+        'workers': {},
+        'population': 0,
+        'thieves': false,
+        'stolen': {},
+        'stokeCount': 0, // 添柴次数计数器
+      },
+      'features': {
+        'location': {
+          'room': true,
+        },
+      },
+      'playStats': {},
+      'config': {
+        'lightsOff': false,
+        'hyperMode': false,
+        'soundOn': true,
+      },
+      'cooldown': {},
+      'wait': {},
+      'outfit': {},
+      'previous': {},
+      'timers': {},
+    };
+  }
+
+  // 确保已加载的状态有所有必需的字段
+  void _ensureRequiredFields() {
+    // 确保基本类别存在
+    final requiredCategories = [
+      'features',
+      'stores',
+      'character',
+      'income',
+      'timers',
+      'game',
+      'playStats',
+      'previous',
+      'outfit',
+      'config',
+      'wait',
+      'cooldown'
+    ];
+
+    for (String category in requiredCategories) {
+      if (_state[category] == null) {
+        _state[category] = {};
+      }
+    }
+
+    // 确保版本号存在
+    if (_state['version'] == null) {
+      _state['version'] = 1.3;
+    }
+
+    // 确保基本配置存在
+    if (_state['config'] != null) {
+      final config = _state['config'] as Map<String, dynamic>;
+      config['lightsOff'] ??= false;
+      config['hyperMode'] ??= false;
+      config['soundOn'] ??= true;
+    }
+
+    // 确保游戏状态存在
+    if (_state['game'] != null) {
+      final game = _state['game'] as Map<String, dynamic>;
+      game['fire'] ??= {'value': 0};
+      game['temperature'] ??= {'value': 0};
+      game['builder'] ??= {'level': -1};
+      game['buildings'] ??= {};
+      game['workers'] ??= {};
+      game['population'] ??= 0;
+      game['thieves'] ??= false;
+      game['stolen'] ??= {};
+      game['stokeCount'] ??= 0;
+    }
+
+    // 确保特性状态存在
+    if (_state['features'] != null) {
+      final features = _state['features'] as Map<String, dynamic>;
+      features['location'] ??= {};
+      final location = features['location'] as Map<String, dynamic>;
+      location['room'] ??= true;
     }
   }
 
@@ -258,15 +326,42 @@ class StateManager with ChangeNotifier {
   Future<void> saveGame() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final jsonState = jsonEncode(_state);
-      await prefs.setString('gameState', jsonState);
+
+      // 确保状态不为空
+      if (_state.isEmpty) {
+        if (kDebugMode) {
+          print('⚠️ StateManager: Cannot save empty state');
+        }
+        return;
+      }
+
+      // 创建保存状态的副本，确保与原游戏格式兼容
+      final saveState = Map<String, dynamic>.from(_state);
+
+      // 确保版本号正确
+      saveState['version'] = 1.3;
+
+      final jsonState = jsonEncode(saveState);
+
+      // 调试：显示要保存的数据
+      print('🔍 StateManager: Saving data length: ${jsonState.length}');
+      print(
+          '🔍 StateManager: Saving data preview: ${jsonState.substring(0, jsonState.length > 100 ? 100 : jsonState.length)}...');
+
+      final success = await prefs.setString('gameState', jsonState);
+      print('🔍 StateManager: Save operation result: $success');
 
       // 同时保存时间戳
       await prefs.setInt(
           'gameStateTimestamp', DateTime.now().millisecondsSinceEpoch);
 
-      if (kDebugMode) {
-        print('💾 游戏状态已保存');
+      // 验证保存是否成功
+      final verifyState = prefs.getString('gameState');
+      if (verifyState != null && verifyState == jsonState) {
+        print(
+            '✅ StateManager: Save verified successfully - Wood: ${saveState['stores']?['wood']}');
+      } else {
+        print('❌ StateManager: Save verification failed!');
       }
     } catch (e) {
       if (kDebugMode) {
@@ -286,22 +381,44 @@ class StateManager with ChangeNotifier {
   Future<void> loadGame() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final jsonState = prefs.getString('gameState');
 
-      if (jsonState != null) {
+      // 调试：列出所有保存的键
+      final keys = prefs.getKeys();
+      print('🔍 StateManager: Available keys: $keys');
+
+      final jsonState = prefs.getString('gameState');
+      print(
+          '🔍 StateManager: Raw saved data: ${jsonState?.substring(0, jsonState.length > 100 ? 100 : jsonState.length)}...');
+
+      if (jsonState != null && jsonState.isNotEmpty) {
         print('💾 StateManager: Loading saved game state');
-        _state = jsonDecode(jsonState);
-        print(
-            '📊 StateManager: Loaded state with wood: ${_state['stores']?['wood']}');
-        notifyListeners();
+        final loadedState = jsonDecode(jsonState) as Map<String, dynamic>;
+
+        // 验证加载的状态是否有效
+        if (loadedState.isNotEmpty) {
+          _state = loadedState;
+
+          // 更新旧状态格式（如果需要）
+          updateOldState();
+
+          print(
+              '📊 StateManager: Loaded state with wood: ${_state['stores']?['wood']}');
+          print('📊 StateManager: State version: ${_state['version']}');
+          notifyListeners();
+        } else {
+          print('⚠️ StateManager: Loaded state is empty, will use default');
+        }
       } else {
-        print('🆕 StateManager: No saved game found, using initial state');
+        print(
+            '🆕 StateManager: No saved game found (jsonState: $jsonState), will use default state');
       }
     } catch (e) {
       print('❌ StateManager: Error loading game: $e');
       if (kDebugMode) {
         print('Error loading game: $e');
       }
+      // 如果加载失败，保持空状态，让init()创建新状态
+      _state = {};
     }
   }
 

@@ -83,11 +83,11 @@ class Engine with ChangeNotifier {
   Future<void> init({Map<String, dynamic>? options}) async {
     this.options = {...this.options, ...?options};
 
-    // 临时：清除保存状态以确保从干净状态开始
-    await clearSaveForDebug();
-
     // 初始化状态管理器
     final sm = StateManager();
+
+    // 先加载保存的游戏状态，然后初始化StateManager
+    await sm.loadGame();
     sm.init();
 
     // 初始化音频引擎
@@ -98,9 +98,6 @@ class Engine with ChangeNotifier {
 
     // 初始化本地化
     await Localization().init();
-
-    // 加载保存的游戏
-    await loadGame();
 
     // 初始化模块
     await Room().init();
