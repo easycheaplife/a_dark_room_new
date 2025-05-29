@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../core/state_manager.dart';
@@ -14,7 +13,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final TextEditingController _importController = TextEditingController();
   String? _saveTimeInfo;
   bool _isLoading = false;
 
@@ -22,12 +20,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _loadSaveTimeInfo();
-  }
-
-  @override
-  void dispose() {
-    _importController.dispose();
-    super.dispose();
   }
 
   Future<void> _loadSaveTimeInfo() async {
@@ -63,19 +55,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 // 保存状态信息
                 _buildSaveInfoSection(stateManager),
-                
+
                 const SizedBox(height: 30),
-                
-                // 导出功能
-                _buildExportSection(stateManager),
-                
+
+                // 导入导出提示
+                _buildImportExportHintSection(),
+
                 const SizedBox(height: 30),
-                
-                // 导入功能
-                _buildImportSection(stateManager),
-                
-                const SizedBox(height: 30),
-                
+
                 // 危险操作
                 _buildDangerSection(stateManager),
               ],
@@ -130,7 +117,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildExportSection(StateManager stateManager) {
+  Widget _buildImportExportHintSection() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(15),
@@ -143,7 +130,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '📤 导出游戏',
+            '💾 导入/导出存档',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -153,81 +140,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 10),
           const Text(
-            '将当前游戏进度导出为文本，可以备份或分享给其他设备',
+            '要导入或导出游戏存档，请点击右上角的导入/导出按钮 📥',
             style: TextStyle(
               fontSize: 14,
               fontFamily: 'Times New Roman',
               color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 15),
-          ElevatedButton.icon(
-            onPressed: _isLoading ? null : () => _exportGame(stateManager),
-            icon: const Icon(Icons.download),
-            label: const Text('导出游戏数据'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildImportSection(StateManager stateManager) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.green[50],
-        border: Border.all(color: Colors.green),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '📥 导入游戏',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Times New Roman',
-              color: Colors.black,
             ),
           ),
           const SizedBox(height: 10),
           const Text(
-            '从导出的文本恢复游戏进度（会覆盖当前进度）',
+            '• 导出：将当前游戏进度保存为文本，可以备份或分享\n• 导入：从导出的文本恢复游戏进度\n• 完全兼容原游戏存档格式',
             style: TextStyle(
-              fontSize: 14,
-              fontFamily: 'Times New Roman',
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 15),
-          TextField(
-            controller: _importController,
-            maxLines: 4,
-            decoration: const InputDecoration(
-              hintText: '在此粘贴导出的游戏数据...',
-              border: OutlineInputBorder(),
-              filled: true,
-              fillColor: Colors.white,
-            ),
-            style: const TextStyle(
-              fontFamily: 'Times New Roman',
               fontSize: 12,
-            ),
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton.icon(
-            onPressed: _isLoading ? null : () => _importGame(stateManager),
-            icon: const Icon(Icons.upload),
-            label: const Text('导入游戏数据'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
+              fontFamily: 'Times New Roman',
+              color: Colors.black54,
             ),
           ),
         ],
@@ -280,117 +206,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Future<void> _exportGame(StateManager stateManager) async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final exportData = stateManager.exportGameState();
-      
-      // 复制到剪贴板
-      await Clipboard.setData(ClipboardData(text: exportData));
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✅ 游戏数据已复制到剪贴板'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('❌ 导出失败：$e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _importGame(StateManager stateManager) async {
-    final importData = _importController.text.trim();
-    
-    if (importData.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('❌ 请输入要导入的游戏数据'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
-
-    // 显示确认对话框
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('确认导入'),
-        content: const Text('导入新的游戏数据会覆盖当前进度，确定要继续吗？'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('确定'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed != true) return;
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final success = await stateManager.importGameState(importData);
-      
-      if (mounted) {
-        if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('✅ 游戏数据导入成功'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          _importController.clear();
-          await _loadSaveTimeInfo();
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('❌ 导入失败：数据格式无效'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('❌ 导入失败：$e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
   Future<void> _clearGameData(StateManager stateManager) async {
     // 显示确认对话框
     final confirmed = await showDialog<bool>(
@@ -420,7 +235,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     try {
       await stateManager.clearGameData();
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
