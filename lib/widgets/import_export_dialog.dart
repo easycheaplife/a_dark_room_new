@@ -112,7 +112,7 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
       title: const Text('导入/导出存档'),
       content: SizedBox(
         width: 400,
-        height: 300,
+        height: 320,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
