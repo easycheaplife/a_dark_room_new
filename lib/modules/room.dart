@@ -568,17 +568,8 @@ class Room with ChangeNotifier {
       changed = false;
     }
 
-    final sm = StateManager();
-    if (sm.get('game.builder.level') == 3) {
-      sm.set('game.builder.level', 4); // 直接设置为4，而不是加1
-      sm.setIncome('builder', {
-        'delay': 10,
-        'stores': {'wood': 2},
-      });
-
-      NotificationManager()
-          .notify(name, _localization.translate('room.strangerHelps'));
-    }
+    // 检查建造者升级
+    checkBuilderUpgrade();
 
     setMusic();
     notifyListeners();
@@ -840,6 +831,30 @@ class Room with ChangeNotifier {
     Engine().saveGame();
   }
 
+  // 检查并升级建造者到等级4（在onArrival时调用）
+  void checkBuilderUpgrade() {
+    final sm = StateManager();
+    final builderLevel = sm.get('game.builder.level', true) ?? -1;
+
+    // 当建造者等级为3时，升级到4并开始帮助建造
+    if (builderLevel == 3) {
+      sm.set('game.builder.level', 4);
+
+      // 设置建造者收入 - 每10秒生产2木材
+      sm.setIncome('builder', {
+        'delay': 10,
+        'stores': {'wood': 2}
+      });
+
+      NotificationManager().notify(name, '陌生人站在火边。她说她可以帮忙。说她会建造东西。');
+
+      // 更新收入视图
+      updateIncomeView();
+
+      notifyListeners();
+    }
+  }
+
   // 更新商店视图
   void updateStoresView() {
     final sm = StateManager();
@@ -1011,10 +1026,14 @@ class Room with ChangeNotifier {
 
     final builderLevel = sm.get('game.builder.level', true);
 
-    if (builderLevel < 4) return false;
+    if (builderLevel < 4) {
+      return false;
+    }
 
     final craftable = craftables[thing];
-    if (craftable == null) return false;
+    if (craftable == null) {
+      return false;
+    }
 
     if (needsWorkshop(craftable['type']) &&
         (sm.get('game.buildings.workshop', true) ?? 0) == 0) {
@@ -1029,7 +1048,9 @@ class Room with ChangeNotifier {
     }
 
     // 如果有至少一半的木材，并且所有其他组件都见过，显示按钮
-    if ((sm.get('stores.wood', true) ?? 0) < (cost['wood'] ?? 0) * 0.5) {
+    final woodHave = sm.get('stores.wood', true) ?? 0;
+    final woodNeed = (cost['wood'] ?? 0) * 0.5;
+    if (woodHave < woodNeed) {
       return false;
     }
 
