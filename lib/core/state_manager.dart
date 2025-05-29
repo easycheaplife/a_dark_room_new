@@ -307,18 +307,69 @@ class StateManager with ChangeNotifier {
     notifyListeners();
   }
 
-  // 收集所有来源的收入
+  // 收集所有来源的收入 - 按照原游戏逻辑实现
   void collectIncome() {
     if (_state['income'] == null) return;
+
+    bool changed = false;
 
     for (String source in _state['income'].keys) {
       Map<String, dynamic> income = _state['income'][source];
 
-      if (income['stores'] != null) {
-        for (String store in income['stores'].keys) {
-          add('stores.$store', income['stores'][store]);
+      // 初始化timeLeft如果不存在
+      if (income['timeLeft'] == null) {
+        income['timeLeft'] = 0;
+      }
+
+      // 减少时间
+      income['timeLeft'] = (income['timeLeft'] as int) - 1;
+
+      // 如果时间到了，收集收入
+      if (income['timeLeft'] <= 0) {
+        if (kDebugMode) {
+          print('🏭 收集来自 $source 的收入');
+        }
+
+        // 检查是否有足够的资源（对于消耗型工人）
+        bool canProduce = true;
+        if (source != 'thieves' && income['stores'] != null) {
+          final stores = income['stores'] as Map<String, dynamic>;
+          for (String store in stores.keys) {
+            final cost = stores[store];
+            if (cost < 0) {
+              // 如果是消耗资源
+              final have = get('stores.$store', true) ?? 0;
+              if (have + cost < 0) {
+                canProduce = false;
+                if (kDebugMode) {
+                  print('⚠️ $source 缺少 $store 资源，无法生产');
+                }
+                break;
+              }
+            }
+          }
+        }
+
+        // 如果可以生产，添加/消耗资源
+        if (canProduce && income['stores'] != null) {
+          final stores = income['stores'] as Map<String, dynamic>;
+          for (String store in stores.keys) {
+            final amount = stores[store];
+            add('stores.$store', amount, true); // 使用noNotify=true避免频繁通知
+          }
+          changed = true;
+        }
+
+        // 重置计时器
+        if (income['delay'] != null) {
+          income['timeLeft'] = income['delay'];
         }
       }
+    }
+
+    // 如果有变化，通知监听器
+    if (changed) {
+      notifyListeners();
     }
   }
 

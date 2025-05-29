@@ -48,12 +48,12 @@ class Outside extends ChangeNotifier {
       'stores': {'meat': -1, 'bait': 1}
     },
     'tanner': {
-      'name': '制革工',
+      'name': '皮革师',
       'delay': 10,
       'stores': {'fur': -5, 'leather': 1}
     },
     'charcutier': {
-      'name': '腌肉师',
+      'name': '熏肉师',
       'delay': 10,
       'stores': {'meat': -5, 'wood': -5, 'cured meat': 1}
     },
@@ -276,6 +276,8 @@ class Outside extends ChangeNotifier {
       final increaseAmt = min(getNumGatherers(), amount);
       // Engine().log('增加 $worker $increaseAmt'); // 暂时注释掉
       sm.add('game.workers["$worker"]', increaseAmt);
+      updateVillageIncome(); // 更新收入
+      notifyListeners();
     }
   }
 
@@ -288,6 +290,8 @@ class Outside extends ChangeNotifier {
       final decreaseAmt = min<int>(currentWorkers, amount);
       // Engine().log('减少 $worker $decreaseAmt'); // 暂时注释掉
       sm.add('game.workers["$worker"]', -decreaseAmt);
+      updateVillageIncome(); // 更新收入
+      notifyListeners();
     }
   }
 
