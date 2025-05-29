@@ -1,0 +1,366 @@
+{
+  "title": "黑暗房间",
+
+  "fire": {
+    "Dead": "熄灭",
+    "dead": "熄灭",
+    "Smoldering": "闷烧",
+    "smoldering": "闷烧",
+    "Flickering": "摇曳",
+    "flickering": "摇曳",
+    "Burning": "燃烧",
+    "burning": "燃烧",
+    "Roaring": "熊熊燃烧",
+    "roaring": "熊熊燃烧"
+  },
+
+  "temperature": {
+    "Freezing": "冰冷",
+    "freezing": "冰冷",
+    "Cold": "寒冷",
+    "cold": "寒冷",
+    "Mild": "温和",
+    "mild": "温和",
+    "Warm": "温暖",
+    "warm": "温暖",
+    "Hot": "炎热",
+    "hot": "炎热"
+  },
+
+  "room": {
+    "title": "黑暗房间",
+    "lightFire": "点火",
+    "lightFireFree": "点火 (免费)",
+    "stokeFire": "添柴",
+    "stokeFireFree": "添柴 (免费)",
+    "fireDescription": "火焰{0}",
+    "temperatureDescription": "房间{0}",
+    "strangerArrives": "一个衣衫褴褛的陌生人跌跌撞撞地走进门，倒在角落里",
+    "strangerShivers": "陌生人颤抖着，轻声嘟囔。她的话听不清楚。",
+    "strangerCalms": "角落里的陌生人停止了颤抖。她的呼吸平静下来。",
+    "strangerHelps": "陌生人站在火边。她说她可以帮忙。说她会建造东西。",
+    "needWood": "木材快用完了",
+    "outOfWood": "木材用完了",
+    "notEnoughWood": "木材不够点火",
+    "lightFromFire": "火光从窗户洒出，照进黑暗",
+    "windHowls": "外面风声呼啸",
+    "builderShivers": "建造者只是颤抖",
+    "builderStokes": "建造者添了柴",
+    "stokeProgress": "添柴进度",
+    "continueStokingToUnlockForest": "继续添柴解锁森林",
+    "gatherWood": "伐木",
+    "silentForest": "静谧森林"
+  },
+
+  "outside": {
+    "title": "静谧森林",
+    "description": "天空是灰色的，风无情地吹着",
+    "gatherWood": "收集木材",
+    "gatherWoodDesc": "干燥的灌木和枯枝散落在森林地面上",
+    "checkTraps": "检查陷阱",
+    "checkTrapsDesc": "查看陷阱是否捕获了什么",
+    "goHunting": "去狩猎",
+    "huntingDesc": "在森林深处寻找猎物",
+    "village": {
+      "title": "村庄",
+      "population": "人口",
+      "workers": "工人",
+      "unemployed": "失业者",
+      "sick": "生病",
+      "starving": "饥饿"
+    },
+    "traps": {
+      "nothing": "什么都没有",
+      "fur": "一些毛皮",
+      "meat": "一些肉",
+      "scales": "一些鳞片",
+      "teeth": "一些牙齿",
+      "cloth": "一些布料",
+      "charm": "一个护身符"
+    },
+    "hunting": {
+      "nothing": "什么都没找到",
+      "rabbit": "捕获了一只兔子",
+      "squirrel": "捕获了一只松鼠",
+      "bird": "捕获了一只鸟",
+      "deer": "捕获了一只鹿",
+      "bear": "遭遇了一只熊！",
+      "wolf": "遭遇了一只狼！"
+    }
+  },
+
+  "path": {
+    "title": "尘土小径",
+    "description": "一条尘土飞扬的小径穿过森林",
+    "compassPoints": "指南针指向东方",
+    "embark": "出发",
+    "embarkDesc": "沿着小径向前走",
+    "locations": {
+      "outpost": "前哨站",
+      "city": "城市",
+      "house": "房屋",
+      "cave": "洞穴",
+      "town": "小镇",
+      "battlefield": "战场",
+      "borehole": "钻孔",
+      "ship": "飞船"
+    },
+    "events": {
+      "nothing": "什么都没发生",
+      "supplies": "发现了一些补给",
+      "stranger": "遇到了一个陌生人",
+      "thieves": "遭遇了盗贼！",
+      "beast": "遭遇了野兽！",
+      "soldiers": "遇到了士兵"
+    }
+  },
+
+  "world": {
+    "title": "荒芜世界",
+    "description": "一个荒凉的世界展现在眼前",
+    "locations": {
+      "outpost": "前哨站",
+      "city": "城市",
+      "house": "房屋",
+      "cave": "洞穴",
+      "town": "小镇",
+      "battlefield": "战场",
+      "borehole": "钻孔"
+    },
+    "actions": {
+      "explore": "探索",
+      "scavenge": "搜寻",
+      "rest": "休息",
+      "leave": "离开"
+    }
+  },
+
+  "fabricator": {
+    "title": "制造器",
+    "description": "制造器嗡嗡作响",
+    "items": {
+      "engine": "引擎",
+      "hull": "船体",
+      "thruster": "推进器",
+      "laser": "激光器",
+      "plasma": "等离子炮",
+      "shield": "护盾"
+    },
+    "actions": {
+      "build": "制造",
+      "upgrade": "升级",
+      "repair": "修理"
+    }
+  },
+
+  "ship": {
+    "title": "飞船",
+    "description": "飞船的系统安静地嗡鸣着",
+    "systems": {
+      "engine": "引擎",
+      "hull": "船体",
+      "thrusters": "推进器",
+      "weapons": "武器系统",
+      "shields": "护盾系统"
+    },
+    "actions": {
+      "launch": "发射",
+      "land": "着陆",
+      "explore": "探索",
+      "return": "返回"
+    },
+    "status": {
+      "ready": "准备就绪",
+      "damaged": "受损",
+      "offline": "离线",
+      "charging": "充电中"
+    }
+  },
+
+  "resources": {
+    "title": "库存",
+    "wood": "木材",
+    "meat": "肉类",
+    "bait": "诱饵",
+    "fur": "毛皮",
+    "leather": "皮革",
+    "cured meat": "腌肉",
+    "cured_meat": "腌肉",
+    "iron": "铁",
+    "coal": "煤炭",
+    "sulphur": "硫磺",
+    "steel": "钢铁",
+    "bullets": "子弹",
+    "scales": "鳞片",
+    "teeth": "牙齿",
+    "medicine": "药品",
+    "compass": "指南针",
+    "torch": "火把",
+    "knife": "刀",
+    "rifle": "步枪",
+    "iron sword": "铁剑",
+    "steel sword": "钢剑",
+    "bone spear": "骨矛",
+    "bolas": "流星锤",
+    "grenade": "手榴弹",
+    "bayonet": "刺刀",
+    "laser rifle": "激光步枪",
+    "waterskin": "水袋",
+    "cask": "木桶",
+    "water tank": "水箱",
+    "rucksack": "背包",
+    "wagon": "马车",
+    "convoy": "车队",
+    "l armour": "皮甲",
+    "i armour": "铁甲",
+    "s armour": "钢甲",
+    "energy cell": "能量电池",
+    "energy_cell": "能量电池",
+    "alien alloy": "外星合金",
+    "alien_alloy": "外星合金"
+  },
+
+  "buildings": {
+    "title": "建筑",
+    "trap": "陷阱",
+    "cart": "货车",
+    "hut": "小屋",
+    "lodge": "狩猎小屋",
+    "trading_post": "贸易站",
+    "tannery": "制革厂",
+    "smokehouse": "熏制房",
+    "workshop": "工作坊",
+    "steelworks": "钢铁厂",
+    "armoury": "军械库",
+    "torch": "火把",
+    "waterskin": "水袋",
+    "cask": "木桶",
+    "wagon": "马车",
+    "convoy": "车队",
+    "descriptions": {
+      "trap": "捕捉小动物",
+      "cart": "增加木材收集量",
+      "hut": "为村民提供住所",
+      "lodge": "吸引更多村民",
+      "trading_post": "与商人进行贸易",
+      "tannery": "将毛皮制成皮革",
+      "smokehouse": "将肉类制成腌肉",
+      "workshop": "制作工具和武器",
+      "steelworks": "冶炼钢铁",
+      "armoury": "制造武器和弹药"
+    },
+    "costs": {
+      "trap": "需要: 木材 10",
+      "cart": "需要: 木材 30",
+      "hut": "需要: 木材 100",
+      "lodge": "需要: 木材 200, 毛皮 10",
+      "trading_post": "需要: 木材 400, 毛皮 100",
+      "tannery": "需要: 木材 500, 皮革 50",
+      "smokehouse": "需要: 木材 600, 肉类 50",
+      "workshop": "需要: 木材 800, 皮革 100, 钢铁 50",
+      "steelworks": "需要: 木材 1500, 铁 100, 煤炭 100",
+      "armoury": "需要: 木材 3000, 钢铁 100, 硫磺 50"
+    }
+  },
+
+  "actions": {
+    "build": "建造",
+    "craft": "制作",
+    "buy": "购买",
+    "sell": "出售",
+    "gather": "收集",
+    "check": "检查",
+    "hunt": "狩猎",
+    "explore": "探索"
+  },
+
+  "ui": {
+    "free": "免费",
+    "cost": "需要",
+    "have": "拥有",
+    "max": "最大",
+    "income": "收入",
+    "per_second": "每秒",
+    "workers": "工人",
+    "population": "人口",
+    "trading": "交易",
+    "fire": "火焰",
+    "room": "房间"
+  },
+
+  "notifications": {
+    "the_fire_is": "火焰",
+    "the_room_is": "房间",
+    "builder_just_shivers": "建造者只是颤抖",
+    "not_enough": "不够",
+    "dry_brush": "干燥的灌木和枯枝散落在森林地面上",
+    "traps_yield": "陷阱里有{0}",
+    "nothing_in_traps": "陷阱里什么都没有",
+    "gained_wood": "获得了{0}个木材",
+    "gained_meat": "获得了{0}个肉类",
+    "gained_fur": "获得了{0}个毛皮",
+    "used_bait": "使用了{0}个诱饵",
+    "population_grows": "人口增长到{0}",
+    "workers_needed": "需要更多工人",
+    "building_complete": "{0}建造完成",
+    "not_enough_resources": "资源不足",
+    "thieves_attack": "盗贼袭击了村庄！",
+    "thieves_steal": "盗贼偷走了{0}",
+    "beast_attack": "野兽袭击！",
+    "soldiers_arrive": "士兵到达了村庄"
+  },
+
+  "events": {
+    "title": "事件",
+    "stranger_arrives": {
+      "title": "陌生人到达",
+      "description": "一个衣衫褴褛的陌生人跌跌撞撞地走进门",
+      "options": {
+        "help": "帮助她",
+        "ignore": "忽视她",
+        "turn_away": "赶走她"
+      }
+    },
+    "thieves": {
+      "title": "盗贼",
+      "description": "一群盗贼威胁着村庄",
+      "options": {
+        "fight": "战斗",
+        "pay": "支付赎金",
+        "hide": "躲藏"
+      }
+    },
+    "beast": {
+      "title": "野兽",
+      "description": "一只凶猛的野兽出现在森林边缘",
+      "options": {
+        "fight": "战斗",
+        "run": "逃跑",
+        "trap": "设置陷阱"
+      }
+    },
+    "merchant": {
+      "title": "商人",
+      "description": "一个商人来到村庄",
+      "options": {
+        "trade": "交易",
+        "rob": "抢劫",
+        "ignore": "忽视"
+      }
+    }
+  },
+
+  "formats": {
+    "cost_format": "需要: {0}",
+    "have_format": "拥有: {0}",
+    "workers_format": "工人: {0}",
+    "population_format": "人口: {0}",
+    "income_format": "收入: {0}/秒",
+    "time_format": "{0}天 {1}小时",
+    "distance_format": "{0}公里",
+    "health_format": "生命值: {0}/{1}",
+    "fuel_format": "燃料: {0}%",
+    "and": "和",
+    "or": "或"
+  }
+}
