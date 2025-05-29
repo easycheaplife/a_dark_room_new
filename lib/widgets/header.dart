@@ -10,6 +10,7 @@ import '../modules/world.dart';
 import '../modules/fabricator.dart';
 import '../modules/ship.dart';
 import '../screens/settings_screen.dart';
+import 'import_export_dialog.dart';
 
 /// Header displays the navigation tabs for different game modules
 /// 基于原始游戏的header.js实现
@@ -98,6 +99,20 @@ class Header extends StatelessWidget {
               // 右侧空间填充
               const Spacer(),
 
+              // 导入/导出按钮
+              Container(
+                margin: const EdgeInsets.only(right: 5),
+                child: IconButton(
+                  onPressed: () => _openImportExport(context),
+                  icon: const Icon(
+                    Icons.save_alt,
+                    color: Colors.black,
+                    size: 20,
+                  ),
+                  tooltip: '导入/导出存档',
+                ),
+              ),
+
               // 设置按钮
               Container(
                 margin: const EdgeInsets.only(right: 10),
@@ -142,6 +157,14 @@ class Header extends StatelessWidget {
         engine.travelTo(Provider.of<Ship>(context, listen: false));
         break;
     }
+  }
+
+  // 打开导入/导出对话框
+  void _openImportExport(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const ImportExportDialog(),
+    );
   }
 
   // 打开设置页面

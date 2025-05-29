@@ -77,20 +77,57 @@ class RoomScreen extends StatelessWidget {
         cost: isFree ? null : {'wood': 5},
         width: 80,
         free: isFree,
+        showCost: false, // 不显示成本信息
         progressDuration: 10000, // 10秒点火时间，与原游戏一致
         tooltip: isFree ? '点燃火堆 (免费)' : '点燃火堆 (消耗 5 木材)',
       );
     } else {
       // 火焰燃烧 - 显示添柴按钮
-      return ProgressButton(
-        text: '添柴',
-        onPressed: () => room.stokeFire(),
-        cost: isFree ? null : {'wood': 1},
-        width: 80,
-        free: isFree,
-        progressDuration: 10000, // 10秒添柴时间，与原游戏一致
-        tooltip: isFree ? '添柴 (免费)' : '添柴 (消耗 1 木材)',
-      );
+      // 如果正在添柴，显示进度
+      if (room.isStoking) {
+        return Container(
+          width: 80,
+          height: 40,
+          margin: const EdgeInsets.only(bottom: 5),
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            border: Border.all(color: Colors.black, width: 1),
+          ),
+          child: Stack(
+            children: [
+              // 进度条填充
+              Container(
+                width: 80 * room.stokeProgress,
+                height: 40,
+                color: Colors.blue[300]?.withValues(alpha: 0.7),
+              ),
+              // 进度文本
+              Center(
+                child: Text(
+                  '${(room.stokeProgress * 100).toInt()}%',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 12,
+                    fontFamily: 'Times New Roman',
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      } else {
+        return ProgressButton(
+          text: '添柴',
+          onPressed: () => room.stokeFire(),
+          cost: isFree ? null : {'wood': 1},
+          width: 80,
+          free: isFree,
+          showCost: false, // 不显示成本信息
+          progressDuration: 10000, // 10秒添柴时间，与原游戏一致
+          tooltip: isFree ? '添柴 (免费)' : '添柴 (消耗 1 木材)',
+        );
+      }
     }
   }
 

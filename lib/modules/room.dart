@@ -42,6 +42,11 @@ class Room with ChangeNotifier {
   Timer? _tempTimer;
   Timer? _builderTimer;
 
+  // 全局进度管理
+  Timer? _stokeProgressTimer;
+  bool _isStoking = false;
+  double _stokeProgress = 0.0;
+
   // 状态
   bool changed = false;
   bool pathDiscovery = false;
@@ -631,8 +636,29 @@ class Room with ChangeNotifier {
     onFireChange();
   }
 
-  // 添柴
-  void stokeFire() {
+  // 开始添柴进度
+  void startStokeFire() {
+    if (_isStoking) return; // 如果已经在添柴，不重复开始
+
+    _isStoking = true;
+    _stokeProgress = 0.0;
+    notifyListeners();
+
+    // 启动进度计时器
+    _stokeProgressTimer =
+        Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      _stokeProgress += 0.01; // 每100ms增加1%
+      notifyListeners();
+
+      if (_stokeProgress >= 1.0) {
+        timer.cancel();
+        _completeStokeAction();
+      }
+    });
+  }
+
+  // 完成添柴动作
+  void _completeStokeAction() {
     final sm = StateManager();
     final wood = sm.get('stores.wood', true) ?? 0;
 
@@ -646,22 +672,35 @@ class Room with ChangeNotifier {
 
       AudioEngine().playSound(AudioLibrary.stokeFire);
       onFireChange();
-      return;
+    } else {
+      // 如果有木材，消耗1个
+      sm.set('stores.wood', wood - 1);
+
+      final fireValue = sm.get('game.fire.value', true) ?? 0;
+      if (fireValue < 4) {
+        sm.set('game.fire.value', fireValue + 1);
+      }
+
+      AudioEngine().playSound(AudioLibrary.stokeFire);
+      onFireChange();
     }
 
-    // 如果有木材，消耗1个
-    sm.set('stores.wood', wood - 1);
-
-    final fireValue = sm.get('game.fire.value', true) ?? 0;
-    if (fireValue < 4) {
-      sm.set('game.fire.value', fireValue + 1);
-    }
-
-    // 移除添柴计数器逻辑 - 森林解锁应该通过建造者状态触发
-
-    AudioEngine().playSound(AudioLibrary.stokeFire);
-    onFireChange();
+    // 重置进度状态
+    _isStoking = false;
+    _stokeProgress = 0.0;
+    _stokeProgressTimer?.cancel();
+    _stokeProgressTimer = null;
+    notifyListeners();
   }
+
+  // 添柴 - 保持原有接口兼容性
+  void stokeFire() {
+    startStokeFire();
+  }
+
+  // 获取添柴进度状态
+  bool get isStoking => _isStoking;
+  double get stokeProgress => _stokeProgress;
 
   // 处理火焰状态变化
   void onFireChange() {

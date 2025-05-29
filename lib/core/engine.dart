@@ -323,16 +323,16 @@ class Engine with ChangeNotifier {
     // 这里先提供基础的导出/导入功能
   }
 
-  // 生成Base64编码的存档
+  // 生成Base64编码的存档 - 兼容原游戏格式
   Future<String> generateExport64() async {
-    final prefs = await SharedPreferences.getInstance();
-    final gameState = prefs.getString('gameState') ?? '{}';
+    // 使用StateManager的导出功能，确保格式兼容
+    final gameStateJson = StateManager().exportGameState();
 
-    // 使用base64编码
-    final bytes = utf8.encode(gameState);
+    // 使用base64编码，与原游戏一致
+    final bytes = utf8.encode(gameStateJson);
     String string64 = base64Encode(bytes);
 
-    // 清理字符串（移除空格、点和换行符）
+    // 清理字符串（移除空格、点和换行符），与原游戏一致
     string64 = string64.replaceAll(RegExp(r'\s'), '');
     string64 = string64.replaceAll('.', '');
     string64 = string64.replaceAll('\n', '');
@@ -346,12 +346,12 @@ class Engine with ChangeNotifier {
     return await generateExport64();
   }
 
-  // 导入存档
-  Future<void> import64(String string64) async {
+  // 导入存档 - 兼容原游戏格式
+  Future<bool> import64(String string64) async {
     try {
       event('progress', 'import');
 
-      // 清理输入字符串
+      // 清理输入字符串，与原游戏一致
       string64 = string64.replaceAll(RegExp(r'\s'), '');
       string64 = string64.replaceAll('.', '');
       string64 = string64.replaceAll('\n', '');
@@ -360,17 +360,27 @@ class Engine with ChangeNotifier {
       final bytes = base64Decode(string64);
       final decodedSave = utf8.decode(bytes);
 
-      // 保存到SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('gameState', decodedSave);
+      // 使用StateManager的导入功能
+      final success = await StateManager().importGameState(decodedSave);
 
-      // 重新初始化游戏
-      await init();
+      if (success) {
+        // 重新初始化游戏
+        await init();
+        if (kDebugMode) {
+          print('✅ 存档导入成功');
+        }
+        return true;
+      } else {
+        if (kDebugMode) {
+          print('❌ 存档导入失败');
+        }
+        return false;
+      }
     } catch (e) {
       if (kDebugMode) {
-        print('导入存档时出错: $e');
+        print('❌ 导入存档时出错: $e');
       }
-      // 可以显示错误消息给用户
+      return false;
     }
   }
 

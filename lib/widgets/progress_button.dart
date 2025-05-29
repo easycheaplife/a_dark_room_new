@@ -11,6 +11,7 @@ class ProgressButton extends StatefulWidget {
   final bool free;
   final int progressDuration; // 进度持续时间（毫秒）
   final String? tooltip; // 悬停提示
+  final bool showCost; // 是否显示成本信息
 
   const ProgressButton({
     super.key,
@@ -22,6 +23,7 @@ class ProgressButton extends StatefulWidget {
     this.free = false,
     this.progressDuration = 2000, // 默认2秒
     this.tooltip,
+    this.showCost = true, // 默认显示成本
   });
 
   @override
@@ -127,8 +129,10 @@ class _ProgressButtonState extends State<ProgressButton>
                         ),
                       ),
 
-                      // 成本显示
-                      if (widget.cost != null && !widget.free) ...[
+                      // 成本显示 - 只在showCost为true时显示
+                      if (widget.cost != null &&
+                          !widget.free &&
+                          widget.showCost) ...[
                         const SizedBox(height: 1),
                         Flexible(
                           child: Text(

@@ -632,13 +632,83 @@ class StateManager with ChangeNotifier {
     });
   }
 
-  // 导出游戏状态为JSON字符串
+  // 确保状态结构完整 - 用于导入时
+  void _ensureStateStructure() {
+    // 确保基本分类存在
+    final categories = [
+      'features',
+      'stores',
+      'character',
+      'income',
+      'timers',
+      'game',
+      'playStats',
+      'previous',
+      'outfit',
+      'config',
+      'wait',
+      'cooldown'
+    ];
+
+    for (String category in categories) {
+      if (_state[category] == null) {
+        _state[category] = {};
+      }
+    }
+
+    // 确保版本号存在
+    if (_state['version'] == null) {
+      _state['version'] = 1.3;
+    }
+
+    // 确保基本配置存在
+    if (_state['config'] != null) {
+      final config = _state['config'] as Map<String, dynamic>;
+      config['lightsOff'] ??= false;
+      config['hyperMode'] ??= false;
+      config['soundOn'] ??= true;
+    }
+
+    // 确保游戏状态存在
+    if (_state['game'] != null) {
+      final game = _state['game'] as Map<String, dynamic>;
+      game['fire'] ??= {'value': 0};
+      game['temperature'] ??= {'value': 0};
+      game['builder'] ??= {'level': -1};
+      game['buildings'] ??= {};
+      game['workers'] ??= {};
+      game['population'] ??= 0;
+      game['thieves'] ??= false;
+      game['stolen'] ??= {};
+      game['stokeCount'] ??= 0;
+    }
+
+    // 确保特性状态存在
+    if (_state['features'] != null) {
+      final features = _state['features'] as Map<String, dynamic>;
+      features['location'] ??= {};
+      final location = features['location'] as Map<String, dynamic>;
+      location['room'] ??= true;
+    }
+
+    // 确保stores存在
+    if (_state['stores'] == null) {
+      _state['stores'] = {};
+    }
+  }
+
+  // 导出游戏状态为JSON字符串 - 兼容原游戏格式
   String exportGameState() {
     try {
-      // 添加导出时间戳
+      // 创建与原游戏完全兼容的状态格式
       final exportData = Map<String, dynamic>.from(_state);
-      exportData['exportTimestamp'] = DateTime.now().millisecondsSinceEpoch;
-      exportData['exportVersion'] = '1.0';
+
+      // 确保版本号与原游戏一致
+      exportData['version'] = 1.3;
+
+      // 移除Flutter特有的字段
+      exportData.remove('exportTimestamp');
+      exportData.remove('exportVersion');
 
       return jsonEncode(exportData);
     } catch (e) {
@@ -649,7 +719,7 @@ class StateManager with ChangeNotifier {
     }
   }
 
-  // 从JSON字符串导入游戏状态
+  // 从JSON字符串导入游戏状态 - 兼容原游戏格式
   Future<bool> importGameState(String jsonData) async {
     try {
       final importedData = jsonDecode(jsonData) as Map<String, dynamic>;
@@ -662,7 +732,7 @@ class StateManager with ChangeNotifier {
         return false;
       }
 
-      // 移除导出相关的元数据
+      // 移除导出相关的元数据（如果存在）
       importedData.remove('exportTimestamp');
       importedData.remove('exportVersion');
 
@@ -672,6 +742,9 @@ class StateManager with ChangeNotifier {
       try {
         // 导入新状态
         _state = importedData;
+
+        // 确保状态结构完整
+        _ensureStateStructure();
 
         // 更新旧状态格式（如果需要）
         updateOldState();
@@ -684,6 +757,7 @@ class StateManager with ChangeNotifier {
 
         if (kDebugMode) {
           print('✅ 游戏状态导入成功');
+          print('📊 导入后的木材数量: ${_state['stores']?['wood']}');
         }
 
         return true;
