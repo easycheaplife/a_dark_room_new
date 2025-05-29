@@ -250,9 +250,8 @@ class StateManager with ChangeNotifier {
 
     if (current == null) {
       set(path, value, noNotify);
-    } else if (current is double && value is double) {
-      set(path, current + value, noNotify);
-    } else if (current is int && value is int) {
+    } else if ((current is num) && (value is num)) {
+      // 处理所有数字类型的组合 (int, double)
       set(path, current + value, noNotify);
     } else if (current is String && value is String) {
       set(path, current + value, noNotify);
@@ -321,8 +320,12 @@ class StateManager with ChangeNotifier {
         income['timeLeft'] = 0;
       }
 
-      // 减少时间
-      income['timeLeft'] = (income['timeLeft'] as int) - 1;
+      // 减少时间 - 确保timeLeft是int类型
+      final currentTimeLeft = income['timeLeft'];
+      income['timeLeft'] = (currentTimeLeft is int
+              ? currentTimeLeft
+              : (currentTimeLeft as num).toInt()) -
+          1;
 
       // 如果时间到了，收集收入
       if (income['timeLeft'] <= 0) {
@@ -360,9 +363,10 @@ class StateManager with ChangeNotifier {
           changed = true;
         }
 
-        // 重置计时器
+        // 重置计时器 - 确保delay转换为int
         if (income['delay'] != null) {
-          income['timeLeft'] = income['delay'];
+          final delay = income['delay'];
+          income['timeLeft'] = delay is int ? delay : (delay as num).toInt();
         }
       }
     }
