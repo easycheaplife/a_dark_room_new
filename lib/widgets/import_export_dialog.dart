@@ -11,17 +11,9 @@ class ImportExportDialog extends StatefulWidget {
 }
 
 class _ImportExportDialogState extends State<ImportExportDialog> {
-  final TextEditingController _textController = TextEditingController();
   bool _isLoading = false;
-  String? _exportData;
 
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
-
-  // 导出存档
+  // 导出存档并直接复制到剪贴板
   Future<void> _exportSave() async {
     setState(() {
       _isLoading = true;
@@ -29,10 +21,10 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
 
     try {
       final exportData = await Engine().export64();
-      setState(() {
-        _exportData = exportData;
-        _textController.text = exportData;
-      });
+
+      // 直接复制到剪贴板
+      await Clipboard.setData(ClipboardData(text: exportData));
+      _showSuccessDialog('存档已导出并复制到剪贴板！');
     } catch (e) {
       _showErrorDialog('导出失败: $e');
     } finally {
@@ -42,20 +34,25 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
     }
   }
 
-  // 导入存档
+  // 从剪贴板导入存档
   Future<void> _importSave() async {
-    final importData = _textController.text.trim();
-    if (importData.isEmpty) {
-      _showErrorDialog('请输入存档数据');
-      return;
-    }
-
     setState(() {
       _isLoading = true;
     });
 
     try {
+      // 从剪贴板读取数据
+      final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+      if (clipboardData == null ||
+          clipboardData.text == null ||
+          clipboardData.text!.trim().isEmpty) {
+        _showErrorDialog('剪贴板中没有存档数据');
+        return;
+      }
+
+      final importData = clipboardData.text!.trim();
       final success = await Engine().import64(importData);
+
       if (mounted) {
         if (success) {
           Navigator.of(context).pop();
@@ -74,38 +71,6 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
           _isLoading = false;
         });
       }
-    }
-  }
-
-  // 从文件导入 - 暂时禁用
-  Future<void> _importFromFile() async {
-    _showErrorDialog('文件导入功能暂时不可用，请使用复制粘贴方式');
-  }
-
-  // 保存到文件 - 暂时禁用
-  Future<void> _saveToFile() async {
-    _showErrorDialog('文件保存功能暂时不可用，请使用复制功能');
-  }
-
-  // 复制到剪贴板
-  void _copyToClipboard() {
-    if (_exportData != null && _exportData!.isNotEmpty) {
-      Clipboard.setData(ClipboardData(text: _exportData!));
-      _showSuccessDialog('存档数据已复制到剪贴板');
-    }
-  }
-
-  // 从剪贴板粘贴
-  Future<void> _pasteFromClipboard() async {
-    try {
-      final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-      if (clipboardData != null && clipboardData.text != null) {
-        setState(() {
-          _textController.text = clipboardData.text!.trim();
-        });
-      }
-    } catch (e) {
-      _showErrorDialog('粘贴失败: $e');
     }
   }
 
@@ -146,99 +111,95 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
     return AlertDialog(
       title: const Text('导入/导出存档'),
       content: SizedBox(
-        width: 500,
-        height: 400,
+        width: 400,
+        height: 300,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 导出区域
-            const Text(
-              '导出存档:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _exportSave,
-                  child: const Text('导出'),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: _exportData != null ? _copyToClipboard : null,
-                  child: const Text('复制'),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: _exportData != null ? _saveToFile : null,
-                  child: const Text('保存到文件'),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-            const Divider(),
-            const SizedBox(height: 16),
-
-            // 导入区域
-            const Text(
-              '导入存档:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _pasteFromClipboard,
-                  child: const Text('粘贴'),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _importFromFile,
-                  child: const Text('从文件导入'),
-                ),
-              ],
+            // 说明文字
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue[50],
+                border: Border.all(color: Colors.blue[200]!),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '📋 剪贴板操作',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    '• 导出：将存档数据自动复制到剪贴板\n• 导入：从剪贴板读取存档数据\n• 完全兼容原游戏存档格式',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ],
+              ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 24),
 
-            // 文本输入框
-            Expanded(
-              child: TextField(
-                controller: _textController,
-                maxLines: null,
-                expands: true,
-                decoration: const InputDecoration(
-                  hintText: '在此粘贴存档数据...',
-                  border: OutlineInputBorder(),
+            // 导出按钮
+            SizedBox(
+              height: 50,
+              child: ElevatedButton.icon(
+                onPressed: _isLoading ? null : _exportSave,
+                icon: const Icon(Icons.download),
+                label: const Text(
+                  '导出存档到剪贴板',
+                  style: TextStyle(fontSize: 16),
                 ),
-                style: const TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 12,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
                 ),
               ),
             ),
 
             const SizedBox(height: 16),
 
-            // 操作按钮
+            // 导入按钮
+            SizedBox(
+              height: 50,
+              child: ElevatedButton.icon(
+                onPressed: _isLoading ? null : _importSave,
+                icon: _isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : const Icon(Icons.upload),
+                label: Text(
+                  _isLoading ? '导入中...' : '从剪贴板导入存档',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ),
+
+            const Spacer(),
+
+            // 关闭按钮
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('取消'),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _importSave,
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('导入'),
+                  child: const Text('关闭'),
                 ),
               ],
             ),
