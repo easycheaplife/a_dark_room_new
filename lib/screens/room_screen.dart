@@ -19,43 +19,49 @@ class RoomScreen extends StatelessWidget {
           width: 700,
           height: 700,
           color: Colors.white,
-          child: Stack(
-            children: [
-              // 火焰控制按钮 - 左上角
-              Positioned(
-                left: 0,
-                top: 0,
-                child: _buildFireButtons(room, stateManager),
-              ),
+          child: SingleChildScrollView(
+            child: SizedBox(
+              width: 700,
+              height: 1000, // 确保有足够的高度支持滚动
+              child: Stack(
+                children: [
+                  // 火焰控制按钮 - 左上角
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    child: _buildFireButtons(room, stateManager),
+                  ),
 
-              // 建造按钮区域 - 原游戏位置: top: 50px, left: 0px
-              Positioned(
-                left: 0,
-                top: 50,
-                child: _buildBuildButtons(room, stateManager),
-              ),
+                  // 建造按钮区域 - 原游戏位置: top: 50px, left: 0px
+                  Positioned(
+                    left: 0,
+                    top: 50,
+                    child: _buildBuildButtons(room, stateManager),
+                  ),
 
-              // 制作按钮区域 - 原游戏位置: top: 50px, left: 150px
-              Positioned(
-                left: 150,
-                top: 50,
-                child: _buildCraftButtons(room, stateManager),
-              ),
+                  // 制作按钮区域 - 原游戏位置: top: 50px, left: 150px
+                  Positioned(
+                    left: 150,
+                    top: 50,
+                    child: _buildCraftButtons(room, stateManager),
+                  ),
 
-              // 购买按钮区域 - 原游戏位置: top: 50px, left: 300px
-              Positioned(
-                left: 300,
-                top: 50,
-                child: _buildBuyButtons(room, stateManager),
-              ),
+                  // 购买按钮区域 - 原游戏位置: top: 50px, left: 300px
+                  Positioned(
+                    left: 300,
+                    top: 50,
+                    child: _buildBuyButtons(room, stateManager),
+                  ),
 
-              // 库存容器 - 原游戏位置: top: 0px, right: 0px
-              Positioned(
-                right: 0,
-                top: 0,
-                child: _buildStoresContainer(stateManager),
+                  // 库存容器 - 原游戏位置: top: 0px, right: 0px
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: _buildStoresContainer(stateManager),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         );
       },
@@ -77,9 +83,8 @@ class RoomScreen extends StatelessWidget {
         cost: isFree ? null : {'wood': 5},
         width: 80,
         free: isFree,
-        showCost: false, // 不显示成本信息
+        showCost: true, // 显示成本信息，与原游戏一致
         progressDuration: 10000, // 10秒点火时间，与原游戏一致
-        tooltip: isFree ? '点燃火堆 (免费)' : '点燃火堆 (消耗 5 木材)',
       );
     } else {
       // 火焰燃烧 - 显示添柴按钮
@@ -89,9 +94,8 @@ class RoomScreen extends StatelessWidget {
         cost: isFree ? null : {'wood': 1},
         width: 80,
         free: isFree,
-        showCost: false, // 不显示成本信息
+        showCost: true, // 显示成本信息，与原游戏一致
         progressDuration: 10000, // 10秒添柴冷却时间，与原游戏一致
-        tooltip: isFree ? '添柴 (免费)' : '添柴 (消耗 1 木材)',
       );
     }
   }

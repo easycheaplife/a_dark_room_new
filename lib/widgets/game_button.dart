@@ -71,7 +71,7 @@ class _GameButtonState extends State<GameButton> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              localization.translate('resources.${entry.key}'),
+                              _getLocalizedResourceName(entry.key),
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 14,
@@ -102,6 +102,35 @@ class _GameButtonState extends State<GameButton> {
   void _removeTooltip() {
     _overlayEntry?.remove();
     _overlayEntry = null;
+  }
+
+  // 获取本地化资源名称
+  String _getLocalizedResourceName(String resourceKey) {
+    const resourceNames = {
+      'wood': '木材',
+      'fur': '毛皮',
+      'meat': '肉类',
+      'bait': '诱饵',
+      'leather': '皮革',
+      'cured meat': '腌肉',
+      'iron': '铁',
+      'coal': '煤炭',
+      'sulphur': '硫磺',
+      'steel': '钢铁',
+      'bullets': '子弹',
+      'cloth': '布料',
+      'teeth': '牙齿',
+      'scales': '鳞片',
+      'bone': '骨头',
+      'alien alloy': '外星合金',
+      'energy cell': '能量电池',
+      'torch': '火把',
+      'waterskin': '水袋',
+      'cask': '水桶',
+      'water tank': '水箱',
+      'compass': '指南针',
+    };
+    return resourceNames[resourceKey] ?? resourceKey;
   }
 
   @override

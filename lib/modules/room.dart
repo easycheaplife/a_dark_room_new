@@ -1071,10 +1071,19 @@ class Room with ChangeNotifier {
   // 检查购买是否解锁
   bool buyUnlocked(String thing) {
     final sm = StateManager();
+    final hasTradingPost =
+        (sm.get('game.buildings["trading post"]', true) ?? 0) > 0;
 
-    if ((sm.get('game.buildings["trading post"]', true) ?? 0) > 0) {
-      if (thing == 'compass' || (sm.get('stores.$thing', true) ?? 0) > 0) {
-        // 一旦见过就允许购买
+    if (hasTradingPost) {
+      // 指南针特殊处理：即使没有见过也可以购买（原游戏逻辑）
+      if (thing == 'compass') {
+        return true;
+      }
+
+      // 其他物品：一旦见过就允许购买（包括数量为0的情况）
+      final hasSeenItem = sm.get('stores["$thing"]', true) != null;
+
+      if (hasSeenItem) {
         return true;
       }
     }
@@ -1370,7 +1379,9 @@ class Room with ChangeNotifier {
     final sm = StateManager();
 
     final good = tradeGoods[thing];
-    if (good == null) return;
+    if (good == null) {
+      return;
+    }
 
     final numThings = sm.get('stores["$thing"]', true) ?? 0;
     final maximum = good['maximum'] ?? 999999;
@@ -1390,7 +1401,7 @@ class Room with ChangeNotifier {
     }
 
     // 检查资源是否足够
-    Map<String, int> storeMod = {};
+    Map<String, num> storeMod = {};
     for (var k in cost.keys) {
       final have = sm.get('stores["$k"]', true) ?? 0;
       if (have < cost[k]!) {
