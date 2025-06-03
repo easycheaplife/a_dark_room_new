@@ -4,6 +4,7 @@ import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/engine.dart';
 import 'room.dart';
+import 'world.dart';
 
 /// 路径模块 - 处理装备和出发到世界地图
 /// 包括装备管理、背包空间、物品重量等功能
@@ -19,7 +20,7 @@ class Path extends ChangeNotifier {
   Path._internal();
 
   // 模块名称
-  final String name = "路径";
+  final String name = "漫漫尘途";
 
   // 常量
   static const int defaultBagSpace = 10;
@@ -106,6 +107,16 @@ class Path extends ChangeNotifier {
       num += n * getWeight(k);
     }
     return getCapacity() - num;
+  }
+
+  /// 获取总重量
+  double getTotalWeight() {
+    double num = 0;
+    for (final k in outfit.keys) {
+      final n = outfit[k] ?? 0;
+      num += n * getWeight(k);
+    }
+    return num;
   }
 
   /// 更新技能显示
@@ -201,7 +212,8 @@ class Path extends ChangeNotifier {
     if (getFreeSpace() >= getWeight(supply) && cur < available) {
       final maxExtraByWeight = (getFreeSpace() / getWeight(supply)).floor();
       final maxExtraByStore = available - cur;
-      outfit[supply] = cur + min(amount, min(maxExtraByWeight, maxExtraByStore));
+      outfit[supply] =
+          cur + min(amount, min(maxExtraByWeight, maxExtraByStore));
       sm.set('outfit[$supply]', outfit[supply]);
       updateOutfitting();
     }
@@ -234,27 +246,45 @@ class Path extends ChangeNotifier {
   /// 设置标题
   void setTitle() {
     // 在Flutter中，标题设置将通过状态管理处理
-    // document.title = '尘土飞扬的小径';
+    // document.title = '漫漫尘途';
   }
 
   /// 出发到世界地图
   void embark() {
+    print('🚀 Path.embark() 被调用');
     final sm = StateManager();
 
-    // 扣除装备中的物品
-    for (final k in outfit.keys) {
-      final amount = outfit[k] ?? 0;
-      if (amount > 0) {
-        sm.add('stores["$k"]', -amount);
+    try {
+      // 扣除装备中的物品
+      for (final k in outfit.keys) {
+        final amount = outfit[k] ?? 0;
+        if (amount > 0) {
+          print('扣除装备: $k x$amount');
+          sm.add('stores["$k"]', -amount);
+        }
       }
+
+      print('🌍 初始化World模块...');
+      // 初始化World模块
+      World().init();
+
+      print('🌍 设置世界功能为已解锁...');
+      // 设置世界功能为已解锁
+      sm.set('features.location.world', true);
+
+      print('🌍 切换到World模块...');
+      // 切换到世界模块
+      Engine().travelTo(World());
+
+      // 显示成功消息
+      NotificationManager().notify('漫漫尘途', '你踏上了前往未知世界的旅程...');
+
+      print('✅ embark() 完成');
+    } catch (e, stackTrace) {
+      print('❌ embark() 错误: $e');
+      print('❌ 错误堆栈: $stackTrace');
+      NotificationManager().notify('漫漫尘途', '出发失败: $e');
     }
-
-    // 切换到世界模块（暂时注释掉）
-    // World().onArrival();
-    // Engine().activeModule = World();
-
-    // 播放出发音效（暂时注释掉）
-    // AudioEngine().playSound(AudioLibrary.embark);
 
     notifyListeners();
   }
@@ -299,7 +329,10 @@ class Path extends ChangeNotifier {
 
   /// 检查是否可以出发
   bool canEmbark() {
-    return (outfit['cured meat'] ?? 0) > 0;
+    final curedMeat = outfit['cured meat'] ?? 0;
+    final canGo = curedMeat > 0;
+    print('🔍 canEmbark: 腌肉=$curedMeat, 可以出发=$canGo');
+    return canGo;
   }
 
   /// 获取装备信息
@@ -314,5 +347,4 @@ class Path extends ChangeNotifier {
     sm.set('outfit', outfit);
     updateOutfitting();
   }
-
 }

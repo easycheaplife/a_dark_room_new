@@ -49,7 +49,7 @@ class Header extends StatelessWidget {
         if (_isPathUnlocked(stateManager)) {
           tabs.add(_buildTab(
             context,
-            '尘土飞扬的小径',
+            '漫漫尘途',
             activeModuleName == 'Path',
             onTap: () => _navigateToModule(context, 'Path'),
           ));

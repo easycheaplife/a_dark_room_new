@@ -239,6 +239,23 @@ class StateManager with ChangeNotifier {
       current[lastPart] = value;
     }
 
+    // 重要：stores值不能为负数（按照原游戏逻辑）
+    if (path.startsWith('stores') && value is num && value < 0) {
+      if (kDebugMode) {
+        print('⚠️ StateManager: stores值不能为负数，将 $path 从 $value 设置为 0');
+      }
+      // 重新设置为0
+      if (lastPart.contains('[') && lastPart.contains(']')) {
+        int startBracket = lastPart.indexOf('[');
+        int endBracket = lastPart.indexOf(']');
+        String objName = lastPart.substring(0, startBracket);
+        String key = lastPart.substring(startBracket + 2, endBracket - 1);
+        current[objName][key] = 0;
+      } else {
+        current[lastPart] = 0;
+      }
+    }
+
     if (!noNotify) {
       notifyListeners();
     }
@@ -252,6 +269,7 @@ class StateManager with ChangeNotifier {
       set(path, value, noNotify);
     } else if ((current is num) && (value is num)) {
       // 处理所有数字类型的组合 (int, double)
+      // 使用set方法确保负数检查生效
       set(path, current + value, noNotify);
     } else if (current is String && value is String) {
       set(path, current + value, noNotify);
@@ -356,10 +374,8 @@ class StateManager with ChangeNotifier {
         // 如果可以生产，添加/消耗资源
         if (canProduce && income['stores'] != null) {
           final stores = income['stores'] as Map<String, dynamic>;
-          for (String store in stores.keys) {
-            final amount = stores[store];
-            add('stores.$store', amount, true); // 使用noNotify=true避免频繁通知
-          }
+          // 使用addM方法，它会自动处理负数检查
+          addM('stores', stores, true);
           changed = true;
         }
 

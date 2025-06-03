@@ -200,8 +200,10 @@ class _GameScreenState extends State<GameScreen> {
       case '外部': // 支持中文模块名
         return const OutsideScreen();
       case 'Path':
+      case '漫漫尘途': // 支持中文模块名
         return const PathScreen();
       case 'World':
+      case '世界': // 支持中文模块名
         return const WorldScreen();
       case 'Fabricator':
         return const FabricatorScreen();

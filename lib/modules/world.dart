@@ -67,43 +67,18 @@ class World extends ChangeNotifier {
   };
 
   // 地形概率
-  static Map<String, double> tileProbs = {};
+  Map<String, double> tileProbs = {};
 
   // 地标配置
-  static Map<String, Map<String, dynamic>> landmarks = {};
+  Map<String, Map<String, dynamic>> landmarks = {};
 
   // 武器配置
   static const Map<String, Map<String, dynamic>> weapons = {
-    'fists': {
-      'verb': '拳击',
-      'type': 'unarmed',
-      'damage': 1,
-      'cooldown': 2
-    },
-    'bone spear': {
-      'verb': '刺击',
-      'type': 'melee',
-      'damage': 2,
-      'cooldown': 2
-    },
-    'iron sword': {
-      'verb': '挥砍',
-      'type': 'melee',
-      'damage': 4,
-      'cooldown': 2
-    },
-    'steel sword': {
-      'verb': '斩击',
-      'type': 'melee',
-      'damage': 6,
-      'cooldown': 2
-    },
-    'bayonet': {
-      'verb': '突刺',
-      'type': 'melee',
-      'damage': 8,
-      'cooldown': 2
-    },
+    'fists': {'verb': '拳击', 'type': 'unarmed', 'damage': 1, 'cooldown': 2},
+    'bone spear': {'verb': '刺击', 'type': 'melee', 'damage': 2, 'cooldown': 2},
+    'iron sword': {'verb': '挥砍', 'type': 'melee', 'damage': 4, 'cooldown': 2},
+    'steel sword': {'verb': '斩击', 'type': 'melee', 'damage': 6, 'cooldown': 2},
+    'bayonet': {'verb': '突刺', 'type': 'melee', 'damage': 8, 'cooldown': 2},
     'rifle': {
       'verb': '射击',
       'type': 'ranged',
@@ -173,16 +148,19 @@ class World extends ChangeNotifier {
 
   /// 初始化世界模块
   void init([Map<String, dynamic>? options]) {
+    print('🌍 World.init() 开始');
     if (options != null) {
       this.options = {...this.options, ...options};
     }
 
     final sm = StateManager();
 
+    print('🌍 设置地形概率...');
     // 设置地形概率，总和必须等于1
     tileProbs[tile['forest']!] = 0.15;
     tileProbs[tile['field']!] = 0.35;
     tileProbs[tile['barrens']!] = 0.5;
+    print('🌍 地形概率设置完成');
 
     // 地标定义
     landmarks[tile['outpost']!] = {
@@ -288,40 +266,87 @@ class World extends ChangeNotifier {
       };
     }
 
+    print('🌍 初始化世界状态...');
     // 初始化世界状态
-    if (sm.get('features.location.world') == null) {
+    final worldFeature = sm.get('features.location.world', true);
+    final worldData = sm.get('game.world', true);
+    print('🌍 检查世界功能状态: $worldFeature');
+    print('🌍 检查世界数据状态: $worldData');
+
+    // 如果世界功能未解锁或者世界数据不存在，则生成新地图
+    if (worldFeature == null || worldData == null || worldData is! Map) {
+      print('🌍 生成新的世界地图...');
       sm.set('features.location.world', true);
       sm.set('features.executioner', true);
-      sm.setM('game.world', {
-        'map': generateMap(),
-        'mask': newMask()
-      });
-    } else if (sm.get('features.executioner') != true) {
+      sm.setM('game.world', {'map': generateMap(), 'mask': newMask()});
+      print('🌍 新世界地图生成完成');
+    } else if (sm.get('features.executioner', true) != true) {
+      print('🌍 在现有地图中放置执行者...');
       // 在之前生成的地图中放置执行者
       final map = sm.get('game.world.map');
-      final landmark = landmarks[tile['executioner']!]!;
-      for (int l = 0; l < landmark['num']; l++) {
-        placeLandmark(landmark['minRadius'], landmark['maxRadius'], tile['executioner']!, map);
+      if (map != null && map is List && map.isNotEmpty && map[0] is List) {
+        try {
+          // 安全地转换为正确的类型
+          final mapList =
+              List<List<String>>.from(map.map((row) => List<String>.from(row)));
+          final landmark = landmarks[tile['executioner']!]!;
+          for (int l = 0; l < landmark['num']; l++) {
+            placeLandmark(landmark['minRadius'], landmark['maxRadius'],
+                tile['executioner']!, mapList);
+          }
+          sm.set('game.world.map', mapList);
+          sm.set('features.executioner', true);
+          print('🌍 执行者放置完成');
+        } catch (e) {
+          print('⚠️ 执行者放置失败: $e');
+          sm.set('features.executioner', true);
+        }
+      } else {
+        print('⚠️ 地图数据无效，跳过执行者放置');
+        sm.set('features.executioner', true);
       }
-      sm.set('game.world.map', map);
-      sm.set('features.executioner', true);
     }
 
+    print('🌍 映射飞船...');
     // 映射飞船并显示指南针提示
-    ship = mapSearch(tile['ship']!, sm.get('game.world.map'), 1);
-    if (ship.isNotEmpty) {
-      dir = compassDir(ship[0]);
+    final worldMap = sm.get('game.world.map');
+    if (worldMap != null &&
+        worldMap is List &&
+        worldMap.isNotEmpty &&
+        worldMap[0] is List) {
+      try {
+        // 安全地转换为正确的类型
+        final mapList = List<List<String>>.from(
+            worldMap.map((row) => List<String>.from(row)));
+        ship = mapSearch(tile['ship']!, mapList, 1);
+        if (ship.isNotEmpty) {
+          dir = compassDir(ship[0]);
+        }
+      } catch (e) {
+        print('⚠️ 飞船映射失败: $e');
+        ship = [];
+        dir = '';
+      }
+    } else {
+      print('⚠️ 世界地图数据无效，跳过飞船映射');
+      ship = [];
+      dir = '';
     }
+    print('🌍 飞船映射完成');
 
+    print('🌍 检查地图可见性...');
     // 检查是否所有地方都已被看到
     testMap();
+    print('🌍 地图可见性检查完成');
 
+    print('🌍 World.init() 完成');
     notifyListeners();
   }
 
   /// 生成新的地图
   List<List<String>> generateMap() {
-    final map = List.generate(radius * 2 + 1, (i) => List<String>.filled(radius * 2 + 1, ''));
+    final map = List.generate(
+        radius * 2 + 1, (i) => List<String>.filled(radius * 2 + 1, ''));
 
     // 村庄总是在正中心
     // 从那里螺旋向外
@@ -361,7 +386,8 @@ class World extends ChangeNotifier {
 
   /// 生成新的遮罩
   List<List<bool>> newMask() {
-    final mask = List.generate(radius * 2 + 1, (i) => List<bool>.filled(radius * 2 + 1, false));
+    final mask = List.generate(
+        radius * 2 + 1, (i) => List<bool>.filled(radius * 2 + 1, false));
     lightMap(radius, radius, mask);
     return mask;
   }
@@ -380,7 +406,8 @@ class World extends ChangeNotifier {
     mask[x][y] = true;
     for (int i = -r; i <= r; i++) {
       for (int j = -r + i.abs(); j <= r - i.abs(); j++) {
-        if (y + j >= 0 && y + j <= radius * 2 &&
+        if (y + j >= 0 &&
+            y + j <= radius * 2 &&
             x + i <= radius * 2 &&
             x + i >= 0) {
           mask[x + i][y + j] = true;
@@ -443,7 +470,8 @@ class World extends ChangeNotifier {
   }
 
   /// 放置地标
-  List<int> placeLandmark(int minRadius, int maxRadius, String landmark, List<List<String>> map) {
+  List<int> placeLandmark(
+      int minRadius, int maxRadius, String landmark, List<List<String>> map) {
     int x = radius, y = radius;
     final random = Random();
 
@@ -470,8 +498,8 @@ class World extends ChangeNotifier {
   /// 检查是否为地形
   bool isTerrain(String tileType) {
     return tileType == tile['forest'] ||
-           tileType == tile['field'] ||
-           tileType == tile['barrens'];
+        tileType == tile['field'] ||
+        tileType == tile['barrens'];
   }
 
   /// 搜索地图
@@ -481,26 +509,42 @@ class World extends ChangeNotifier {
       return [];
     }
 
+    // 检查地图数据类型
+    if (map == null || map is! List) {
+      print('⚠️ mapSearch: 地图数据无效 (map=$map)');
+      return [];
+    }
+
     int max = landmark['num'];
     max = required < max ? required : max;
 
     int index = 0;
     final targets = <Map<String, int>>[];
 
-    for (int i = 0; i <= radius * 2; i++) {
-      for (int j = 0; j <= radius * 2; j++) {
-        if (map[i][j].toString().startsWith(target)) {
-          targets.add({
-            'x': i - radius,
-            'y': j - radius,
-          });
-          index++;
-          if (index == max) {
-            return targets;
+    try {
+      for (int i = 0; i <= radius * 2; i++) {
+        if (i >= map.length) break;
+        if (map[i] is! List) continue;
+
+        for (int j = 0; j <= radius * 2; j++) {
+          if (j >= map[i].length) break;
+
+          if (map[i][j].toString().startsWith(target)) {
+            targets.add({
+              'x': i - radius,
+              'y': j - radius,
+            });
+            index++;
+            if (index == max) {
+              return targets;
+            }
           }
         }
       }
+    } catch (e) {
+      print('⚠️ mapSearch错误: $e');
     }
+
     return targets;
   }
 
@@ -527,16 +571,27 @@ class World extends ChangeNotifier {
       final sm = StateManager();
       final mask = sm.get('game.world.mask');
 
-      if (mask != null) {
-        for (int i = 0; i < mask.length; i++) {
-          for (int j = 0; j < mask[i].length; j++) {
-            if (!mask[i][j]) {
-              dark = true;
-              break;
+      if (mask != null && mask is List) {
+        try {
+          for (int i = 0; i < mask.length; i++) {
+            if (mask[i] is List) {
+              for (int j = 0; j < mask[i].length; j++) {
+                if (!mask[i][j]) {
+                  dark = true;
+                  break;
+                }
+              }
             }
+            if (dark) break;
           }
-          if (dark) break;
+        } catch (e) {
+          print('⚠️ testMap错误: $e');
+          // 如果出错，假设还有未探索的区域
+          dark = true;
         }
+      } else {
+        print('⚠️ 地图遮罩数据无效，跳过可见性检查');
+        dark = true; // 假设还有未探索的区域
       }
       seenAll = !dark;
     }
@@ -637,11 +692,13 @@ class World extends ChangeNotifier {
     final sm = StateManager();
 
     if (!danger) {
-      if ((sm.get('stores["i armour"]', true) ?? 0) == 0 && getDistance() >= 8) {
+      if ((sm.get('stores["i armour"]', true) ?? 0) == 0 &&
+          getDistance() >= 8) {
         danger = true;
         return true;
       }
-      if ((sm.get('stores["s armour"]', true) ?? 0) == 0 && getDistance() >= 18) {
+      if ((sm.get('stores["s armour"]', true) ?? 0) == 0 &&
+          getDistance() >= 18) {
         danger = true;
         return true;
       }
@@ -725,7 +782,8 @@ class World extends ChangeNotifier {
           NotificationManager().notify(name, '饥饿开始了');
           starvation = true;
         } else {
-          sm.set('character.starved', (sm.get('character.starved', true) ?? 0) + 1);
+          sm.set('character.starved',
+              (sm.get('character.starved', true) ?? 0) + 1);
           // if (sm.get('character.starved') >= 10 && !sm.hasPerk('slow metabolism')) {
           //   sm.addPerk('slow metabolism');
           // }
@@ -756,7 +814,8 @@ class World extends ChangeNotifier {
           NotificationManager().notify(name, '口渴变得难以忍受');
           thirst = true;
         } else {
-          sm.set('character.dehydrated', (sm.get('character.dehydrated', true) ?? 0) + 1);
+          sm.set('character.dehydrated',
+              (sm.get('character.dehydrated', true) ?? 0) + 1);
           // if (sm.get('character.dehydrated') >= 10 && !sm.hasPerk('desert rat')) {
           //   sm.addPerk('desert rat');
           // }
@@ -908,7 +967,13 @@ class World extends ChangeNotifier {
     final sm = StateManager();
 
     // 初始化状态
-    state = sm.get('game.world');
+    final worldData = sm.get('game.world', true);
+    if (worldData != null && worldData is Map<String, dynamic>) {
+      state = worldData;
+    } else {
+      print('⚠️ 世界数据无效，使用默认状态');
+      state = null;
+    }
 
     // 设置初始位置和状态
     curPos = [villagePos[0], villagePos[1]];
