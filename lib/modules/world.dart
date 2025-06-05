@@ -37,7 +37,7 @@ class World extends ChangeNotifier {
   static const int hypoHeal = 30;
   static const int fightDelay = 3; // 战斗之间至少三次移动
 
-  // 方向常量
+  // 方向常量 (与原游戏完全一致)
   static const List<int> north = [0, -1];
   static const List<int> south = [0, 1];
   static const List<int> west = [-1, 0];
@@ -970,15 +970,39 @@ class World extends ChangeNotifier {
     final worldData = sm.get('game.world', true);
     if (worldData != null && worldData is Map<String, dynamic>) {
       state = worldData;
+      print('✅ 加载已有世界数据');
     } else {
-      print('⚠️ 世界数据无效，使用默认状态');
-      state = null;
+      print('⚠️ 世界数据无效，重新初始化');
+      // 如果没有世界数据，重新初始化
+      init();
+      final newWorldData = sm.get('game.world', true);
+      if (newWorldData != null && newWorldData is Map<String, dynamic>) {
+        state = newWorldData;
+        print('✅ 重新生成世界数据成功');
+      } else {
+        print('❌ 无法生成世界数据');
+        state = null;
+      }
     }
 
     // 设置初始位置和状态
     curPos = [villagePos[0], villagePos[1]];
     health = getMaxHealth();
     water = getMaxWater();
+
+    // 如果有有效的地图数据，点亮当前位置
+    if (state != null && state!['mask'] != null) {
+      try {
+        final mask = List<List<bool>>.from(
+            state!['mask'].map((row) => List<bool>.from(row)));
+        lightMap(curPos[0], curPos[1], mask);
+        // 更新状态中的遮罩
+        state!['mask'] = mask;
+        print('✅ 地图照明完成');
+      } catch (e) {
+        print('⚠️ 地图照明失败: $e');
+      }
+    }
 
     // 播放背景音乐（暂时注释掉）
     // AudioEngine().playBackgroundMusic(AudioLibrary.musicWorldMap);

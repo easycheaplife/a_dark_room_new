@@ -117,35 +117,68 @@ class _WorldScreenState extends State<WorldScreen> {
 
   /// 构建地图
   Widget _buildMap(World world) {
-    final map = world.state!['map'] as List<List<String>>;
-    final mask = world.state!['mask'] as List<List<bool>>;
-    final curPos = world.getCurrentPosition();
+    try {
+      // 安全地转换地图数据
+      final mapData = world.state!['map'];
+      final maskData = world.state!['mask'];
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Container(
-          padding: const EdgeInsets.all(4.0),
-          child: Column(
-            children: List.generate(map.length, (j) {
-              return Row(
-                children: List.generate(map[j].length, (i) {
-                  return _buildMapTile(
-                    map[i][j],
-                    mask[i][j],
-                    i == curPos[0] && j == curPos[1],
-                    i,
-                    j,
-                    world,
-                  );
-                }),
-              );
-            }),
+      if (mapData == null || maskData == null) {
+        return const Center(
+          child: Text(
+            '地图数据缺失',
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+      }
+
+      // 转换为正确的类型
+      final map =
+          List<List<String>>.from(mapData.map((row) => List<String>.from(row)));
+      final curPos = world.getCurrentPosition();
+
+      // 确保地图数据有效
+      if (map.isEmpty || map[0].isEmpty) {
+        return const Center(
+          child: Text(
+            '地图数据为空',
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+      }
+
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Container(
+            padding: const EdgeInsets.all(4.0),
+            child: Column(
+              children: List.generate(map[0].length, (j) {
+                return Row(
+                  children: List.generate(map.length, (i) {
+                    return _buildMapTile(
+                      map[i][j],
+                      true, // 显示完整地图，不使用遮罩
+                      i == curPos[0] && j == curPos[1],
+                      i,
+                      j,
+                      world,
+                    );
+                  }),
+                );
+              }),
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      return Center(
+        child: Text(
+          '地图渲染错误: $e',
+          style: const TextStyle(color: Colors.red),
+        ),
+      );
+    }
   }
 
   /// 构建地图瓦片
@@ -159,10 +192,8 @@ class _WorldScreenState extends State<WorldScreen> {
       displayChar = '@';
       color = Colors.yellow;
       tooltip = '流浪者';
-    } else if (!visible) {
-      displayChar = ' ';
-      color = Colors.black;
     } else {
+      // 显示完整地图，不使用遮罩系统
       displayChar = tile;
 
       // 设置地形颜色和提示
@@ -337,18 +368,23 @@ class _WorldScreenState extends State<WorldScreen> {
   Widget _buildControlButtons(World world) {
     return Container(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: Column(
         children: [
-          _buildDirectionButton('北', () => world.moveNorth()),
-          Column(
+          // 上方向键
+          _buildDirectionButton('上', () => world.moveNorth()),
+          const SizedBox(height: 8),
+          // 左右方向键
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildDirectionButton('西', () => world.moveWest()),
-              const SizedBox(height: 8),
-              _buildDirectionButton('东', () => world.moveEast()),
+              _buildDirectionButton('左', () => world.moveWest()),
+              const SizedBox(width: 60), // 中间空隙
+              _buildDirectionButton('右', () => world.moveEast()),
             ],
           ),
-          _buildDirectionButton('南', () => world.moveSouth()),
+          const SizedBox(height: 8),
+          // 下方向键
+          _buildDirectionButton('下', () => world.moveSouth()),
         ],
       ),
     );
