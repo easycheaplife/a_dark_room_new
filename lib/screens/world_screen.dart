@@ -44,21 +44,19 @@ class _WorldScreenState extends State<WorldScreen> {
           },
           child: GestureDetector(
             onTap: () => _focusNode.requestFocus(),
-            onPanUpdate: (details) => _handleSwipe(details, world),
             child: Container(
               color: Colors.black,
               child: Column(
                 children: [
-                  // 状态栏
-                  _buildStatusBar(world),
-                  // 地图区域
+                  // 状态栏和背包区域
+                  _buildTopArea(world),
+                  // 地图区域 - 占据大部分空间
                   Expanded(
+                    flex: 3,
                     child: _buildMapArea(world),
                   ),
-                  // 背包区域
-                  _buildBackpackArea(world),
-                  // 控制按钮
-                  _buildControlButtons(world),
+                  // 重生按钮（仅在死亡时显示）
+                  if (world.dead) _buildRespawnButton(world),
                 ],
               ),
             ),
@@ -68,27 +66,95 @@ class _WorldScreenState extends State<WorldScreen> {
     );
   }
 
-  /// 构建状态栏
-  Widget _buildStatusBar(World world) {
+  /// 构建顶部区域（状态栏和背包）
+  Widget _buildTopArea(World world) {
+    final path = Path();
+
     return Container(
       padding: const EdgeInsets.all(8.0),
       color: Colors.grey[900],
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Column(
         children: [
-          Text(
-            '生命值: ${world.health}/${world.getMaxHealth()}',
-            style: const TextStyle(color: Colors.white),
+          // 状态栏
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(
+                '生命值: ${world.health}/${world.getMaxHealth()}',
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+              ),
+              Text(
+                '水: ${world.water}/${world.getMaxWater()}',
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+              ),
+              Text(
+                '位置: ${world.getCurrentTerrainName()}',
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+              ),
+            ],
           ),
-          Text(
-            '水: ${world.water}/${world.getMaxWater()}',
-            style: const TextStyle(color: Colors.white),
-          ),
-          Text(
-            '位置: ${world.getCurrentTerrainName()}',
-            style: const TextStyle(color: Colors.white),
+          const SizedBox(height: 8),
+          // 背包信息
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white),
+              color: Colors.black,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      '背包',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12),
+                    ),
+                    Text(
+                      '空间: ${path.getCapacity() - path.getTotalWeight()}/${path.getCapacity()}',
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                SizedBox(
+                  height: 30,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        if (world.water > 0) _buildSupplyItem('水', world.water),
+                        ...path.outfit.entries
+                            .where((entry) => entry.value > 0)
+                            .map((entry) =>
+                                _buildSupplyItem(entry.key, entry.value)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// 构建重生按钮
+  Widget _buildRespawnButton(World world) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        onPressed: () => world.forceRespawn(),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red[700],
+          foregroundColor: Colors.white,
+          minimumSize: const Size(100, 40),
+        ),
+        child: const Text('重生'),
       ),
     );
   }
@@ -145,27 +211,30 @@ class _WorldScreenState extends State<WorldScreen> {
         );
       }
 
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
+      return GestureDetector(
+        onTapDown: (details) => _handleMapClick(details, world),
         child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Container(
-            padding: const EdgeInsets.all(4.0),
-            child: Column(
-              children: List.generate(map[0].length, (j) {
-                return Row(
-                  children: List.generate(map.length, (i) {
-                    return _buildMapTile(
-                      map[i][j],
-                      true, // 显示完整地图，不使用遮罩
-                      i == curPos[0] && j == curPos[1],
-                      i,
-                      j,
-                      world,
-                    );
-                  }),
-                );
-              }),
+          scrollDirection: Axis.horizontal,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Container(
+              padding: const EdgeInsets.all(4.0),
+              child: Column(
+                children: List.generate(map[0].length, (j) {
+                  return Row(
+                    children: List.generate(map.length, (i) {
+                      return _buildMapTile(
+                        map[i][j],
+                        true, // 显示完整地图，不使用遮罩
+                        i == curPos[0] && j == curPos[1],
+                        i,
+                        j,
+                        world,
+                      );
+                    }),
+                  );
+                }),
+              ),
             ),
           ),
         ),
@@ -298,54 +367,7 @@ class _WorldScreenState extends State<WorldScreen> {
       );
     }
 
-    return GestureDetector(
-      onTap: () => _handleMapTileClick(x, y, world),
-      child: tileWidget,
-    );
-  }
-
-  /// 构建背包区域
-  Widget _buildBackpackArea(World world) {
-    final path = Path();
-
-    return Container(
-      margin: const EdgeInsets.all(8.0),
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.white),
-        color: Colors.grey[900],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                '背包',
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                '空间: ${path.getCapacity() - path.getTotalWeight()}/${path.getCapacity()}',
-                style: const TextStyle(color: Colors.white),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 4,
-            children: [
-              if (world.water > 0) _buildSupplyItem('水', world.water),
-              ...path.outfit.entries
-                  .where((entry) => entry.value > 0)
-                  .map((entry) => _buildSupplyItem(entry.key, entry.value)),
-            ],
-          ),
-        ],
-      ),
-    );
+    return tileWidget;
   }
 
   /// 构建补给品项目
@@ -360,57 +382,6 @@ class _WorldScreenState extends State<WorldScreen> {
         '$name: $count',
         style: const TextStyle(color: Colors.white, fontSize: 12),
       ),
-    );
-  }
-
-  /// 构建控制按钮
-  Widget _buildControlButtons(World world) {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          // 上方向键
-          _buildDirectionButton('上', () => world.moveNorth()),
-          const SizedBox(height: 8),
-          // 左右方向键
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildDirectionButton('左', () => world.moveWest()),
-              const SizedBox(width: 60), // 中间空隙
-              _buildDirectionButton('右', () => world.moveEast()),
-            ],
-          ),
-          const SizedBox(height: 8),
-          // 下方向键
-          _buildDirectionButton('下', () => world.moveSouth()),
-          const SizedBox(height: 16),
-          // 重生按钮（仅在死亡时显示）
-          if (world.dead)
-            ElevatedButton(
-              onPressed: () => world.forceRespawn(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red[700],
-                foregroundColor: Colors.white,
-                minimumSize: const Size(100, 40),
-              ),
-              child: const Text('重生'),
-            ),
-        ],
-      ),
-    );
-  }
-
-  /// 构建方向按钮
-  Widget _buildDirectionButton(String label, VoidCallback onPressed) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.grey[800],
-        foregroundColor: Colors.white,
-        minimumSize: const Size(60, 40),
-      ),
-      child: Text(label),
     );
   }
 
@@ -436,38 +407,37 @@ class _WorldScreenState extends State<WorldScreen> {
     }
   }
 
-  /// 处理滑动手势
-  void _handleSwipe(DragUpdateDetails details, World world) {
-    const double sensitivity = 20.0;
+  /// 处理地图点击 - 实现原游戏的点击移动逻辑
+  void _handleMapClick(TapDownDetails details, World world) {
+    // 获取地图容器的渲染框
+    final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
 
-    if (details.delta.dx > sensitivity) {
-      world.moveEast();
-    } else if (details.delta.dx < -sensitivity) {
-      world.moveWest();
-    } else if (details.delta.dy > sensitivity) {
-      world.moveSouth();
-    } else if (details.delta.dy < -sensitivity) {
+    // 计算点击位置相对于地图中心的偏移
+    final localPosition = details.localPosition;
+    final mapSize = renderBox.size;
+
+    // 假设地图在屏幕中心，计算相对于当前位置的点击偏移
+    final centerX = mapSize.width / 2;
+    final centerY = mapSize.height / 2;
+
+    final clickX = localPosition.dx - centerX;
+    final clickY = localPosition.dy - centerY;
+
+    // 使用原游戏的点击逻辑：根据点击位置的象限决定移动方向
+    // 这个逻辑来自原游戏的 World.click 函数
+    if (clickX > clickY && clickX < -clickY) {
+      // 上方
       world.moveNorth();
-    }
-  }
-
-  /// 处理地图瓦片点击
-  void _handleMapTileClick(int x, int y, World world) {
-    final curPos = world.getCurrentPosition();
-    final dx = x - curPos[0];
-    final dy = y - curPos[1];
-
-    // 只允许移动到相邻的瓦片
-    if (dx.abs() + dy.abs() == 1) {
-      if (dx > 0) {
-        world.moveEast();
-      } else if (dx < 0) {
-        world.moveWest();
-      } else if (dy > 0) {
-        world.moveSouth();
-      } else if (dy < 0) {
-        world.moveNorth();
-      }
+    } else if (clickX < clickY && clickX > -clickY) {
+      // 下方
+      world.moveSouth();
+    } else if (clickX < clickY && clickX < -clickY) {
+      // 左方
+      world.moveWest();
+    } else if (clickX > clickY && clickX > -clickY) {
+      // 右方
+      world.moveEast();
     }
   }
 }
