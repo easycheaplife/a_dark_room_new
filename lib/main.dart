@@ -17,12 +17,14 @@ import 'modules/path.dart';
 import 'modules/world.dart';
 import 'modules/fabricator.dart';
 import 'modules/ship.dart';
+import 'modules/events.dart';
 import 'screens/room_screen.dart';
 import 'screens/outside_screen.dart';
 import 'screens/path_screen.dart';
 import 'screens/world_screen.dart';
 import 'screens/fabricator_screen.dart';
 import 'screens/ship_screen.dart';
+import 'screens/combat_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,6 +55,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => World()),
         ChangeNotifierProvider(create: (_) => Fabricator()),
         ChangeNotifierProvider(create: (_) => Ship()),
+        ChangeNotifierProvider(create: (_) => Events()),
       ],
       child: Consumer<Localization>(
         builder: (context, localization, child) {
@@ -136,7 +139,7 @@ class _GameScreenState extends State<GameScreen> {
           }
         },
         child: SafeArea(
-          child: Container(
+          child: SizedBox(
             // 模拟原游戏的wrapper布局
             width: double.infinity,
             height: double.infinity,
@@ -148,7 +151,7 @@ class _GameScreenState extends State<GameScreen> {
                   top: 0,
                   right: 0,
                   bottom: 0,
-                  child: Container(
+                  child: SizedBox(
                     width: 700, // 原游戏的固定宽度
                     child: Column(
                       children: [
@@ -180,6 +183,11 @@ class _GameScreenState extends State<GameScreen> {
                   width: 200,
                   height: 700,
                   child: NotificationDisplay(),
+                ),
+
+                // 战斗界面 - 全屏覆盖
+                const Positioned.fill(
+                  child: CombatScreen(),
                 ),
               ],
             ),

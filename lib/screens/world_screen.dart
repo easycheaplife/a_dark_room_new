@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../modules/world.dart';
 import '../modules/path.dart';
-import '../core/state_manager.dart';
 
 /// 世界界面 - 显示地图探索和生存状态
 class WorldScreen extends StatefulWidget {
@@ -385,6 +384,18 @@ class _WorldScreenState extends State<WorldScreen> {
           const SizedBox(height: 8),
           // 下方向键
           _buildDirectionButton('下', () => world.moveSouth()),
+          const SizedBox(height: 16),
+          // 重生按钮（仅在死亡时显示）
+          if (world.dead)
+            ElevatedButton(
+              onPressed: () => world.forceRespawn(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red[700],
+                foregroundColor: Colors.white,
+                minimumSize: const Size(100, 40),
+              ),
+              child: const Text('重生'),
+            ),
         ],
       ),
     );

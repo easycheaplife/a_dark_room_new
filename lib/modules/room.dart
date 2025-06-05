@@ -24,7 +24,7 @@ class Room with ChangeNotifier {
   static const int _fireCoolDelay = 5 * 60 * 1000; // 火焰冷却延迟
   static const int _roomWarmDelay = 30 * 1000; // 房间温度更新延迟
   static const int _builderStateDelay = 30 * 1000; // 建造者状态更新延迟
-  static const int _stokeCooldown = 10 * 1000; // 添柴冷却时间（10秒）
+
   static const int _needWoodDelay = 15 * 1000; // 需要木材的延迟
 
   // 模块名称

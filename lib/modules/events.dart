@@ -82,23 +82,304 @@ class Events extends ChangeNotifier {
 
   /// 全局事件
   List<Map<String, dynamic>> get globalEvents => [
-    // 这里将包含全局事件定义
-  ];
+        // 这里将包含全局事件定义
+      ];
 
   /// 房间事件
   List<Map<String, dynamic>> get roomEvents => [
-    // 这里将包含房间事件定义
-  ];
+        // 这里将包含房间事件定义
+      ];
 
   /// 外部事件
   List<Map<String, dynamic>> get outsideEvents => [
-    // 这里将包含外部事件定义
-  ];
+        // 这里将包含外部事件定义
+      ];
 
   /// 营销事件
   List<Map<String, dynamic>> get marketingEvents => [
-    // 这里将包含营销事件定义
-  ];
+        // 这里将包含营销事件定义
+      ];
+
+  /// 战斗遭遇事件列表 - 完整翻译自原游戏encounters.js
+  List<Map<String, dynamic>> get encounters => [
+        // Tier 1 - 距离 <= 10
+        {
+          'title': '咆哮的野兽',
+          'isAvailable': () {
+            final world = World();
+            return world.getDistance() <= 10 && world.getTerrain() == ';'; // 森林
+          },
+          'scenes': {
+            'start': {
+              'combat': true,
+              'enemy': 'snarling beast',
+              'enemyName': '咆哮的野兽',
+              'deathMessage': '咆哮的野兽死了',
+              'chara': 'R',
+              'damage': 1,
+              'hit': 0.8,
+              'attackDelay': 1,
+              'health': 5,
+              'loot': {
+                'fur': {'min': 1, 'max': 3, 'chance': 1.0},
+                'meat': {'min': 1, 'max': 3, 'chance': 1.0},
+                'teeth': {'min': 1, 'max': 3, 'chance': 0.8}
+              },
+              'notification': '一只咆哮的野兽从灌木丛中跳了出来'
+            }
+          }
+        },
+        {
+          'title': '憔悴的人',
+          'isAvailable': () {
+            final world = World();
+            return world.getDistance() <= 10 && world.getTerrain() == '.'; // 荒地
+          },
+          'scenes': {
+            'start': {
+              'combat': true,
+              'enemy': 'gaunt man',
+              'enemyName': '憔悴的人',
+              'deathMessage': '憔悴的人死了',
+              'chara': 'E',
+              'damage': 2,
+              'hit': 0.8,
+              'attackDelay': 2,
+              'health': 6,
+              'loot': {
+                'cloth': {'min': 1, 'max': 3, 'chance': 0.8},
+                'teeth': {'min': 1, 'max': 2, 'chance': 0.8},
+                'leather': {'min': 1, 'max': 2, 'chance': 0.5}
+              },
+              'notification': '一个憔悴的人走近，眼中带着疯狂的神色'
+            }
+          }
+        },
+        {
+          'title': '奇怪的鸟',
+          'isAvailable': () {
+            final world = World();
+            return world.getDistance() <= 10 && world.getTerrain() == ','; // 田野
+          },
+          'scenes': {
+            'start': {
+              'combat': true,
+              'enemy': 'strange bird',
+              'enemyName': '奇怪的鸟',
+              'deathMessage': '奇怪的鸟死了',
+              'chara': 'R',
+              'damage': 3,
+              'hit': 0.8,
+              'attackDelay': 2,
+              'health': 4,
+              'loot': {
+                'scales': {'min': 1, 'max': 3, 'chance': 0.8},
+                'teeth': {'min': 1, 'max': 2, 'chance': 0.5},
+                'meat': {'min': 1, 'max': 3, 'chance': 0.8}
+              },
+              'notification': '一只奇怪的鸟在平原上快速穿过'
+            }
+          }
+        },
+        // Tier 2 - 距离 10-20
+        {
+          'title': '颤抖的人',
+          'isAvailable': () {
+            final world = World();
+            return world.getDistance() > 10 &&
+                world.getDistance() <= 20 &&
+                world.getTerrain() == '.'; // 荒地
+          },
+          'scenes': {
+            'start': {
+              'combat': true,
+              'enemy': 'shivering man',
+              'enemyName': '颤抖的人',
+              'deathMessage': '颤抖的人死了',
+              'chara': 'E',
+              'damage': 5,
+              'hit': 0.5,
+              'attackDelay': 1,
+              'health': 20,
+              'loot': {
+                'cloth': {'min': 1, 'max': 1, 'chance': 0.2},
+                'teeth': {'min': 1, 'max': 2, 'chance': 0.8},
+                'leather': {'min': 1, 'max': 1, 'chance': 0.2},
+                'medicine': {'min': 1, 'max': 3, 'chance': 0.7}
+              },
+              'notification': '一个颤抖的人走近，以惊人的力量发起攻击'
+            }
+          }
+        },
+        {
+          'title': '食人者',
+          'isAvailable': () {
+            final world = World();
+            return world.getDistance() > 10 &&
+                world.getDistance() <= 20 &&
+                world.getTerrain() == ';'; // 森林
+          },
+          'scenes': {
+            'start': {
+              'combat': true,
+              'enemy': 'man-eater',
+              'enemyName': '食人者',
+              'deathMessage': '食人者死了',
+              'chara': 'T',
+              'damage': 3,
+              'hit': 0.8,
+              'attackDelay': 1,
+              'health': 25,
+              'loot': {
+                'fur': {'min': 5, 'max': 10, 'chance': 1.0},
+                'meat': {'min': 5, 'max': 10, 'chance': 1.0},
+                'teeth': {'min': 5, 'max': 10, 'chance': 0.8}
+              },
+              'notification': '一只大型生物发起攻击，爪子上还沾着新鲜的血迹'
+            }
+          }
+        },
+        {
+          'title': '拾荒者',
+          'isAvailable': () {
+            final world = World();
+            return world.getDistance() > 10 &&
+                world.getDistance() <= 20 &&
+                world.getTerrain() == '.'; // 荒地
+          },
+          'scenes': {
+            'start': {
+              'combat': true,
+              'enemy': 'scavenger',
+              'enemyName': '拾荒者',
+              'deathMessage': '拾荒者死了',
+              'chara': 'E',
+              'damage': 4,
+              'hit': 0.8,
+              'attackDelay': 2,
+              'health': 30,
+              'loot': {
+                'cloth': {'min': 5, 'max': 10, 'chance': 0.8},
+                'leather': {'min': 5, 'max': 10, 'chance': 0.8},
+                'iron': {'min': 1, 'max': 5, 'chance': 0.5},
+                'medicine': {'min': 1, 'max': 2, 'chance': 0.1}
+              },
+              'notification': '一个拾荒者靠近，希望能轻松得手'
+            }
+          }
+        },
+        {
+          'title': '巨大蜥蜴',
+          'isAvailable': () {
+            final world = World();
+            return world.getDistance() > 10 &&
+                world.getDistance() <= 20 &&
+                world.getTerrain() == ','; // 田野
+          },
+          'scenes': {
+            'start': {
+              'combat': true,
+              'enemy': 'lizard',
+              'enemyName': '蜥蜴',
+              'deathMessage': '蜥蜴死了',
+              'chara': 'T',
+              'damage': 5,
+              'hit': 0.8,
+              'attackDelay': 2,
+              'health': 20,
+              'loot': {
+                'scales': {'min': 5, 'max': 10, 'chance': 0.8},
+                'teeth': {'min': 5, 'max': 10, 'chance': 0.5},
+                'meat': {'min': 5, 'max': 10, 'chance': 0.8}
+              },
+              'notification': '草丛剧烈摇摆，一只巨大的蜥蜴冲了出来'
+            }
+          }
+        },
+        // Tier 3 - 距离 > 20
+        {
+          'title': '野性恐兽',
+          'isAvailable': () {
+            final world = World();
+            return world.getDistance() > 20 && world.getTerrain() == ';'; // 森林
+          },
+          'scenes': {
+            'start': {
+              'combat': true,
+              'enemy': 'feral terror',
+              'enemyName': '野性恐兽',
+              'deathMessage': '野性恐兽死了',
+              'chara': 'T',
+              'damage': 6,
+              'hit': 0.8,
+              'attackDelay': 1,
+              'health': 45,
+              'loot': {
+                'fur': {'min': 5, 'max': 10, 'chance': 1.0},
+                'meat': {'min': 5, 'max': 10, 'chance': 1.0},
+                'teeth': {'min': 5, 'max': 10, 'chance': 0.8}
+              },
+              'notification': '一只比想象中更野性的野兽从树叶中爆发而出'
+            }
+          }
+        },
+        {
+          'title': '士兵',
+          'isAvailable': () {
+            final world = World();
+            return world.getDistance() > 20 && world.getTerrain() == '.'; // 荒地
+          },
+          'scenes': {
+            'start': {
+              'combat': true,
+              'enemy': 'soldier',
+              'enemyName': '士兵',
+              'deathMessage': '士兵死了',
+              'ranged': true,
+              'chara': 'D',
+              'damage': 8,
+              'hit': 0.8,
+              'attackDelay': 2,
+              'health': 50,
+              'loot': {
+                'cloth': {'min': 5, 'max': 10, 'chance': 0.8},
+                'bullets': {'min': 1, 'max': 5, 'chance': 0.5},
+                'rifle': {'min': 1, 'max': 1, 'chance': 0.2},
+                'medicine': {'min': 1, 'max': 2, 'chance': 0.1}
+              },
+              'notification': '一名士兵从沙漠对面开火'
+            }
+          }
+        },
+        {
+          'title': '狙击手',
+          'isAvailable': () {
+            final world = World();
+            return world.getDistance() > 20 && world.getTerrain() == ','; // 田野
+          },
+          'scenes': {
+            'start': {
+              'combat': true,
+              'enemy': 'sniper',
+              'enemyName': '狙击手',
+              'deathMessage': '狙击手死了',
+              'chara': 'D',
+              'damage': 15,
+              'hit': 0.8,
+              'attackDelay': 4,
+              'health': 30,
+              'ranged': true,
+              'loot': {
+                'cloth': {'min': 5, 'max': 10, 'chance': 0.8},
+                'bullets': {'min': 1, 'max': 5, 'chance': 0.5},
+                'rifle': {'min': 1, 'max': 1, 'chance': 0.2},
+                'medicine': {'min': 1, 'max': 2, 'chance': 0.1}
+              },
+              'notification': '枪声响起，来自长草丛中的某个地方'
+            }
+          }
+        },
+      ];
 
   /// 加载场景
   void loadScene(String sceneName) {
@@ -287,10 +568,30 @@ class Events extends ChangeNotifier {
     return eventStack.isNotEmpty ? eventStack.last : null;
   }
 
+  /// 获取战斗状态
+  Map<String, dynamic> getCombatStatus() {
+    final event = activeEvent();
+    if (event == null) {
+      return {'inCombat': false};
+    }
+
+    final scene = event['scenes']?[activeScene];
+    final inCombat = scene?['combat'] == true;
+
+    return {
+      'inCombat': inCombat,
+      'enemy': scene?['enemy'],
+      'enemyName': scene?['enemyName'],
+      'enemyHealth': scene?['health'],
+      'enemyMaxHealth': scene?['health'],
+    };
+  }
+
   /// 安排下一个事件
   void scheduleNextEvent() {
     final random = Random();
-    final delay = random.nextInt(eventTimeRange[1] - eventTimeRange[0] + 1) + eventTimeRange[0];
+    final delay = random.nextInt(eventTimeRange[1] - eventTimeRange[0] + 1) +
+        eventTimeRange[0];
 
     nextEventTimer = Timer(Duration(minutes: delay), () {
       triggerEvent();
@@ -513,76 +814,66 @@ class Events extends ChangeNotifier {
     }
   }
 
-  /// 触发战斗
-  void triggerFight() {
-    // 创建一个简单的战斗事件
-    final fightEvent = {
-      'title': '遭遇敌人',
-      'scenes': {
-        'start': {
-          'combat': true,
-          'notification': '一个敌对生物出现了！',
-          'chara': 'E',
-          'health': 10,
-          'damage': 2,
-          'hit': 0.8,
-          'attackDelay': 2,
-          'deathMessage': '敌人被击败了',
-          'loot': {
-            'fur': {'min': 1, 'max': 3, 'chance': 0.8},
-            'meat': {'min': 1, 'max': 2, 'chance': 0.6}
-          }
-        }
-      }
-    };
-
-    startEvent(fightEvent);
-  }
-
-  /// 获取可用武器
+  /// 获取可用武器列表
   List<String> getAvailableWeapons() {
     final path = Path();
-    final weapons = <String>[];
+    final availableWeapons = <String>[];
 
+    // 总是可用的拳头
+    availableWeapons.add('fists');
+
+    // 检查背包中的武器
     for (final weaponName in World.weapons.keys) {
-      final weapon = World.weapons[weaponName]!;
-      final hasWeapon = (path.outfit[weaponName] ?? 0) > 0;
-
-      if (hasWeapon || weaponName == 'fists') {
-        // 检查弹药
-        bool hasAmmo = true;
-        if (weapon['cost'] != null) {
-          final cost = weapon['cost'] as Map<String, dynamic>;
-          for (final entry in cost.entries) {
-            final required = entry.value as int;
-            final available = path.outfit[entry.key] ?? 0;
-            if (available < required) {
-              hasAmmo = false;
-              break;
-            }
-          }
-        }
-
-        if (hasAmmo) {
-          weapons.add(weaponName);
-        }
+      if (weaponName != 'fists' && (path.outfit[weaponName] ?? 0) > 0) {
+        availableWeapons.add(weaponName);
       }
     }
 
-    return weapons;
+    return availableWeapons;
   }
 
-  /// 获取当前战斗状态
-  Map<String, dynamic> getCombatStatus() {
-    return {
-      'inCombat': activeScene != null && activeEvent()?['scenes'][activeScene]?['combat'] == true,
-      'playerHealth': World().health,
-      'playerMaxHealth': World().getMaxHealth(),
-      'availableWeapons': getAvailableWeapons(),
-      'canHeal': World().health < World().getMaxHealth(),
-      'fought': fought,
-      'won': won,
-    };
+  /// 触发战斗
+  void triggerFight() {
+    print('🎯 Events.triggerFight() 被调用');
+
+    final possibleFights = <Map<String, dynamic>>[];
+
+    // 检查所有可用的战斗事件
+    for (final fight in encounters) {
+      if (fight['isAvailable']()) {
+        possibleFights.add(fight);
+      }
+    }
+
+    print('🎯 可用战斗事件数量: ${possibleFights.length}');
+
+    if (possibleFights.isNotEmpty) {
+      // 随机选择一个战斗事件
+      final r = Random().nextInt(possibleFights.length);
+      final selectedFight = possibleFights[r];
+
+      print('🎯 选择的战斗事件: ${selectedFight['title']}');
+
+      // 触发战斗事件
+      startEvent(selectedFight);
+
+      // 播放战斗音乐（根据距离选择不同层级）
+      final world = World();
+      final distance = world.getDistance();
+
+      if (distance > 20) {
+        // Tier 3
+        print('🎵 播放Tier 3战斗音乐');
+      } else if (distance > 10) {
+        // Tier 2
+        print('🎵 播放Tier 2战斗音乐');
+      } else {
+        // Tier 1
+        print('🎵 播放Tier 1战斗音乐');
+      }
+    } else {
+      print('⚠️ 没有可用的战斗事件');
+    }
   }
 
   /// 处理状态更新

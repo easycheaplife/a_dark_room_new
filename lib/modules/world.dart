@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'dart:async';
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import 'path.dart';
+import 'events.dart';
+import 'setpieces.dart';
 
 /// 世界模块 - 处理世界地图探索
 /// 包括地图生成、移动、战斗、资源消耗等功能
@@ -622,6 +625,12 @@ class World extends ChangeNotifier {
   void move(List<int> direction) {
     if (state == null) return;
 
+    // 检查是否死亡，死亡状态下不能移动
+    if (dead) {
+      NotificationManager().notify(name, '你已经死了，无法移动');
+      return;
+    }
+
     final oldTile = state!['map'][curPos[0]][curPos[1]];
     curPos[0] += direction[0];
     curPos[1] += direction[1];
@@ -742,17 +751,113 @@ class World extends ChangeNotifier {
     if (curTile == tile['village']) {
       goHome();
     } else if (curTile == tile['executioner']) {
-      // 执行者场景（暂时注释掉）
+      // 执行者场景（暂时注释掉，需要实现Executioner事件）
       // final scene = state!['executioner'] ? 'executioner-antechamber' : 'executioner-intro';
-      // Events.startEvent(Events.Executioner[scene]);
+      // Events().startEvent(Events.Executioner[scene]);
+      NotificationManager().notify(name, '发现了一个神秘的装置');
     } else if (landmarks.containsKey(curTile)) {
       if (curTile != tile['outpost'] || !outpostUsed()) {
-        // Events.startEvent(Events.Setpieces[landmarks[curTile]!['scene']]);
+        // 触发地标建筑事件
+        final landmarkInfo = landmarks[curTile];
+        if (landmarkInfo != null && landmarkInfo['scene'] != null) {
+          final setpieces = Setpieces();
+          final sceneName = landmarkInfo['scene'];
+
+          // 检查场景是否存在
+          if (setpieces.isSetpieceAvailable(sceneName)) {
+            setpieces.startSetpiece(sceneName);
+          } else {
+            // 为缺失的场景提供默认处理
+            _handleMissingSetpiece(curTile, landmarkInfo);
+          }
+        }
       }
     } else {
       if (useSupplies()) {
         checkFight();
       }
+    }
+  }
+
+  /// 处理缺失的场景事件
+  void _handleMissingSetpiece(
+      String curTile, Map<String, dynamic> landmarkInfo) {
+    final label = landmarkInfo['label'] ?? '未知地点';
+
+    switch (curTile) {
+      case 'I': // 铁矿
+        NotificationManager().notify(name, '发现了一个废弃的铁矿。里面可能有有用的资源。');
+        // 简单的资源奖励
+        final sm = StateManager();
+        sm.add('stores["iron"]', 5);
+        markVisited(curPos[0], curPos[1]);
+        break;
+
+      case 'C': // 煤矿
+        NotificationManager().notify(name, '发现了一个废弃的煤矿。黑色的煤炭散落在地上。');
+        final sm = StateManager();
+        sm.add('stores["coal"]', 5);
+        markVisited(curPos[0], curPos[1]);
+        break;
+
+      case 'S': // 硫磺矿
+        NotificationManager().notify(name, '发现了一个硫磺矿。空气中弥漫着刺鼻的气味。');
+        final sm = StateManager();
+        sm.add('stores["sulphur"]', 5);
+        markVisited(curPos[0], curPos[1]);
+        break;
+
+      case 'H': // 旧房子
+        NotificationManager().notify(name, '发现了一座废弃的房子。也许里面有什么有用的东西。');
+        // 随机奖励
+        final sm = StateManager();
+        final random = Random();
+        if (random.nextDouble() < 0.5) {
+          sm.add('stores["wood"]', random.nextInt(3) + 1);
+        }
+        if (random.nextDouble() < 0.3) {
+          sm.add('stores["cloth"]', random.nextInt(2) + 1);
+        }
+        markVisited(curPos[0], curPos[1]);
+        break;
+
+      case 'B': // 钻孔
+        NotificationManager().notify(name, '发现了一个深深的钻孔。底部传来奇怪的声音。');
+        markVisited(curPos[0], curPos[1]);
+        break;
+
+      case 'F': // 战场
+        NotificationManager().notify(name, '这里曾经发生过激烈的战斗。地上散落着武器和装备。');
+        final sm = StateManager();
+        final random = Random();
+        if (random.nextDouble() < 0.4) {
+          sm.add('stores["bullets"]', random.nextInt(5) + 1);
+        }
+        if (random.nextDouble() < 0.2) {
+          sm.add('stores["rifle"]', 1);
+        }
+        markVisited(curPos[0], curPos[1]);
+        break;
+
+      case 'Y': // 废墟城市
+        NotificationManager().notify(name, '巨大的废墟城市矗立在眼前。曾经的繁华已成过往。');
+        markVisited(curPos[0], curPos[1]);
+        break;
+
+      case 'W': // 坠毁星舰
+        NotificationManager().notify(name, '发现了一艘坠毁的星舰。金属外壳闪闪发光。');
+        markVisited(curPos[0], curPos[1]);
+        break;
+
+      case 'U': // 被摧毁的村庄
+        NotificationManager().notify(name, '这里曾经是一个村庄，现在只剩下废墟。');
+        markVisited(curPos[0], curPos[1]);
+        break;
+
+      default:
+        NotificationManager().notify(name, '发现了$label。');
+        markVisited(curPos[0], curPos[1]);
+        break;
     }
   }
 
@@ -834,12 +939,19 @@ class World extends ChangeNotifier {
   /// 检查战斗
   void checkFight() {
     fightMove++;
+    print(
+        '🎯 World.checkFight() - fightMove: $fightMove, fightDelay: $fightDelay');
+
     if (fightMove > fightDelay) {
       double chance = fightChance;
       // chance *= sm.hasPerk('stealthy') ? 0.5 : 1; // 暂时注释掉技能系统
-      if (Random().nextDouble() < chance) {
+      final randomValue = Random().nextDouble();
+      print('🎯 战斗检查 - chance: $chance, random: $randomValue');
+
+      if (randomValue < chance) {
         fightMove = 0;
-        // Events.triggerFight(); // 暂时注释掉事件系统
+        print('🎯 触发战斗！');
+        Events().triggerFight(); // 启用战斗事件
       }
     }
   }
@@ -947,19 +1059,39 @@ class World extends ChangeNotifier {
     health = 0;
     NotificationManager().notify(name, '你死了');
 
-    // 死亡冷却时间
-    // Timer(Duration(seconds: deathCooldown), () {
-    //   // 重生逻辑
-    //   dead = false;
-    //   health = getMaxHealth();
-    //   water = getMaxWater();
-    //   curPos = [villagePos[0], villagePos[1]];
-    //   starvation = false;
-    //   thirst = false;
-    //   notifyListeners();
-    // });
+    // 死亡冷却时间后自动重生
+    Timer(Duration(seconds: deathCooldown), () {
+      respawn();
+    });
 
     notifyListeners();
+  }
+
+  /// 重生
+  void respawn() {
+    print('🔄 World.respawn() 被调用');
+    dead = false;
+    health = getMaxHealth();
+    water = getMaxWater();
+    curPos = [villagePos[0], villagePos[1]];
+    starvation = false;
+    thirst = false;
+    foodMove = 0;
+    waterMove = 0;
+
+    // 重置装备中的食物和水
+    final path = Path();
+    path.outfit['cured meat'] = 1; // 给一些基本补给
+
+    NotificationManager().notify(name, '你重生了，回到了村庄');
+    print('✅ 重生完成 - 生命值: $health, 水: $water');
+    notifyListeners();
+  }
+
+  /// 手动重生（用于测试）
+  void forceRespawn() {
+    print('🔄 强制重生被调用');
+    respawn();
   }
 
   /// 到达时调用
@@ -967,17 +1099,27 @@ class World extends ChangeNotifier {
     final sm = StateManager();
 
     // 初始化状态
-    final worldData = sm.get('game.world', true);
-    if (worldData != null && worldData is Map<String, dynamic>) {
-      state = worldData;
+    final worldMap = sm.get('game.world.map', true);
+    final worldMask = sm.get('game.world.mask', true);
+
+    if (worldMap != null && worldMask != null) {
+      state = {
+        'map': worldMap,
+        'mask': worldMask,
+      };
       print('✅ 加载已有世界数据');
     } else {
       print('⚠️ 世界数据无效，重新初始化');
       // 如果没有世界数据，重新初始化
       init();
-      final newWorldData = sm.get('game.world', true);
-      if (newWorldData != null && newWorldData is Map<String, dynamic>) {
-        state = newWorldData;
+      final newWorldMap = sm.get('game.world.map', true);
+      final newWorldMask = sm.get('game.world.mask', true);
+
+      if (newWorldMap != null && newWorldMask != null) {
+        state = {
+          'map': newWorldMap,
+          'mask': newWorldMask,
+        };
         print('✅ 重新生成世界数据成功');
       } else {
         print('❌ 无法生成世界数据');

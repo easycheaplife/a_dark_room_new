@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../modules/outside.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
-import '../widgets/game_button.dart';
 import '../widgets/progress_button.dart';
 
 /// 外部界面 - 显示村庄状态、建筑和工人管理
@@ -251,7 +250,7 @@ class OutsideScreen extends StatelessWidget {
 
   // 构建工人控制按钮 - 模拟原游戏的上下箭头按钮
   Widget _buildWorkerControlButton(String text, VoidCallback? onPressed) {
-    return Container(
+    return SizedBox(
       width: 14,
       height: 12,
       child: InkWell(

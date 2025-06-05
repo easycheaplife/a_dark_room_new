@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../modules/room.dart';
-import '../modules/outside.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
 import '../widgets/game_button.dart';
