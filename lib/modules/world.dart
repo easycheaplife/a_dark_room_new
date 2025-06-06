@@ -749,15 +749,19 @@ class World extends ChangeNotifier {
     if (state == null) return;
 
     final curTile = state!['map'][curPos[0]][curPos[1]];
+    print('🗺️ doSpace() - 当前位置: [${curPos[0]}, ${curPos[1]}], 地形: $curTile');
 
     if (curTile == tile['village']) {
+      print('🏠 触发村庄事件 - 回到小黑屋');
       goHome();
     } else if (curTile == tile['executioner']) {
       // 执行者场景（暂时注释掉，需要实现Executioner事件）
       // final scene = state!['executioner'] ? 'executioner-antechamber' : 'executioner-intro';
       // Events().startEvent(Events.Executioner[scene]);
+      print('🔮 发现执行者装置');
       NotificationManager().notify(name, '发现了一个神秘的装置');
     } else if (landmarks.containsKey(curTile)) {
+      print('🏛️ 触发地标事件: $curTile');
       if (curTile != tile['outpost'] || !outpostUsed()) {
         // 触发地标建筑事件
         final landmarkInfo = landmarks[curTile];
@@ -775,6 +779,7 @@ class World extends ChangeNotifier {
         }
       }
     } else {
+      print('🚶 普通移动 - 使用补给和检查战斗');
       if (useSupplies()) {
         checkFight();
       }
@@ -871,6 +876,10 @@ class World extends ChangeNotifier {
     foodMove++;
     waterMove++;
 
+    print(
+        '🍖 useSupplies() - foodMove: $foodMove/$movesPerFood, waterMove: $waterMove/$movesPerWater');
+    print('🍖 当前状态 - 饥饿: $starvation, 口渴: $thirst, 水: $water');
+
     // 食物
     int currentMovesPerFood = movesPerFood;
     // currentMovesPerFood *= sm.hasPerk('slow metabolism') ? 2 : 1; // 暂时注释掉技能系统
@@ -878,28 +887,33 @@ class World extends ChangeNotifier {
     if (foodMove >= currentMovesPerFood) {
       foodMove = 0;
       var num = path.outfit['cured meat'] ?? 0;
+      print('🍖 需要消耗食物 - 熏肉数量: $num');
       num--;
 
       if (num == 0) {
         NotificationManager().notify(name, '肉已经用完了');
+        print('⚠️ 肉已经用完了');
       } else if (num < 0) {
         // 饥饿！
         num = 0;
         if (!starvation) {
           NotificationManager().notify(name, '饥饿开始了');
           starvation = true;
+          print('⚠️ 开始饥饿状态');
         } else {
           sm.set('character.starved',
               (sm.get('character.starved', true) ?? 0) + 1);
           // if (sm.get('character.starved') >= 10 && !sm.hasPerk('slow metabolism')) {
           //   sm.addPerk('slow metabolism');
           // }
+          print('💀 饥饿死亡！');
           die();
           return false;
         }
       } else {
         starvation = false;
         setHp(health + meatHealAmount());
+        print('🍖 消耗了熏肉，剩余: $num，恢复生命值');
       }
       path.outfit['cured meat'] = num;
     }
@@ -911,26 +925,31 @@ class World extends ChangeNotifier {
     if (waterMove >= currentMovesPerWater) {
       waterMove = 0;
       var waterAmount = water;
+      print('💧 需要消耗水 - 当前水量: $waterAmount');
       waterAmount--;
 
       if (waterAmount == 0) {
         NotificationManager().notify(name, '没有更多的水了');
+        print('⚠️ 没有更多的水了');
       } else if (waterAmount < 0) {
         waterAmount = 0;
         if (!thirst) {
           NotificationManager().notify(name, '口渴变得难以忍受');
           thirst = true;
+          print('⚠️ 开始口渴状态');
         } else {
           sm.set('character.dehydrated',
               (sm.get('character.dehydrated', true) ?? 0) + 1);
           // if (sm.get('character.dehydrated') >= 10 && !sm.hasPerk('desert rat')) {
           //   sm.addPerk('desert rat');
           // }
+          print('💀 口渴死亡！');
           die();
           return false;
         }
       } else {
         thirst = false;
+        print('💧 消耗了水，剩余: $waterAmount');
       }
       setWater(waterAmount);
       // updateSupplies(); // 在Flutter中由状态管理自动更新
@@ -1390,12 +1409,132 @@ class World extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 清除地牢状态
+  /// 清除地牢状态 - 参考原游戏的clearDungeon函数
   void clearDungeon() {
+    print('🏛️ World.clearDungeon() - 将当前位置转换为前哨站');
+
+    if (state != null && state!['map'] != null) {
+      // 将当前位置的地形改为前哨站 - 参考原游戏逻辑
+      final map = state!['map'] as List<List<String>>;
+      if (curPos[0] >= 0 &&
+          curPos[0] < map.length &&
+          curPos[1] >= 0 &&
+          curPos[1] < map[curPos[0]].length) {
+        final oldTile = map[curPos[0]][curPos[1]];
+        map[curPos[0]][curPos[1]] = tile['outpost']!;
+
+        print(
+            '🏛️ 地形转换: $oldTile -> ${tile['outpost']} 在位置 [${curPos[0]}, ${curPos[1]}]');
+
+        // 绘制道路连接到前哨站 - 参考原游戏的drawRoad函数
+        drawRoad();
+
+        // 标记前哨站为已使用（因为玩家刚刚清理了这里）
+        markOutpostUsed();
+
+        // 重新绘制地图以更新显示 - 关键！
+        notifyListeners();
+      }
+    }
+
     final sm = StateManager();
     sm.set('game.world.dungeonCleared', true);
-    NotificationManager().notify(name, '地牢已清理完毕');
+    NotificationManager().notify(name, '地牢已清理完毕，这里现在是一个前哨站');
     notifyListeners();
+  }
+
+  /// 绘制道路 - 参考原游戏的drawRoad函数
+  void drawRoad() {
+    if (state == null || state!['map'] == null) return;
+
+    final map = state!['map'] as List<List<String>>;
+
+    // 寻找最近的道路 - 参考原游戏的findClosestRoad函数
+    List<int> findClosestRoad(List<int> startPos) {
+      // 螺旋搜索最近的道路瓦片
+      int x = 0, y = 0, dx = 1, dy = -1;
+      final maxDistance = getDistance(startPos, villagePos) + 2;
+
+      for (int i = 0; i < maxDistance * maxDistance; i++) {
+        final searchX = startPos[0] + x;
+        final searchY = startPos[1] + y;
+
+        if (searchX > 0 &&
+            searchX < radius * 2 &&
+            searchY > 0 &&
+            searchY < radius * 2) {
+          final currentTile = map[searchX][searchY];
+
+          // 检查是否是道路、前哨站或村庄
+          if (currentTile == tile['road'] ||
+              (currentTile == tile['outpost'] && !(x == 0 && y == 0)) ||
+              currentTile == tile['village']) {
+            return [searchX, searchY];
+          }
+        }
+
+        // 螺旋移动逻辑
+        if (x == 0 || y == 0) {
+          final dtmp = dx;
+          dx = -dy;
+          dy = dtmp;
+        }
+        if (x == 0 && y <= 0) {
+          x++;
+        } else {
+          x += dx;
+          y += dy;
+        }
+      }
+      return villagePos; // 如果找不到道路，返回村庄位置
+    }
+
+    final closestRoad = findClosestRoad(curPos);
+    final xDist = curPos[0] - closestRoad[0];
+    final yDist = curPos[1] - closestRoad[1];
+
+    if (xDist == 0 && yDist == 0) return; // 已经在道路上
+
+    final xDir = xDist.abs() ~/ xDist; // 方向：1 或 -1
+    final yDir = yDist.abs() ~/ yDist; // 方向：1 或 -1
+
+    int xIntersect, yIntersect;
+    if (xDist.abs() > yDist.abs()) {
+      xIntersect = closestRoad[0];
+      yIntersect = closestRoad[1] + yDist;
+    } else {
+      xIntersect = closestRoad[0] + xDist;
+      yIntersect = closestRoad[1];
+    }
+
+    // 绘制水平道路
+    for (int x = 0; x < xDist.abs(); x++) {
+      final roadX = closestRoad[0] + (xDir * x);
+      if (roadX >= 0 &&
+          roadX < map.length &&
+          yIntersect >= 0 &&
+          yIntersect < map[roadX].length) {
+        if (isTerrain(map[roadX][yIntersect])) {
+          map[roadX][yIntersect] = tile['road']!;
+        }
+      }
+    }
+
+    // 绘制垂直道路
+    for (int y = 0; y < yDist.abs(); y++) {
+      final roadY = closestRoad[1] + (yDir * y);
+      if (xIntersect >= 0 &&
+          xIntersect < map.length &&
+          roadY >= 0 &&
+          roadY < map[xIntersect].length) {
+        if (isTerrain(map[xIntersect][roadY])) {
+          map[xIntersect][roadY] = tile['road']!;
+        }
+      }
+    }
+
+    print(
+        '🛤️ 绘制道路完成：从 [${curPos[0]}, ${curPos[1]}] 到 [${closestRoad[0]}, ${closestRoad[1]}]');
   }
 
   /// 检查位置是否已访问

@@ -6,6 +6,7 @@ import '../core/notifications.dart';
 import '../core/engine.dart';
 import 'path.dart';
 import 'world.dart';
+import 'setpieces.dart';
 
 /// 事件模块 - 处理随机事件系统
 /// 包括战斗、故事事件、战利品系统等功能
@@ -404,9 +405,15 @@ class Events extends ChangeNotifier {
     final scene = event['scenes'][sceneName];
     if (scene == null) return;
 
-    // onLoad 回调
+    // onLoad 回调 - 支持函数和字符串形式
     if (scene['onLoad'] != null) {
-      scene['onLoad']();
+      final onLoad = scene['onLoad'];
+      if (onLoad is Function) {
+        onLoad();
+      } else if (onLoad is String) {
+        // 处理字符串形式的回调
+        _handleOnLoadCallback(onLoad);
+      }
     }
 
     // 场景通知
@@ -959,6 +966,24 @@ class Events extends ChangeNotifier {
       }
     } else {
       print('⚠️ 没有可用的战斗事件');
+    }
+  }
+
+  /// 处理onLoad回调 - 根据字符串名称调用相应的方法
+  void _handleOnLoadCallback(String callbackName) {
+    switch (callbackName) {
+      case 'useOutpost':
+        Setpieces().useOutpost();
+        break;
+      case 'addGastronomePerk':
+        Setpieces().addGastronomePerk();
+        break;
+      case 'clearDungeon':
+        Setpieces().clearDungeon();
+        break;
+      default:
+        print('⚠️ 未知的onLoad回调: $callbackName');
+        break;
     }
   }
 

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../modules/world.dart';
 import '../modules/path.dart';
 
-/// 世界界面 - 显示地图探索和生存状态
+/// 世界地图屏幕 - 参考原游戏的world.js
 class WorldScreen extends StatefulWidget {
   const WorldScreen({super.key});
 
@@ -13,190 +13,103 @@ class WorldScreen extends StatefulWidget {
 }
 
 class _WorldScreenState extends State<WorldScreen> {
-  late FocusNode _focusNode;
-
   @override
   void initState() {
     super.initState();
-    _focusNode = FocusNode();
-    // 确保焦点在组件上，以便接收键盘事件
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _focusNode.requestFocus();
-    });
+    // 设置键盘监听
+    HardwareKeyboard.instance.addHandler(_handleKeyEvent);
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    HardwareKeyboard.instance.removeHandler(_handleKeyEvent);
     super.dispose();
+  }
+
+  bool _handleKeyEvent(KeyEvent event) {
+    if (event is KeyDownEvent) {
+      final world = Provider.of<World>(context, listen: false);
+      _handleKeyPress(event, world);
+      return true;
+    }
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<World>(
-      builder: (context, world, child) {
-        return KeyboardListener(
-          focusNode: _focusNode,
-          onKeyEvent: (KeyEvent event) {
-            if (event is KeyDownEvent) {
-              _handleKeyPress(event, world);
-            }
-          },
-          child: GestureDetector(
-            onTap: () => _focusNode.requestFocus(),
-            child: Container(
-              color: Colors.black,
-              child: Column(
-                children: [
-                  // 状态栏和背包区域
-                  _buildTopArea(world),
-                  // 地图区域 - 占据大部分空间
-                  Expanded(
-                    flex: 3,
-                    child: _buildMapArea(world),
-                  ),
-                  // 重生按钮（仅在死亡时显示）
-                  if (world.dead) _buildRespawnButton(world),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  /// 构建顶部区域（状态栏和背包）
-  Widget _buildTopArea(World world) {
-    final path = Path();
-
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      color: Colors.grey[900],
-      child: Column(
-        children: [
-          // 状态栏
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Consumer<World>(
+        builder: (context, world, child) {
+          return Column(
             children: [
-              Text(
-                '生命值: ${world.health}/${world.getMaxHealth()}',
-                style: const TextStyle(color: Colors.white, fontSize: 14),
+              // 标题栏
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: const Text(
+                  '荒芜世界',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-              Text(
-                '水: ${world.water}/${world.getMaxWater()}',
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-              ),
-              Text(
-                '位置: ${world.getCurrentTerrainName()}',
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          // 背包信息
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.white),
-              color: Colors.black,
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+              // 状态信息
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    const Text(
-                      '背包',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12),
+                    Text(
+                      '生命值: ${world.health}',
+                      style: const TextStyle(color: Colors.red),
                     ),
                     Text(
-                      '空间: ${path.getCapacity() - path.getTotalWeight()}/${path.getCapacity()}',
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                      '水: ${world.water}',
+                      style: const TextStyle(color: Colors.blue),
+                    ),
+                    Text(
+                      '距离: ${world.getDistance()}',
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
-                SizedBox(
-                  height: 30,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        if (world.water > 0) _buildSupplyItem('水', world.water),
-                        ...path.outfit.entries
-                            .where((entry) => entry.value > 0)
-                            .map((entry) =>
-                                _buildSupplyItem(entry.key, entry.value)),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+              ),
 
-  /// 构建重生按钮
-  Widget _buildRespawnButton(World world) {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      child: ElevatedButton(
-        onPressed: () => world.forceRespawn(),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red[700],
-          foregroundColor: Colors.white,
-          minimumSize: const Size(100, 40),
-        ),
-        child: const Text('重生'),
-      ),
-    );
-  }
+              const SizedBox(height: 16),
 
-  /// 构建地图区域
-  Widget _buildMapArea(World world) {
-    if (world.state == null) {
-      return const Center(
-        child: Text(
-          '地图数据加载中...',
-          style: TextStyle(color: Colors.white),
-        ),
-      );
-    }
+              // 地图区域
+              Expanded(
+                child: _buildMap(world),
+              ),
 
-    return Container(
-      margin: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.white),
-        color: Colors.black,
+              // 补给品信息
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: _buildSupplies(world),
+              ),
+            ],
+          );
+        },
       ),
-      child: _buildMap(world),
     );
   }
 
   /// 构建地图
   Widget _buildMap(World world) {
     try {
-      // 安全地转换地图数据
-      final mapData = world.state!['map'];
-      final maskData = world.state!['mask'];
-
-      if (mapData == null || maskData == null) {
+      final mapData = world.state?['map'];
+      if (mapData == null) {
         return const Center(
           child: Text(
-            '地图数据缺失',
+            '地图未初始化',
             style: TextStyle(color: Colors.white),
           ),
         );
       }
 
-      // 转换为正确的类型
       final map =
           List<List<String>>.from(mapData.map((row) => List<String>.from(row)));
       final curPos = world.getCurrentPosition();
@@ -249,7 +162,7 @@ class _WorldScreenState extends State<WorldScreen> {
     }
   }
 
-  /// 构建地图瓦片
+  /// 构建地图瓦片 - 参考原游戏的drawMap函数逻辑
   Widget _buildMapTile(
       String tile, bool visible, bool isPlayer, int x, int y, World world) {
     String displayChar;
@@ -261,85 +174,23 @@ class _WorldScreenState extends State<WorldScreen> {
       color = Colors.yellow;
       tooltip = '流浪者';
     } else {
-      // 显示完整地图，不使用遮罩系统
-      displayChar = tile;
+      // 参考原游戏的地标显示逻辑
+      // if(typeof World.LANDMARKS[c] != 'undefined' && (c != World.TILE.OUTPOST || !World.outpostUsed(i, j)))
+      final isLandmark = _isLandmarkTile(tile);
+      final isUsedOutpost = (tile == 'P' && world.outpostUsed());
 
-      // 设置地形颜色和提示
-      switch (tile) {
-        case 'A': // 村庄
-          color = Colors.green;
-          tooltip = '村庄';
-          break;
-        case ';': // 森林
-          color = Colors.green[300]!;
-          break;
-        case ',': // 田野
-          color = Colors.yellow[700]!;
-          break;
-        case '.': // 荒地
-          color = Colors.brown[300]!;
-          break;
-        case '#': // 道路
-          color = Colors.grey[400]!;
-          break;
-        case 'H': // 房子
-          color = Colors.blue;
-          tooltip = '旧房子';
-          break;
-        case 'V': // 洞穴
-          color = Colors.purple;
-          tooltip = '潮湿洞穴';
-          break;
-        case 'O': // 小镇
-          color = Colors.orange;
-          tooltip = '废弃小镇';
-          break;
-        case 'Y': // 城市
-          color = Colors.red;
-          tooltip = '废墟城市';
-          break;
-        case 'P': // 前哨站
-          color = Colors.cyan;
-          tooltip = '前哨站';
-          break;
-        case 'W': // 飞船
-          color = Colors.white;
-          tooltip = '坠毁星舰';
-          break;
-        case 'I': // 铁矿
-          color = Colors.grey[600]!;
-          tooltip = '铁矿';
-          break;
-        case 'C': // 煤矿
-          color = Colors.black;
-          tooltip = '煤矿';
-          break;
-        case 'S': // 硫磺矿
-          color = Colors.yellow;
-          tooltip = '硫磺矿';
-          break;
-        case 'B': // 钻孔
-          color = Colors.brown;
-          tooltip = '钻孔';
-          break;
-        case 'F': // 战场
-          color = Colors.red[800]!;
-          tooltip = '战场';
-          break;
-        case 'M': // 沼泽
-          color = Colors.green[800]!;
-          tooltip = '阴暗沼泽';
-          break;
-        case 'U': // 缓存
-          color = Colors.grey[700]!;
-          tooltip = '被摧毁的村庄';
-          break;
-        case 'X': // 执行者
-          color = Colors.red[900]!;
-          tooltip = '被摧毁的战舰';
-          break;
-        default:
-          color = Colors.grey;
+      if (isLandmark && !isUsedOutpost) {
+        // 显示为地标（有特殊颜色和提示）
+        displayChar = tile;
+        final styleResult = _getLandmarkStyle(tile);
+        color = styleResult['color'];
+        tooltip = styleResult['tooltip'];
+      } else {
+        // 显示为普通地形（已使用的前哨站或普通地形）
+        displayChar = tile.length > 1
+            ? tile[0]
+            : tile; // 参考原游戏：if(c.length > 1) c = c[0];
+        color = _getTerrainColor(displayChar);
       }
     }
 
@@ -368,6 +219,108 @@ class _WorldScreenState extends State<WorldScreen> {
     }
 
     return tileWidget;
+  }
+
+  /// 检查是否是地标瓦片
+  bool _isLandmarkTile(String tile) {
+    const landmarks = [
+      'H',
+      'V',
+      'O',
+      'Y',
+      'P',
+      'W',
+      'I',
+      'C',
+      'S',
+      'B',
+      'F',
+      'M',
+      'U',
+      'X'
+    ];
+    return landmarks.contains(tile);
+  }
+
+  /// 获取地标样式
+  Map<String, dynamic> _getLandmarkStyle(String tile) {
+    switch (tile) {
+      case 'H': // 房子
+        return {'color': Colors.blue, 'tooltip': '旧房子'};
+      case 'V': // 洞穴
+        return {'color': Colors.purple, 'tooltip': '潮湿洞穴'};
+      case 'O': // 小镇
+        return {'color': Colors.orange, 'tooltip': '废弃小镇'};
+      case 'Y': // 城市
+        return {'color': Colors.red, 'tooltip': '废墟城市'};
+      case 'P': // 前哨站
+        return {'color': Colors.cyan, 'tooltip': '前哨站'};
+      case 'W': // 飞船
+        return {'color': Colors.white, 'tooltip': '坠毁星舰'};
+      case 'I': // 铁矿
+        return {'color': Colors.grey[600]!, 'tooltip': '铁矿'};
+      case 'C': // 煤矿
+        return {'color': Colors.black, 'tooltip': '煤矿'};
+      case 'S': // 硫磺矿
+        return {'color': Colors.yellow, 'tooltip': '硫磺矿'};
+      case 'B': // 钻孔
+        return {'color': Colors.brown, 'tooltip': '钻孔'};
+      case 'F': // 战场
+        return {'color': Colors.red[800]!, 'tooltip': '战场'};
+      case 'M': // 沼泽
+        return {'color': Colors.green[800]!, 'tooltip': '阴暗沼泽'};
+      case 'U': // 缓存
+        return {'color': Colors.grey[700]!, 'tooltip': '被摧毁的村庄'};
+      case 'X': // 执行者
+        return {'color': Colors.red[900]!, 'tooltip': '被摧毁的战舰'};
+      default:
+        return {'color': Colors.grey, 'tooltip': null};
+    }
+  }
+
+  /// 获取地形颜色
+  Color _getTerrainColor(String tile) {
+    switch (tile) {
+      case 'A': // 村庄
+        return Colors.green;
+      case ';': // 森林
+        return Colors.green[300]!;
+      case ',': // 田野
+        return Colors.yellow[700]!;
+      case '.': // 荒地
+        return Colors.brown[300]!;
+      case '#': // 道路
+        return Colors.grey[400]!;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  /// 构建补给品信息
+  Widget _buildSupplies(World world) {
+    final path = Provider.of<Path>(context, listen: false);
+    final supplies = <Widget>[];
+
+    // 显示重要的补给品
+    final meat = path.outfit['cured meat'] ?? 0;
+    if (meat > 0) {
+      supplies.add(_buildSupplyItem('熏肉', meat));
+    }
+
+    final bullets = path.outfit['bullets'] ?? 0;
+    if (bullets > 0) {
+      supplies.add(_buildSupplyItem('子弹', bullets));
+    }
+
+    final medicine = path.outfit['medicine'] ?? 0;
+    if (medicine > 0) {
+      supplies.add(_buildSupplyItem('药物', medicine));
+    }
+
+    return Wrap(
+      spacing: 8,
+      children: supplies,
+    );
   }
 
   /// 构建补给品项目
@@ -409,64 +362,60 @@ class _WorldScreenState extends State<WorldScreen> {
 
   /// 处理地图点击 - 完全参考原游戏的点击移动逻辑
   void _handleMapClick(TapDownDetails details, World world) {
-    // 获取地图容器的渲染框
-    final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
-    if (renderBox == null) return;
-
-    // 计算点击位置相对于地图容器的本地坐标
     final localPosition = details.localPosition;
+    final curPos = world.curPos;
 
-    // 获取地图的实际显示尺寸
-    final mapDisplayWidth = renderBox.size.width;
-    final mapDisplayHeight = renderBox.size.height;
-
-    // 参考原游戏的逻辑：
+    // 参考原游戏world.js第435-454行的点击逻辑
+    // 原游戏的坐标计算：
     // centreX = map.offset().left + map.width() * World.curPos[0] / (World.RADIUS * 2),
     // centreY = map.offset().top + map.height() * World.curPos[1] / (World.RADIUS * 2),
     // clickX = event.pageX - centreX,
     // clickY = event.pageY - centreY;
 
-    // 计算当前位置在地图中的中心点 - 完全参考原游戏逻辑
-    final radius = World.radius;
-    final curPos = world.curPos;
+    // 我们的地图渲染方式：
+    // - 外层循环j是Y轴（行，从上到下）：List.generate(map[0].length, (j)
+    // - 内层循环i是X轴（列，从左到右）：List.generate(map.length, (i)
+    // - 每个瓦片16x16像素
 
-    // 原游戏的坐标计算：当前位置在地图显示中的像素坐标
-    // 注意：原游戏的地图显示是整个地图，不是以当前位置为中心的视图
-    final centreX = mapDisplayWidth * curPos[0] / (radius * 2);
-    final centreY = mapDisplayHeight * curPos[1] / (radius * 2);
+    // 计算当前位置在地图中的像素坐标
+    // 注意：我们的地图是从(0,0)开始渲染的，不是以玩家为中心
+    // 但是我们需要考虑地图的padding（4.0像素）
+    final playerPixelX =
+        curPos[0] * 16.0 + 8.0 + 4.0; // X轴：列 * 瓦片宽度 + 瓦片中心偏移 + 容器padding
+    final playerPixelY =
+        curPos[1] * 16.0 + 8.0 + 4.0; // Y轴：行 * 瓦片高度 + 瓦片中心偏移 + 容器padding
 
-    // 计算点击位置相对于当前位置中心的偏移
-    final clickX = localPosition.dx - centreX;
-    final clickY = localPosition.dy - centreY;
+    // 计算点击位置相对于玩家位置的偏移
+    final clickX = localPosition.dx - playerPixelX;
+    final clickY = localPosition.dy - playerPixelY;
 
     print('🗺️ 地图点击调试:');
-    print('  地图尺寸: ${mapDisplayWidth}x${mapDisplayHeight}');
-    print('  当前位置: ${curPos[0]}, ${curPos[1]}');
-    print('  半径: $radius');
-    print('  中心点: $centreX, $centreY');
-    print('  点击位置: ${localPosition.dx}, ${localPosition.dy}');
-    print('  偏移量: $clickX, $clickY');
+    print(
+        '  当前位置: [${curPos[0]}, ${curPos[1]}] (X=${curPos[0]}, Y=${curPos[1]})');
+    print('  玩家像素位置: ($playerPixelX, $playerPixelY)');
+    print('  点击位置: (${localPosition.dx}, ${localPosition.dy})');
+    print('  偏移量: ($clickX, $clickY)');
 
     // 使用原游戏的完全相同的点击逻辑
     // 注意：原游戏使用的是 if 而不是 else if，这样可以处理边界情况
     if (clickX > clickY && clickX < -clickY) {
-      // 上方
-      print('  → 向北移动');
+      // 上方三角形 - 向北移动（Y坐标减少）
+      print('  → 向北移动 (Y坐标减少)');
       world.moveNorth();
     }
     if (clickX < clickY && clickX > -clickY) {
-      // 下方
-      print('  → 向南移动');
+      // 下方三角形 - 向南移动（Y坐标增加）
+      print('  → 向南移动 (Y坐标增加)');
       world.moveSouth();
     }
     if (clickX < clickY && clickX < -clickY) {
-      // 左方
-      print('  → 向西移动');
+      // 左方三角形 - 向西移动（X坐标减少）
+      print('  → 向西移动 (X坐标减少)');
       world.moveWest();
     }
     if (clickX > clickY && clickX > -clickY) {
-      // 右方
-      print('  → 向东移动');
+      // 右方三角形 - 向东移动（X坐标增加）
+      print('  → 向东移动 (X坐标增加)');
       world.moveEast();
     }
   }
