@@ -426,12 +426,12 @@ class _WorldScreenState extends State<WorldScreen> {
     // clickX = event.pageX - centreX,
     // clickY = event.pageY - centreY;
 
-    // 计算当前位置在地图中的中心点
+    // 计算当前位置在地图中的中心点 - 完全参考原游戏逻辑
     final radius = World.radius;
     final curPos = world.curPos;
 
-    // 原游戏的坐标系统：curPos[0] 和 curPos[1] 都是从 0 到 RADIUS*2
-    // 当前位置在地图显示中的像素坐标
+    // 原游戏的坐标计算：当前位置在地图显示中的像素坐标
+    // 注意：原游戏的地图显示是整个地图，不是以当前位置为中心的视图
     final centreX = mapDisplayWidth * curPos[0] / (radius * 2);
     final centreY = mapDisplayHeight * curPos[1] / (radius * 2);
 
@@ -442,6 +442,7 @@ class _WorldScreenState extends State<WorldScreen> {
     print('🗺️ 地图点击调试:');
     print('  地图尺寸: ${mapDisplayWidth}x${mapDisplayHeight}');
     print('  当前位置: ${curPos[0]}, ${curPos[1]}');
+    print('  半径: $radius');
     print('  中心点: $centreX, $centreY');
     print('  点击位置: ${localPosition.dx}, ${localPosition.dy}');
     print('  偏移量: $clickX, $clickY');

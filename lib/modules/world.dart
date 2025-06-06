@@ -1036,11 +1036,98 @@ class World extends ChangeNotifier {
     return baseWater;
   }
 
-  /// 回家
+  /// 回家 - 参考原游戏的goHome函数
   void goHome() {
-    // Engine().travelTo(Room()); // 暂时注释掉，直到Engine有travelTo方法
-    NotificationManager().notify(name, '回到了村庄');
+    print('🏠 World.goHome() 开始');
+
+    // 保存世界状态到StateManager - 参考原游戏逻辑
+    if (state != null) {
+      final sm = StateManager();
+      sm.setM('game.world', state!);
+      print('🏠 保存世界状态完成');
+
+      // 检查并解锁建筑 - 参考原游戏的建筑解锁逻辑
+      if (state!['sulphurmine'] == true &&
+          (sm.get('game.buildings["sulphur mine"]', true) ?? 0) == 0) {
+        sm.add('game.buildings["sulphur mine"]', 1);
+        print('🏠 解锁硫磺矿');
+      }
+      if (state!['ironmine'] == true &&
+          (sm.get('game.buildings["iron mine"]', true) ?? 0) == 0) {
+        sm.add('game.buildings["iron mine"]', 1);
+        print('🏠 解锁铁矿');
+      }
+      if (state!['coalmine'] == true &&
+          (sm.get('game.buildings["coal mine"]', true) ?? 0) == 0) {
+        sm.add('game.buildings["coal mine"]', 1);
+        print('🏠 解锁煤矿');
+      }
+      if (state!['ship'] == true &&
+          !sm.get('features.location.spaceShip', true)) {
+        // Ship.init(); // 暂时注释掉，需要实现Ship模块
+        sm.set('features.location.spaceShip', true);
+        print('🏠 解锁星舰');
+      }
+      if (state!['executioner'] == true &&
+          !sm.get('features.location.fabricator', true)) {
+        // Fabricator.init(); // 暂时注释掉，需要实现Fabricator模块
+        sm.set('features.location.fabricator', true);
+        NotificationManager().notify(name, '建造者知道这个奇怪的装置。很快就把它拿走了。没有问它从哪里来的。');
+        print('🏠 解锁制造器');
+      }
+
+      // 清空世界状态
+      state = null;
+    }
+
+    // 返回装备到仓库 - 参考原游戏的returnOutfit函数
+    returnOutfit();
+
+    // 回到小黑屋模块
+    final engine = Engine();
+    final room = Room();
+    engine.travelTo(room);
+
+    NotificationManager().notify(name, '安全回到了村庄');
+    print('🏠 World.goHome() 完成');
     notifyListeners();
+  }
+
+  /// 返回装备到仓库 - 参考原游戏的returnOutfit函数
+  void returnOutfit() {
+    final path = Path();
+    final sm = StateManager();
+
+    for (final entry in path.outfit.entries) {
+      final itemName = entry.key;
+      final amount = entry.value;
+
+      if (amount > 0) {
+        // 将装备中的物品添加到仓库
+        sm.add('stores["$itemName"]', amount);
+
+        // 检查是否应该留在家里（不带走的物品）
+        if (leaveItAtHome(itemName)) {
+          path.outfit[itemName] = 0;
+        }
+      }
+    }
+
+    print('🎒 装备已返回仓库');
+  }
+
+  /// 检查物品是否应该留在家里 - 参考原游戏的leaveItAtHome函数
+  bool leaveItAtHome(String thing) {
+    // 这些物品可以带走：食物、弹药、能量电池、护身符、药物、武器、可制作物品
+    return thing != 'cured meat' &&
+        thing != 'bullets' &&
+        thing != 'energy cell' &&
+        thing != 'charm' &&
+        thing != 'medicine' &&
+        thing != 'stim' &&
+        thing != 'hypo' &&
+        !weapons.containsKey(thing); // 武器可以带走
+    // && typeof Room.Craftables[thing] == 'undefined'; // 暂时注释掉，需要实现Room.Craftables
   }
 
   /// 检查前哨站是否已使用
@@ -1287,11 +1374,19 @@ class World extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 标记位置为已访问
+  /// 标记位置为已访问 - 参考原游戏的markVisited函数
   void markVisited(int x, int y) {
-    final key = '$x,$y';
-    final sm = StateManager();
-    sm.set('game.world.visited["$key"]', true);
+    if (state != null && state!['map'] != null) {
+      // 在地图上添加'!'标记，表示已访问
+      final map = state!['map'] as List<List<String>>;
+      if (x >= 0 && x < map.length && y >= 0 && y < map[x].length) {
+        final currentTile = map[x][y];
+        if (!currentTile.endsWith('!')) {
+          map[x][y] = currentTile + '!';
+          print('🗺️ 标记位置 ($x, $y) 为已访问: ${map[x][y]}');
+        }
+      }
+    }
     notifyListeners();
   }
 

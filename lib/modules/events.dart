@@ -760,6 +760,9 @@ class Events extends ChangeNotifier {
 
       endFight();
 
+      // 播放胜利音效（暂时注释掉）
+      // AudioEngine().playSound(AudioLibrary.WIN_FIGHT);
+
       // 敌人消失动画延迟
       Timer(const Duration(milliseconds: 1000), () {
         final event = activeEvent();
@@ -768,10 +771,14 @@ class Events extends ChangeNotifier {
         final scene = event['scenes'][activeScene];
         if (scene == null) return;
 
-        // 显示死亡消息和战利品
+        // 显示死亡消息和战利品 - 参考原游戏逻辑
         showingLoot = true;
         final loot = scene['loot'] as Map<String, dynamic>? ?? {};
         drawLoot(loot);
+
+        // 注意：原游戏的winFight不会自动回到小黑屋
+        // 只是显示战利品界面，玩家可以选择离开
+        // 只有loseFight才会调用World.die()回到小黑屋
 
         notifyListeners();
       });
