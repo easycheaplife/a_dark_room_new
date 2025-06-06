@@ -3,9 +3,11 @@ import 'dart:math';
 import 'dart:async';
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
+import '../core/engine.dart';
 import 'path.dart';
 import 'events.dart';
 import 'setpieces.dart';
+import 'room.dart';
 
 /// 世界模块 - 处理世界地图探索
 /// 包括地图生成、移动、战斗、资源消耗等功能
@@ -1053,18 +1055,43 @@ class World extends ChangeNotifier {
     usedOutposts[key] = true;
   }
 
-  /// 死亡
+  /// 死亡 - 参考原游戏的World.die函数
   void die() {
-    dead = true;
-    health = 0;
-    NotificationManager().notify(name, '你死了');
+    if (!dead) {
+      dead = true;
+      health = 0;
+      print('💀 玩家死亡');
 
-    // 死亡冷却时间后自动重生
-    Timer(Duration(seconds: deathCooldown), () {
-      respawn();
-    });
+      // 显示死亡通知
+      NotificationManager().notify(name, '世界渐渐消失了');
 
-    notifyListeners();
+      // 清空世界状态和装备 - 参考原游戏逻辑
+      state = null;
+      final path = Path();
+      path.outfit.clear();
+
+      // 清除StateManager中的装备数据
+      final sm = StateManager();
+      sm.remove('outfit');
+
+      // 播放死亡音效（暂时注释掉）
+      // AudioEngine().playSound(AudioLibrary.death);
+
+      // 延迟后回到小黑屋 - 参考原游戏的动画时序
+      Timer(const Duration(milliseconds: 2000), () {
+        // 回到小黑屋模块
+        final engine = Engine();
+        final room = Room();
+        engine.travelTo(room);
+
+        // 重置死亡状态
+        dead = false;
+
+        print('🏠 返回小黑屋');
+      });
+
+      notifyListeners();
+    }
   }
 
   /// 重生
