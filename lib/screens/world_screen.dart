@@ -407,36 +407,65 @@ class _WorldScreenState extends State<WorldScreen> {
     }
   }
 
-  /// 处理地图点击 - 实现原游戏的点击移动逻辑
+  /// 处理地图点击 - 完全参考原游戏的点击移动逻辑
   void _handleMapClick(TapDownDetails details, World world) {
     // 获取地图容器的渲染框
     final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
     if (renderBox == null) return;
 
-    // 计算点击位置相对于地图中心的偏移
+    // 计算点击位置相对于地图容器的本地坐标
     final localPosition = details.localPosition;
-    final mapSize = renderBox.size;
 
-    // 假设地图在屏幕中心，计算相对于当前位置的点击偏移
-    final centerX = mapSize.width / 2;
-    final centerY = mapSize.height / 2;
+    // 获取地图的实际显示尺寸
+    final mapDisplayWidth = renderBox.size.width;
+    final mapDisplayHeight = renderBox.size.height;
 
-    final clickX = localPosition.dx - centerX;
-    final clickY = localPosition.dy - centerY;
+    // 参考原游戏的逻辑：
+    // centreX = map.offset().left + map.width() * World.curPos[0] / (World.RADIUS * 2),
+    // centreY = map.offset().top + map.height() * World.curPos[1] / (World.RADIUS * 2),
+    // clickX = event.pageX - centreX,
+    // clickY = event.pageY - centreY;
 
-    // 使用原游戏的点击逻辑：根据点击位置的象限决定移动方向
-    // 这个逻辑来自原游戏的 World.click 函数
+    // 计算当前位置在地图中的中心点
+    final radius = World.radius;
+    final curPos = world.curPos;
+
+    // 原游戏的坐标系统：curPos[0] 和 curPos[1] 都是从 0 到 RADIUS*2
+    // 当前位置在地图显示中的像素坐标
+    final centreX = mapDisplayWidth * curPos[0] / (radius * 2);
+    final centreY = mapDisplayHeight * curPos[1] / (radius * 2);
+
+    // 计算点击位置相对于当前位置中心的偏移
+    final clickX = localPosition.dx - centreX;
+    final clickY = localPosition.dy - centreY;
+
+    print('🗺️ 地图点击调试:');
+    print('  地图尺寸: ${mapDisplayWidth}x${mapDisplayHeight}');
+    print('  当前位置: ${curPos[0]}, ${curPos[1]}');
+    print('  中心点: $centreX, $centreY');
+    print('  点击位置: ${localPosition.dx}, ${localPosition.dy}');
+    print('  偏移量: $clickX, $clickY');
+
+    // 使用原游戏的完全相同的点击逻辑
+    // 注意：原游戏使用的是 if 而不是 else if，这样可以处理边界情况
     if (clickX > clickY && clickX < -clickY) {
       // 上方
+      print('  → 向北移动');
       world.moveNorth();
-    } else if (clickX < clickY && clickX > -clickY) {
+    }
+    if (clickX < clickY && clickX > -clickY) {
       // 下方
+      print('  → 向南移动');
       world.moveSouth();
-    } else if (clickX < clickY && clickX < -clickY) {
+    }
+    if (clickX < clickY && clickX < -clickY) {
       // 左方
+      print('  → 向西移动');
       world.moveWest();
-    } else if (clickX > clickY && clickX > -clickY) {
+    }
+    if (clickX > clickY && clickX > -clickY) {
       // 右方
+      print('  → 向东移动');
       world.moveEast();
     }
   }

@@ -57,6 +57,19 @@ class Events extends ChangeNotifier {
   Timer? dotTimer;
   int meditateDmg = 0;
 
+  // 动画状态
+  String?
+      currentAnimation; // 'melee_wanderer', 'melee_enemy', 'ranged_wanderer', 'ranged_enemy'
+  int currentAnimationDamage = 0;
+
+  // 敌人血量管理
+  int currentEnemyHealth = 0;
+  int maxEnemyHealth = 0;
+
+  // 战斗胜利状态
+  bool showingLoot = false;
+  Map<String, int> currentLoot = {};
+
   /// 初始化事件模块
   void init([Map<String, dynamic>? options]) {
     if (options != null) {
@@ -425,10 +438,9 @@ class Events extends ChangeNotifier {
     fought = false;
     won = false;
 
-    // 创建战斗者（暂时不使用这些变量，但保留逻辑）
-    // final wandererHealth = World().health;
-    // final wandererMaxHealth = World().getMaxHealth();
-    // final enemyHealth = scene['health'] ?? 10;
+    // 初始化敌人血量
+    currentEnemyHealth = scene['health'] ?? 10;
+    maxEnemyHealth = scene['health'] ?? 10;
 
     // 设置敌人攻击定时器
     startEnemyAttacks(scene['attackDelay'] ?? 2.0);
@@ -500,29 +512,62 @@ class Events extends ChangeNotifier {
     }
   }
 
-  /// 近战动画
+  /// 近战动画 - 参考原游戏的animateMelee函数
   void animateMelee(String fighterId, int dmg, VoidCallback? callback) {
-    final enemy = fighterId == 'wanderer' ? 'enemy' : 'wanderer';
-    damage(fighterId, enemy, dmg, 'melee');
-    callback?.call();
+    print('🎬 执行近战动画: $fighterId 造成 $dmg 伤害');
+
+    // 设置动画状态
+    currentAnimation = 'melee_$fighterId';
+    currentAnimationDamage = dmg;
+    notifyListeners(); // 触发UI更新以显示动画
+
+    // 延迟模拟动画时间
+    Timer(Duration(milliseconds: fightSpeed), () {
+      final enemy = fighterId == 'wanderer' ? 'enemy' : 'wanderer';
+      damage(fighterId, enemy, dmg, 'melee');
+
+      // 动画结束后的回调
+      Timer(Duration(milliseconds: fightSpeed), () {
+        currentAnimation = null;
+        currentAnimationDamage = 0;
+        notifyListeners();
+        callback?.call();
+      });
+    });
   }
 
-  /// 远程动画
+  /// 远程动画 - 参考原游戏的animateRanged函数
   void animateRanged(String fighterId, int dmg, VoidCallback? callback) {
-    final enemy = fighterId == 'wanderer' ? 'enemy' : 'wanderer';
-    damage(fighterId, enemy, dmg, 'ranged');
-    callback?.call();
+    print('🎬 执行远程动画: $fighterId 造成 $dmg 伤害');
+
+    // 设置动画状态
+    currentAnimation = 'ranged_$fighterId';
+    currentAnimationDamage = dmg;
+    notifyListeners(); // 触发UI更新以显示动画
+
+    // 延迟模拟子弹飞行时间
+    Timer(Duration(milliseconds: fightSpeed * 2), () {
+      final enemy = fighterId == 'wanderer' ? 'enemy' : 'wanderer';
+      damage(fighterId, enemy, dmg, 'ranged');
+
+      currentAnimation = null;
+      currentAnimationDamage = 0;
+      notifyListeners();
+      callback?.call();
+    });
   }
 
   /// 造成伤害
   void damage(String fighterId, String enemyId, int dmg, String type) {
+    if (dmg <= 0) return; // 未命中
+
     if (enemyId == 'wanderer') {
       // 对玩家造成伤害
       final newHp = max(0, World().health - dmg);
       World().setHp(newHp);
     } else {
       // 对敌人造成伤害
-      // 这里需要实现敌人血量管理
+      currentEnemyHealth = max(0, currentEnemyHealth - dmg);
     }
 
     // 播放音效（暂时注释掉）
@@ -625,6 +670,15 @@ class Events extends ChangeNotifier {
     fought = false;
     won = false;
     paused = false;
+
+    // 重置战斗相关状态
+    showingLoot = false;
+    currentLoot.clear();
+    currentEnemyHealth = 0;
+    maxEnemyHealth = 0;
+    currentAnimation = null;
+    currentAnimationDamage = 0;
+
     notifyListeners();
   }
 
@@ -691,38 +745,36 @@ class Events extends ChangeNotifier {
 
   /// 检查敌人死亡
   void checkEnemyDeath(int dmg) {
-    final event = activeEvent();
-    if (event == null) return;
-
-    final scene = event['scenes'][activeScene];
-    if (scene == null) return;
-
-    // 这里需要实现敌人血量管理
-    // 暂时简化处理
-    if (dmg > 0 && !won) {
+    if (currentEnemyHealth <= 0 && !won) {
       won = true;
       winFight();
     }
   }
 
-  /// 胜利战斗
+  /// 胜利战斗 - 参考原游戏的winFight函数
   void winFight() {
     if (fought) return;
 
-    endFight();
-
     Timer(Duration(milliseconds: fightSpeed), () {
-      final event = activeEvent();
-      if (event == null) return;
+      if (fought) return;
 
-      final scene = event['scenes'][activeScene];
-      if (scene == null) return;
+      endFight();
 
-      // 显示战利品
-      final loot = scene['loot'] as Map<String, dynamic>? ?? {};
-      drawLoot(loot);
+      // 敌人消失动画延迟
+      Timer(const Duration(milliseconds: 1000), () {
+        final event = activeEvent();
+        if (event == null) return;
 
-      notifyListeners();
+        final scene = event['scenes'][activeScene];
+        if (scene == null) return;
+
+        // 显示死亡消息和战利品
+        showingLoot = true;
+        final loot = scene['loot'] as Map<String, dynamic>? ?? {};
+        drawLoot(loot);
+
+        notifyListeners();
+      });
     });
   }
 
@@ -732,9 +784,9 @@ class Events extends ChangeNotifier {
     clearTimeouts();
   }
 
-  /// 绘制战利品
+  /// 绘制战利品 - 参考原游戏的drawLoot函数
   void drawLoot(Map<String, dynamic> lootList) {
-    final availableLoot = <String, int>{};
+    currentLoot.clear();
 
     for (final entry in lootList.entries) {
       final loot = entry.value as Map<String, dynamic>;
@@ -744,29 +796,51 @@ class Events extends ChangeNotifier {
         final min = (loot['min'] ?? 1) as int;
         final max = (loot['max'] ?? 1) as int;
         final num = Random().nextInt(max - min + 1) + min;
-        availableLoot[entry.key] = num;
+        currentLoot[entry.key] = num;
       }
     }
 
-    // 在Flutter中，战利品显示将通过UI组件处理
     notifyListeners();
   }
 
-  /// 获取战利品
+  /// 获取战利品 - 参考原游戏的getLoot函数
   void getLoot(String itemName, int amount) {
+    print('🎒 获取战利品: $itemName x$amount');
+
     final path = Path();
     final weight = path.getWeight(itemName);
     final freeSpace = path.getFreeSpace();
 
-    final canTake = min(amount, (freeSpace / weight).floor());
-    if (canTake > 0) {
-      final sm = StateManager();
-      sm.add('stores["$itemName"]', canTake);
+    print('🎒 物品重量: $weight, 剩余空间: $freeSpace');
 
-      // 更新装备
-      if (path.outfit.containsKey(itemName)) {
-        path.outfit[itemName] = (path.outfit[itemName] ?? 0) + canTake;
+    final canTake = min(amount, (freeSpace / weight).floor());
+    print('🎒 可以拿取: $canTake');
+
+    if (canTake > 0) {
+      // 更新装备 - 只使用Path.outfit，不使用StateManager
+      final oldAmount = path.outfit[itemName] ?? 0;
+      path.outfit[itemName] = oldAmount + canTake;
+
+      print('🎒 更新装备: $itemName 从 $oldAmount 增加到 ${path.outfit[itemName]}');
+
+      // 从当前战利品中移除已拾取的数量
+      if (currentLoot.containsKey(itemName)) {
+        final oldLootAmount = currentLoot[itemName] ?? 0;
+        currentLoot[itemName] = oldLootAmount - canTake;
+        print(
+            '🎒 战利品剩余: $itemName 从 $oldLootAmount 减少到 ${currentLoot[itemName]}');
+
+        if (currentLoot[itemName]! <= 0) {
+          currentLoot.remove(itemName);
+          print('🎒 战利品已全部拾取: $itemName');
+        }
       }
+
+      // 保存到StateManager
+      final sm = StateManager();
+      sm.set('outfit["$itemName"]', path.outfit[itemName]);
+    } else {
+      print('🎒 背包空间不足，无法拾取');
     }
 
     notifyListeners();
@@ -830,6 +904,11 @@ class Events extends ChangeNotifier {
     }
 
     return availableWeapons;
+  }
+
+  /// 获取当前敌人血量
+  int getCurrentEnemyHealth() {
+    return currentEnemyHealth;
   }
 
   /// 触发战斗
