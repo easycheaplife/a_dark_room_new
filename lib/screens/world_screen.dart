@@ -134,14 +134,17 @@ class _WorldScreenState extends State<WorldScreen> {
               padding: const EdgeInsets.all(4.0),
               child: Column(
                 children: List.generate(map[0].length, (j) {
+                  // j 是 Y轴（行，从上到下）
                   return Row(
                     children: List.generate(map.length, (i) {
+                      // i 是 X轴（列，从左到右）
+                      // 地图数据访问：map[i][j] 即 map[x][y]
                       return _buildMapTile(
                         map[i][j],
                         true, // 显示完整地图，不使用遮罩
-                        i == curPos[0] && j == curPos[1],
-                        i,
-                        j,
+                        i == curPos[0] && j == curPos[1], // 检查是否是玩家位置
+                        i, // X坐标
+                        j, // Y坐标
                         world,
                       );
                     }),
@@ -360,63 +363,48 @@ class _WorldScreenState extends State<WorldScreen> {
     }
   }
 
-  /// 处理地图点击 - 完全参考原游戏的点击移动逻辑
+  /// 处理地图点击 - 简化版本，直接基于点击位置相对于玩家位置的方向
   void _handleMapClick(TapDownDetails details, World world) {
     final localPosition = details.localPosition;
     final curPos = world.curPos;
 
-    // 参考原游戏world.js第435-454行的点击逻辑
-    // 原游戏的坐标计算：
-    // centreX = map.offset().left + map.width() * World.curPos[0] / (World.RADIUS * 2),
-    // centreY = map.offset().top + map.height() * World.curPos[1] / (World.RADIUS * 2),
-    // clickX = event.pageX - centreX,
-    // clickY = event.pageY - centreY;
-
-    // 我们的地图渲染方式：
-    // - 外层循环j是Y轴（行，从上到下）：List.generate(map[0].length, (j)
-    // - 内层循环i是X轴（列，从左到右）：List.generate(map.length, (i)
-    // - 每个瓦片16x16像素
-
-    // 计算当前位置在地图中的像素坐标
-    // 注意：我们的地图是从(0,0)开始渲染的，不是以玩家为中心
-    // 但是我们需要考虑地图的padding（4.0像素）
-    final playerPixelX =
-        curPos[0] * 16.0 + 8.0 + 4.0; // X轴：列 * 瓦片宽度 + 瓦片中心偏移 + 容器padding
-    final playerPixelY =
-        curPos[1] * 16.0 + 8.0 + 4.0; // Y轴：行 * 瓦片高度 + 瓦片中心偏移 + 容器padding
+    // 计算玩家在地图中的实际像素位置（瓦片中心）
+    final tileSize = 16.0;
+    final padding = 4.0; // Container的padding
+    final playerPixelX = curPos[0] * tileSize + tileSize / 2 + padding;
+    final playerPixelY = curPos[1] * tileSize + tileSize / 2 + padding;
 
     // 计算点击位置相对于玩家位置的偏移
     final clickX = localPosition.dx - playerPixelX;
     final clickY = localPosition.dy - playerPixelY;
 
-    print('🗺️ 地图点击调试:');
-    print(
-        '  当前位置: [${curPos[0]}, ${curPos[1]}] (X=${curPos[0]}, Y=${curPos[1]})');
+    print('🗺️ 地图点击调试 (简化版):');
+    print('  当前位置: [${curPos[0]}, ${curPos[1]}]');
     print('  玩家像素位置: ($playerPixelX, $playerPixelY)');
     print('  点击位置: (${localPosition.dx}, ${localPosition.dy})');
     print('  偏移量: ($clickX, $clickY)');
 
-    // 使用原游戏的完全相同的点击逻辑
-    // 注意：原游戏使用的是 if 而不是 else if，这样可以处理边界情况
+    // 使用原游戏的点击逻辑
+    // 这四个条件将以玩家为中心的区域分成四个三角形
     if (clickX > clickY && clickX < -clickY) {
-      // 上方三角形 - 向北移动（Y坐标减少）
-      print('  → 向北移动 (Y坐标减少)');
+      // 上方三角形 - 向北移动
+      print('  → 向北移动');
       world.moveNorth();
-    }
-    if (clickX < clickY && clickX > -clickY) {
-      // 下方三角形 - 向南移动（Y坐标增加）
-      print('  → 向南移动 (Y坐标增加)');
+    } else if (clickX < clickY && clickX > -clickY) {
+      // 下方三角形 - 向南移动
+      print('  → 向南移动');
       world.moveSouth();
-    }
-    if (clickX < clickY && clickX < -clickY) {
-      // 左方三角形 - 向西移动（X坐标减少）
-      print('  → 向西移动 (X坐标减少)');
+    } else if (clickX < clickY && clickX < -clickY) {
+      // 左方三角形 - 向西移动
+      print('  → 向西移动');
       world.moveWest();
-    }
-    if (clickX > clickY && clickX > -clickY) {
-      // 右方三角形 - 向东移动（X坐标增加）
-      print('  → 向东移动 (X坐标增加)');
+    } else if (clickX > clickY && clickX > -clickY) {
+      // 右方三角形 - 向东移动
+      print('  → 向东移动');
       world.moveEast();
+    } else {
+      // 点击在玩家位置附近，不移动
+      print('  → 点击位置太接近玩家，不移动');
     }
   }
 }
