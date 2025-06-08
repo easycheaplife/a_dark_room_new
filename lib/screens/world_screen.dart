@@ -132,6 +132,12 @@ class _WorldScreenState extends State<WorldScreen> {
             scrollDirection: Axis.vertical,
             child: Container(
               padding: const EdgeInsets.all(4.0),
+              decoration: const BoxDecoration(
+                color: Colors.white, // 白色背景，与原游戏一致
+                border: Border.fromBorderSide(
+                  BorderSide(color: Colors.black, width: 1), // 黑色边框
+                ),
+              ),
               child: Column(
                 children: List.generate(map[0].length, (j) {
                   // j 是 Y轴（行，从上到下）
@@ -171,29 +177,44 @@ class _WorldScreenState extends State<WorldScreen> {
     String displayChar;
     Color color = Colors.grey;
     String? tooltip;
+    bool isLandmarkStyle = false; // 是否使用地标样式（黑色粗体）
 
     if (isPlayer) {
       displayChar = '@';
       color = Colors.yellow;
       tooltip = '流浪者';
+      isLandmarkStyle = true;
     } else {
       // 参考原游戏的地标显示逻辑
-      // if(typeof World.LANDMARKS[c] != 'undefined' && (c != World.TILE.OUTPOST || !World.outpostUsed(i, j)))
-      final isLandmark = _isLandmarkTile(tile);
-      final isUsedOutpost = (tile == 'P' && world.outpostUsed());
+      // 原游戏逻辑：if(typeof World.LANDMARKS[c] != 'undefined' && (c != World.TILE.OUTPOST || !World.outpostUsed(i, j)))
 
-      if (isLandmark && !isUsedOutpost) {
-        // 显示为地标（有特殊颜色和提示）
-        displayChar = tile;
-        final styleResult = _getLandmarkStyle(tile);
+      // 获取原始字符（去掉可能的'!'标记）
+      final originalTile = tile.length > 1 ? tile[0] : tile;
+      final isVisited = tile.length > 1 && tile.endsWith('!'); // 检查是否已访问
+      final isLandmark = _isLandmarkTile(originalTile) || originalTile == 'A'; // 村庄也是地标
+      final isUsedOutpost = (originalTile == 'P' && world.outpostUsed());
+
+      if (isLandmark && !isUsedOutpost && !isVisited) {
+        // 未访问的地标 - 显示为地标样式（黑色粗体）
+        displayChar = originalTile;
+        final styleResult = _getLandmarkStyle(originalTile);
         color = styleResult['color'];
         tooltip = styleResult['tooltip'];
+        isLandmarkStyle = true;
       } else {
-        // 显示为普通地形（已使用的前哨站或普通地形）
-        displayChar = tile.length > 1
-            ? tile[0]
-            : tile; // 参考原游戏：if(c.length > 1) c = c[0];
-        color = _getTerrainColor(displayChar);
+        // 已访问的地标、已使用的前哨站或普通地形 - 显示为普通样式
+        displayChar = originalTile;
+
+        if (isVisited && isLandmark) {
+          // 已访问的地标显示为普通灰色，与原游戏一致（#999）
+          color = const Color(0xFF999999); // 原游戏CSS中的#999颜色
+          final styleResult = _getLandmarkStyle(originalTile);
+          tooltip = styleResult['tooltip'];
+        } else {
+          // 普通地形或已使用的前哨站
+          color = _getTerrainColor(displayChar);
+        }
+        isLandmarkStyle = false;
       }
     }
 
@@ -207,9 +228,7 @@ class _WorldScreenState extends State<WorldScreen> {
           color: color,
           fontSize: 12,
           fontFamily: 'Courier',
-          fontWeight: (tooltip != null || isPlayer)
-              ? FontWeight.bold
-              : FontWeight.normal,
+          fontWeight: isLandmarkStyle ? FontWeight.bold : FontWeight.normal,
         ),
       ),
     );
@@ -245,58 +264,48 @@ class _WorldScreenState extends State<WorldScreen> {
     return landmarks.contains(tile);
   }
 
-  /// 获取地标样式
+  /// 获取地标样式 - 参考原游戏，所有未访问地标都使用黑色粗体
   Map<String, dynamic> _getLandmarkStyle(String tile) {
     switch (tile) {
+      case 'A': // 村庄
+        return {'color': Colors.black, 'tooltip': '村庄'};
       case 'H': // 房子
-        return {'color': Colors.blue, 'tooltip': '旧房子'};
+        return {'color': Colors.black, 'tooltip': '旧房子'};
       case 'V': // 洞穴
-        return {'color': Colors.purple, 'tooltip': '潮湿洞穴'};
+        return {'color': Colors.black, 'tooltip': '潮湿洞穴'};
       case 'O': // 小镇
-        return {'color': Colors.orange, 'tooltip': '废弃小镇'};
+        return {'color': Colors.black, 'tooltip': '废弃小镇'};
       case 'Y': // 城市
-        return {'color': Colors.red, 'tooltip': '废墟城市'};
+        return {'color': Colors.black, 'tooltip': '废墟城市'};
       case 'P': // 前哨站
-        return {'color': Colors.cyan, 'tooltip': '前哨站'};
+        return {'color': Colors.black, 'tooltip': '前哨站'};
       case 'W': // 飞船
-        return {'color': Colors.white, 'tooltip': '坠毁星舰'};
+        return {'color': Colors.black, 'tooltip': '坠毁星舰'};
       case 'I': // 铁矿
-        return {'color': Colors.grey[600]!, 'tooltip': '铁矿'};
+        return {'color': Colors.black, 'tooltip': '铁矿'};
       case 'C': // 煤矿
         return {'color': Colors.black, 'tooltip': '煤矿'};
       case 'S': // 硫磺矿
-        return {'color': Colors.yellow, 'tooltip': '硫磺矿'};
+        return {'color': Colors.black, 'tooltip': '硫磺矿'};
       case 'B': // 钻孔
-        return {'color': Colors.brown, 'tooltip': '钻孔'};
+        return {'color': Colors.black, 'tooltip': '钻孔'};
       case 'F': // 战场
-        return {'color': Colors.red[800]!, 'tooltip': '战场'};
+        return {'color': Colors.black, 'tooltip': '战场'};
       case 'M': // 沼泽
-        return {'color': Colors.green[800]!, 'tooltip': '阴暗沼泽'};
+        return {'color': Colors.black, 'tooltip': '阴暗沼泽'};
       case 'U': // 缓存
-        return {'color': Colors.grey[700]!, 'tooltip': '被摧毁的村庄'};
+        return {'color': Colors.black, 'tooltip': '被摧毁的村庄'};
       case 'X': // 执行者
-        return {'color': Colors.red[900]!, 'tooltip': '被摧毁的战舰'};
+        return {'color': Colors.black, 'tooltip': '被摧毁的战舰'};
       default:
-        return {'color': Colors.grey, 'tooltip': null};
+        return {'color': Colors.black, 'tooltip': null};
     }
   }
 
-  /// 获取地形颜色
+  /// 获取地形颜色 - 参考原游戏，普通地形使用#999灰色
   Color _getTerrainColor(String tile) {
-    switch (tile) {
-      case 'A': // 村庄
-        return Colors.green;
-      case ';': // 森林
-        return Colors.green[300]!;
-      case ',': // 田野
-        return Colors.yellow[700]!;
-      case '.': // 荒地
-        return Colors.brown[300]!;
-      case '#': // 道路
-        return Colors.grey[400]!;
-      default:
-        return Colors.grey;
-    }
+    // 所有普通地形都使用原游戏的#999灰色
+    return const Color(0xFF999999); // 原游戏CSS中的#999颜色
   }
 
   /// 构建补给品信息
