@@ -59,10 +59,15 @@ class Path extends ChangeNotifier {
       sm.set('features.location.path', true);
     }
 
-    // 获取装备配置
+    // 获取装备配置 - 支持两种格式的数据
     final savedOutfit = sm.get('outfit', true);
     if (savedOutfit != null && savedOutfit is Map) {
       outfit = Map<String, int>.from(savedOutfit);
+    } else {
+      // 如果没有整体的outfit数据，尝试从单个物品键值对中恢复
+      outfit = {};
+      // 这里可以添加从单个outfit["item"]键中恢复数据的逻辑
+      // 但为了简化，我们先使用空的outfit
     }
 
     updateOutfitting();
@@ -214,7 +219,8 @@ class Path extends ChangeNotifier {
       final maxExtraByStore = available - cur;
       outfit[supply] =
           cur + min(amount, min(maxExtraByWeight, maxExtraByStore));
-      sm.set('outfit[$supply]', outfit[supply]);
+      // 使用统一的格式保存到StateManager
+      sm.set('outfit["$supply"]', outfit[supply]);
       updateOutfitting();
     }
   }
@@ -226,7 +232,8 @@ class Path extends ChangeNotifier {
 
     if (cur > 0) {
       outfit[supply] = max(0, cur - amount);
-      sm.set('outfit[$supply]', outfit[supply]);
+      // 使用统一的格式保存到StateManager
+      sm.set('outfit["$supply"]', outfit[supply]);
       updateOutfitting();
     }
   }
@@ -255,6 +262,14 @@ class Path extends ChangeNotifier {
     final sm = StateManager();
 
     try {
+      // 确保outfit已正确初始化
+      if (outfit.isEmpty) {
+        print('⚠️ outfit为空，重新初始化...');
+        updateOutfitting();
+      }
+
+      print('🎒 当前装备状态: $outfit');
+
       // 扣除装备中的物品
       for (final k in outfit.keys) {
         final amount = outfit[k] ?? 0;
@@ -263,6 +278,13 @@ class Path extends ChangeNotifier {
           sm.add('stores["$k"]', -amount);
         }
       }
+
+      // 保存装备状态到StateManager（确保World模块能访问）
+      sm.set('outfit', outfit);
+      for (final entry in outfit.entries) {
+        sm.set('outfit["${entry.key}"]', entry.value);
+      }
+      print('🎒 装备状态已保存到StateManager');
 
       print('🌍 初始化World模块...');
       // 初始化World模块
@@ -344,7 +366,15 @@ class Path extends ChangeNotifier {
   void setOutfit(Map<String, int> newOutfit) {
     outfit = Map<String, int>.from(newOutfit);
     final sm = StateManager();
+
+    // 保存整体outfit数据
     sm.set('outfit', outfit);
+
+    // 同时保存单个物品数据（为了兼容性）
+    for (final entry in outfit.entries) {
+      sm.set('outfit["${entry.key}"]', entry.value);
+    }
+
     updateOutfitting();
   }
 }

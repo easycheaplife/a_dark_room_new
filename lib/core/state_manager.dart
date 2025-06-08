@@ -250,6 +250,11 @@ class StateManager with ChangeNotifier {
         int endBracket = lastPart.indexOf(']');
         String objName = lastPart.substring(0, startBracket);
         String key = lastPart.substring(startBracket + 2, endBracket - 1);
+
+        // 确保父对象存在
+        if (current[objName] == null) {
+          current[objName] = {};
+        }
         current[objName][key] = 0;
       } else {
         current[lastPart] = 0;

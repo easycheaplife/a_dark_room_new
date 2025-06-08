@@ -194,6 +194,11 @@ class _WorldScreenState extends State<WorldScreen> {
       final isLandmark = _isLandmarkTile(originalTile) || originalTile == 'A'; // 村庄也是地标
       final isUsedOutpost = (originalTile == 'P' && world.outpostUsed());
 
+      // 调试信息：打印地标状态
+      if (isLandmark) {
+        print('🗺️ 地标调试 [$x,$y]: tile="$tile", original="$originalTile", visited=$isVisited, usedOutpost=$isUsedOutpost');
+      }
+
       if (isLandmark && !isUsedOutpost && !isVisited) {
         // 未访问的地标 - 显示为地标样式（黑色粗体）
         displayChar = originalTile;
@@ -201,6 +206,7 @@ class _WorldScreenState extends State<WorldScreen> {
         color = styleResult['color'];
         tooltip = styleResult['tooltip'];
         isLandmarkStyle = true;
+        print('🗺️ 显示未访问地标: $originalTile (黑色粗体)');
       } else {
         // 已访问的地标、已使用的前哨站或普通地形 - 显示为普通样式
         displayChar = originalTile;
@@ -210,6 +216,7 @@ class _WorldScreenState extends State<WorldScreen> {
           color = const Color(0xFF999999); // 原游戏CSS中的#999颜色
           final styleResult = _getLandmarkStyle(originalTile);
           tooltip = styleResult['tooltip'];
+          print('🗺️ 显示已访问地标: $originalTile (灰色)');
         } else {
           // 普通地形或已使用的前哨站
           color = _getTerrainColor(displayChar);

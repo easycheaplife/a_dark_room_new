@@ -625,21 +625,33 @@ class World extends ChangeNotifier {
 
   /// 移动
   void move(List<int> direction) {
-    if (state == null) return;
+    if (state == null) {
+      print('⚠️ move() - state为null，无法移动');
+      return;
+    }
 
     // 检查是否死亡，死亡状态下不能移动
     if (dead) {
       NotificationManager().notify(name, '你已经死了，无法移动');
+      print('⚠️ move() - 玩家已死亡，无法移动');
       return;
     }
 
+    final oldPos = [curPos[0], curPos[1]];
     final oldTile = state!['map'][curPos[0]][curPos[1]];
     curPos[0] += direction[0];
     curPos[1] += direction[1];
-    narrateMove(oldTile, state!['map'][curPos[0]][curPos[1]]);
+    final newTile = state!['map'][curPos[0]][curPos[1]];
+
+    print('🚶 移动: [${oldPos[0]}, ${oldPos[1]}] -> [${curPos[0]}, ${curPos[1]}], $oldTile -> $newTile');
+    print('🚶 即将调用doSpace()...');
+
+    narrateMove(oldTile, newTile);
     lightMap(curPos[0], curPos[1], state!['mask']);
     // drawMap(); // 在Flutter中由UI自动更新
     doSpace();
+
+    print('🚶 doSpace()调用完成，即将调用notifyListeners()...');
 
     // 播放随机脚步声（暂时注释掉）
     // final randomFootstep = Random().nextInt(5) + 1;
@@ -744,42 +756,67 @@ class World extends ChangeNotifier {
     return weapons[thing]?['damage'];
   }
 
-  /// 处理空间事件
+  /// 处理空间事件 - 参考原游戏的doSpace函数
   void doSpace() {
     if (state == null) return;
 
+    // 获取当前地形
     final curTile = state!['map'][curPos[0]][curPos[1]];
+    // 获取原始地形字符（去掉可能的'!'标记）
+    final originalTile = curTile.length > 1 && curTile.endsWith('!')
+        ? curTile.substring(0, curTile.length - 1)
+        : curTile;
+    final isVisited = curTile.length > 1 && curTile.endsWith('!');
+
     print('🗺️ doSpace() - 当前位置: [${curPos[0]}, ${curPos[1]}], 地形: $curTile');
 
     if (curTile == tile['village']) {
       print('🏠 触发村庄事件 - 回到小黑屋');
       goHome();
-    } else if (curTile == tile['executioner']) {
+    } else if (originalTile == tile['executioner']) {
       // 执行者场景（暂时注释掉，需要实现Executioner事件）
       // final scene = state!['executioner'] ? 'executioner-antechamber' : 'executioner-intro';
       // Events().startEvent(Events.Executioner[scene]);
       print('🔮 发现执行者装置');
       NotificationManager().notify(name, '发现了一个神秘的装置');
-    } else if (landmarks.containsKey(curTile)) {
-      print('🏛️ 触发地标事件: $curTile');
-      if (curTile != tile['outpost'] || !outpostUsed()) {
-        // 触发地标建筑事件
-        final landmarkInfo = landmarks[curTile];
-        if (landmarkInfo != null && landmarkInfo['scene'] != null) {
-          final setpieces = Setpieces();
-          final sceneName = landmarkInfo['scene'];
-
-          // 检查场景是否存在
-          if (setpieces.isSetpieceAvailable(sceneName)) {
-            setpieces.startSetpiece(sceneName);
-          } else {
-            // 为缺失的场景提供默认处理
-            _handleMissingSetpiece(curTile, landmarkInfo);
-          }
-        }
+      if (!isVisited) {
+        markVisited(curPos[0], curPos[1]); // 只有未访问时才标记
       }
+    } else if (landmarks.containsKey(originalTile)) {
+      // 检查是否是地标（使用原始字符检查）
+      print('🏛️ 触发地标事件: $originalTile (visited: $isVisited)');
+      if (originalTile != tile['outpost'] || !outpostUsed()) {
+        // 只有未访问的地标才触发事件
+        if (!isVisited) {
+          // 触发地标建筑事件
+          final landmarkInfo = landmarks[originalTile];
+          if (landmarkInfo != null && landmarkInfo['scene'] != null) {
+            final setpieces = Setpieces();
+            final sceneName = landmarkInfo['scene'];
+
+            // 检查场景是否存在
+            if (setpieces.isSetpieceAvailable(sceneName)) {
+              print('🏛️ 启动Setpiece场景: $sceneName');
+              setpieces.startSetpiece(sceneName);
+            } else {
+              // 为缺失的场景提供默认处理
+              print('🏛️ 场景不存在，使用默认处理: $sceneName');
+              _handleMissingSetpiece(originalTile, landmarkInfo);
+            }
+          } else {
+            print('🏛️ 地标信息无效: $landmarkInfo');
+            _handleMissingSetpiece(originalTile, {'label': '未知地标'});
+          }
+        } else {
+          print('🏛️ 地标已访问，跳过事件');
+        }
+      } else {
+        print('🏛️ 前哨站已使用，跳过事件');
+      }
+      // 注意：地标事件不消耗补给！
     } else {
       print('🚶 普通移动 - 使用补给和检查战斗');
+      // 只有在普通地形移动时才消耗补给
       if (useSupplies()) {
         checkFight();
       }
@@ -856,6 +893,53 @@ class World extends ChangeNotifier {
         markVisited(curPos[0], curPos[1]);
         break;
 
+      case 'O': // 废弃小镇
+        NotificationManager().notify(name, '发现了一个废弃的小镇。街道上空无一人，但可能还有有用的物品。');
+        final sm = StateManager();
+        final random = Random();
+        // 小镇可能有各种物品
+        if (random.nextDouble() < 0.4) {
+          sm.add('stores["cloth"]', random.nextInt(3) + 1);
+        }
+        if (random.nextDouble() < 0.3) {
+          sm.add('stores["leather"]', random.nextInt(2) + 1);
+        }
+        if (random.nextDouble() < 0.2) {
+          sm.add('stores["medicine"]', 1);
+        }
+        markVisited(curPos[0], curPos[1]);
+        break;
+
+      case 'V': // 潮湿洞穴
+        NotificationManager().notify(name, '发现了一个潮湿的洞穴。里面很黑，但可能藏着什么。');
+        final sm2 = StateManager();
+        final random2 = Random();
+        if (random2.nextDouble() < 0.3) {
+          sm2.add('stores["fur"]', random2.nextInt(2) + 1);
+        }
+        if (random2.nextDouble() < 0.2) {
+          sm2.add('stores["teeth"]', random2.nextInt(3) + 1);
+        }
+        markVisited(curPos[0], curPos[1]);
+        break;
+
+      case 'M': // 阴暗沼泽
+        NotificationManager().notify(name, '进入了一片阴暗的沼泽。空气潮湿，充满了腐败的气味。');
+        final sm3 = StateManager();
+        final random3 = Random();
+        // 沼泽可能有特殊的物品
+        if (random3.nextDouble() < 0.3) {
+          sm3.add('stores["scales"]', random3.nextInt(2) + 1);
+        }
+        if (random3.nextDouble() < 0.2) {
+          sm3.add('stores["teeth"]', random3.nextInt(3) + 1);
+        }
+        if (random3.nextDouble() < 0.1) {
+          sm3.add('stores["alien alloy"]', 1);
+        }
+        markVisited(curPos[0], curPos[1]);
+        break;
+
       case 'U': // 被摧毁的村庄
         NotificationManager().notify(name, '这里曾经是一个村庄，现在只剩下废墟。');
         markVisited(curPos[0], curPos[1]);
@@ -886,36 +970,48 @@ class World extends ChangeNotifier {
 
     if (foodMove >= currentMovesPerFood) {
       foodMove = 0;
-      var num = path.outfit['cured meat'] ?? 0;
-      print('🍖 需要消耗食物 - 熏肉数量: $num');
-      num--;
 
-      if (num == 0) {
-        NotificationManager().notify(name, '肉已经用完了');
-        print('⚠️ 肉已经用完了');
-      } else if (num < 0) {
-        // 饥饿！
-        num = 0;
-        if (!starvation) {
-          NotificationManager().notify(name, '饥饿开始了');
-          starvation = true;
-          print('⚠️ 开始饥饿状态');
+      // 安全地访问Path().outfit，避免null错误
+      try {
+        var num = path.outfit['cured meat'] ?? 0;
+        print('🍖 需要消耗食物 - 熏肉数量: $num');
+        num--;
+
+        if (num == 0) {
+          NotificationManager().notify(name, '肉已经用完了');
+          print('⚠️ 肉已经用完了');
+        } else if (num < 0) {
+          // 饥饿！
+          num = 0;
+          if (!starvation) {
+            NotificationManager().notify(name, '饥饿开始了');
+            starvation = true;
+            print('⚠️ 开始饥饿状态');
+          } else {
+            sm.set('character.starved',
+                (sm.get('character.starved', true) ?? 0) + 1);
+            // if (sm.get('character.starved') >= 10 && !sm.hasPerk('slow metabolism')) {
+            //   sm.addPerk('slow metabolism');
+            // }
+            print('💀 饥饿死亡！');
+            die();
+            return false;
+          }
         } else {
-          sm.set('character.starved',
-              (sm.get('character.starved', true) ?? 0) + 1);
-          // if (sm.get('character.starved') >= 10 && !sm.hasPerk('slow metabolism')) {
-          //   sm.addPerk('slow metabolism');
-          // }
-          print('💀 饥饿死亡！');
-          die();
-          return false;
+          starvation = false;
+          setHp(health + meatHealAmount());
+          print('🍖 消耗了熏肉，剩余: $num，恢复生命值');
         }
-      } else {
-        starvation = false;
-        setHp(health + meatHealAmount());
-        print('🍖 消耗了熏肉，剩余: $num，恢复生命值');
+
+        // 安全地更新outfit
+        path.outfit['cured meat'] = num;
+
+        // 同步到StateManager
+        sm.set('outfit["cured meat"]', num);
+      } catch (e) {
+        print('⚠️ 访问Path().outfit时出错: $e');
+        // 如果访问失败，跳过食物消耗
       }
-      path.outfit['cured meat'] = num;
     }
 
     // 水
@@ -1117,22 +1213,28 @@ class World extends ChangeNotifier {
     final path = Path();
     final sm = StateManager();
 
-    for (final entry in path.outfit.entries) {
-      final itemName = entry.key;
-      final amount = entry.value;
+    try {
+      for (final entry in path.outfit.entries) {
+        final itemName = entry.key;
+        final amount = entry.value;
 
-      if (amount > 0) {
-        // 将装备中的物品添加到仓库
-        sm.add('stores["$itemName"]', amount);
+        if (amount > 0) {
+          // 将装备中的物品添加到仓库
+          sm.add('stores["$itemName"]', amount);
 
-        // 检查是否应该留在家里（不带走的物品）
-        if (leaveItAtHome(itemName)) {
-          path.outfit[itemName] = 0;
+          // 检查是否应该留在家里（不带走的物品）
+          if (leaveItAtHome(itemName)) {
+            path.outfit[itemName] = 0;
+            // 同步到StateManager
+            sm.set('outfit["$itemName"]', 0);
+          }
         }
       }
-    }
 
-    print('🎒 装备已返回仓库');
+      print('🎒 装备已返回仓库');
+    } catch (e) {
+      print('⚠️ 返回装备时出错: $e');
+    }
   }
 
   /// 检查物品是否应该留在家里 - 参考原游戏的leaveItAtHome函数
@@ -1174,7 +1276,11 @@ class World extends ChangeNotifier {
       // 清空世界状态和装备 - 参考原游戏逻辑
       state = null;
       final path = Path();
-      path.outfit.clear();
+      try {
+        path.outfit.clear();
+      } catch (e) {
+        print('⚠️ 清空装备时出错: $e');
+      }
 
       // 清除StateManager中的装备数据
       final sm = StateManager();
@@ -1214,7 +1320,15 @@ class World extends ChangeNotifier {
 
     // 重置装备中的食物和水
     final path = Path();
-    path.outfit['cured meat'] = 1; // 给一些基本补给
+    try {
+      path.outfit['cured meat'] = 1; // 给一些基本补给
+
+      // 同步到StateManager
+      final sm = StateManager();
+      sm.set('outfit["cured meat"]', 1);
+    } catch (e) {
+      print('⚠️ 重置装备时出错: $e');
+    }
 
     NotificationManager().notify(name, '你重生了，回到了村庄');
     print('✅ 重生完成 - 生命值: $health, 水: $water');
@@ -1396,14 +1510,32 @@ class World extends ChangeNotifier {
   /// 标记位置为已访问 - 参考原游戏的markVisited函数
   void markVisited(int x, int y) {
     if (state != null && state!['map'] != null) {
-      // 在地图上添加'!'标记，表示已访问
-      final map = state!['map'] as List<List<String>>;
-      if (x >= 0 && x < map.length && y >= 0 && y < map[x].length) {
-        final currentTile = map[x][y];
-        if (!currentTile.endsWith('!')) {
-          map[x][y] = currentTile + '!';
-          print('🗺️ 标记位置 ($x, $y) 为已访问: ${map[x][y]}');
+      try {
+        // 安全地转换地图数据类型
+        final mapData = state!['map'];
+        final map = List<List<String>>.from(
+            mapData.map((row) => List<String>.from(row)));
+
+        if (x >= 0 && x < map.length && y >= 0 && y < map[x].length) {
+          final currentTile = map[x][y];
+          if (!currentTile.endsWith('!')) {
+            map[x][y] = currentTile + '!';
+            print('🗺️ 标记位置 ($x, $y) 为已访问: ${map[x][y]}');
+
+            // 更新state中的地图数据
+            state!['map'] = map;
+
+            // 立即保存到StateManager以确保持久化
+            final sm = StateManager();
+            sm.set('game.world.map', map);
+            print('🗺️ 地图状态已保存到StateManager');
+          } else {
+            print('🗺️ 位置 ($x, $y) 已经被标记为已访问: $currentTile');
+          }
         }
+      } catch (e) {
+        print('⚠️ markVisited失败: $e');
+        print('⚠️ 地图数据类型: ${state!['map'].runtimeType}');
       }
     }
     notifyListeners();
@@ -1414,26 +1546,36 @@ class World extends ChangeNotifier {
     print('🏛️ World.clearDungeon() - 将当前位置转换为前哨站');
 
     if (state != null && state!['map'] != null) {
-      // 将当前位置的地形改为前哨站 - 参考原游戏逻辑
-      final map = state!['map'] as List<List<String>>;
-      if (curPos[0] >= 0 &&
-          curPos[0] < map.length &&
-          curPos[1] >= 0 &&
-          curPos[1] < map[curPos[0]].length) {
-        final oldTile = map[curPos[0]][curPos[1]];
-        map[curPos[0]][curPos[1]] = tile['outpost']!;
+      try {
+        // 安全地转换地图数据类型
+        final mapData = state!['map'];
+        final map = List<List<String>>.from(
+            mapData.map((row) => List<String>.from(row)));
 
-        print(
-            '🏛️ 地形转换: $oldTile -> ${tile['outpost']} 在位置 [${curPos[0]}, ${curPos[1]}]');
+        if (curPos[0] >= 0 &&
+            curPos[0] < map.length &&
+            curPos[1] >= 0 &&
+            curPos[1] < map[curPos[0]].length) {
+          final oldTile = map[curPos[0]][curPos[1]];
+          map[curPos[0]][curPos[1]] = tile['outpost']!;
 
-        // 绘制道路连接到前哨站 - 参考原游戏的drawRoad函数
-        drawRoad();
+          print(
+              '🏛️ 地形转换: $oldTile -> ${tile['outpost']} 在位置 [${curPos[0]}, ${curPos[1]}]');
 
-        // 标记前哨站为已使用（因为玩家刚刚清理了这里）
-        markOutpostUsed();
+          // 更新state中的地图数据
+          state!['map'] = map;
 
-        // 重新绘制地图以更新显示 - 关键！
-        notifyListeners();
+          // 绘制道路连接到前哨站 - 参考原游戏的drawRoad函数
+          drawRoad();
+
+          // 标记前哨站为已使用（因为玩家刚刚清理了这里）
+          markOutpostUsed();
+
+          // 重新绘制地图以更新显示 - 关键！
+          notifyListeners();
+        }
+      } catch (e) {
+        print('⚠️ clearDungeon失败: $e');
       }
     }
 
@@ -1548,5 +1690,23 @@ class World extends ChangeNotifier {
   bool isDungeonCleared() {
     final sm = StateManager();
     return sm.get('game.world.dungeonCleared', true) == true;
+  }
+
+  /// 测试函数：手动触发地标事件（用于调试）
+  void testLandmarkEvent(String landmarkType) {
+    print('🧪 测试地标事件: $landmarkType');
+    if (landmarks.containsKey(landmarkType)) {
+      final landmarkInfo = landmarks[landmarkType];
+      print('🧪 地标信息: $landmarkInfo');
+      _handleMissingSetpiece(landmarkType, landmarkInfo!);
+    } else {
+      print('🧪 地标类型不存在: $landmarkType');
+    }
+  }
+
+  /// 测试函数：手动标记位置为已访问（用于调试）
+  void testMarkVisited() {
+    print('🧪 测试标记当前位置为已访问');
+    markVisited(curPos[0], curPos[1]);
   }
 }

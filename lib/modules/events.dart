@@ -450,7 +450,8 @@ class Events extends ChangeNotifier {
     maxEnemyHealth = scene['health'] ?? 10;
 
     // 设置敌人攻击定时器
-    startEnemyAttacks(scene['attackDelay'] ?? 2.0);
+    final attackDelay = scene['attackDelay'];
+    startEnemyAttacks(attackDelay != null ? attackDelay.toDouble() : 2.0);
 
     // 设置特殊技能定时器
     final specials = scene['specials'] as List<Map<String, dynamic>>? ?? [];
@@ -485,7 +486,8 @@ class Events extends ChangeNotifier {
     final scene = event['scenes'][activeScene];
     if (scene == null) return;
 
-    final attackDelay = delay ?? (scene['attackDelay'] ?? 2.0);
+    final sceneDelay = scene['attackDelay'];
+    final attackDelay = delay ?? (sceneDelay != null ? sceneDelay.toDouble() : 2.0);
     enemyAttackTimer = Timer.periodic(
       Duration(milliseconds: (attackDelay * 1000).round()),
       (timer) => enemyAttack(),
@@ -717,10 +719,14 @@ class Events extends ChangeNotifier {
         }
       }
 
-      // 消耗弹药
+      // 消耗弹药并同步到StateManager
+      final sm = StateManager();
       for (final entry in cost.entries) {
         final required = entry.value as int;
-        path.outfit[entry.key] = (path.outfit[entry.key] ?? 0) - required;
+        final newAmount = (path.outfit[entry.key] ?? 0) - required;
+        path.outfit[entry.key] = newAmount;
+        // 同步保存到StateManager
+        sm.set('outfit["${entry.key}"]', newAmount);
       }
     }
 
@@ -864,7 +870,13 @@ class Events extends ChangeNotifier {
   void eatMeat() {
     final path = Path();
     if ((path.outfit['cured meat'] ?? 0) > 0) {
-      path.outfit['cured meat'] = (path.outfit['cured meat'] ?? 0) - 1;
+      final newAmount = (path.outfit['cured meat'] ?? 0) - 1;
+      path.outfit['cured meat'] = newAmount;
+
+      // 同步保存到StateManager
+      final sm = StateManager();
+      sm.set('outfit["cured meat"]', newAmount);
+
       final healing = World().meatHealAmount();
       final newHp = min(World().getMaxHealth(), World().health + healing);
       World().setHp(newHp);
@@ -878,7 +890,13 @@ class Events extends ChangeNotifier {
   void useMeds() {
     final path = Path();
     if ((path.outfit['medicine'] ?? 0) > 0) {
-      path.outfit['medicine'] = (path.outfit['medicine'] ?? 0) - 1;
+      final newAmount = (path.outfit['medicine'] ?? 0) - 1;
+      path.outfit['medicine'] = newAmount;
+
+      // 同步保存到StateManager
+      final sm = StateManager();
+      sm.set('outfit["medicine"]', newAmount);
+
       final healing = World().medsHealAmount();
       final newHp = min(World().getMaxHealth(), World().health + healing);
       World().setHp(newHp);
@@ -892,7 +910,13 @@ class Events extends ChangeNotifier {
   void useHypo() {
     final path = Path();
     if ((path.outfit['hypo'] ?? 0) > 0) {
-      path.outfit['hypo'] = (path.outfit['hypo'] ?? 0) - 1;
+      final newAmount = (path.outfit['hypo'] ?? 0) - 1;
+      path.outfit['hypo'] = newAmount;
+
+      // 同步保存到StateManager
+      final sm = StateManager();
+      sm.set('outfit["hypo"]', newAmount);
+
       final healing = World().hypoHealAmount();
       final newHp = min(World().getMaxHealth(), World().health + healing);
       World().setHp(newHp);
