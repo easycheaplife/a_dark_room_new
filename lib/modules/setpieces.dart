@@ -35,6 +35,12 @@ class Setpieces extends ChangeNotifier {
           'buttons': {
             'leave': {'text': '离开', 'cooldown': 1, 'nextScene': 'end'}
           }
+        },
+        'end': {
+          'text': ['离开了前哨站，回到了荒野中。'],
+          'buttons': {
+            'continue': {'text': '继续', 'nextScene': 'finish'}
+          }
         }
       },
       'audio': 'landmark_friendly_outpost'

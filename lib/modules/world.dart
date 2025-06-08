@@ -1500,10 +1500,16 @@ class World extends ChangeNotifier {
     moveSouth();
   }
 
-  /// 使用前哨站
+  /// 使用前哨站 - 参考原游戏的World.useOutpost函数
   void useOutpost() {
+    // 补充水到最大值
+    water = getMaxWater();
+    NotificationManager().notify(name, '水已补充');
+
+    // 标记前哨站为已使用
     markOutpostUsed();
-    NotificationManager().notify(name, '在前哨站休息了一下');
+
+    print('🏛️ 前哨站已使用，水补充到: $water');
     notifyListeners();
   }
 
