@@ -1005,6 +1005,9 @@ class Events extends ChangeNotifier {
       case 'clearDungeon':
         Setpieces().clearDungeon();
         break;
+      case 'markVisited':
+        Setpieces().markVisited();
+        break;
       default:
         print('⚠️ 未知的onLoad回调: $callbackName');
         break;

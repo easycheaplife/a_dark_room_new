@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../modules/world.dart';
 import '../modules/path.dart';
+import '../screens/events_screen.dart';
+import '../screens/combat_screen.dart';
 
 /// 世界地图屏幕 - 参考原游戏的world.js
 class WorldScreen extends StatefulWidget {
@@ -39,60 +41,71 @@ class _WorldScreenState extends State<WorldScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Consumer<World>(
-        builder: (context, world, child) {
-          return Column(
-            children: [
-              // 标题栏
-              Container(
-                padding: const EdgeInsets.all(16),
-                child: const Text(
-                  '荒芜世界',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+      body: Stack(
+        children: [
+          // 主界面
+          Consumer<World>(
+            builder: (context, world, child) {
+              return Column(
+                children: [
+                  // 标题栏
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    child: const Text(
+                      '荒芜世界',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
-              ),
 
-              // 状态信息
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(
-                      '生命值: ${world.health}',
-                      style: const TextStyle(color: Colors.red),
+                  // 状态信息
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text(
+                          '生命值: ${world.health}',
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                        Text(
+                          '水: ${world.water}',
+                          style: const TextStyle(color: Colors.blue),
+                        ),
+                        Text(
+                          '距离: ${world.getDistance()}',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ],
                     ),
-                    Text(
-                      '水: ${world.water}',
-                      style: const TextStyle(color: Colors.blue),
-                    ),
-                    Text(
-                      '距离: ${world.getDistance()}',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
 
-              const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-              // 地图区域
-              Expanded(
-                child: _buildMap(world),
-              ),
+                  // 地图区域
+                  Expanded(
+                    child: _buildMap(world),
+                  ),
 
-              // 补给品信息
-              Container(
-                padding: const EdgeInsets.all(16),
-                child: _buildSupplies(world),
-              ),
-            ],
-          );
-        },
+                  // 补给品信息
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    child: _buildSupplies(world),
+                  ),
+                ],
+              );
+            },
+          ),
+
+          // 事件界面覆盖层
+          const EventsScreen(),
+
+          // 战斗界面覆盖层
+          const CombatScreen(),
+        ],
       ),
     );
   }

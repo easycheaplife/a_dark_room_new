@@ -269,6 +269,13 @@ class Setpieces extends ChangeNotifier {
           'buttons': {
             'leave': {'text': '离开洞穴', 'cooldown': 1, 'nextScene': 'end'}
           }
+        },
+        'end': {
+          'text': ['离开了洞穴，回到了荒野中。'],
+          'onLoad': 'markVisited',
+          'buttons': {
+            'continue': {'text': '继续', 'nextScene': 'finish'}
+          }
         }
       },
       'audio': 'landmark_cave'
@@ -322,6 +329,69 @@ class Setpieces extends ChangeNotifier {
             },
             'leave': {'text': '离开城镇', 'cooldown': 1, 'nextScene': 'end'}
           }
+        },
+        'a3': {
+          'text': ['一座废弃的商店，门窗都被木板封住了。'],
+          'loot': {
+            'cured meat': {'min': 1, 'max': 3, 'chance': 0.8},
+            'cloth': {'min': 2, 'max': 5, 'chance': 0.6}
+          },
+          'buttons': {
+            'continue': {'text': '继续', 'nextScene': 'end'},
+            'leave': {'text': '离开城镇', 'nextScene': 'end'}
+          }
+        },
+        'b1': {
+          'text': ['学校里空荡荡的，只有灰尘和破碎的桌椅。'],
+          'loot': {
+            'cloth': {'min': 3, 'max': 8, 'chance': 1.0},
+            'cured meat': {'min': 1, 'max': 2, 'chance': 0.3}
+          },
+          'buttons': {
+            'continue': {'text': '继续', 'nextScene': 'end'},
+            'leave': {'text': '离开城镇', 'nextScene': 'end'}
+          }
+        },
+        'b2': {
+          'text': ['在学校的角落里发现了一些有用的物品。'],
+          'loot': {
+            'medicine': {'min': 1, 'max': 2, 'chance': 0.5},
+            'cloth': {'min': 5, 'max': 10, 'chance': 1.0}
+          },
+          'buttons': {
+            'continue': {'text': '继续', 'nextScene': 'end'},
+            'leave': {'text': '离开城镇', 'nextScene': 'end'}
+          }
+        },
+        'b3': {
+          'text': ['街道上散落着各种废弃物品。'],
+          'loot': {
+            'iron': {'min': 2, 'max': 5, 'chance': 0.7},
+            'leather': {'min': 1, 'max': 3, 'chance': 0.5}
+          },
+          'buttons': {
+            'continue': {'text': '继续', 'nextScene': 'end'},
+            'leave': {'text': '离开城镇', 'nextScene': 'end'}
+          }
+        },
+        'b4': {
+          'text': ['在一栋房子里发现了一个小储藏室。'],
+          'loot': {
+            'cured meat': {'min': 3, 'max': 8, 'chance': 1.0},
+            'medicine': {'min': 1, 'max': 3, 'chance': 0.4},
+            'steel': {'min': 1, 'max': 2, 'chance': 0.2}
+          },
+          'buttons': {
+            'continue': {'text': '继续', 'nextScene': 'end'},
+            'leave': {'text': '离开城镇', 'nextScene': 'end'}
+          }
+        },
+        'end': {
+          'text': ['离开了废弃的城镇，回到了荒野中。'],
+          'onLoad': 'markVisited',
+          'buttons': {
+            'continue': {'text': '继续', 'nextScene': 'finish'}
+          }
         }
       },
       'audio': 'landmark_town'
@@ -361,6 +431,12 @@ class Setpieces extends ChangeNotifier {
   /// 清除地牢
   void clearDungeon() {
     World().clearDungeon();
+    notifyListeners();
+  }
+
+  /// 标记当前位置为已访问
+  void markVisited() {
+    World().markVisited(World().curPos[0], World().curPos[1]);
     notifyListeners();
   }
 
