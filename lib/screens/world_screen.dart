@@ -114,7 +114,9 @@ class _WorldScreenState extends State<WorldScreen> {
   Widget _buildMap(World world) {
     try {
       final mapData = world.state?['map'];
-      if (mapData == null) {
+      final maskData = world.state?['mask'];
+
+      if (mapData == null || maskData == null) {
         return const Center(
           child: Text(
             '地图未初始化',
@@ -125,10 +127,12 @@ class _WorldScreenState extends State<WorldScreen> {
 
       final map =
           List<List<String>>.from(mapData.map((row) => List<String>.from(row)));
+      final mask =
+          List<List<bool>>.from(maskData.map((row) => List<bool>.from(row)));
       final curPos = world.getCurrentPosition();
 
       // 确保地图数据有效
-      if (map.isEmpty || map[0].isEmpty) {
+      if (map.isEmpty || map[0].isEmpty || mask.isEmpty || mask[0].isEmpty) {
         return const Center(
           child: Text(
             '地图数据为空',
@@ -137,40 +141,45 @@ class _WorldScreenState extends State<WorldScreen> {
         );
       }
 
+      // 以玩家为中心显示地图的一小块区域
+      const viewRadius = 10; // 显示玩家周围10格的区域
+      final startX = (curPos[0] - viewRadius).clamp(0, map.length - 1);
+      final endX = (curPos[0] + viewRadius).clamp(0, map.length - 1);
+      final startY = (curPos[1] - viewRadius).clamp(0, map[0].length - 1);
+      final endY = (curPos[1] + viewRadius).clamp(0, map[0].length - 1);
+
       return GestureDetector(
-        onTapDown: (details) => _handleMapClick(details, world),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Container(
-              padding: const EdgeInsets.all(4.0),
-              decoration: const BoxDecoration(
-                color: Colors.white, // 白色背景，与原游戏一致
-                border: Border.fromBorderSide(
-                  BorderSide(color: Colors.black, width: 1), // 黑色边框
-                ),
-              ),
-              child: Column(
-                children: List.generate(map[0].length, (j) {
-                  // j 是 Y轴（行，从上到下）
-                  return Row(
-                    children: List.generate(map.length, (i) {
-                      // i 是 X轴（列，从左到右）
-                      // 地图数据访问：map[i][j] 即 map[x][y]
-                      return _buildMapTile(
-                        map[i][j],
-                        true, // 显示完整地图，不使用遮罩
-                        i == curPos[0] && j == curPos[1], // 检查是否是玩家位置
-                        i, // X坐标
-                        j, // Y坐标
-                        world,
-                      );
-                    }),
+        onTapDown: (details) => _handleMapClick(details, world, startX, startY),
+        child: Container(
+          padding: const EdgeInsets.all(4.0),
+          decoration: const BoxDecoration(
+            color: Colors.white, // 白色背景，与原游戏一致
+            border: Border.fromBorderSide(
+              BorderSide(color: Colors.black, width: 1), // 黑色边框
+            ),
+          ),
+          child: Column(
+            children: List.generate(endY - startY + 1, (j) {
+              final actualY = startY + j;
+              return Row(
+                children: List.generate(endX - startX + 1, (i) {
+                  final actualX = startX + i;
+                  // 检查遮罩：只有mask[actualX][actualY]为true或者是玩家位置时才显示内容
+                  final isPlayerPos =
+                      actualX == curPos[0] && actualY == curPos[1];
+                  final isVisible = mask[actualX][actualY] || isPlayerPos;
+
+                  return _buildMapTile(
+                    map[actualX][actualY],
+                    isVisible, // 使用遮罩系统控制可见性
+                    isPlayerPos, // 检查是否是玩家位置
+                    actualX, // X坐标
+                    actualY, // Y坐标
+                    world,
                   );
                 }),
-              ),
-            ),
+              );
+            }),
           ),
         ),
       );
@@ -187,6 +196,22 @@ class _WorldScreenState extends State<WorldScreen> {
   /// 构建地图瓦片 - 参考原游戏的drawMap函数逻辑
   Widget _buildMapTile(
       String tile, bool visible, bool isPlayer, int x, int y, World world) {
+    // 如果不可见且不是玩家位置，显示空白（对应原游戏的'&nbsp;'）
+    if (!visible && !isPlayer) {
+      return Container(
+        width: 16,
+        height: 16,
+        alignment: Alignment.center,
+        child: const Text(
+          ' ', // 空白字符
+          style: TextStyle(
+            fontSize: 12,
+            fontFamily: 'Courier',
+          ),
+        ),
+      );
+    }
+
     String displayChar;
     Color color = Colors.grey;
     String? tooltip;
@@ -204,12 +229,14 @@ class _WorldScreenState extends State<WorldScreen> {
       // 获取原始字符（去掉可能的'!'标记）
       final originalTile = tile.length > 1 ? tile[0] : tile;
       final isVisited = tile.length > 1 && tile.endsWith('!'); // 检查是否已访问
-      final isLandmark = _isLandmarkTile(originalTile) || originalTile == 'A'; // 村庄也是地标
+      final isLandmark =
+          _isLandmarkTile(originalTile) || originalTile == 'A'; // 村庄也是地标
       final isUsedOutpost = (originalTile == 'P' && world.outpostUsed());
 
       // 调试信息：打印地标状态
       if (isLandmark) {
-        print('🗺️ 地标调试 [$x,$y]: tile="$tile", original="$originalTile", visited=$isVisited, usedOutpost=$isUsedOutpost');
+        print(
+            '🗺️ 地标调试 [$x,$y]: tile="$tile", original="$originalTile", visited=$isVisited, usedOutpost=$isUsedOutpost');
       }
 
       if (isLandmark && !isUsedOutpost && !isVisited) {
@@ -392,48 +419,90 @@ class _WorldScreenState extends State<WorldScreen> {
     }
   }
 
-  /// 处理地图点击 - 简化版本，直接基于点击位置相对于玩家位置的方向
-  void _handleMapClick(TapDownDetails details, World world) {
+  /// 处理地图点击 - 适应以玩家为中心的地图视图
+  void _handleMapClick(
+      TapDownDetails details, World world, int startX, int startY) {
     final localPosition = details.localPosition;
     final curPos = world.curPos;
 
-    // 计算玩家在地图中的实际像素位置（瓦片中心）
+    // 计算点击的瓦片坐标（相对于显示的地图区域）
     final tileSize = 16.0;
-    final padding = 4.0; // Container的padding
-    final playerPixelX = curPos[0] * tileSize + tileSize / 2 + padding;
-    final playerPixelY = curPos[1] * tileSize + tileSize / 2 + padding;
+    final padding = 4.0;
 
-    // 计算点击位置相对于玩家位置的偏移
-    final clickX = localPosition.dx - playerPixelX;
-    final clickY = localPosition.dy - playerPixelY;
+    // 计算点击位置对应的瓦片索引（相对于显示区域）
+    final relativeClickTileX =
+        ((localPosition.dx - padding) / tileSize).floor();
+    final relativeClickTileY =
+        ((localPosition.dy - padding) / tileSize).floor();
 
-    print('🗺️ 地图点击调试 (简化版):');
-    print('  当前位置: [${curPos[0]}, ${curPos[1]}]');
-    print('  玩家像素位置: ($playerPixelX, $playerPixelY)');
+    // 转换为绝对地图坐标
+    final clickTileX = startX + relativeClickTileX;
+    final clickTileY = startY + relativeClickTileY;
+
+    // 计算相对于玩家的方向
+    final deltaX = clickTileX - curPos[0];
+    final deltaY = clickTileY - curPos[1];
+
+    print('🗺️ 地图点击调试 (以玩家为中心):');
+    print('  玩家位置: [${curPos[0]}, ${curPos[1]}]');
+    print('  显示区域: [$startX-${startX + 20}, $startY-${startY + 20}]');
     print('  点击位置: (${localPosition.dx}, ${localPosition.dy})');
-    print('  偏移量: ($clickX, $clickY)');
+    print('  相对瓦片: [$relativeClickTileX, $relativeClickTileY]');
+    print('  绝对瓦片: [$clickTileX, $clickTileY]');
+    print('  方向偏移: ($deltaX, $deltaY)');
 
-    // 使用原游戏的点击逻辑
-    // 这四个条件将以玩家为中心的区域分成四个三角形
-    if (clickX > clickY && clickX < -clickY) {
-      // 上方三角形 - 向北移动
-      print('  → 向北移动');
-      world.moveNorth();
-    } else if (clickX < clickY && clickX > -clickY) {
-      // 下方三角形 - 向南移动
-      print('  → 向南移动');
-      world.moveSouth();
-    } else if (clickX < clickY && clickX < -clickY) {
-      // 左方三角形 - 向西移动
-      print('  → 向西移动');
-      world.moveWest();
-    } else if (clickX > clickY && clickX > -clickY) {
-      // 右方三角形 - 向东移动
-      print('  → 向东移动');
+    // 计算玩家在当前显示区域中的相对位置
+    final playerRelativeX = curPos[0] - startX;
+    final playerRelativeY = curPos[1] - startY;
+    final playerScreenX = playerRelativeX * tileSize + padding;
+    final playerScreenY = playerRelativeY * tileSize + padding;
+    print('  玩家在显示区域中的位置: [$playerRelativeX, $playerRelativeY]');
+    print('  玩家屏幕位置: ($playerScreenX, $playerScreenY)');
+    print(
+        '  点击相对于玩家的像素偏移: (${localPosition.dx - playerScreenX}, ${localPosition.dy - playerScreenY})');
+
+    // 简单的方向判断：只允许单步移动
+    if (deltaX == 1 && deltaY == 0) {
+      print('  ✅ 检测到向东移动 (deltaX=1, deltaY=0)');
+      print('  🚀 调用 world.moveEast()');
       world.moveEast();
+      print('  ✅ world.moveEast() 调用完成');
+    } else if (deltaX == -1 && deltaY == 0) {
+      print('  ✅ 检测到向西移动 (deltaX=-1, deltaY=0)');
+      print('  🚀 调用 world.moveWest()');
+      world.moveWest();
+      print('  ✅ world.moveWest() 调用完成');
+    } else if (deltaX == 0 && deltaY == 1) {
+      print('  ✅ 检测到向南移动 (deltaX=0, deltaY=1)');
+      print('  🚀 调用 world.moveSouth()');
+      world.moveSouth();
+      print('  ✅ world.moveSouth() 调用完成');
+    } else if (deltaX == 0 && deltaY == -1) {
+      print('  ✅ 检测到向北移动 (deltaX=0, deltaY=-1)');
+      print('  🚀 调用 world.moveNorth()');
+      world.moveNorth();
+      print('  ✅ world.moveNorth() 调用完成');
+    } else if (deltaX.abs() > 0 || deltaY.abs() > 0) {
+      // 对于非相邻瓦片，选择主要方向
+      if (deltaX.abs() > deltaY.abs()) {
+        if (deltaX > 0) {
+          print('  → 向东移动 (远距离)');
+          world.moveEast();
+        } else {
+          print('  → 向西移动 (远距离)');
+          world.moveWest();
+        }
+      } else {
+        if (deltaY > 0) {
+          print('  → 向南移动 (远距离)');
+          world.moveSouth();
+        } else {
+          print('  → 向北移动 (远距离)');
+          world.moveNorth();
+        }
+      }
     } else {
-      // 点击在玩家位置附近，不移动
-      print('  → 点击位置太接近玩家，不移动');
+      print('  → 点击在玩家位置，不移动');
     }
   }
 }

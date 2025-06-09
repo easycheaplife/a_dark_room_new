@@ -643,11 +643,22 @@ class World extends ChangeNotifier {
     curPos[1] += direction[1];
     final newTile = state!['map'][curPos[0]][curPos[1]];
 
-    print('🚶 移动: [${oldPos[0]}, ${oldPos[1]}] -> [${curPos[0]}, ${curPos[1]}], $oldTile -> $newTile');
+    print(
+        '🚶 移动: [${oldPos[0]}, ${oldPos[1]}] -> [${curPos[0]}, ${curPos[1]}], $oldTile -> $newTile');
     print('🚶 即将调用doSpace()...');
 
     narrateMove(oldTile, newTile);
-    lightMap(curPos[0], curPos[1], state!['mask']);
+
+    // 更新遮罩并保存到StateManager
+    final mask = List<List<bool>>.from(
+        state!['mask'].map((row) => List<bool>.from(row)));
+    lightMap(curPos[0], curPos[1], mask);
+    state!['mask'] = mask;
+
+    // 立即保存遮罩到StateManager以确保持久化
+    final sm = StateManager();
+    sm.set('game.world.mask', mask);
+
     // drawMap(); // 在Flutter中由UI自动更新
     doSpace();
 
