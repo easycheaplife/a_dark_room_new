@@ -64,14 +64,14 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(
                 seedColor: Colors.grey,
-                brightness: Brightness.dark,
+                brightness: Brightness.light, // 改为浅色主题
               ),
-              scaffoldBackgroundColor: Colors.black,
+              scaffoldBackgroundColor: Colors.white, // 白色背景
               textTheme: const TextTheme(
-                bodyMedium: TextStyle(color: Colors.white),
-                bodyLarge: TextStyle(color: Colors.white),
-                titleMedium: TextStyle(color: Colors.white),
-                titleLarge: TextStyle(color: Colors.white),
+                bodyMedium: TextStyle(color: Colors.black), // 黑色文字
+                bodyLarge: TextStyle(color: Colors.black),
+                titleMedium: TextStyle(color: Colors.black),
+                titleLarge: TextStyle(color: Colors.black),
               ),
               useMaterial3: true,
             ),
@@ -222,7 +222,7 @@ class _GameScreenState extends State<GameScreen> {
           child: Text(
             'Module: $activeModuleName',
             style: const TextStyle(
-              color: Colors.white,
+              color: Colors.black, // 黑色文字
               fontSize: 24,
             ),
           ),

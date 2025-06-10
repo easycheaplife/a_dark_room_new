@@ -25,14 +25,14 @@ class CombatScreen extends StatelessWidget {
         }
 
         return Container(
-          color: Colors.black.withValues(alpha: 0.8),
+          color: Colors.white.withValues(alpha: 0.9), // 白色半透明背景
           child: Center(
             child: Container(
               width: 600,
               height: 400,
               decoration: BoxDecoration(
-                color: const Color(0xFF2D2D2D),
-                border: Border.all(color: const Color(0xFF555555)),
+                color: Colors.white, // 白色背景
+                border: Border.all(color: Colors.black), // 黑色边框
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -42,13 +42,13 @@ class CombatScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     decoration: const BoxDecoration(
                       border: Border(
-                        bottom: BorderSide(color: Color(0xFF555555)),
+                        bottom: BorderSide(color: Colors.black), // 黑色边框
                       ),
                     ),
                     child: Text(
                       activeEvent['title'] ?? '战斗',
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Colors.black, // 黑色文字
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -68,15 +68,14 @@ class CombatScreen extends StatelessWidget {
                               padding: const EdgeInsets.all(12),
                               margin: const EdgeInsets.only(bottom: 16),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF1A1A1A),
-                                border:
-                                    Border.all(color: const Color(0xFF444444)),
+                                color: Colors.grey[100], // 浅灰色背景
+                                border: Border.all(color: Colors.grey), // 灰色边框
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 scene['notification'],
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: Colors.black, // 黑色文字
                                   fontSize: 14,
                                 ),
                               ),
@@ -181,12 +180,12 @@ class CombatScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: Colors.transparent,
-              border: Border.all(color: Colors.white, width: 1),
+              border: Border.all(color: Colors.black, width: 1), // 黑色边框
             ),
             child: Text(
               chara,
               style: const TextStyle(
-                color: Colors.white,
+                color: Colors.black, // 黑色文字
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -274,7 +273,7 @@ class CombatScreen extends StatelessWidget {
       children: [
         const Text(
           '选择武器:',
-          style: TextStyle(color: Colors.white, fontSize: 14),
+          style: TextStyle(color: Colors.black, fontSize: 14), // 黑色文字
         ),
         const SizedBox(height: 8),
         Wrap(
@@ -284,8 +283,9 @@ class CombatScreen extends StatelessWidget {
             return ElevatedButton(
               onPressed: () => events.useWeapon(weaponName),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF444444),
-                foregroundColor: Colors.white,
+                backgroundColor: Colors.grey[200], // 浅灰色背景
+                foregroundColor: Colors.black, // 黑色文字
+                side: const BorderSide(color: Colors.black), // 黑色边框
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               ),
@@ -313,8 +313,9 @@ class CombatScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () => events.eatMeat(),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF8B4513),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.brown[100], // 浅棕色背景
+              foregroundColor: Colors.black, // 黑色文字
+              side: const BorderSide(color: Colors.brown), // 棕色边框
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
             child: Text('吃肉 (${path.outfit['cured meat']})'),
@@ -325,8 +326,9 @@ class CombatScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () => events.useMeds(),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF228B22),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.green[100], // 浅绿色背景
+              foregroundColor: Colors.black, // 黑色文字
+              side: const BorderSide(color: Colors.green), // 绿色边框
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
             child: Text('用药 (${path.outfit['medicine']})'),
@@ -337,8 +339,9 @@ class CombatScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () => events.useHypo(),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4169E1),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.blue[100], // 浅蓝色背景
+              foregroundColor: Colors.black, // 黑色文字
+              side: const BorderSide(color: Colors.blue), // 蓝色边框
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
             child: Text('注射器 (${path.outfit['hypo']})'),
@@ -348,8 +351,9 @@ class CombatScreen extends StatelessWidget {
         ElevatedButton(
           onPressed: () => events.endEvent(),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF8B0000),
-            foregroundColor: Colors.white,
+            backgroundColor: Colors.red[100], // 浅红色背景
+            foregroundColor: Colors.black, // 黑色文字
+            side: const BorderSide(color: Colors.red), // 红色边框
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           ),
           child: const Text('逃跑'),
@@ -370,7 +374,7 @@ class CombatScreen extends StatelessWidget {
           child: Text(
             scene['deathMessage'] ?? '敌人死了',
             style: const TextStyle(
-              color: Colors.white,
+              color: Colors.black, // 黑色文字
               fontSize: 16,
             ),
             textAlign: TextAlign.center,
@@ -384,7 +388,7 @@ class CombatScreen extends StatelessWidget {
           const Text(
             '战利品:',
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.black, // 黑色文字
               fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
@@ -399,14 +403,15 @@ class CombatScreen extends StatelessWidget {
                   Expanded(
                     child: Text(
                       '${_getItemDisplayName(entry.key)} [${entry.value}]',
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.black), // 黑色文字
                     ),
                   ),
                   ElevatedButton(
                     onPressed: () => events.getLoot(entry.key, entry.value),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF444444),
-                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.white, // 白色背景
+                      foregroundColor: Colors.black, // 黑色文字
+                      side: const BorderSide(color: Colors.black), // 黑色边框
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                     ),
@@ -419,7 +424,7 @@ class CombatScreen extends StatelessWidget {
         ] else ...[
           const Text(
             '没有战利品',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.black), // 黑色文字
           ),
         ],
 
@@ -429,8 +434,9 @@ class CombatScreen extends StatelessWidget {
         ElevatedButton(
           onPressed: () => events.endEvent(),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF8B0000),
-            foregroundColor: Colors.white,
+            backgroundColor: Colors.red[100], // 浅红色背景
+            foregroundColor: Colors.black, // 黑色文字
+            side: const BorderSide(color: Colors.red), // 红色边框
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
           child: const Text('离开'),
