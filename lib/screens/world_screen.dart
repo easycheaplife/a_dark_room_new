@@ -98,17 +98,22 @@ class _WorldScreenState extends State<WorldScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
-
-                  // 地图区域
+                  // 主内容区域 - 使用SingleChildScrollView让页面可滚动
                   Expanded(
-                    child: _buildMap(world),
-                  ),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          // 地图区域 - 固定大小，不滚动
+                          _buildMap(world),
 
-                  // 补给品信息
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    child: _buildSupplies(world),
+                          const SizedBox(height: 16),
+
+                          // 补给品信息
+                          _buildSupplies(world),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               );
@@ -125,7 +130,7 @@ class _WorldScreenState extends State<WorldScreen> {
     );
   }
 
-  /// 构建地图 - 参考原游戏的drawMap函数，显示完整的61x61地图
+  /// 构建地图 - 参考原游戏的drawMap函数，固定大小显示地图，不使用内部滚动
   Widget _buildMap(World world) {
     try {
       final mapData = world.state?['map'];
@@ -161,39 +166,44 @@ class _WorldScreenState extends State<WorldScreen> {
       const radius = 30; // 原游戏的World.RADIUS = 30
       final mapSize = radius * 2 + 1; // 61x61
 
-      return GestureDetector(
-        onTapDown: (details) => _handleMapClick(details, world),
-        child: Container(
-          padding: const EdgeInsets.all(4.0),
-          decoration: const BoxDecoration(
-            color: Colors.white, // 白色背景，与原游戏一致
-            border: Border.fromBorderSide(
-              BorderSide(color: Colors.black, width: 1), // 黑色边框
+      return Center(
+        child: GestureDetector(
+          onTapDown: (details) => _handleMapClick(details, world),
+          child: Container(
+            padding: const EdgeInsets.all(4.0),
+            decoration: const BoxDecoration(
+              color: Colors.white, // 白色背景，与原游戏一致
+              border: Border.fromBorderSide(
+                BorderSide(color: Colors.black, width: 1), // 黑色边框
+              ),
             ),
-          ),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
+            // 参考原游戏CSS: overflow: hidden - 地图固定大小，不滚动
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Column(
-                children: List.generate(mapSize, (j) {
-                  return Row(
-                    children: List.generate(mapSize, (i) {
-                      // 检查遮罩：只有mask[i][j]为true或者是玩家位置时才显示内容
-                      final isPlayerPos = i == curPos[0] && j == curPos[1];
-                      final isVisible = mask[i][j] || isPlayerPos;
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(mapSize, (j) {
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(mapSize, (i) {
+                        // 检查遮罩：只有mask[i][j]为true或者是玩家位置时才显示内容
+                        final isPlayerPos = i == curPos[0] && j == curPos[1];
+                        final isVisible = mask[i][j] || isPlayerPos;
 
-                      return _buildMapTile(
-                        map[i][j],
-                        isVisible, // 使用遮罩系统控制可见性
-                        isPlayerPos, // 检查是否是玩家位置
-                        i, // X坐标
-                        j, // Y坐标
-                        world,
-                      );
-                    }),
-                  );
-                }),
+                        return _buildMapTile(
+                          map[i][j],
+                          isVisible, // 使用遮罩系统控制可见性
+                          isPlayerPos, // 检查是否是玩家位置
+                          i, // X坐标
+                          j, // Y坐标
+                          world,
+                        );
+                      }),
+                    );
+                  }),
+                ),
               ),
             ),
           ),
@@ -427,7 +437,7 @@ class _WorldScreenState extends State<WorldScreen> {
     }
   }
 
-  /// 处理地图点击 - 简化的直观移动逻辑
+  /// 处理地图点击 - 参考原游戏的click函数，使用象限判断
   void _handleMapClick(TapDownDetails details, World world) {
     final localPosition = details.localPosition;
     final curPos = world.curPos;
@@ -435,32 +445,26 @@ class _WorldScreenState extends State<WorldScreen> {
     final tileSize = 12.0;
     final padding = 4.0;
 
-    // 计算点击的瓦片坐标
-    final clickTileX = ((localPosition.dx - padding) / tileSize).floor();
-    final clickTileY = ((localPosition.dy - padding) / tileSize).floor();
+    // 参考原游戏的click函数逻辑
+    // 计算地图中心点（玩家位置）
+    final mapWidth = (30 * 2 + 1) * tileSize; // 61 * 12
+    final mapHeight = (30 * 2 + 1) * tileSize; // 61 * 12
+    final centreX = padding + mapWidth * curPos[0] / (30 * 2);
+    final centreY = padding + mapHeight * curPos[1] / (30 * 2);
 
-    // 计算相对于玩家的方向
-    final deltaX = clickTileX - curPos[0];
-    final deltaY = clickTileY - curPos[1];
+    // 计算相对于中心的点击位置
+    final clickX = localPosition.dx - centreX;
+    final clickY = localPosition.dy - centreY;
 
-    // 简单直观的移动逻辑：
-    // 点击玩家右边 -> 向东移动
-    // 点击玩家左边 -> 向西移动
-    // 点击玩家下方 -> 向南移动
-    // 点击玩家上方 -> 向北移动
-
-    if (deltaX > 0) {
-      // 点击在玩家右侧，向东移动
-      world.moveEast();
-    } else if (deltaX < 0) {
-      // 点击在玩家左侧，向西移动
-      world.moveWest();
-    } else if (deltaY > 0) {
-      // 点击在玩家下方，向南移动
-      world.moveSouth();
-    } else if (deltaY < 0) {
-      // 点击在玩家上方，向北移动
+    // 使用原游戏的象限判断逻辑
+    if (clickX > clickY && clickX < -clickY) {
       world.moveNorth();
+    } else if (clickX < clickY && clickX > -clickY) {
+      world.moveSouth();
+    } else if (clickX < clickY && clickX < -clickY) {
+      world.moveWest();
+    } else if (clickX > clickY && clickX > -clickY) {
+      world.moveEast();
     }
     // 如果点击在玩家位置 (deltaX == 0 && deltaY == 0)，不移动
   }
