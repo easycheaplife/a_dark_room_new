@@ -94,11 +94,11 @@ class Path extends ChangeNotifier {
 
     if ((sm.get('stores["cargo drone"]', true) ?? 0) > 0) {
       return defaultBagSpace + 100;
-    } else if ((sm.get('stores.convoy', true) ?? 0) > 0) {
+    } else if ((sm.get('stores["convoy"]', true) ?? 0) > 0) {
       return defaultBagSpace + 60;
-    } else if ((sm.get('stores.wagon', true) ?? 0) > 0) {
+    } else if ((sm.get('stores["wagon"]', true) ?? 0) > 0) {
       return defaultBagSpace + 30;
-    } else if ((sm.get('stores.rucksack', true) ?? 0) > 0) {
+    } else if ((sm.get('stores["rucksack"]', true) ?? 0) > 0) {
       return defaultBagSpace + 10;
     }
     return defaultBagSpace;
