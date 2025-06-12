@@ -473,6 +473,13 @@ class Events extends ChangeNotifier {
 
   /// 开始故事
   void startStory(Map<String, dynamic> scene) {
+    // 如果场景有战利品，生成战利品
+    if (scene['loot'] != null) {
+      showingLoot = true;
+      final loot = scene['loot'] as Map<String, dynamic>;
+      drawLoot(loot);
+    }
+
     // 故事场景处理
     notifyListeners();
   }
@@ -1062,6 +1069,9 @@ class Events extends ChangeNotifier {
         break;
       case 'markVisited':
         Setpieces().markVisited();
+        break;
+      case 'replenishWater':
+        Setpieces().replenishWater();
         break;
       default:
         print('⚠️ 未知的onLoad回调: $callbackName');

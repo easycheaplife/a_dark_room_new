@@ -287,6 +287,76 @@ class Setpieces extends ChangeNotifier {
       'audio': 'landmark_cave'
     },
 
+    // 旧房子
+    'house': {
+      'title': '旧房子',
+      'scenes': {
+        'start': {
+          'text': ['一座旧房子仍然矗立在这里，曾经白色的壁板已经发黄剥落。', '门敞开着。'],
+          'notification': '旧房子的遗迹作为更简单时代的纪念碑矗立着',
+          'buttons': {
+            'enter': {
+              'text': '进入',
+              'nextScene': {
+                '0.25': 'medicine',
+                '0.75': 'supplies',
+                '1': 'occupied'
+              }
+            },
+            'leave': {'text': '离开', 'nextScene': 'end'}
+          }
+        },
+        'supplies': {
+          'text': ['房子已被遗弃，但尚未被搜刮。', '旧井里还有几滴水。'],
+          'onLoad': 'replenishWater',
+          'loot': {
+            'cured meat': {'min': 1, 'max': 10, 'chance': 0.8},
+            'leather': {'min': 1, 'max': 10, 'chance': 0.2},
+            'cloth': {'min': 1, 'max': 10, 'chance': 0.5}
+          },
+          'buttons': {
+            'leave': {'text': '离开', 'cooldown': 1, 'nextScene': 'end'}
+          }
+        },
+        'medicine': {
+          'text': ['房子已被洗劫。', '但地板下面藏着一些药剂。'],
+          'onLoad': 'markVisited',
+          'loot': {
+            'medicine': {'min': 2, 'max': 5, 'chance': 1.0}
+          },
+          'buttons': {
+            'leave': {'text': '离开', 'cooldown': 1, 'nextScene': 'end'}
+          }
+        },
+        'occupied': {
+          'combat': true,
+          'enemy': 'squatter',
+          'chara': 'E',
+          'damage': 3,
+          'hit': 0.8,
+          'attackDelay': 2,
+          'health': 10,
+          'notification': '一个男人冲下大厅，手里拿着一把生锈的刀片',
+          'onLoad': 'markVisited',
+          'loot': {
+            'cured meat': {'min': 1, 'max': 10, 'chance': 0.8},
+            'leather': {'min': 1, 'max': 10, 'chance': 0.2},
+            'cloth': {'min': 1, 'max': 10, 'chance': 0.5}
+          },
+          'buttons': {
+            'leave': {'text': '离开', 'cooldown': 1, 'nextScene': 'end'}
+          }
+        },
+        'end': {
+          'text': ['离开了旧房子，回到了荒野中。'],
+          'buttons': {
+            'continue': {'text': '继续', 'nextScene': 'finish'}
+          }
+        }
+      },
+      'audio': 'landmark_house'
+    },
+
     // 废弃城镇
     'town': {
       'title': '废弃城镇',
@@ -442,6 +512,13 @@ class Setpieces extends ChangeNotifier {
 
   /// 标记当前位置为已访问
   void markVisited() {
+    World().markVisited(World().curPos[0], World().curPos[1]);
+    notifyListeners();
+  }
+
+  /// 补充水源并标记已访问
+  void replenishWater() {
+    World().setWater(World().getMaxWater());
     World().markVisited(World().curPos[0], World().curPos[1]);
     notifyListeners();
   }

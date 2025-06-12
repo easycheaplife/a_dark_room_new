@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../modules/events.dart';
@@ -12,7 +13,7 @@ class EventsScreen extends StatelessWidget {
     return Consumer<Events>(
       builder: (context, events, child) {
         final activeEvent = events.activeEvent();
-        
+
         // 如果没有活动事件，不显示界面
         if (activeEvent == null || events.activeScene == null) {
           return const SizedBox.shrink();
@@ -34,7 +35,7 @@ class EventsScreen extends StatelessWidget {
   }
 
   /// 构建事件对话框
-  Widget _buildEventDialog(BuildContext context, Events events, 
+  Widget _buildEventDialog(BuildContext context, Events events,
       Map<String, dynamic> event, Map<String, dynamic> scene) {
     return Container(
       color: Colors.black.withOpacity(0.8),
@@ -59,9 +60,9 @@ class EventsScreen extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // 场景文本
               Expanded(
                 child: SingleChildScrollView(
@@ -82,9 +83,10 @@ class EventsScreen extends StatelessWidget {
                             ),
                           ),
                       ],
-                      
-                      // 显示战利品
-                      if (scene['loot'] != null) ...[
+
+                      // 显示实际生成的战利品
+                      if (events.showingLoot &&
+                          events.currentLoot.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         const Text(
                           '发现了：',
@@ -95,25 +97,66 @@ class EventsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        for (final entry in (scene['loot'] as Map<String, dynamic>).entries)
-                          Text(
-                            '${entry.key}: ${_getLootAmount(entry.value)}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
+                        ...events.currentLoot.entries.map((entry) {
+                          return Container(
+                            margin: const EdgeInsets.symmetric(vertical: 4),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '${_getItemDisplayName(entry.key)} [${entry.value}]',
+                                    style: const TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () =>
+                                      events.getLoot(entry.key, entry.value),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: Colors.black,
+                                    side: const BorderSide(color: Colors.black),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                  ),
+                                  child: const Text('拿取',
+                                      style: TextStyle(fontSize: 12)),
+                                ),
+                              ],
                             ),
+                          );
+                        }),
+                        const SizedBox(height: 8),
+                        // 拿取所有按钮
+                        if (events.currentLoot.isNotEmpty)
+                          ElevatedButton(
+                            onPressed: () {
+                              // 拿取所有物品
+                              final lootEntries =
+                                  List.from(events.currentLoot.entries);
+                              for (final entry in lootEntries) {
+                                events.getLoot(entry.key, entry.value);
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black,
+                              side: const BorderSide(color: Colors.black),
+                            ),
+                            child: const Text('拿走一切'),
                           ),
                       ],
                     ],
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // 按钮区域
               if (scene['buttons'] != null)
-                _buildButtons(context, events, scene['buttons'] as Map<String, dynamic>),
+                _buildButtons(
+                    context, events, scene['buttons'] as Map<String, dynamic>),
             ],
           ),
         ),
@@ -122,14 +165,15 @@ class EventsScreen extends StatelessWidget {
   }
 
   /// 构建按钮
-  Widget _buildButtons(BuildContext context, Events events, Map<String, dynamic> buttons) {
+  Widget _buildButtons(
+      BuildContext context, Events events, Map<String, dynamic> buttons) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: buttons.entries.map((entry) {
         final buttonConfig = entry.value as Map<String, dynamic>;
         final text = buttonConfig['text'] ?? entry.key;
-        
+
         return GameButton(
           text: text,
           onPressed: () => _handleButtonPress(events, entry.key, buttonConfig),
@@ -140,15 +184,16 @@ class EventsScreen extends StatelessWidget {
   }
 
   /// 处理按钮点击
-  void _handleButtonPress(Events events, String buttonKey, Map<String, dynamic> buttonConfig) {
+  void _handleButtonPress(
+      Events events, String buttonKey, Map<String, dynamic> buttonConfig) {
     print('🎮 事件按钮点击: $buttonKey');
-    
+
     // 处理冷却时间
     final cooldown = buttonConfig['cooldown'];
     if (cooldown != null) {
       // 这里可以添加冷却时间处理逻辑
     }
-    
+
     // 处理下一个场景
     final nextScene = buttonConfig['nextScene'];
     if (nextScene != null) {
@@ -159,18 +204,28 @@ class EventsScreen extends StatelessWidget {
         // 加载指定场景
         events.loadScene(nextScene);
       } else if (nextScene is Map<String, dynamic>) {
-        // 随机选择场景
-        final random = DateTime.now().millisecondsSinceEpoch % 1000 / 1000.0;
+        // 随机选择场景 - 使用累积概率
+        final random = Random().nextDouble();
         String? selectedScene;
-        
-        for (final entry in nextScene.entries) {
+
+        // 将概率键转换为数字并排序
+        final sortedEntries = nextScene.entries.toList()
+          ..sort((a, b) => (double.tryParse(a.key) ?? 0.0)
+              .compareTo(double.tryParse(b.key) ?? 0.0));
+
+        for (final entry in sortedEntries) {
           final chance = double.tryParse(entry.key) ?? 0.0;
           if (random <= chance) {
             selectedScene = entry.value;
             break;
           }
         }
-        
+
+        // 如果没有选中任何场景，选择最后一个（概率为1.0的场景）
+        if (selectedScene == null && sortedEntries.isNotEmpty) {
+          selectedScene = sortedEntries.last.value;
+        }
+
         if (selectedScene != null) {
           events.loadScene(selectedScene);
         }
@@ -178,19 +233,53 @@ class EventsScreen extends StatelessWidget {
     }
   }
 
-  /// 获取战利品数量描述
-  String _getLootAmount(dynamic lootConfig) {
-    if (lootConfig is Map<String, dynamic>) {
-      final min = lootConfig['min'] ?? 1;
-      final max = lootConfig['max'] ?? 1;
-      final chance = lootConfig['chance'] ?? 1.0;
-      
-      if (min == max) {
-        return '$min (${(chance * 100).toInt()}%几率)';
-      } else {
-        return '$min-$max (${(chance * 100).toInt()}%几率)';
-      }
+  /// 获取物品显示名称
+  String _getItemDisplayName(String itemName) {
+    switch (itemName) {
+      case 'fur':
+        return '毛皮';
+      case 'meat':
+        return '肉';
+      case 'cured meat':
+        return '熏肉';
+      case 'scales':
+        return '鳞片';
+      case 'teeth':
+        return '牙齿';
+      case 'cloth':
+        return '布料';
+      case 'leather':
+        return '皮革';
+      case 'iron':
+        return '铁';
+      case 'steel':
+        return '钢';
+      case 'coal':
+        return '煤炭';
+      case 'sulphur':
+        return '硫磺';
+      case 'medicine':
+        return '药剂';
+      case 'bullets':
+        return '子弹';
+      case 'energy cell':
+        return '能量电池';
+      case 'laser rifle':
+        return '激光步枪';
+      case 'rifle':
+        return '步枪';
+      case 'bayonet':
+        return '刺刀';
+      case 'grenade':
+        return '手榴弹';
+      case 'bolas':
+        return '流星锤';
+      case 'alien alloy':
+        return '外星合金';
+      case 'charm':
+        return '护身符';
+      default:
+        return itemName;
     }
-    return lootConfig.toString();
   }
 }
