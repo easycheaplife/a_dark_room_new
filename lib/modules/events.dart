@@ -487,7 +487,8 @@ class Events extends ChangeNotifier {
     if (scene == null) return;
 
     final sceneDelay = scene['attackDelay'];
-    final attackDelay = delay ?? (sceneDelay != null ? sceneDelay.toDouble() : 2.0);
+    final attackDelay =
+        delay ?? (sceneDelay != null ? sceneDelay.toDouble() : 2.0);
     enemyAttackTimer = Timer.periodic(
       Duration(milliseconds: (attackDelay * 1000).round()),
       (timer) => enemyAttack(),
@@ -806,20 +807,28 @@ class Events extends ChangeNotifier {
 
   /// 绘制战利品 - 参考原游戏的drawLoot函数
   void drawLoot(Map<String, dynamic> lootList) {
+    print('🎁 开始生成战利品，战利品列表: $lootList');
     currentLoot.clear();
 
     for (final entry in lootList.entries) {
       final loot = entry.value as Map<String, dynamic>;
       final chance = (loot['chance'] ?? 1.0) as double;
+      final randomValue = Random().nextDouble();
 
-      if (Random().nextDouble() < chance) {
+      print('🎁 物品: ${entry.key}, 概率: $chance, 随机值: $randomValue');
+
+      if (randomValue < chance) {
         final min = (loot['min'] ?? 1) as int;
         final max = (loot['max'] ?? 1) as int;
         final num = Random().nextInt(max - min + 1) + min;
         currentLoot[entry.key] = num;
+        print('🎁 生成战利品: ${entry.key} x$num');
+      } else {
+        print('🎁 未生成战利品: ${entry.key} (概率不足)');
       }
     }
 
+    print('🎁 最终战利品: $currentLoot');
     notifyListeners();
   }
 
@@ -837,7 +846,7 @@ class Events extends ChangeNotifier {
     print('🎒 可以拿取: $canTake');
 
     if (canTake > 0) {
-      // 更新装备 - 只使用Path.outfit，不使用StateManager
+      // 更新装备 - 同时更新Path.outfit和StateManager
       final oldAmount = path.outfit[itemName] ?? 0;
       path.outfit[itemName] = oldAmount + canTake;
 
@@ -856,14 +865,60 @@ class Events extends ChangeNotifier {
         }
       }
 
-      // 保存到StateManager
+      // 保存到StateManager - 确保数据持久化
       final sm = StateManager();
       sm.set('outfit["$itemName"]', path.outfit[itemName]);
+
+      // 通知Path模块更新
+      path.updateOutfitting();
+
+      // 显示获取通知
+      NotificationManager()
+          .notify(name, '获得了 ${_getItemDisplayName(itemName)} x$canTake');
     } else {
       print('🎒 背包空间不足，无法拾取');
+      NotificationManager().notify(name, '背包空间不足');
     }
 
     notifyListeners();
+  }
+
+  /// 获取物品显示名称 - 用于通知
+  String _getItemDisplayName(String itemName) {
+    switch (itemName) {
+      case 'fur':
+        return '毛皮';
+      case 'meat':
+        return '肉';
+      case 'scales':
+        return '鳞片';
+      case 'teeth':
+        return '牙齿';
+      case 'cloth':
+        return '布料';
+      case 'leather':
+        return '皮革';
+      case 'iron':
+        return '铁';
+      case 'coal':
+        return '煤炭';
+      case 'steel':
+        return '钢铁';
+      case 'sulphur':
+        return '硫磺';
+      case 'energy cell':
+        return '能量电池';
+      case 'bullets':
+        return '子弹';
+      case 'medicine':
+        return '药物';
+      case 'cured meat':
+        return '熏肉';
+      case 'rifle':
+        return '步枪';
+      default:
+        return itemName;
+    }
   }
 
   /// 吃肉

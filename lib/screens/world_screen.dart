@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../modules/world.dart';
 import '../modules/path.dart';
+import '../core/state_manager.dart';
 import '../screens/events_screen.dart';
 import '../screens/combat_screen.dart';
 
@@ -68,7 +69,7 @@ class _WorldScreenState extends State<WorldScreen> {
                     ),
                   ),
 
-                  // 状态信息
+                  // 状态信息 - 参考原游戏的状态栏布局
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -87,10 +88,6 @@ class _WorldScreenState extends State<WorldScreen> {
                           style: const TextStyle(color: Colors.red),
                         ),
                         Text(
-                          '水: ${world.water}',
-                          style: const TextStyle(color: Colors.blue),
-                        ),
-                        Text(
                           '距离: ${world.getDistance()}',
                           style: const TextStyle(color: Colors.black), // 黑色文字
                         ),
@@ -104,13 +101,13 @@ class _WorldScreenState extends State<WorldScreen> {
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         children: [
-                          // 地图区域 - 固定大小，不滚动
-                          _buildMap(world),
+                          // 背包区域 - 参考原游戏的bagspace-world
+                          _buildBagspace(world),
 
                           const SizedBox(height: 16),
 
-                          // 补给品信息
-                          _buildSupplies(world),
+                          // 地图区域 - 固定大小，不滚动
+                          _buildMap(world),
                         ],
                       ),
                     ),
@@ -373,31 +370,173 @@ class _WorldScreenState extends State<WorldScreen> {
     return const Color(0xFF999999); // 原游戏CSS中的#999颜色
   }
 
-  /// 构建补给品信息
-  Widget _buildSupplies(World world) {
-    final path = Provider.of<Path>(context, listen: false);
-    final supplies = <Widget>[];
+  /// 构建背包区域 - 参考原游戏的bagspace-world和updateSupplies函数
+  Widget _buildBagspace(World world) {
+    return Consumer<Path>(
+      builder: (context, path, child) {
+        final supplies = <Widget>[];
 
-    // 显示重要的补给品
-    final meat = path.outfit['cured meat'] ?? 0;
-    if (meat > 0) {
-      supplies.add(_buildSupplyItem('熏肉', meat));
-    }
+        // 参考原游戏逻辑：首先添加水
+        if (world.water > 0) {
+          supplies.add(_buildSupplyItem('水', world.water));
+        }
 
-    final bullets = path.outfit['bullets'] ?? 0;
-    if (bullets > 0) {
-      supplies.add(_buildSupplyItem('子弹', bullets));
-    }
+        // 然后按照原游戏逻辑添加其他物品
+        for (final entry in path.outfit.entries) {
+          final itemName = entry.key;
+          final num = entry.value;
 
-    final medicine = path.outfit['medicine'] ?? 0;
-    if (medicine > 0) {
-      supplies.add(_buildSupplyItem('药物', medicine));
-    }
+          if (num > 0) {
+            if (itemName == 'cured meat') {
+              // 熏肉：如果有水则在水后面，否则在最前面
+              if (world.water > 0) {
+                // 在水后面插入（这里简化为直接添加）
+                supplies.add(_buildSupplyItem('熏肉', num));
+              } else {
+                // 在最前面插入
+                supplies.insert(0, _buildSupplyItem('熏肉', num));
+              }
+            } else {
+              // 其他物品添加到末尾
+              supplies
+                  .add(_buildSupplyItem(_getItemDisplayName(itemName), num));
+            }
+          }
+        }
 
-    return Wrap(
-      spacing: 8,
-      children: supplies,
+        // 计算背包信息
+        final total = path.outfit.entries.fold<double>(0.0, (sum, entry) {
+          return sum + (entry.value * path.getWeight(entry.key));
+        });
+        final capacity = path.getCapacity();
+        final freeSpace = capacity - total;
+
+        return Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.black, width: 1),
+            color: Colors.white,
+          ),
+          height: 80,
+          child: Stack(
+            children: [
+              // 背包标题
+              Positioned(
+                top: 0,
+                left: 10,
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    (StateManager().get('stores["rucksack"]', true) ?? 0) > 0
+                        ? '背包'
+                        : '口袋',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+
+              // 背包空间信息
+              Positioned(
+                top: 0,
+                right: 10,
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    '剩余 ${freeSpace.floor()}/${capacity.floor()}',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+
+              // 物品列表
+              Positioned(
+                top: 16,
+                left: 6,
+                right: 6,
+                bottom: 6,
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    spacing: 5,
+                    runSpacing: 6,
+                    children: supplies,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
+  }
+
+  /// 获取物品显示名称 - 参考原游戏的物品翻译
+  String _getItemDisplayName(String itemName) {
+    switch (itemName) {
+      case 'fur':
+        return '毛皮';
+      case 'meat':
+        return '肉';
+      case 'scales':
+        return '鳞片';
+      case 'teeth':
+        return '牙齿';
+      case 'cloth':
+        return '布料';
+      case 'leather':
+        return '皮革';
+      case 'iron':
+        return '铁';
+      case 'coal':
+        return '煤炭';
+      case 'steel':
+        return '钢铁';
+      case 'sulphur':
+        return '硫磺';
+      case 'energy cell':
+        return '能量电池';
+      case 'bullets':
+        return '子弹';
+      case 'medicine':
+        return '药物';
+      case 'cured meat':
+        return '熏肉';
+      case 'bone spear':
+        return '骨矛';
+      case 'iron sword':
+        return '铁剑';
+      case 'steel sword':
+        return '钢剑';
+      case 'bayonet':
+        return '刺刀';
+      case 'rifle':
+        return '步枪';
+      case 'laser rifle':
+        return '激光步枪';
+      case 'grenade':
+        return '手榴弹';
+      case 'bolas':
+        return '流星锤';
+      case 'plasma rifle':
+        return '等离子步枪';
+      case 'energy blade':
+        return '能量剑';
+      case 'disruptor':
+        return '干扰器';
+      case 'hypo':
+        return '注射器';
+      case 'rucksack':
+        return '背包';
+      default:
+        return itemName;
+    }
   }
 
   /// 构建补给品项目
