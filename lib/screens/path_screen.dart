@@ -50,7 +50,7 @@ class PathScreen extends StatelessWidget {
   Widget _buildOutfittingSection(
       Path path, StateManager stateManager, Localization localization) {
     return Container(
-      width: 200,
+      width: 320, // 调整宽度，刚好容纳内容
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -68,13 +68,15 @@ class PathScreen extends StatelessWidget {
                 child: Container(
                   color: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: const Text(
-                    '补给:',
-                    style: TextStyle(
+                  width: 300, // 设置宽度以容纳完整的标题行
+                  child: Text(
+                    '供应:——背包剩余空间: ${path.getFreeSpace().floor()}/${path.getCapacity()}',
+                    style: const TextStyle(
                       color: Colors.black,
                       fontSize: 16,
                       fontFamily: 'Times New Roman',
                     ),
+                    overflow: TextOverflow.visible, // 确保文本不被截断
                   ),
                 ),
               ),
@@ -94,24 +96,6 @@ class PathScreen extends StatelessWidget {
               // 装备物品列表
               ..._buildOutfitItems(path, stateManager),
             ],
-          ),
-
-          // 背包空间显示 - 右上角
-          Positioned(
-            top: -13,
-            right: 10,
-            child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: Text(
-                '剩余 ${path.getFreeSpace().floor()}/${path.getCapacity()}',
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontFamily: 'Times New Roman',
-                ),
-              ),
-            ),
           ),
         ],
       ),
