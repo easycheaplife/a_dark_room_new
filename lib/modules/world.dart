@@ -649,15 +649,13 @@ class World extends ChangeNotifier {
 
     narrateMove(oldTile, newTile);
 
-    // 更新遮罩并保存到StateManager
+    // 更新遮罩（仅在临时状态中）
     final mask = List<List<bool>>.from(
         state!['mask'].map((row) => List<bool>.from(row)));
     lightMap(curPos[0], curPos[1], mask);
     state!['mask'] = mask;
 
-    // 立即保存遮罩到StateManager以确保持久化
-    final sm = StateManager();
-    sm.set('game.world.mask', mask);
+    // 注意：不立即保存到StateManager，只有回到村庄时才保存
 
     // drawMap(); // 在Flutter中由UI自动更新
     doSpace();
@@ -842,36 +840,32 @@ class World extends ChangeNotifier {
     switch (curTile) {
       case 'I': // 铁矿
         NotificationManager().notify(name, '发现了一个废弃的铁矿。里面可能有有用的资源。');
-        // 简单的资源奖励
-        final sm = StateManager();
-        sm.add('stores["iron"]', 5);
+        // 将物品添加到装备中，回到村庄时才会转移到仓库
+        _addToOutfit('iron', 5);
         markVisited(curPos[0], curPos[1]);
         break;
 
       case 'C': // 煤矿
         NotificationManager().notify(name, '发现了一个废弃的煤矿。黑色的煤炭散落在地上。');
-        final sm = StateManager();
-        sm.add('stores["coal"]', 5);
+        _addToOutfit('coal', 5);
         markVisited(curPos[0], curPos[1]);
         break;
 
       case 'S': // 硫磺矿
         NotificationManager().notify(name, '发现了一个硫磺矿。空气中弥漫着刺鼻的气味。');
-        final sm = StateManager();
-        sm.add('stores["sulphur"]', 5);
+        _addToOutfit('sulphur', 5);
         markVisited(curPos[0], curPos[1]);
         break;
 
       case 'H': // 旧房子
         NotificationManager().notify(name, '发现了一座废弃的房子。也许里面有什么有用的东西。');
         // 随机奖励
-        final sm = StateManager();
         final random = Random();
         if (random.nextDouble() < 0.5) {
-          sm.add('stores["wood"]', random.nextInt(3) + 1);
+          _addToOutfit('wood', random.nextInt(3) + 1);
         }
         if (random.nextDouble() < 0.3) {
-          sm.add('stores["cloth"]', random.nextInt(2) + 1);
+          _addToOutfit('cloth', random.nextInt(2) + 1);
         }
         markVisited(curPos[0], curPos[1]);
         break;
@@ -883,13 +877,12 @@ class World extends ChangeNotifier {
 
       case 'F': // 战场
         NotificationManager().notify(name, '这里曾经发生过激烈的战斗。地上散落着武器和装备。');
-        final sm = StateManager();
         final random = Random();
         if (random.nextDouble() < 0.4) {
-          sm.add('stores["bullets"]', random.nextInt(5) + 1);
+          _addToOutfit('bullets', random.nextInt(5) + 1);
         }
         if (random.nextDouble() < 0.2) {
-          sm.add('stores["rifle"]', 1);
+          _addToOutfit('rifle', 1);
         }
         markVisited(curPos[0], curPos[1]);
         break;
@@ -906,47 +899,44 @@ class World extends ChangeNotifier {
 
       case 'O': // 废弃小镇
         NotificationManager().notify(name, '发现了一个废弃的小镇。街道上空无一人，但可能还有有用的物品。');
-        final sm = StateManager();
         final random = Random();
         // 小镇可能有各种物品
         if (random.nextDouble() < 0.4) {
-          sm.add('stores["cloth"]', random.nextInt(3) + 1);
+          _addToOutfit('cloth', random.nextInt(3) + 1);
         }
         if (random.nextDouble() < 0.3) {
-          sm.add('stores["leather"]', random.nextInt(2) + 1);
+          _addToOutfit('leather', random.nextInt(2) + 1);
         }
         if (random.nextDouble() < 0.2) {
-          sm.add('stores["medicine"]', 1);
+          _addToOutfit('medicine', 1);
         }
         markVisited(curPos[0], curPos[1]);
         break;
 
       case 'V': // 潮湿洞穴
         NotificationManager().notify(name, '发现了一个潮湿的洞穴。里面很黑，但可能藏着什么。');
-        final sm2 = StateManager();
         final random2 = Random();
         if (random2.nextDouble() < 0.3) {
-          sm2.add('stores["fur"]', random2.nextInt(2) + 1);
+          _addToOutfit('fur', random2.nextInt(2) + 1);
         }
         if (random2.nextDouble() < 0.2) {
-          sm2.add('stores["teeth"]', random2.nextInt(3) + 1);
+          _addToOutfit('teeth', random2.nextInt(3) + 1);
         }
         markVisited(curPos[0], curPos[1]);
         break;
 
       case 'M': // 阴暗沼泽
         NotificationManager().notify(name, '进入了一片阴暗的沼泽。空气潮湿，充满了腐败的气味。');
-        final sm3 = StateManager();
         final random3 = Random();
         // 沼泽可能有特殊的物品
         if (random3.nextDouble() < 0.3) {
-          sm3.add('stores["scales"]', random3.nextInt(2) + 1);
+          _addToOutfit('scales', random3.nextInt(2) + 1);
         }
         if (random3.nextDouble() < 0.2) {
-          sm3.add('stores["teeth"]', random3.nextInt(3) + 1);
+          _addToOutfit('teeth', random3.nextInt(3) + 1);
         }
         if (random3.nextDouble() < 0.1) {
-          sm3.add('stores["alien alloy"]', 1);
+          _addToOutfit('alien alloy', 1);
         }
         markVisited(curPos[0], curPos[1]);
         break;
@@ -1352,32 +1342,27 @@ class World extends ChangeNotifier {
     respawn();
   }
 
-  /// 到达时调用
+  /// 到达时调用 - 参考原游戏的onArrival函数
   void onArrival([int transitionDiff = 0]) {
     final sm = StateManager();
 
-    // 初始化状态
-    final worldMap = sm.get('game.world.map', true);
-    final worldMask = sm.get('game.world.mask', true);
+    // 创建临时世界状态副本 - 参考原游戏的逻辑
+    // World.state = $.extend(true, {}, $SM.get('game.world'));
+    final savedWorldState = sm.get('game.world', true);
 
-    if (worldMap != null && worldMask != null) {
-      state = {
-        'map': worldMap,
-        'mask': worldMask,
-      };
-      print('✅ 加载已有世界数据');
+    if (savedWorldState != null) {
+      // 深拷贝世界状态，创建临时副本
+      state = _deepCopyWorldState(savedWorldState);
+      print('✅ 创建临时世界状态副本');
     } else {
       print('⚠️ 世界数据无效，重新初始化');
       // 如果没有世界数据，重新初始化
       init();
-      final newWorldMap = sm.get('game.world.map', true);
-      final newWorldMask = sm.get('game.world.mask', true);
+      final newWorldState = sm.get('game.world', true);
 
-      if (newWorldMap != null && newWorldMask != null) {
-        state = {
-          'map': newWorldMap,
-          'mask': newWorldMask,
-        };
+      if (newWorldState != null) {
+        // 深拷贝新生成的世界状态
+        state = _deepCopyWorldState(newWorldState);
         print('✅ 重新生成世界数据成功');
       } else {
         print('❌ 无法生成世界数据');
@@ -1539,13 +1524,11 @@ class World extends ChangeNotifier {
             map[x][y] = currentTile + '!';
             print('🗺️ 标记位置 ($x, $y) 为已访问: ${map[x][y]}');
 
-            // 更新state中的地图数据
+            // 更新state中的地图数据（仅在临时状态中）
             state!['map'] = map;
 
-            // 立即保存到StateManager以确保持久化
-            final sm = StateManager();
-            sm.set('game.world.map', map);
-            print('🗺️ 地图状态已保存到StateManager');
+            // 注意：不立即保存到StateManager，只有回到村庄时才保存
+            print('🗺️ 地图状态已更新到临时状态');
           } else {
             print('🗺️ 位置 ($x, $y) 已经被标记为已访问: $currentTile');
           }
@@ -1725,5 +1708,59 @@ class World extends ChangeNotifier {
   void testMarkVisited() {
     print('🧪 测试标记当前位置为已访问');
     markVisited(curPos[0], curPos[1]);
+  }
+
+  /// 深拷贝世界状态 - 参考原游戏的$.extend(true, {}, obj)
+  Map<String, dynamic> _deepCopyWorldState(Map<String, dynamic> original) {
+    final copy = <String, dynamic>{};
+
+    for (final entry in original.entries) {
+      final key = entry.key;
+      final value = entry.value;
+
+      if (value is Map<String, dynamic>) {
+        copy[key] = _deepCopyWorldState(value);
+      } else if (value is List) {
+        copy[key] = _deepCopyList(value);
+      } else {
+        copy[key] = value;
+      }
+    }
+
+    return copy;
+  }
+
+  /// 深拷贝列表
+  List<dynamic> _deepCopyList(List<dynamic> original) {
+    final copy = <dynamic>[];
+
+    for (final item in original) {
+      if (item is Map<String, dynamic>) {
+        copy.add(_deepCopyWorldState(item));
+      } else if (item is List) {
+        copy.add(_deepCopyList(item));
+      } else {
+        copy.add(item);
+      }
+    }
+
+    return copy;
+  }
+
+  /// 将物品添加到装备中 - 参考原游戏的临时状态逻辑
+  void _addToOutfit(String itemName, int amount) {
+    try {
+      final path = Path();
+      final currentAmount = path.outfit[itemName] ?? 0;
+      path.outfit[itemName] = currentAmount + amount;
+
+      // 同步到StateManager（装备数据需要立即同步以保持一致性）
+      final sm = StateManager();
+      sm.set('outfit["$itemName"]', path.outfit[itemName]);
+
+      print('🎒 添加到装备: $itemName x$amount (总计: ${path.outfit[itemName]})');
+    } catch (e) {
+      print('⚠️ 添加物品到装备时出错: $e');
+    }
   }
 }

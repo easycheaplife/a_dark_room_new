@@ -151,28 +151,37 @@ class _GameScreenState extends State<GameScreen> {
                   top: 0,
                   right: 0,
                   bottom: 0,
-                  child: SizedBox(
-                    width: 700, // 原游戏的固定宽度
-                    child: Column(
-                      children: [
-                        // Header导航
-                        const Header(),
+                  child: Consumer<Engine>(
+                    builder: (context, engine, child) {
+                      // 检查是否在世界地图模式
+                      final isWorldMode =
+                          engine.activeModule?.name == 'World' ||
+                              engine.activeModule?.name == '世界';
 
-                        // 主面板区域
-                        Expanded(
-                          child: Consumer<Engine>(
-                            builder: (context, engine, child) {
-                              if (engine.activeModule == null) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              return _buildActiveModulePanel(engine);
-                            },
-                          ),
+                      return SizedBox(
+                        width: 700, // 原游戏的固定宽度
+                        child: Column(
+                          children: [
+                            // Header导航 - 只在非世界地图模式显示
+                            if (!isWorldMode) const Header(),
+
+                            // 主面板区域
+                            Expanded(
+                              child: Consumer<Engine>(
+                                builder: (context, engine, child) {
+                                  if (engine.activeModule == null) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                  return _buildActiveModulePanel(engine);
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
 
