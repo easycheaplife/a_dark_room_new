@@ -53,7 +53,7 @@ class Localization extends ChangeNotifier {
       'bolas': '流星锤',
       'bayonet': '刺刀',
       'bait': '诱饵',
-      'cured meat': '腌肉',
+      'cured meat': '熏肉',
       'scales': '鳞片',
       'compass': '指南针',
       'laser rifle': '激光步枪',

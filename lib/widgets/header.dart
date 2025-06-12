@@ -6,7 +6,7 @@ import '../core/localization.dart';
 import '../modules/room.dart';
 import '../modules/outside.dart';
 import '../modules/path.dart';
-import '../modules/world.dart';
+// import '../modules/world.dart'; // 移除世界模块导入，不再需要独立的世界页签
 import '../modules/fabricator.dart';
 import '../modules/ship.dart';
 import '../screens/settings_screen.dart';
@@ -55,15 +55,8 @@ class Header extends StatelessWidget {
           ));
         }
 
-        // World tab - 只有在解锁世界后才显示
-        if (_isWorldUnlocked(stateManager)) {
-          tabs.add(_buildTab(
-            context,
-            '世界',
-            activeModuleName == 'World',
-            onTap: () => _navigateToModule(context, 'World'),
-          ));
-        }
+        // World tab - 移除世界页签，用户只能通过漫漫尘途的出发功能进入世界地图
+        // 世界地图现在作为漫漫尘途模块的一部分，不再是独立页签
 
         // Fabricator tab - 只有在解锁制造器后才显示
         if (_isFabricatorUnlocked(stateManager)) {
@@ -147,9 +140,7 @@ class Header extends StatelessWidget {
       case 'Path':
         engine.travelTo(Provider.of<Path>(context, listen: false));
         break;
-      case 'World':
-        engine.travelTo(Provider.of<World>(context, listen: false));
-        break;
+      // World 导航已移除 - 世界地图现在通过漫漫尘途的出发功能访问
       case 'Fabricator':
         engine.travelTo(Provider.of<Fabricator>(context, listen: false));
         break;
@@ -186,10 +177,10 @@ class Header extends StatelessWidget {
     return (stateManager.get('stores.compass', true) ?? 0) > 0;
   }
 
-  // 检查世界是否解锁
-  bool _isWorldUnlocked(StateManager stateManager) {
-    return stateManager.get('features.location.world') == true;
-  }
+  // 检查世界是否解锁 - 已移除，世界地图现在通过漫漫尘途访问
+  // bool _isWorldUnlocked(StateManager stateManager) {
+  //   return stateManager.get('features.location.world') == true;
+  // }
 
   // 检查制造器是否解锁
   bool _isFabricatorUnlocked(StateManager stateManager) {

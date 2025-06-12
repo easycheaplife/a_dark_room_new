@@ -129,7 +129,7 @@ class OutsideScreen extends StatelessWidget {
           _buildWorkerButton('猎人', 'hunter', outside, stateManager),
           _buildWorkerButton('陷阱师', 'trapper', outside, stateManager),
           _buildWorkerButton('制革工', 'tanner', outside, stateManager),
-          _buildWorkerButton('腌肉师', 'charcutier', outside, stateManager),
+          _buildWorkerButton('熏肉师', 'charcutier', outside, stateManager),
           _buildWorkerButton('制钢工', 'steelworker', outside, stateManager),
         ],
       ),
@@ -289,7 +289,7 @@ class OutsideScreen extends StatelessWidget {
         return (stateManager.get('game.buildings.tannery', true) ?? 0) > 0;
       case 'charcutier':
         return (stateManager.get('game.buildings.smokehouse', true) ?? 0) >
-            0; // 腌肉师由熏制房解锁
+            0; // 熏肉师由熏制房解锁
       case 'steelworker':
         return (stateManager.get('game.buildings.steelworks', true) ?? 0) > 0;
       default:
@@ -377,7 +377,7 @@ class OutsideScreen extends StatelessWidget {
       'meat': '肉类',
       'bait': '诱饵',
       'leather': '皮革',
-      'cured meat': '腌肉',
+      'cured meat': '熏肉',
       'iron': '铁',
       'coal': '煤炭',
       'sulphur': '硫磺',
@@ -566,7 +566,7 @@ class _StoresWidgetState extends State<_StoresWidget> {
       'meat': '肉类',
       'bait': '诱饵',
       'leather': '皮革',
-      'cured meat': '腌肉',
+      'cured meat': '熏肉',
       'iron': '铁',
       'coal': '煤炭',
       'sulphur': '硫磺',
@@ -641,7 +641,7 @@ class _StoresWidgetState extends State<_StoresWidget> {
       'hunter': '猎人',
       'trapper': '陷阱师',
       'tanner': '制革工',
-      'charcutier': '腌肉师',
+      'charcutier': '熏肉师',
       'steelworker': '钢铁工',
       'thieves': '小偷',
     };

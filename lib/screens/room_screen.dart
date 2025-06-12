@@ -397,7 +397,7 @@ class RoomScreen extends StatelessWidget {
       'meat': '肉类',
       'bait': '诱饵',
       'leather': '皮革',
-      'cured meat': '腌肉',
+      'cured meat': '熏肉',
       'iron': '铁',
       'coal': '煤炭',
       'sulphur': '硫磺',

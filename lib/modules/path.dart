@@ -202,7 +202,7 @@ class Path extends ChangeNotifier {
     // final freeSpace = getCapacity() - currentBagCapacity; // 暂时不使用
 
     // 在Flutter中，背包空间显示将通过状态管理自动更新
-    // 检查是否可以出发（需要有腌肉）
+    // 检查是否可以出发（需要有熏肉）
     // final canEmbark = (outfit['cured meat'] ?? 0) > 0; // 暂时不使用
 
     notifyListeners();
@@ -353,7 +353,7 @@ class Path extends ChangeNotifier {
   bool canEmbark() {
     final curedMeat = outfit['cured meat'] ?? 0;
     final canGo = curedMeat > 0;
-    print('🔍 canEmbark: 腌肉=$curedMeat, 可以出发=$canGo');
+    print('🔍 canEmbark: 熏肉=$curedMeat, 可以出发=$canGo');
     return canGo;
   }
 

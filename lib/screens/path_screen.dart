@@ -369,7 +369,7 @@ class PathScreen extends StatelessWidget {
   /// 获取本地化物品名称
   String _getLocalizedItemName(String itemName) {
     const itemNames = {
-      'cured meat': '腌肉',
+      'cured meat': '熏肉',
       'bullets': '子弹',
       'grenade': '手榴弹',
       'bolas': '流星锤',
@@ -410,7 +410,7 @@ class PathScreen extends StatelessWidget {
     print('🎯 PathScreen: canEmbark=$canEmbark');
 
     return Tooltip(
-      message: canEmbark ? '前往世界地图' : '需要携带腌肉才能出发',
+      message: canEmbark ? '前往世界地图' : '需要携带熏肉才能出发',
       child: GameButton(
         text: '出发',
         onPressed: canEmbark
