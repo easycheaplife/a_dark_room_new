@@ -783,13 +783,35 @@ class World extends ChangeNotifier {
       print('🏠 触发村庄事件 - 回到小黑屋');
       goHome();
     } else if (originalTile == tile['executioner']) {
-      // 执行者场景（暂时注释掉，需要实现Executioner事件）
-      // final scene = state!['executioner'] ? 'executioner-antechamber' : 'executioner-intro';
-      // Events().startEvent(Events.Executioner[scene]);
+      // 执行者场景 - 检查是否已访问
       print('🔮 发现执行者装置');
-      NotificationManager().notify(name, '发现了一个神秘的装置');
-      if (!isVisited) {
-        markVisited(curPos[0], curPos[1]); // 只有未访问时才标记
+      if (originalTile != tile['outpost'] || !outpostUsed()) {
+        // 只有未访问的地标才触发事件
+        if (!isVisited) {
+          // 触发执行者建筑事件
+          final landmarkInfo = landmarks[originalTile];
+          if (landmarkInfo != null && landmarkInfo['scene'] != null) {
+            final setpieces = Setpieces();
+            final sceneName = landmarkInfo['scene'];
+
+            // 检查场景是否存在
+            if (setpieces.isSetpieceAvailable(sceneName)) {
+              print('🔮 启动执行者Setpiece场景: $sceneName');
+              setpieces.startSetpiece(sceneName);
+            } else {
+              // 为缺失的场景提供默认处理
+              print('🔮 执行者场景不存在，使用默认处理: $sceneName');
+              NotificationManager().notify(name, '发现了一个神秘的装置');
+              markVisited(curPos[0], curPos[1]);
+            }
+          } else {
+            print('🔮 执行者地标信息无效: $landmarkInfo');
+            NotificationManager().notify(name, '发现了一个神秘的装置');
+            markVisited(curPos[0], curPos[1]);
+          }
+        } else {
+          print('🔮 执行者地标已访问，跳过事件');
+        }
       }
     } else if (landmarks.containsKey(originalTile)) {
       // 检查是否是地标（使用原始字符检查）
@@ -839,22 +861,18 @@ class World extends ChangeNotifier {
 
     switch (curTile) {
       case 'I': // 铁矿
-        NotificationManager().notify(name, '发现了一个废弃的铁矿。里面可能有有用的资源。');
-        // 将物品添加到装备中，回到村庄时才会转移到仓库
-        _addToOutfit('iron', 5);
-        markVisited(curPos[0], curPos[1]);
+        // 触发铁矿事件
+        Events().triggerSetpiece('ironmine');
         break;
 
       case 'C': // 煤矿
-        NotificationManager().notify(name, '发现了一个废弃的煤矿。黑色的煤炭散落在地上。');
-        _addToOutfit('coal', 5);
-        markVisited(curPos[0], curPos[1]);
+        // 触发煤矿事件
+        Events().triggerSetpiece('coalmine');
         break;
 
       case 'S': // 硫磺矿
-        NotificationManager().notify(name, '发现了一个硫磺矿。空气中弥漫着刺鼻的气味。');
-        _addToOutfit('sulphur', 5);
-        markVisited(curPos[0], curPos[1]);
+        // 触发硫磺矿事件
+        Events().triggerSetpiece('sulphurmine');
         break;
 
       case 'H': // 旧房子

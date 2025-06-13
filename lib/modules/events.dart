@@ -1055,6 +1055,17 @@ class Events extends ChangeNotifier {
     }
   }
 
+  /// 触发地标事件
+  void triggerSetpiece(String setpieceName) {
+    print('🏛️ Events.triggerSetpiece() 被调用: $setpieceName');
+    final setpiece = Setpieces.setpieces[setpieceName];
+    if (setpiece != null) {
+      startEvent(setpiece);
+    } else {
+      print('⚠️ 未找到地标事件: $setpieceName');
+    }
+  }
+
   /// 处理onLoad回调 - 根据字符串名称调用相应的方法
   void _handleOnLoadCallback(String callbackName) {
     switch (callbackName) {
@@ -1072,6 +1083,15 @@ class Events extends ChangeNotifier {
         break;
       case 'replenishWater':
         Setpieces().replenishWater();
+        break;
+      case 'clearIronMine':
+        Setpieces().clearIronMine();
+        break;
+      case 'clearCoalMine':
+        Setpieces().clearCoalMine();
+        break;
+      case 'clearSulphurMine':
+        Setpieces().clearSulphurMine();
         break;
       default:
         print('⚠️ 未知的onLoad回调: $callbackName');
