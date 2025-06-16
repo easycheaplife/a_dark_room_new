@@ -6,6 +6,7 @@ import '../core/notifications.dart';
 import '../core/audio_engine.dart';
 import '../core/engine.dart';
 import '../core/localization.dart';
+import '../core/logger.dart';
 
 /// 外部区域模块 - 注册户外功能
 /// 包括村庄建设、工人管理、陷阱检查等功能
@@ -497,9 +498,9 @@ class Outside extends ChangeNotifier {
     final random = Random();
 
     // 调试信息
-    print(
+    Logger.info(
         '🪤 Checking traps: numTraps=$numTraps, numBait=$numBait, numDrops=$numDrops');
-    print('🏗️ Buildings: ${sm.get('game.buildings')}');
+    Logger.info('🏗️ Buildings: ${sm.get('game.buildings')}');
 
     for (var i = 0; i < numDrops; i++) {
       final roll = random.nextDouble();

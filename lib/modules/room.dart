@@ -6,6 +6,7 @@ import '../core/audio_library.dart';
 import '../core/notifications.dart';
 import '../core/engine.dart';
 import '../core/localization.dart';
+import '../core/logger.dart';
 import '../widgets/button.dart';
 import 'outside.dart';
 import 'path.dart';
@@ -593,13 +594,13 @@ class Room with ChangeNotifier {
     final wood = sm.get('stores.wood', true) ?? 0;
 
     // 调试信息
-    print('🔥 lightFire called');
-    print('🪵 Current wood: $wood');
-    print('📊 Full stores state: ${sm.get('stores')}');
+    Logger.info('🔥 lightFire called');
+    Logger.info('🪵 Current wood: $wood');
+    Logger.info('📊 Full stores state: ${sm.get('stores')}');
 
     // 按照原始游戏逻辑：如果没有木材，点火是免费的！
     if (wood == 0) {
-      print('🆓 Free fire lighting (no wood available)');
+      Logger.info('🆓 Free fire lighting (no wood available)');
       sm.set('game.fire.value', fireEnum['Burning']!['value']);
       AudioEngine().playSound(AudioLibrary.lightFire);
       onFireChange();
@@ -610,7 +611,7 @@ class Room with ChangeNotifier {
     if (wood < 5) {
       NotificationManager()
           .notify(name, _localization.translate('room.notEnoughWood'));
-      print('❌ Not enough wood: need 5, have $wood');
+      Logger.error('❌ Not enough wood: need 5, have $wood');
       return;
     }
 
@@ -618,7 +619,7 @@ class Room with ChangeNotifier {
     sm.set('stores.wood', wood - 5);
     sm.set('game.fire.value', fireEnum['Burning']!['value']);
     AudioEngine().playSound(AudioLibrary.lightFire);
-    print('✅ Fire lit successfully! Wood remaining: ${wood - 5}');
+    Logger.info('✅ Fire lit successfully! Wood remaining: ${wood - 5}');
     onFireChange();
   }
 

@@ -7,6 +7,7 @@ import '../core/engine.dart';
 import 'path.dart';
 import 'world.dart';
 import 'setpieces.dart';
+import '../core/logger.dart';
 
 /// 事件模块 - 处理随机事件系统
 /// 包括战斗、故事事件、战利品系统等功能
@@ -531,7 +532,7 @@ class Events extends ChangeNotifier {
 
   /// 近战动画 - 参考原游戏的animateMelee函数
   void animateMelee(String fighterId, int dmg, VoidCallback? callback) {
-    print('🎬 执行近战动画: $fighterId 造成 $dmg 伤害');
+    Logger.info('🎬 执行近战动画: $fighterId 造成 $dmg 伤害');
 
     // 设置动画状态
     currentAnimation = 'melee_$fighterId';
@@ -555,7 +556,7 @@ class Events extends ChangeNotifier {
 
   /// 远程动画 - 参考原游戏的animateRanged函数
   void animateRanged(String fighterId, int dmg, VoidCallback? callback) {
-    print('🎬 执行远程动画: $fighterId 造成 $dmg 伤害');
+    Logger.info('🎬 执行远程动画: $fighterId 造成 $dmg 伤害');
 
     // 设置动画状态
     currentAnimation = 'ranged_$fighterId';
@@ -814,7 +815,7 @@ class Events extends ChangeNotifier {
 
   /// 绘制战利品 - 参考原游戏的drawLoot函数
   void drawLoot(Map<String, dynamic> lootList) {
-    print('🎁 开始生成战利品，战利品列表: $lootList');
+    Logger.info('🎁 开始生成战利品，战利品列表: $lootList');
     currentLoot.clear();
 
     for (final entry in lootList.entries) {
@@ -822,53 +823,54 @@ class Events extends ChangeNotifier {
       final chance = (loot['chance'] ?? 1.0) as double;
       final randomValue = Random().nextDouble();
 
-      print('🎁 物品: ${entry.key}, 概率: $chance, 随机值: $randomValue');
+      Logger.info('🎁 物品: ${entry.key}, 概率: $chance, 随机值: $randomValue');
 
       if (randomValue < chance) {
         final min = (loot['min'] ?? 1) as int;
         final max = (loot['max'] ?? 1) as int;
         final num = Random().nextInt(max - min + 1) + min;
         currentLoot[entry.key] = num;
-        print('🎁 生成战利品: ${entry.key} x$num');
+        Logger.info('🎁 生成战利品: ${entry.key} x$num');
       } else {
-        print('🎁 未生成战利品: ${entry.key} (概率不足)');
+        Logger.info('🎁 未生成战利品: ${entry.key} (概率不足)');
       }
     }
 
-    print('🎁 最终战利品: $currentLoot');
+    Logger.info('🎁 最终战利品: $currentLoot');
     notifyListeners();
   }
 
   /// 获取战利品 - 参考原游戏的getLoot函数
   void getLoot(String itemName, int amount) {
-    print('🎒 获取战利品: $itemName x$amount');
+    Logger.info('🎒 获取战利品: $itemName x$amount');
 
     final path = Path();
     final weight = path.getWeight(itemName);
     final freeSpace = path.getFreeSpace();
 
-    print('🎒 物品重量: $weight, 剩余空间: $freeSpace');
+    Logger.info('🎒 物品重量: $weight, 剩余空间: $freeSpace');
 
     final canTake = min(amount, (freeSpace / weight).floor());
-    print('🎒 可以拿取: $canTake');
+    Logger.info('🎒 可以拿取: $canTake');
 
     if (canTake > 0) {
       // 更新装备 - 同时更新Path.outfit和StateManager
       final oldAmount = path.outfit[itemName] ?? 0;
       path.outfit[itemName] = oldAmount + canTake;
 
-      print('🎒 更新装备: $itemName 从 $oldAmount 增加到 ${path.outfit[itemName]}');
+      Logger.info(
+          '🎒 更新装备: $itemName 从 $oldAmount 增加到 ${path.outfit[itemName]}');
 
       // 从当前战利品中移除已拾取的数量
       if (currentLoot.containsKey(itemName)) {
         final oldLootAmount = currentLoot[itemName] ?? 0;
         currentLoot[itemName] = oldLootAmount - canTake;
-        print(
+        Logger.info(
             '🎒 战利品剩余: $itemName 从 $oldLootAmount 减少到 ${currentLoot[itemName]}');
 
         if (currentLoot[itemName]! <= 0) {
           currentLoot.remove(itemName);
-          print('🎒 战利品已全部拾取: $itemName');
+          Logger.info('🎒 战利品已全部拾取: $itemName');
         }
       }
 
@@ -883,7 +885,7 @@ class Events extends ChangeNotifier {
       NotificationManager()
           .notify(name, '获得了 ${_getItemDisplayName(itemName)} x$canTake');
     } else {
-      print('🎒 背包空间不足，无法拾取');
+      Logger.info('🎒 背包空间不足，无法拾取');
       NotificationManager().notify(name, '背包空间不足');
     }
 
@@ -1013,7 +1015,7 @@ class Events extends ChangeNotifier {
 
   /// 触发战斗
   void triggerFight() {
-    print('🎯 Events.triggerFight() 被调用');
+    Logger.info('🎯 Events.triggerFight() 被调用');
 
     final possibleFights = <Map<String, dynamic>>[];
 
@@ -1024,14 +1026,14 @@ class Events extends ChangeNotifier {
       }
     }
 
-    print('🎯 可用战斗事件数量: ${possibleFights.length}');
+    Logger.info('🎯 可用战斗事件数量: ${possibleFights.length}');
 
     if (possibleFights.isNotEmpty) {
       // 随机选择一个战斗事件
       final r = Random().nextInt(possibleFights.length);
       final selectedFight = possibleFights[r];
 
-      print('🎯 选择的战斗事件: ${selectedFight['title']}');
+      Logger.info('🎯 选择的战斗事件: ${selectedFight['title']}');
 
       // 触发战斗事件
       startEvent(selectedFight);
@@ -1042,27 +1044,27 @@ class Events extends ChangeNotifier {
 
       if (distance > 20) {
         // Tier 3
-        print('🎵 播放Tier 3战斗音乐');
+        Logger.info('🎵 播放Tier 3战斗音乐');
       } else if (distance > 10) {
         // Tier 2
-        print('🎵 播放Tier 2战斗音乐');
+        Logger.info('🎵 播放Tier 2战斗音乐');
       } else {
         // Tier 1
-        print('🎵 播放Tier 1战斗音乐');
+        Logger.info('🎵 播放Tier 1战斗音乐');
       }
     } else {
-      print('⚠️ 没有可用的战斗事件');
+      Logger.info('⚠️ 没有可用的战斗事件');
     }
   }
 
   /// 触发地标事件
   void triggerSetpiece(String setpieceName) {
-    print('🏛️ Events.triggerSetpiece() 被调用: $setpieceName');
+    Logger.info('🏛️ Events.triggerSetpiece() 被调用: $setpieceName');
     final setpiece = Setpieces.setpieces[setpieceName];
     if (setpiece != null) {
       startEvent(setpiece);
     } else {
-      print('⚠️ 未找到地标事件: $setpieceName');
+      Logger.info('⚠️ 未找到地标事件: $setpieceName');
     }
   }
 
@@ -1094,7 +1096,7 @@ class Events extends ChangeNotifier {
         Setpieces().clearSulphurMine();
         break;
       default:
-        print('⚠️ 未知的onLoad回调: $callbackName');
+        Logger.info('⚠️ 未知的onLoad回调: $callbackName');
         break;
     }
   }

@@ -4,6 +4,7 @@ import '../modules/path.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
 import '../widgets/game_button.dart';
+import '../core/logger.dart';
 
 /// 漫漫尘途界面 - 显示装备管理和出发准备
 class PathScreen extends StatelessWidget {
@@ -391,7 +392,7 @@ class PathScreen extends StatelessWidget {
   Widget _buildEmbarkButton(
       Path path, StateManager stateManager, Localization localization) {
     final canEmbark = path.canEmbark();
-    print('🎯 PathScreen: canEmbark=$canEmbark');
+    Logger.info('🎯 PathScreen: canEmbark=$canEmbark');
 
     return Tooltip(
       message: canEmbark ? '前往世界地图' : '需要携带熏肉才能出发',
@@ -399,7 +400,7 @@ class PathScreen extends StatelessWidget {
         text: '出发',
         onPressed: canEmbark
             ? () {
-                print('🎯 PathScreen: 出发按钮被点击');
+                Logger.info('🎯 PathScreen: 出发按钮被点击');
                 path.embark();
               }
             : null,

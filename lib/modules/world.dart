@@ -4,6 +4,7 @@ import 'dart:async';
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/engine.dart';
+import '../core/logger.dart';
 import 'path.dart';
 import 'events.dart';
 import 'setpieces.dart';
@@ -59,7 +60,7 @@ class World extends ChangeNotifier {
     'barrens': '.',
     'road': '#',
     'house': 'H',
-    'cave': 'V',
+    'cave': 'V', // 确保洞穴使用V
     'town': 'O',
     'city': 'Y',
     'outpost': 'P',
@@ -153,19 +154,19 @@ class World extends ChangeNotifier {
 
   /// 初始化世界模块
   void init([Map<String, dynamic>? options]) {
-    print('🌍 World.init() 开始');
+    Logger.info('World.init() 开始');
     if (options != null) {
       this.options = {...this.options, ...options};
     }
 
     final sm = StateManager();
 
-    print('🌍 设置地形概率...');
+    Logger.info('设置地形概率...');
     // 设置地形概率，总和必须等于1
     tileProbs[tile['forest']!] = 0.15;
     tileProbs[tile['field']!] = 0.35;
     tileProbs[tile['barrens']!] = 0.5;
-    print('🌍 地形概率设置完成');
+    Logger.info('地形概率设置完成');
 
     // 地标定义
     landmarks[tile['outpost']!] = {
@@ -271,22 +272,22 @@ class World extends ChangeNotifier {
       };
     }
 
-    print('🌍 初始化世界状态...');
+    Logger.info('🌍 初始化世界状态...');
     // 初始化世界状态
     final worldFeature = sm.get('features.location.world', true);
     final worldData = sm.get('game.world', true);
-    print('🌍 检查世界功能状态: $worldFeature');
-    print('🌍 检查世界数据状态: $worldData');
+    Logger.info('🌍 检查世界功能状态: $worldFeature');
+    Logger.info('🌍 检查世界数据状态: $worldData');
 
     // 如果世界功能未解锁或者世界数据不存在，则生成新地图
     if (worldFeature == null || worldData == null || worldData is! Map) {
-      print('🌍 生成新的世界地图...');
+      Logger.info('🌍 生成新的世界地图...');
       sm.set('features.location.world', true);
       sm.set('features.executioner', true);
       sm.setM('game.world', {'map': generateMap(), 'mask': newMask()});
-      print('🌍 新世界地图生成完成');
+      Logger.info('🌍 新世界地图生成完成');
     } else if (sm.get('features.executioner', true) != true) {
-      print('🌍 在现有地图中放置执行者...');
+      Logger.info('🌍 在现有地图中放置执行者...');
       // 在之前生成的地图中放置执行者
       final map = sm.get('game.world.map');
       if (map != null && map is List && map.isNotEmpty && map[0] is List) {
@@ -301,18 +302,18 @@ class World extends ChangeNotifier {
           }
           sm.set('game.world.map', mapList);
           sm.set('features.executioner', true);
-          print('🌍 执行者放置完成');
+          Logger.info('🌍 执行者放置完成');
         } catch (e) {
-          print('⚠️ 执行者放置失败: $e');
+          Logger.info('⚠️ 执行者放置失败: $e');
           sm.set('features.executioner', true);
         }
       } else {
-        print('⚠️ 地图数据无效，跳过执行者放置');
+        Logger.info('⚠️ 地图数据无效，跳过执行者放置');
         sm.set('features.executioner', true);
       }
     }
 
-    print('🌍 映射飞船...');
+    Logger.info('🌍 映射飞船...');
     // 映射飞船并显示指南针提示
     final worldMap = sm.get('game.world.map');
     if (worldMap != null &&
@@ -328,23 +329,23 @@ class World extends ChangeNotifier {
           dir = compassDir(ship[0]);
         }
       } catch (e) {
-        print('⚠️ 飞船映射失败: $e');
+        Logger.info('⚠️ 飞船映射失败: $e');
         ship = [];
         dir = '';
       }
     } else {
-      print('⚠️ 世界地图数据无效，跳过飞船映射');
+      Logger.info('⚠️ 世界地图数据无效，跳过飞船映射');
       ship = [];
       dir = '';
     }
-    print('🌍 飞船映射完成');
+    Logger.info('🌍 飞船映射完成');
 
-    print('🌍 检查地图可见性...');
+    Logger.info('🌍 检查地图可见性...');
     // 检查是否所有地方都已被看到
     testMap();
-    print('🌍 地图可见性检查完成');
+    Logger.info('🌍 地图可见性检查完成');
 
-    print('🌍 World.init() 完成');
+    Logger.info('🌍 World.init() 完成');
     notifyListeners();
   }
 
@@ -516,7 +517,7 @@ class World extends ChangeNotifier {
 
     // 检查地图数据类型
     if (map == null || map is! List) {
-      print('⚠️ mapSearch: 地图数据无效 (map=$map)');
+      Logger.info('⚠️ mapSearch: 地图数据无效 (map=$map)');
       return [];
     }
 
@@ -547,7 +548,7 @@ class World extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print('⚠️ mapSearch错误: $e');
+      Logger.info('⚠️ mapSearch错误: $e');
     }
 
     return targets;
@@ -590,12 +591,12 @@ class World extends ChangeNotifier {
             if (dark) break;
           }
         } catch (e) {
-          print('⚠️ testMap错误: $e');
+          Logger.info('⚠️ testMap错误: $e');
           // 如果出错，假设还有未探索的区域
           dark = true;
         }
       } else {
-        print('⚠️ 地图遮罩数据无效，跳过可见性检查');
+        Logger.info('⚠️ 地图遮罩数据无效，跳过可见性检查');
         dark = true; // 假设还有未探索的区域
       }
       seenAll = !dark;
@@ -626,14 +627,14 @@ class World extends ChangeNotifier {
   /// 移动
   void move(List<int> direction) {
     if (state == null) {
-      print('⚠️ move() - state为null，无法移动');
+      Logger.error('move() - state为null，无法移动');
       return;
     }
 
     // 检查是否死亡，死亡状态下不能移动
     if (dead) {
       NotificationManager().notify(name, '你已经死了，无法移动');
-      print('⚠️ move() - 玩家已死亡，无法移动');
+      Logger.error('move() - 玩家已死亡，无法移动');
       return;
     }
 
@@ -643,9 +644,9 @@ class World extends ChangeNotifier {
     curPos[1] += direction[1];
     final newTile = state!['map'][curPos[0]][curPos[1]];
 
-    print(
-        '🚶 移动: [${oldPos[0]}, ${oldPos[1]}] -> [${curPos[0]}, ${curPos[1]}], $oldTile -> $newTile');
-    print('🚶 即将调用doSpace()...');
+    Logger.info(
+        '移动: [${oldPos[0]}, ${oldPos[1]}] -> [${curPos[0]}, ${curPos[1]}], $oldTile -> $newTile');
+    Logger.info('即将调用doSpace()...');
 
     narrateMove(oldTile, newTile);
 
@@ -660,7 +661,7 @@ class World extends ChangeNotifier {
     // drawMap(); // 在Flutter中由UI自动更新
     doSpace();
 
-    print('🚶 doSpace()调用完成，即将调用notifyListeners()...');
+    Logger.info('🚶 doSpace()调用完成，即将调用notifyListeners()...');
 
     // 播放随机脚步声（暂时注释掉）
     // final randomFootstep = Random().nextInt(5) + 1;
@@ -777,14 +778,15 @@ class World extends ChangeNotifier {
         : curTile;
     final isVisited = curTile.length > 1 && curTile.endsWith('!');
 
-    print('🗺️ doSpace() - 当前位置: [${curPos[0]}, ${curPos[1]}], 地形: $curTile');
+    Logger.info(
+        '🗺️ doSpace() - 当前位置: [${curPos[0]}, ${curPos[1]}], 地形: $curTile');
 
     if (curTile == tile['village']) {
-      print('🏠 触发村庄事件 - 回到小黑屋');
+      Logger.info('🏠 触发村庄事件 - 回到小黑屋');
       goHome();
     } else if (originalTile == tile['executioner']) {
       // 执行者场景 - 检查是否已访问
-      print('🔮 发现执行者装置');
+      Logger.info('🔮 发现执行者装置');
       if (originalTile != tile['outpost'] || !outpostUsed()) {
         // 只有未访问的地标才触发事件
         if (!isVisited) {
@@ -796,26 +798,26 @@ class World extends ChangeNotifier {
 
             // 检查场景是否存在
             if (setpieces.isSetpieceAvailable(sceneName)) {
-              print('🔮 启动执行者Setpiece场景: $sceneName');
+              Logger.info('🔮 启动执行者Setpiece场景: $sceneName');
               setpieces.startSetpiece(sceneName);
             } else {
               // 为缺失的场景提供默认处理
-              print('🔮 执行者场景不存在，使用默认处理: $sceneName');
+              Logger.info('🔮 执行者场景不存在，使用默认处理: $sceneName');
               NotificationManager().notify(name, '发现了一个神秘的装置');
               markVisited(curPos[0], curPos[1]);
             }
           } else {
-            print('🔮 执行者地标信息无效: $landmarkInfo');
+            Logger.info('🔮 执行者地标信息无效: $landmarkInfo');
             NotificationManager().notify(name, '发现了一个神秘的装置');
             markVisited(curPos[0], curPos[1]);
           }
         } else {
-          print('🔮 执行者地标已访问，跳过事件');
+          Logger.info('🔮 执行者地标已访问，跳过事件');
         }
       }
     } else if (landmarks.containsKey(originalTile)) {
       // 检查是否是地标（使用原始字符检查）
-      print('🏛️ 触发地标事件: $originalTile (visited: $isVisited)');
+      Logger.info('🏛️ 触发地标事件: $originalTile (visited: $isVisited)');
       if (originalTile != tile['outpost'] || !outpostUsed()) {
         // 只有未访问的地标才触发事件
         if (!isVisited) {
@@ -827,26 +829,26 @@ class World extends ChangeNotifier {
 
             // 检查场景是否存在
             if (setpieces.isSetpieceAvailable(sceneName)) {
-              print('🏛️ 启动Setpiece场景: $sceneName');
+              Logger.info('🏛️ 启动Setpiece场景: $sceneName');
               setpieces.startSetpiece(sceneName);
             } else {
               // 为缺失的场景提供默认处理
-              print('🏛️ 场景不存在，使用默认处理: $sceneName');
+              Logger.info('🏛️ 场景不存在，使用默认处理: $sceneName');
               _handleMissingSetpiece(originalTile, landmarkInfo);
             }
           } else {
-            print('🏛️ 地标信息无效: $landmarkInfo');
+            Logger.info('🏛️ 地标信息无效: $landmarkInfo');
             _handleMissingSetpiece(originalTile, {'label': '未知地标'});
           }
         } else {
-          print('🏛️ 地标已访问，跳过事件');
+          Logger.info('🏛️ 地标已访问，跳过事件');
         }
       } else {
-        print('🏛️ 前哨站已使用，跳过事件');
+        Logger.info('🏛️ 前哨站已使用，跳过事件');
       }
       // 注意：地标事件不消耗补给！
     } else {
-      print('🚶 普通移动 - 使用补给和检查战斗');
+      Logger.info('🚶 普通移动 - 使用补给和检查战斗');
       // 只有在普通地形移动时才消耗补给
       if (useSupplies()) {
         checkFight();
@@ -979,9 +981,9 @@ class World extends ChangeNotifier {
     foodMove++;
     waterMove++;
 
-    print(
+    Logger.info(
         '🍖 useSupplies() - foodMove: $foodMove/$movesPerFood, waterMove: $waterMove/$movesPerWater');
-    print('🍖 当前状态 - 饥饿: $starvation, 口渴: $thirst, 水: $water');
+    Logger.info('🍖 当前状态 - 饥饿: $starvation, 口渴: $thirst, 水: $water');
 
     // 食物
     int currentMovesPerFood = movesPerFood;
@@ -993,33 +995,33 @@ class World extends ChangeNotifier {
       // 安全地访问Path().outfit，避免null错误
       try {
         var num = path.outfit['cured meat'] ?? 0;
-        print('🍖 需要消耗食物 - 熏肉数量: $num');
+        Logger.info('🍖 需要消耗食物 - 熏肉数量: $num');
         num--;
 
         if (num == 0) {
           NotificationManager().notify(name, '肉已经用完了');
-          print('⚠️ 肉已经用完了');
+          Logger.info('⚠️ 肉已经用完了');
         } else if (num < 0) {
           // 饥饿！
           num = 0;
           if (!starvation) {
             NotificationManager().notify(name, '饥饿开始了');
             starvation = true;
-            print('⚠️ 开始饥饿状态');
+            Logger.info('⚠️ 开始饥饿状态');
           } else {
             sm.set('character.starved',
                 (sm.get('character.starved', true) ?? 0) + 1);
             // if (sm.get('character.starved') >= 10 && !sm.hasPerk('slow metabolism')) {
             //   sm.addPerk('slow metabolism');
             // }
-            print('💀 饥饿死亡！');
+            Logger.info('💀 饥饿死亡！');
             die();
             return false;
           }
         } else {
           starvation = false;
           setHp(health + meatHealAmount());
-          print('🍖 消耗了熏肉，剩余: $num，恢复生命值');
+          Logger.info('🍖 消耗了熏肉，剩余: $num，恢复生命值');
         }
 
         // 安全地更新outfit
@@ -1028,7 +1030,7 @@ class World extends ChangeNotifier {
         // 同步到StateManager
         sm.set('outfit["cured meat"]', num);
       } catch (e) {
-        print('⚠️ 访问Path().outfit时出错: $e');
+        Logger.info('⚠️ 访问Path().outfit时出错: $e');
         // 如果访问失败，跳过食物消耗
       }
     }
@@ -1040,31 +1042,31 @@ class World extends ChangeNotifier {
     if (waterMove >= currentMovesPerWater) {
       waterMove = 0;
       var waterAmount = water;
-      print('💧 需要消耗水 - 当前水量: $waterAmount');
+      Logger.info('💧 需要消耗水 - 当前水量: $waterAmount');
       waterAmount--;
 
       if (waterAmount == 0) {
         NotificationManager().notify(name, '没有更多的水了');
-        print('⚠️ 没有更多的水了');
+        Logger.info('⚠️ 没有更多的水了');
       } else if (waterAmount < 0) {
         waterAmount = 0;
         if (!thirst) {
           NotificationManager().notify(name, '口渴变得难以忍受');
           thirst = true;
-          print('⚠️ 开始口渴状态');
+          Logger.info('⚠️ 开始口渴状态');
         } else {
           sm.set('character.dehydrated',
               (sm.get('character.dehydrated', true) ?? 0) + 1);
           // if (sm.get('character.dehydrated') >= 10 && !sm.hasPerk('desert rat')) {
           //   sm.addPerk('desert rat');
           // }
-          print('💀 口渴死亡！');
+          Logger.info('💀 口渴死亡！');
           die();
           return false;
         }
       } else {
         thirst = false;
-        print('💧 消耗了水，剩余: $waterAmount');
+        Logger.info('💧 消耗了水，剩余: $waterAmount');
       }
       setWater(waterAmount);
       // updateSupplies(); // 在Flutter中由状态管理自动更新
@@ -1075,18 +1077,18 @@ class World extends ChangeNotifier {
   /// 检查战斗
   void checkFight() {
     fightMove++;
-    print(
+    Logger.info(
         '🎯 World.checkFight() - fightMove: $fightMove, fightDelay: $fightDelay');
 
     if (fightMove > fightDelay) {
       double chance = fightChance;
       // chance *= sm.hasPerk('stealthy') ? 0.5 : 1; // 暂时注释掉技能系统
       final randomValue = Random().nextDouble();
-      print('🎯 战斗检查 - chance: $chance, random: $randomValue');
+      Logger.info('🎯 战斗检查 - chance: $chance, random: $randomValue');
 
       if (randomValue < chance) {
         fightMove = 0;
-        print('🎯 触发战斗！');
+        Logger.info('🎯 触发战斗！');
         Events().triggerFight(); // 启用战斗事件
       }
     }
@@ -1172,42 +1174,42 @@ class World extends ChangeNotifier {
 
   /// 回家 - 参考原游戏的goHome函数
   void goHome() {
-    print('🏠 World.goHome() 开始');
+    Logger.info('🏠 World.goHome() 开始');
 
     // 保存世界状态到StateManager - 参考原游戏逻辑
     if (state != null) {
       final sm = StateManager();
       sm.setM('game.world', state!);
-      print('🏠 保存世界状态完成');
+      Logger.info('🏠 保存世界状态完成');
 
       // 检查并解锁建筑 - 参考原游戏的建筑解锁逻辑
       if (state!['sulphurmine'] == true &&
           (sm.get('game.buildings["sulphur mine"]', true) ?? 0) == 0) {
         sm.add('game.buildings["sulphur mine"]', 1);
-        print('🏠 解锁硫磺矿');
+        Logger.info('🏠 解锁硫磺矿');
       }
       if (state!['ironmine'] == true &&
           (sm.get('game.buildings["iron mine"]', true) ?? 0) == 0) {
         sm.add('game.buildings["iron mine"]', 1);
-        print('🏠 解锁铁矿');
+        Logger.info('🏠 解锁铁矿');
       }
       if (state!['coalmine'] == true &&
           (sm.get('game.buildings["coal mine"]', true) ?? 0) == 0) {
         sm.add('game.buildings["coal mine"]', 1);
-        print('🏠 解锁煤矿');
+        Logger.info('🏠 解锁煤矿');
       }
       if (state!['ship'] == true &&
           !sm.get('features.location.spaceShip', true)) {
         // Ship.init(); // 暂时注释掉，需要实现Ship模块
         sm.set('features.location.spaceShip', true);
-        print('🏠 解锁星舰');
+        Logger.info('🏠 解锁星舰');
       }
       if (state!['executioner'] == true &&
           !sm.get('features.location.fabricator', true)) {
         // Fabricator.init(); // 暂时注释掉，需要实现Fabricator模块
         sm.set('features.location.fabricator', true);
         NotificationManager().notify(name, '建造者知道这个奇怪的装置。很快就把它拿走了。没有问它从哪里来的。');
-        print('🏠 解锁制造器');
+        Logger.info('🏠 解锁制造器');
       }
 
       // 清空世界状态
@@ -1223,7 +1225,7 @@ class World extends ChangeNotifier {
     engine.travelTo(room);
 
     NotificationManager().notify(name, '安全回到了村庄');
-    print('🏠 World.goHome() 完成');
+    Logger.info('🏠 World.goHome() 完成');
     notifyListeners();
   }
 
@@ -1250,9 +1252,9 @@ class World extends ChangeNotifier {
         }
       }
 
-      print('🎒 装备已返回仓库');
+      Logger.info('🎒 装备已返回仓库');
     } catch (e) {
-      print('⚠️ 返回装备时出错: $e');
+      Logger.info('⚠️ 返回装备时出错: $e');
     }
   }
 
@@ -1287,7 +1289,7 @@ class World extends ChangeNotifier {
     if (!dead) {
       dead = true;
       health = 0;
-      print('💀 玩家死亡');
+      Logger.info('💀 玩家死亡');
 
       // 显示死亡通知
       NotificationManager().notify(name, '世界渐渐消失了');
@@ -1298,7 +1300,7 @@ class World extends ChangeNotifier {
       try {
         path.outfit.clear();
       } catch (e) {
-        print('⚠️ 清空装备时出错: $e');
+        Logger.info('⚠️ 清空装备时出错: $e');
       }
 
       // 清除StateManager中的装备数据
@@ -1318,7 +1320,7 @@ class World extends ChangeNotifier {
         // 重置死亡状态
         dead = false;
 
-        print('🏠 返回小黑屋');
+        Logger.info('🏠 返回小黑屋');
       });
 
       notifyListeners();
@@ -1327,7 +1329,7 @@ class World extends ChangeNotifier {
 
   /// 重生
   void respawn() {
-    print('🔄 World.respawn() 被调用');
+    Logger.info('🔄 World.respawn() 被调用');
     dead = false;
     health = getMaxHealth();
     water = getMaxWater();
@@ -1346,17 +1348,17 @@ class World extends ChangeNotifier {
       final sm = StateManager();
       sm.set('outfit["cured meat"]', 1);
     } catch (e) {
-      print('⚠️ 重置装备时出错: $e');
+      Logger.info('⚠️ 重置装备时出错: $e');
     }
 
     NotificationManager().notify(name, '你重生了，回到了村庄');
-    print('✅ 重生完成 - 生命值: $health, 水: $water');
+    Logger.info('✅ 重生完成 - 生命值: $health, 水: $water');
     notifyListeners();
   }
 
   /// 手动重生（用于测试）
   void forceRespawn() {
-    print('🔄 强制重生被调用');
+    Logger.info('🔄 强制重生被调用');
     respawn();
   }
 
@@ -1371,9 +1373,9 @@ class World extends ChangeNotifier {
     if (savedWorldState != null) {
       // 深拷贝世界状态，创建临时副本
       state = _deepCopyWorldState(savedWorldState);
-      print('✅ 创建临时世界状态副本');
+      Logger.info('✅ 创建临时世界状态副本');
     } else {
-      print('⚠️ 世界数据无效，重新初始化');
+      Logger.info('⚠️ 世界数据无效，重新初始化');
       // 如果没有世界数据，重新初始化
       init();
       final newWorldState = sm.get('game.world', true);
@@ -1381,9 +1383,9 @@ class World extends ChangeNotifier {
       if (newWorldState != null) {
         // 深拷贝新生成的世界状态
         state = _deepCopyWorldState(newWorldState);
-        print('✅ 重新生成世界数据成功');
+        Logger.info('✅ 重新生成世界数据成功');
       } else {
-        print('❌ 无法生成世界数据');
+        Logger.info('❌ 无法生成世界数据');
         state = null;
       }
     }
@@ -1401,9 +1403,9 @@ class World extends ChangeNotifier {
         lightMap(curPos[0], curPos[1], mask);
         // 更新状态中的遮罩
         state!['mask'] = mask;
-        print('✅ 地图照明完成');
+        Logger.info('✅ 地图照明完成');
       } catch (e) {
-        print('⚠️ 地图照明失败: $e');
+        Logger.info('⚠️ 地图照明失败: $e');
       }
     }
 
@@ -1523,7 +1525,7 @@ class World extends ChangeNotifier {
     // 标记前哨站为已使用
     markOutpostUsed();
 
-    print('🏛️ 前哨站已使用，水补充到: $water');
+    Logger.info('🏛️ 前哨站已使用，水补充到: $water');
     notifyListeners();
   }
 
@@ -1540,20 +1542,20 @@ class World extends ChangeNotifier {
           final currentTile = map[x][y];
           if (!currentTile.endsWith('!')) {
             map[x][y] = currentTile + '!';
-            print('🗺️ 标记位置 ($x, $y) 为已访问: ${map[x][y]}');
+            Logger.info('🗺️ 标记位置 ($x, $y) 为已访问: ${map[x][y]}');
 
             // 更新state中的地图数据（仅在临时状态中）
             state!['map'] = map;
 
             // 注意：不立即保存到StateManager，只有回到村庄时才保存
-            print('🗺️ 地图状态已更新到临时状态');
+            Logger.info('🗺️ 地图状态已更新到临时状态');
           } else {
-            print('🗺️ 位置 ($x, $y) 已经被标记为已访问: $currentTile');
+            Logger.info('🗺️ 位置 ($x, $y) 已经被标记为已访问: $currentTile');
           }
         }
       } catch (e) {
-        print('⚠️ markVisited失败: $e');
-        print('⚠️ 地图数据类型: ${state!['map'].runtimeType}');
+        Logger.info('⚠️ markVisited失败: $e');
+        Logger.info('⚠️ 地图数据类型: ${state!['map'].runtimeType}');
       }
     }
     notifyListeners();
@@ -1561,7 +1563,7 @@ class World extends ChangeNotifier {
 
   /// 清除地牢状态 - 参考原游戏的clearDungeon函数
   void clearDungeon() {
-    print('🏛️ World.clearDungeon() - 将当前位置转换为前哨站');
+    Logger.info('🏛️ World.clearDungeon() - 将当前位置转换为前哨站');
 
     if (state != null && state!['map'] != null) {
       try {
@@ -1577,7 +1579,7 @@ class World extends ChangeNotifier {
           final oldTile = map[curPos[0]][curPos[1]];
           map[curPos[0]][curPos[1]] = tile['outpost']!;
 
-          print(
+          Logger.info(
               '🏛️ 地形转换: $oldTile -> ${tile['outpost']} 在位置 [${curPos[0]}, ${curPos[1]}]');
 
           // 更新state中的地图数据
@@ -1593,7 +1595,7 @@ class World extends ChangeNotifier {
           notifyListeners();
         }
       } catch (e) {
-        print('⚠️ clearDungeon失败: $e');
+        Logger.info('⚠️ clearDungeon失败: $e');
       }
     }
 
@@ -1693,7 +1695,7 @@ class World extends ChangeNotifier {
       }
     }
 
-    print(
+    Logger.info(
         '🛤️ 绘制道路完成：从 [${curPos[0]}, ${curPos[1]}] 到 [${closestRoad[0]}, ${closestRoad[1]}]');
   }
 
@@ -1712,19 +1714,19 @@ class World extends ChangeNotifier {
 
   /// 测试函数：手动触发地标事件（用于调试）
   void testLandmarkEvent(String landmarkType) {
-    print('🧪 测试地标事件: $landmarkType');
+    Logger.info('🧪 测试地标事件: $landmarkType');
     if (landmarks.containsKey(landmarkType)) {
       final landmarkInfo = landmarks[landmarkType];
-      print('🧪 地标信息: $landmarkInfo');
+      Logger.info('🧪 地标信息: $landmarkInfo');
       _handleMissingSetpiece(landmarkType, landmarkInfo!);
     } else {
-      print('🧪 地标类型不存在: $landmarkType');
+      Logger.info('🧪 地标类型不存在: $landmarkType');
     }
   }
 
   /// 测试函数：手动标记位置为已访问（用于调试）
   void testMarkVisited() {
-    print('🧪 测试标记当前位置为已访问');
+    Logger.info('🧪 测试标记当前位置为已访问');
     markVisited(curPos[0], curPos[1]);
   }
 
@@ -1776,9 +1778,10 @@ class World extends ChangeNotifier {
       final sm = StateManager();
       sm.set('outfit["$itemName"]', path.outfit[itemName]);
 
-      print('🎒 添加到装备: $itemName x$amount (总计: ${path.outfit[itemName]})');
+      Logger.info(
+          '🎒 添加到装备: $itemName x$amount (总计: ${path.outfit[itemName]})');
     } catch (e) {
-      print('⚠️ 添加物品到装备时出错: $e');
+      Logger.info('⚠️ 添加物品到装备时出错: $e');
     }
   }
 }

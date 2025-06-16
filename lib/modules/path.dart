@@ -5,6 +5,7 @@ import '../core/notifications.dart';
 import '../core/engine.dart';
 import 'room.dart';
 import 'world.dart';
+import '../core/logger.dart';
 
 /// 路径模块 - 处理装备和出发到世界地图
 /// 包括装备管理、背包空间、物品重量等功能
@@ -258,23 +259,23 @@ class Path extends ChangeNotifier {
 
   /// 出发到世界地图
   void embark() {
-    print('🚀 Path.embark() 被调用');
+    Logger.info('🚀 Path.embark() 被调用');
     final sm = StateManager();
 
     try {
       // 确保outfit已正确初始化
       if (outfit.isEmpty) {
-        print('⚠️ outfit为空，重新初始化...');
+        Logger.info('⚠️ outfit为空，重新初始化...');
         updateOutfitting();
       }
 
-      print('🎒 当前装备状态: $outfit');
+      Logger.info('🎒 当前装备状态: $outfit');
 
       // 扣除装备中的物品
       for (final k in outfit.keys) {
         final amount = outfit[k] ?? 0;
         if (amount > 0) {
-          print('扣除装备: $k x$amount');
+          Logger.info('扣除装备: $k x$amount');
           sm.add('stores["$k"]', -amount);
         }
       }
@@ -284,27 +285,27 @@ class Path extends ChangeNotifier {
       for (final entry in outfit.entries) {
         sm.set('outfit["${entry.key}"]', entry.value);
       }
-      print('🎒 装备状态已保存到StateManager');
+      Logger.info('🎒 装备状态已保存到StateManager');
 
-      print('🌍 初始化World模块...');
+      Logger.info('🌍 初始化World模块...');
       // 初始化World模块
       World().init();
 
-      print('🌍 设置世界功能为已解锁...');
+      Logger.info('🌍 设置世界功能为已解锁...');
       // 设置世界功能为已解锁
       sm.set('features.location.world', true);
 
-      print('🌍 切换到World模块...');
+      Logger.info('🌍 切换到World模块...');
       // 切换到世界模块
       Engine().travelTo(World());
 
       // 显示成功消息
       NotificationManager().notify('漫漫尘途', '你踏上了前往未知世界的旅程...');
 
-      print('✅ embark() 完成');
+      Logger.info('✅ embark() 完成');
     } catch (e, stackTrace) {
-      print('❌ embark() 错误: $e');
-      print('❌ 错误堆栈: $stackTrace');
+      Logger.info('❌ embark() 错误: $e');
+      Logger.info('❌ 错误堆栈: $stackTrace');
       NotificationManager().notify('漫漫尘途', '出发失败: $e');
     }
 
@@ -353,7 +354,7 @@ class Path extends ChangeNotifier {
   bool canEmbark() {
     final curedMeat = outfit['cured meat'] ?? 0;
     final canGo = curedMeat > 0;
-    print('🔍 canEmbark: 熏肉=$curedMeat, 可以出发=$canGo');
+    Logger.info('🔍 canEmbark: 熏肉=$curedMeat, 可以出发=$canGo');
     return canGo;
   }
 

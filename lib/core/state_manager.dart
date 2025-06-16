@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
+import 'logger.dart';
 
 /// StateManager (SM) 是游戏的中央状态管理系统
 /// 它替代了原始游戏中的 JavaScript $SM 对象
@@ -24,13 +25,13 @@ class StateManager with ChangeNotifier {
   void init() {
     // 如果状态为空，创建初始状态
     if (_state.isEmpty) {
-      print('🎮 StateManager: Initializing new game state');
+      Logger.info('🎮 StateManager: Initializing new game state');
       _initializeNewGameState();
-      print(
+      Logger.info(
           '✅ StateManager: Initial state created with wood: ${_state['stores']['wood']}');
       notifyListeners();
     } else {
-      print(
+      Logger.info(
           '🔄 StateManager: Using existing state with wood: ${_state['stores']?['wood']}');
       // 确保已加载的状态有所有必需的字段
       _ensureRequiredFields();
@@ -242,7 +243,7 @@ class StateManager with ChangeNotifier {
     // 重要：stores值不能为负数（按照原游戏逻辑）
     if (path.startsWith('stores') && value is num && value < 0) {
       if (kDebugMode) {
-        print('⚠️ StateManager: stores值不能为负数，将 $path 从 $value 设置为 0');
+        Logger.info('⚠️ StateManager: stores值不能为负数，将 $path 从 $value 设置为 0');
       }
       // 重新设置为0
       if (lastPart.contains('[') && lastPart.contains(']')) {
@@ -353,7 +354,7 @@ class StateManager with ChangeNotifier {
       // 如果时间到了，收集收入
       if (income['timeLeft'] <= 0) {
         if (kDebugMode) {
-          print('🏭 收集来自 $source 的收入');
+          Logger.info('🏭 收集来自 $source 的收入');
         }
 
         // 检查是否有足够的资源（对于消耗型工人）
@@ -368,7 +369,7 @@ class StateManager with ChangeNotifier {
               if (have + cost < 0) {
                 canProduce = false;
                 if (kDebugMode) {
-                  print('⚠️ $source 缺少 $store 资源，无法生产');
+                  Logger.error('⚠️ $source 缺少 $store 资源，无法生产');
                 }
                 break;
               }
@@ -406,7 +407,7 @@ class StateManager with ChangeNotifier {
       // 确保状态不为空
       if (_state.isEmpty) {
         if (kDebugMode) {
-          print('⚠️ StateManager: Cannot save empty state');
+          Logger.error('⚠️ StateManager: Cannot save empty state');
         }
         return;
       }
@@ -420,12 +421,12 @@ class StateManager with ChangeNotifier {
       final jsonState = jsonEncode(saveState);
 
       // 调试：显示要保存的数据
-      print('🔍 StateManager: Saving data length: ${jsonState.length}');
-      print(
+      Logger.info('🔍 StateManager: Saving data length: ${jsonState.length}');
+      Logger.info(
           '🔍 StateManager: Saving data preview: ${jsonState.substring(0, jsonState.length > 100 ? 100 : jsonState.length)}...');
 
       final success = await prefs.setString('gameState', jsonState);
-      print('🔍 StateManager: Save operation result: $success');
+      Logger.info('🔍 StateManager: Save operation result: $success');
 
       // 同时保存时间戳
       await prefs.setInt(
@@ -434,14 +435,14 @@ class StateManager with ChangeNotifier {
       // 验证保存是否成功
       final verifyState = prefs.getString('gameState');
       if (verifyState != null && verifyState == jsonState) {
-        print(
+        Logger.info(
             '✅ StateManager: Save verified successfully - Wood: ${saveState['stores']?['wood']}');
       } else {
-        print('❌ StateManager: Save verification failed!');
+        Logger.error('❌ StateManager: Save verification failed!');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ 保存游戏失败: $e');
+        Logger.error('❌ 保存游戏失败: $e');
       }
     }
   }
@@ -460,14 +461,14 @@ class StateManager with ChangeNotifier {
 
       // 调试：列出所有保存的键
       final keys = prefs.getKeys();
-      print('🔍 StateManager: Available keys: $keys');
+      Logger.info('🔍 StateManager: Available keys: $keys');
 
       final jsonState = prefs.getString('gameState');
-      print(
+      Logger.info(
           '🔍 StateManager: Raw saved data: ${jsonState?.substring(0, jsonState.length > 100 ? 100 : jsonState.length)}...');
 
       if (jsonState != null && jsonState.isNotEmpty) {
-        print('💾 StateManager: Loading saved game state');
+        Logger.info('💾 StateManager: Loading saved game state');
         final loadedState = jsonDecode(jsonState) as Map<String, dynamic>;
 
         // 验证加载的状态是否有效
@@ -477,21 +478,22 @@ class StateManager with ChangeNotifier {
           // 更新旧状态格式（如果需要）
           updateOldState();
 
-          print(
+          Logger.info(
               '📊 StateManager: Loaded state with wood: ${_state['stores']?['wood']}');
-          print('📊 StateManager: State version: ${_state['version']}');
+          Logger.info('📊 StateManager: State version: ${_state['version']}');
           notifyListeners();
         } else {
-          print('⚠️ StateManager: Loaded state is empty, will use default');
+          Logger.error(
+              '⚠️ StateManager: Loaded state is empty, will use default');
         }
       } else {
-        print(
+        Logger.error(
             '🆕 StateManager: No saved game found (jsonState: $jsonState), will use default state');
       }
     } catch (e) {
-      print('❌ StateManager: Error loading game: $e');
+      Logger.error('❌ StateManager: Error loading game: $e');
       if (kDebugMode) {
-        print('Error loading game: $e');
+        Logger.error('Error loading game: $e');
       }
       // 如果加载失败，保持空状态，让init()创建新状态
       _state = {};
@@ -508,7 +510,7 @@ class StateManager with ChangeNotifier {
       remove('outside.workers.hunter', true);
       remove('income.hunter', true);
       if (kDebugMode) {
-        print('升级存档到 v1.1');
+        Logger.info('升级存档到 v1.1');
       }
       version = 1.1;
     }
@@ -520,7 +522,7 @@ class StateManager with ChangeNotifier {
         // World.placeLandmark(15, World.RADIUS * 1.5, World.TILE.SWAMP, get('world.map'));
       }
       if (kDebugMode) {
-        print('升级存档到 v1.2');
+        Logger.info('升级存档到 v1.2');
       }
       version = 1.2;
     }
@@ -643,7 +645,7 @@ class StateManager with ChangeNotifier {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('警告：尝试移除不存在的状态 \'$path\'。');
+        Logger.error('警告：尝试移除不存在的状态 \'$path\'。');
       }
     }
 
@@ -789,7 +791,7 @@ class StateManager with ChangeNotifier {
       return jsonEncode(exportData);
     } catch (e) {
       if (kDebugMode) {
-        print('❌ 导出游戏状态失败: $e');
+        Logger.error('❌ 导出游戏状态失败: $e');
       }
       rethrow;
     }
@@ -803,7 +805,7 @@ class StateManager with ChangeNotifier {
       // 验证导入数据的基本结构
       if (!_validateImportData(importedData)) {
         if (kDebugMode) {
-          print('❌ 导入数据格式无效');
+          Logger.error('❌ 导入数据格式无效');
         }
         return false;
       }
@@ -832,8 +834,8 @@ class StateManager with ChangeNotifier {
         notifyListeners();
 
         if (kDebugMode) {
-          print('✅ 游戏状态导入成功');
-          print('📊 导入后的木材数量: ${_state['stores']?['wood']}');
+          Logger.info('✅ 游戏状态导入成功');
+          Logger.info('📊 导入后的木材数量: ${_state['stores']?['wood']}');
         }
 
         return true;
@@ -843,13 +845,13 @@ class StateManager with ChangeNotifier {
         notifyListeners();
 
         if (kDebugMode) {
-          print('❌ 导入失败，已恢复原状态: $e');
+          Logger.error('❌ 导入失败，已恢复原状态: $e');
         }
         return false;
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ 解析导入数据失败: $e');
+        Logger.error('❌ 解析导入数据失败: $e');
       }
       return false;
     }
@@ -896,7 +898,7 @@ class StateManager with ChangeNotifier {
       return null;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ 获取保存时间失败: $e');
+        Logger.error('❌ 获取保存时间失败: $e');
       }
       return null;
     }
@@ -914,11 +916,11 @@ class StateManager with ChangeNotifier {
       init();
 
       if (kDebugMode) {
-        print('🗑️ 游戏数据已清除');
+        Logger.info('🗑️ 游戏数据已清除');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ 清除游戏数据失败: $e');
+        Logger.error('❌ 清除游戏数据失败: $e');
       }
     }
   }

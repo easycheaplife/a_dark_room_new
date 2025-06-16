@@ -13,6 +13,7 @@ import '../modules/outside.dart';
 import '../modules/path.dart';
 import '../modules/fabricator.dart';
 import '../modules/ship.dart';
+import 'logger.dart';
 
 /// Engine是游戏的核心引擎，负责协调所有游戏系统
 class Engine with ChangeNotifier {
@@ -104,7 +105,7 @@ class Engine with ChangeNotifier {
 
     // 检查是否应该初始化外部 - 只有在森林已解锁时才初始化
     if (sm.get('features.location.outside') == true) {
-      print('🌲 Forest already unlocked, initializing Outside module');
+      Logger.info('🌲 Forest already unlocked, initializing Outside module');
       Outside().init();
     }
 
@@ -159,11 +160,11 @@ class Engine with ChangeNotifier {
     try {
       await StateManager().loadGame();
       if (kDebugMode) {
-        print('游戏加载成功');
+        Logger.info('游戏加载成功');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('加载游戏时出错: $e');
+        Logger.error('加载游戏时出错: $e');
       }
 
       // 初始化新游戏状态
@@ -180,7 +181,7 @@ class Engine with ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.clear();
-      print('🗑️ 游戏保存状态已清除');
+      Logger.info('🗑️ 游戏保存状态已清除');
 
       if (!noReload) {
         // 在Web上下文中，这会重新加载页面
@@ -189,7 +190,7 @@ class Engine with ChangeNotifier {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('删除保存时出错: $e');
+        Logger.error('删除保存时出错: $e');
       }
     }
   }
@@ -198,7 +199,7 @@ class Engine with ChangeNotifier {
   Future<void> clearSaveForDebug() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    print('🗑️ 调试：游戏保存状态已清除');
+    Logger.info('🗑️ 调试：游戏保存状态已清除');
   }
 
   // 前往不同的模块
@@ -260,7 +261,7 @@ class Engine with ChangeNotifier {
     // 在原始游戏中，这会发送分析
     // 现在，我们只在调试模式下记录
     if (kDebugMode) {
-      print('事件: $category - $action');
+      Logger.info('事件: $category - $action');
     }
   }
 
@@ -367,18 +368,18 @@ class Engine with ChangeNotifier {
         // 重新初始化游戏
         await init();
         if (kDebugMode) {
-          print('✅ 存档导入成功');
+          Logger.info('✅ 存档导入成功');
         }
         return true;
       } else {
         if (kDebugMode) {
-          print('❌ 存档导入失败');
+          Logger.error('❌ 存档导入失败');
         }
         return false;
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ 导入存档时出错: $e');
+        Logger.error('❌ 导入存档时出错: $e');
       }
       return false;
     }
