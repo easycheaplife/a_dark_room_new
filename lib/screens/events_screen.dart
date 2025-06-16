@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../modules/events.dart';
 import '../widgets/game_button.dart';
+import '../core/logger.dart';
 
 /// 事件界面 - 显示Setpiece事件（如洞穴探索、废弃城镇等）
 class EventsScreen extends StatelessWidget {
@@ -186,7 +187,7 @@ class EventsScreen extends StatelessWidget {
   /// 处理按钮点击
   void _handleButtonPress(
       Events events, String buttonKey, Map<String, dynamic> buttonConfig) {
-    print('🎮 事件按钮点击: $buttonKey');
+    Logger.info('🎮 事件按钮点击: $buttonKey');
 
     // 处理冷却时间
     final cooldown = buttonConfig['cooldown'];

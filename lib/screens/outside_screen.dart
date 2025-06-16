@@ -345,7 +345,7 @@ class OutsideScreen extends StatelessWidget {
     if (type == 'gatherer') {
       final totalProduction = availableWorkers * (stores['wood'] as num);
       if (totalProduction > 0) {
-        effects.add('生产: +${totalProduction.toStringAsFixed(1)} 木材 每${delay}秒');
+        effects.add('生产: +${totalProduction.toStringAsFixed(1)} 木材 每$delay秒');
       }
     } else {
       for (final entry in stores.entries) {
@@ -357,7 +357,7 @@ class OutsideScreen extends StatelessWidget {
           final resourceName = _getLocalizedResourceName(resource);
           final prefix = totalRate > 0 ? '+' : '';
           effects.add(
-              '${totalRate > 0 ? '生产' : '消耗'}: $prefix${totalRate.toStringAsFixed(1)} $resourceName 每${delay}秒');
+              '${totalRate > 0 ? '生产' : '消耗'}: $prefix${totalRate.toStringAsFixed(1)} $resourceName 每$delay秒');
         }
       }
     }
@@ -605,7 +605,7 @@ class _StoresWidgetState extends State<_StoresWidget> {
           final sourceDisplayName = _getWorkerDisplayName(sourceName);
           final prefix = rate > 0 ? '+' : '';
           effects.add(
-              '$sourceDisplayName: $prefix${rate.toStringAsFixed(1)} 每${delay}秒');
+              '$sourceDisplayName: $prefix${rate.toStringAsFixed(1)} 每$delay秒');
         }
       }
     }
@@ -627,8 +627,7 @@ class _StoresWidgetState extends State<_StoresWidget> {
 
     if (totalRate != 0) {
       final prefix = totalRate > 0 ? '+' : '';
-      effects
-          .add('总计: $prefix${totalRate.toStringAsFixed(1)} 每${commonDelay}秒');
+      effects.add('总计: $prefix${totalRate.toStringAsFixed(1)} 每$commonDelay秒');
     }
 
     return effects.join('\n');
