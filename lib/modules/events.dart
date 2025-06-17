@@ -166,7 +166,7 @@ class Events extends ChangeNotifier {
                 'teeth': {'min': 1, 'max': 2, 'chance': 0.8},
                 'leather': {'min': 1, 'max': 2, 'chance': 0.5}
               },
-              'notification': '一个憔悴的人走近，眼中带着疯狂的神色'
+              'notification': '一个憔悴的人ximity，眼中带着疯狂的神色'
             }
           }
         },
@@ -222,7 +222,7 @@ class Events extends ChangeNotifier {
                 'leather': {'min': 1, 'max': 1, 'chance': 0.2},
                 'medicine': {'min': 1, 'max': 3, 'chance': 0.7}
               },
-              'notification': '一个颤抖的人走近，以惊人的力量发起攻击'
+              'notification': '一个颤抖的人ximity，以惊人的力量发起攻击'
             }
           }
         },
@@ -841,7 +841,7 @@ class Events extends ChangeNotifier {
   }
 
   /// 获取战利品 - 参考原游戏的getLoot函数
-  void getLoot(String itemName, int amount) {
+  void getLoot(String itemName, int amount, {Function? onBagFull}) {
     Logger.info('🎒 获取战利品: $itemName x$amount');
 
     final path = Path();
@@ -887,6 +887,11 @@ class Events extends ChangeNotifier {
     } else {
       Logger.info('🎒 背包空间不足，无法拾取');
       NotificationManager().notify(name, '背包空间不足');
+      
+      // 如果提供了背包满回调，则调用它
+      if (onBagFull != null) {
+        onBagFull();
+      }
     }
 
     notifyListeners();

@@ -2,6 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../modules/events.dart';
+import '../modules/path.dart';
+import '../core/state_manager.dart';
 import '../widgets/game_button.dart';
 import '../core/logger.dart';
 
@@ -111,8 +113,72 @@ class EventsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 ElevatedButton(
-                                  onPressed: () =>
-                                      events.getLoot(entry.key, entry.value),
+                                  onPressed: () {
+                                    events.getLoot(
+                                      entry.key,
+                                      entry.value,
+                                      onBagFull: () {
+                                        // 显示丢弃物品对话框
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: const Text('背包空间不足'),
+                                              content: SizedBox(
+                                                width: 300,
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    const Text(
+                                                        '请选择要丢弃的物品以腾出空间：'),
+                                                    ...Path()
+                                                        .outfit
+                                                        .entries
+                                                        .where(
+                                                            (e) => e.value > 0)
+                                                        .map((e) => ListTile(
+                                                              title: Text(
+                                                                  '${_getItemDisplayName(e.key)} x${e.value}'),
+                                                              trailing:
+                                                                  ElevatedButton(
+                                                                onPressed: () {
+                                                                  Path().outfit[
+                                                                          e.key] =
+                                                                      e.value -
+                                                                          1;
+                                                                  StateManager().set(
+                                                                      'outfit["${e.key}"]',
+                                                                      Path().outfit[
+                                                                          e.key]);
+                                                                  Path()
+                                                                      .updateOutfitting();
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                },
+                                                                child:
+                                                                    const Text(
+                                                                        '丢弃1'),
+                                                              ),
+                                                            )),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('关闭'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,
                                     foregroundColor: Colors.black,
@@ -136,7 +202,191 @@ class EventsScreen extends StatelessWidget {
                               final lootEntries =
                                   List.from(events.currentLoot.entries);
                               for (final entry in lootEntries) {
-                                events.getLoot(entry.key, entry.value);
+                                events.getLoot(
+                                  entry.key,
+                                  entry.value,
+                                  onBagFull: () {
+                                    // 显示丢弃物品对话框
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: const Text('背包空间不足'),
+                                          content: SizedBox(
+                                            width: 300,
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const Text('请选择要丢弃的物品以腾出空间：'),
+                                                ...Path()
+                                                    .outfit
+                                                    .entries
+                                                    .where((e) => e.value > 0)
+                                                    .map((e) => ListTile(
+                                                          title: Text(
+                                                              '${_getItemDisplayName(e.key)} x${e.value}'),
+                                                          trailing:
+                                                              ElevatedButton(
+                                                            onPressed: () {
+                                                              Path().outfit[
+                                                                      e.key] =
+                                                                  e.value - 1;
+                                                              StateManager().set(
+                                                                  'outfit["${e.key}"]',
+                                                                  Path().outfit[
+                                                                      e.key]);
+                                                              Path()
+                                                                  .updateOutfitting();
+                                                              // 关闭对话框
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                              // 重新打开对话框以刷新显示
+                                                              showDialog(
+                                                                context: context,
+                                                                builder: (context) {
+                                                                  return AlertDialog(
+                                                                    title: const Text('背包空间不足'),
+                                                                    content: SizedBox(
+                                                                      width: 300,
+                                                                      child: Column(
+                                                                        mainAxisSize: MainAxisSize.min,
+                                                                        children: [
+                                                                          const Text('请选择要丢弃的物品以腾出空间：'),
+                                                                          ...Path()
+                                                                              .outfit
+                                                                              .entries
+                                                                              .where((e) => e.value > 0)
+                                                                              .map((e) => ListTile(
+                                                                                    title: Text('${_getItemDisplayName(e.key)} x${e.value}'),
+                                                                                    trailing: ElevatedButton(
+                                                                                      onPressed: () {
+                                                                                        Path().outfit[e.key] = e.value - 1;
+                                                                                        StateManager().set('outfit["${e.key}"]', Path().outfit[e.key]);
+                                                                                        Path().updateOutfitting();
+                                                                                        Navigator.of(context).pop();
+                                                                                        // 递归调用以刷新显示
+                                                                                        showDialog(
+                                                                                          context: context,
+                                                                                          builder: (context) {
+                                                                                            return AlertDialog(
+                                                                                              title: const Text('背包空间不足'),
+                                                                                              content: SizedBox(
+                                                                                                width: 300,
+                                                                                                child: Column(
+                                                                                                  mainAxisSize: MainAxisSize.min,
+                                                                                                  children: [
+                                                                                                    const Text('请选择要丢弃的物品以腾出空间：'),
+                                                                                                    ...Path()
+                                                                                                        .outfit
+                                                                                                        .entries
+                                                                                                        .where((e) => e.value > 0)
+                                                                                                        .map((e) => ListTile(
+                                                                                                              title: Text('${_getItemDisplayName(e.key)} x${e.value}'),
+                                                                                                              trailing: ElevatedButton(
+                                                                                                                onPressed: () {
+                                                                                                                  // 同样的逻辑，但不再递归调用
+                                                                                                                  Path().outfit[e.key] = e.value - 1;
+                                                                                                                  StateManager().set('outfit["${e.key}"]', Path().outfit[e.key]);
+                                                                                                                  Path().updateOutfitting();
+                                                                                                                  Navigator.of(context).pop();
+                                                                                                                  // 再次打开对话框
+                                                                                                                  showDialog(
+                                                                                                                    context: context,
+                                                                                                                    builder: (context) => AlertDialog(
+                                                                                                                      title: const Text('背包空间不足'),
+                                                                                                                      content: SizedBox(
+                                                                                                                        width: 300,
+                                                                                                                        child: Column(
+                                                                                                                          mainAxisSize: MainAxisSize.min,
+                                                                                                                          children: [
+                                                                                                                            const Text('请选择要丢弃的物品以腾出空间：'),
+                                                                                                                            ...Path()
+                                                                                                                                .outfit
+                                                                                                                                .entries
+                                                                                                                                .where((e) => e.value > 0)
+                                                                                                                                .map((e) => ListTile(
+                                                                                                                                      title: Text('${_getItemDisplayName(e.key)} x${e.value}'),
+                                                                                                                                      trailing: ElevatedButton(
+                                                                                                                                        onPressed: () {
+                                                                                                                                          Path().outfit[e.key] = e.value - 1;
+                                                                                                                                          StateManager().set('outfit["${e.key}"]', Path().outfit[e.key]);
+                                                                                                                                          Path().updateOutfitting();
+                                                                                                                                          Navigator.of(context).pop();
+                                                                                                                                        },
+                                                                                                                                        child: const Text('丢弃1'),
+                                                                                                                                      ),
+                                                                                                                                    )),
+                                                                                                                          ],
+                                                                                                                        ),
+                                                                                                                      ),
+                                                                                                                      actions: [
+                                                                                                                        TextButton(
+                                                                                                                          onPressed: () {
+                                                                                                                            Navigator.of(context).pop();
+                                                                                                                          },
+                                                                                                                          child: const Text('关闭'),
+                                                                                                                        ),
+                                                                                                                      ],
+                                                                                                                    ),
+                                                                                                                  );
+                                                                                                                },
+                                                                                                                child: const Text('丢弃1'),
+                                                                                                              ),
+                                                                                                            )),
+                                                                                                  ],
+                                                                                                ),
+                                                                                              ),
+                                                                                              actions: [
+                                                                                                TextButton(
+                                                                                                  onPressed: () {
+                                                                                                    Navigator.of(context).pop();
+                                                                                                  },
+                                                                                                  child: const Text('关闭'),
+                                                                                                ),
+                                                                                              ],
+                                                                                            );
+                                                                                          },
+                                                                                        );
+                                                                                      },
+                                                                                      child: const Text('丢弃1'),
+                                                                                    ),
+                                                                                  )),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        onPressed: () {
+                                                                          Navigator.of(context).pop();
+                                                                        },
+                                                                        child: const Text('关闭'),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
+                                                            },
+                                                            child: const Text(
+                                                                '丢弃1'),
+                                                          ),
+                                                        )),
+                                              ],
+                                            ),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('关闭'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
                               }
                             },
                             style: ElevatedButton.styleFrom(
