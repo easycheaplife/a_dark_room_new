@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../modules/events.dart';
 import '../modules/world.dart';
 import '../modules/path.dart';
+import '../core/state_manager.dart';
 
 /// 战斗界面 - 完整翻译自原游戏的战斗系统
 class CombatScreen extends StatelessWidget {
