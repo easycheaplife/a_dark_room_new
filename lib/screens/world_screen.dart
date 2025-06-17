@@ -99,6 +99,7 @@ class _WorldScreenState extends State<WorldScreen> {
                   Expanded(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.all(16),
+                      physics: const ClampingScrollPhysics(), // 使用更平滑的滚动物理
                       child: Column(
                         children: [
                           // 背包区域 - 参考原游戏的bagspace-world
@@ -177,8 +178,10 @@ class _WorldScreenState extends State<WorldScreen> {
             // 参考原游戏CSS: overflow: hidden - 地图固定大小，不滚动
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
+              physics: const ClampingScrollPhysics(), // 使用更平滑的滚动物理
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
+                physics: const ClampingScrollPhysics(), // 使用更平滑的滚动物理
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: List.generate(mapSize, (j) {
@@ -463,6 +466,7 @@ class _WorldScreenState extends State<WorldScreen> {
                 right: 6,
                 bottom: 6,
                 child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(), // 使用更平滑的滚动物理
                   child: Wrap(
                     spacing: 5,
                     runSpacing: 6,

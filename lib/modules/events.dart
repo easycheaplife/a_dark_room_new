@@ -442,13 +442,21 @@ class Events extends ChangeNotifier {
 
   /// 开始战斗
   void startCombat(Map<String, dynamic> scene) {
+    Logger.info('⚔️ 开始战斗: ${scene['enemy']}');
     Engine().event('game event', 'combat');
+
+    // 重置战斗状态
     fought = false;
     won = false;
+    showingLoot = false;
+    currentLoot.clear();
+    currentAnimation = null;
+    currentAnimationDamage = 0;
 
     // 初始化敌人血量
     currentEnemyHealth = scene['health'] ?? 10;
     maxEnemyHealth = scene['health'] ?? 10;
+    Logger.info('⚔️ 敌人血量初始化: $currentEnemyHealth/$maxEnemyHealth');
 
     // 设置敌人攻击定时器
     final attackDelay = scene['attackDelay'];
@@ -767,7 +775,9 @@ class Events extends ChangeNotifier {
 
   /// 检查敌人死亡
   void checkEnemyDeath(int dmg) {
+    Logger.info('🩸 检查敌人死亡: 当前血量=$currentEnemyHealth, 伤害=$dmg, 已胜利=$won');
     if (currentEnemyHealth <= 0 && !won) {
+      Logger.info('🏆 敌人死亡，触发胜利');
       won = true;
       winFight();
     }
@@ -775,9 +785,11 @@ class Events extends ChangeNotifier {
 
   /// 胜利战斗 - 参考原游戏的winFight函数
   void winFight() {
+    Logger.info('🏆 winFight() 被调用, fought=$fought');
     if (fought) return;
 
     Timer(Duration(milliseconds: fightSpeed), () {
+      Logger.info('🏆 winFight() 第一个定时器执行, fought=$fought');
       if (fought) return;
 
       endFight();
@@ -787,15 +799,23 @@ class Events extends ChangeNotifier {
 
       // 敌人消失动画延迟
       Timer(const Duration(milliseconds: 1000), () {
+        Logger.info('🏆 winFight() 第二个定时器执行，准备显示战利品');
         final event = activeEvent();
-        if (event == null) return;
+        if (event == null) {
+          Logger.info('⚠️ winFight() 没有活动事件');
+          return;
+        }
 
         final scene = event['scenes'][activeScene];
-        if (scene == null) return;
+        if (scene == null) {
+          Logger.info('⚠️ winFight() 没有活动场景');
+          return;
+        }
 
         // 显示死亡消息和战利品 - 参考原游戏逻辑
         showingLoot = true;
         final loot = scene['loot'] as Map<String, dynamic>? ?? {};
+        Logger.info('🏆 显示战利品界面，战利品: $loot');
         drawLoot(loot);
 
         // 注意：原游戏的winFight不会自动回到小黑屋
@@ -887,7 +907,7 @@ class Events extends ChangeNotifier {
     } else {
       Logger.info('🎒 背包空间不足，无法拾取');
       NotificationManager().notify(name, '背包空间不足');
-      
+
       // 如果提供了背包满回调，则调用它
       if (onBagFull != null) {
         onBagFull();
