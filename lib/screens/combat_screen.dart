@@ -28,138 +28,135 @@ class CombatScreen extends StatelessWidget {
         return Container(
           color: Colors.white.withValues(alpha: 0.9), // 白色半透明背景
           child: Center(
-            child: Container(
-              width: 600,
-              height: 400,
-              decoration: BoxDecoration(
-                color: Colors.white, // 白色背景
-                border: Border.all(color: Colors.black), // 黑色边框
-                borderRadius: BorderRadius.circular(8),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: 700,
+                maxHeight:
+                    MediaQuery.of(context).size.height * 0.9, // 最大高度为屏幕的90%
               ),
-              child: Column(
-                children: [
-                  // 标题栏
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Colors.black), // 黑色边框
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white, // 白色背景
+                  border: Border.all(color: Colors.black), // 黑色边框
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 标题栏
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(color: Colors.black), // 黑色边框
+                        ),
+                      ),
+                      child: Text(
+                        activeEvent['title'] ?? '战斗',
+                        style: const TextStyle(
+                          color: Colors.black, // 黑色文字
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                    child: Text(
-                      activeEvent['title'] ?? '战斗',
-                      style: const TextStyle(
-                        color: Colors.black, // 黑色文字
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
 
-                  // 战斗描述
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
+                    // 通知文本 - 移到顶部，减少高度
+                    if (scene['notification'] != null)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(8),
+                        margin: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100], // 浅灰色背景
+                          border: Border.all(color: Colors.grey), // 灰色边框
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          scene['notification'],
+                          style: const TextStyle(
+                            color: Colors.black, // 黑色文字
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+
+                    // 战斗区域 - 减少高度
+                    Container(
+                      height: 120,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Stack(
                         children: [
-                          // 通知文本
-                          if (scene['notification'] != null)
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(12),
-                              margin: const EdgeInsets.only(bottom: 16),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[100], // 浅灰色背景
-                                border: Border.all(color: Colors.grey), // 灰色边框
-                                borderRadius: BorderRadius.circular(4),
+                          // 玩家 - 左侧
+                          Positioned(
+                            left: events.currentAnimation == 'melee_wanderer'
+                                ? 80
+                                : 40,
+                            bottom: 10,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 400),
+                              child: _buildFighterDiv(
+                                '流浪者',
+                                '@',
+                                world.health,
+                                world.getMaxHealth(),
+                                isPlayer: true,
                               ),
-                              child: Text(
-                                scene['notification'],
-                                style: const TextStyle(
-                                  color: Colors.black, // 黑色文字
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-
-                          // 战斗区域 - 参考原游戏布局
-                          Container(
-                            height: 150,
-                            padding: const EdgeInsets.all(16),
-                            child: Stack(
-                              children: [
-                                // 玩家 - 左侧
-                                Positioned(
-                                  left: events.currentAnimation ==
-                                          'melee_wanderer'
-                                      ? 100
-                                      : 50,
-                                  bottom: 15,
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 400),
-                                    child: _buildFighterDiv(
-                                      '流浪者',
-                                      '@',
-                                      world.health,
-                                      world.getMaxHealth(),
-                                      isPlayer: true,
-                                    ),
-                                  ),
-                                ),
-
-                                // 敌人 - 右侧
-                                Positioned(
-                                  right:
-                                      events.currentAnimation == 'melee_enemy'
-                                          ? 100
-                                          : 50,
-                                  bottom: 15,
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 400),
-                                    child: _buildFighterDiv(
-                                      scene['enemyName'] ?? '敌人',
-                                      scene['chara'] ?? 'E',
-                                      events.getCurrentEnemyHealth(),
-                                      scene['health'] ?? 10,
-                                      isPlayer: false,
-                                    ),
-                                  ),
-                                ),
-
-                                // 子弹动画
-                                if (events.currentAnimation
-                                        ?.startsWith('ranged') ==
-                                    true)
-                                  _buildBulletAnimation(
-                                      events.currentAnimation!),
-
-                                // 伤害数字动画
-                                if (events.currentAnimationDamage > 0)
-                                  _buildDamageText(
-                                      events.currentAnimationDamage),
-                              ],
                             ),
                           ),
 
-                          const SizedBox(height: 20),
+                          // 敌人 - 右侧
+                          Positioned(
+                            right: events.currentAnimation == 'melee_enemy'
+                                ? 80
+                                : 40,
+                            bottom: 10,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 400),
+                              child: _buildFighterDiv(
+                                scene['enemyName'] ?? '敌人',
+                                scene['chara'] ?? 'E',
+                                events.getCurrentEnemyHealth(),
+                                scene['health'] ?? 10,
+                                isPlayer: false,
+                              ),
+                            ),
+                          ),
 
-                          // 根据战斗状态显示不同内容
-                          if (events.showingLoot)
-                            _buildLootInterface(context, events, scene)
-                          else ...[
-                            // 攻击按钮
-                            _buildAttackButtons(context, events, path),
+                          // 子弹动画
+                          if (events.currentAnimation?.startsWith('ranged') ==
+                              true)
+                            _buildBulletAnimation(events.currentAnimation!),
 
-                            const SizedBox(height: 16),
-
-                            // 物品按钮
-                            _buildItemButtons(context, events, path, world),
-                          ],
+                          // 伤害数字动画
+                          if (events.currentAnimationDamage > 0)
+                            _buildDamageText(events.currentAnimationDamage),
                         ],
                       ),
                     ),
-                  ),
-                ],
+
+                    // 根据战斗状态显示不同内容 - 紧凑布局
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: events.showingLoot
+                            ? _buildLootInterface(context, events, scene)
+                            : Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // 攻击按钮
+                                  _buildAttackButtons(context, events, path),
+                                  const SizedBox(height: 12),
+                                  // 物品按钮
+                                  _buildItemButtons(
+                                      context, events, path, world),
+                                ],
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -271,15 +268,17 @@ class CombatScreen extends StatelessWidget {
     final availableWeapons = events.getAvailableWeapons();
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         const Text(
           '选择武器:',
-          style: TextStyle(color: Colors.black, fontSize: 14), // 黑色文字
+          style: TextStyle(color: Colors.black, fontSize: 13), // 黑色文字
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 6,
+          runSpacing: 6,
+          alignment: WrapAlignment.center,
           children: availableWeapons.map((weaponName) {
             return ElevatedButton(
               onPressed: () => events.useWeapon(weaponName),
@@ -288,11 +287,12 @@ class CombatScreen extends StatelessWidget {
                 foregroundColor: Colors.black, // 黑色文字
                 side: const BorderSide(color: Colors.black), // 黑色边框
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                minimumSize: const Size(0, 32), // 减少最小高度
               ),
               child: Text(
                 _getWeaponDisplayName(weaponName),
-                style: const TextStyle(fontSize: 12),
+                style: const TextStyle(fontSize: 11),
               ),
             );
           }).toList(),
@@ -305,8 +305,8 @@ class CombatScreen extends StatelessWidget {
   Widget _buildItemButtons(
       BuildContext context, Events events, Path path, World world) {
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+      spacing: 6,
+      runSpacing: 6,
       alignment: WrapAlignment.center,
       children: [
         // 吃肉
@@ -317,9 +317,13 @@ class CombatScreen extends StatelessWidget {
               backgroundColor: Colors.brown[100], // 浅棕色背景
               foregroundColor: Colors.black, // 黑色文字
               side: const BorderSide(color: Colors.brown), // 棕色边框
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              minimumSize: const Size(0, 32), // 减少最小高度
             ),
-            child: Text('吃肉 (${path.outfit['cured meat']})'),
+            child: Text(
+              '吃肉 (${path.outfit['cured meat']})',
+              style: const TextStyle(fontSize: 11),
+            ),
           ),
 
         // 使用药物
@@ -330,9 +334,13 @@ class CombatScreen extends StatelessWidget {
               backgroundColor: Colors.green[100], // 浅绿色背景
               foregroundColor: Colors.black, // 黑色文字
               side: const BorderSide(color: Colors.green), // 绿色边框
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              minimumSize: const Size(0, 32), // 减少最小高度
             ),
-            child: Text('用药 (${path.outfit['medicine']})'),
+            child: Text(
+              '用药 (${path.outfit['medicine']})',
+              style: const TextStyle(fontSize: 11),
+            ),
           ),
 
         // 使用注射器
@@ -343,9 +351,13 @@ class CombatScreen extends StatelessWidget {
               backgroundColor: Colors.blue[100], // 浅蓝色背景
               foregroundColor: Colors.black, // 黑色文字
               side: const BorderSide(color: Colors.blue), // 蓝色边框
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              minimumSize: const Size(0, 32), // 减少最小高度
             ),
-            child: Text('注射器 (${path.outfit['hypo']})'),
+            child: Text(
+              '注射器 (${path.outfit['hypo']})',
+              style: const TextStyle(fontSize: 11),
+            ),
           ),
 
         // 逃跑按钮
@@ -355,9 +367,13 @@ class CombatScreen extends StatelessWidget {
             backgroundColor: Colors.red[100], // 浅红色背景
             foregroundColor: Colors.black, // 黑色文字
             side: const BorderSide(color: Colors.red), // 红色边框
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            minimumSize: const Size(0, 32), // 减少最小高度
           ),
-          child: const Text('逃跑'),
+          child: const Text(
+            '逃跑',
+            style: TextStyle(fontSize: 11),
+          ),
         ),
       ],
     );
@@ -370,19 +386,16 @@ class CombatScreen extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         // 死亡消息
-        Container(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            scene['deathMessage'] ?? '敌人死了',
-            style: const TextStyle(
-              color: Colors.black, // 黑色文字
-              fontSize: 16,
-            ),
-            textAlign: TextAlign.center,
+        Text(
+          scene['deathMessage'] ?? '敌人死了',
+          style: const TextStyle(
+            color: Colors.black, // 黑色文字
+            fontSize: 15,
           ),
+          textAlign: TextAlign.center,
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
 
         // 战利品列表
         if (events.currentLoot.isNotEmpty) ...[
@@ -390,156 +403,35 @@ class CombatScreen extends StatelessWidget {
             '战利品:',
             style: TextStyle(
               color: Colors.black, // 黑色文字
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           ...events.currentLoot.entries.map((entry) {
             return Container(
-              margin: const EdgeInsets.symmetric(vertical: 4),
+              margin: const EdgeInsets.symmetric(vertical: 2),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: Text(
                       '${_getItemDisplayName(entry.key)} [${entry.value}]',
-                      style: const TextStyle(color: Colors.black), // 黑色文字
+                      style: const TextStyle(
+                        color: Colors.black, // 黑色文字
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       events.getLoot(
-                        entry.key, 
+                        entry.key,
                         entry.value,
                         onBagFull: () {
-                          // 显示丢弃物品对话框
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text('背包空间不足'),
-                                content: SizedBox(
-                                  width: 300,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Text('请选择要丢弃的物品以腾出空间：'),
-                                      ...Path()
-                                          .outfit
-                                          .entries
-                                          .where((e) => e.value > 0)
-                                          .map((e) => ListTile(
-                                                title: Text('${_getItemDisplayName(e.key)} x${e.value}'),
-                                                trailing: ElevatedButton(
-                                                  onPressed: () {
-                                                    Path().outfit[e.key] = e.value - 1;
-                                                    StateManager().set('outfit["${e.key}"]', Path().outfit[e.key]);
-                                                    Path().updateOutfitting();
-                                                    Navigator.of(context).pop();
-                                                    // 重新打开对话框以刷新显示
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (context) {
-                                                        return AlertDialog(
-                                                          title: const Text('背包空间不足'),
-                                                          content: SizedBox(
-                                                            width: 300,
-                                                            child: Column(
-                                                              mainAxisSize: MainAxisSize.min,
-                                                              children: [
-                                                                const Text('请选择要丢弃的物品以腾出空间：'),
-                                                                ...Path()
-                                                                    .outfit
-                                                                    .entries
-                                                                    .where((e) => e.value > 0)
-                                                                    .map((e) => ListTile(
-                                                                          title: Text('${_getItemDisplayName(e.key)} x${e.value}'),
-                                                                          trailing: ElevatedButton(
-                                                                            onPressed: () {
-                                                                              Path().outfit[e.key] = e.value - 1;
-                                                                              StateManager().set('outfit["${e.key}"]', Path().outfit[e.key]);
-                                                                              Path().updateOutfitting();
-                                                                              Navigator.of(context).pop();
-                                                                              // 递归调用以刷新显示
-                                                                              showDialog(
-                                                                                context: context,
-                                                                                builder: (context) {
-                                                                                  return AlertDialog(
-                                                                                    title: const Text('背包空间不足'),
-                                                                                    content: SizedBox(
-                                                                                      width: 300,
-                                                                                      child: Column(
-                                                                                        mainAxisSize: MainAxisSize.min,
-                                                                                        children: [
-                                                                                          const Text('请选择要丢弃的物品以腾出空间：'),
-                                                                                          ...Path()
-                                                                                              .outfit
-                                                                                              .entries
-                                                                                              .where((e) => e.value > 0)
-                                                                                              .map((e) => ListTile(
-                                                                                                    title: Text('${_getItemDisplayName(e.key)} x${e.value}'),
-                                                                                                    trailing: ElevatedButton(
-                                                                                                      onPressed: () {
-                                                                                                        // 同样的逻辑，但不再递归调用
-                                                                                                        Path().outfit[e.key] = e.value - 1;
-                                                                                                        StateManager().set('outfit["${e.key}"]', Path().outfit[e.key]);
-                                                                                                        Path().updateOutfitting();
-                                                                                                        Navigator.of(context).pop();
-                                                                                                      },
-                                                                                                      child: const Text('丢弃1'),
-                                                                                                    ),
-                                                                                                  )),
-                                                                                        ],
-                                                                                      ),
-                                                                                    ),
-                                                                                    actions: [
-                                                                                      TextButton(
-                                                                                        onPressed: () {
-                                                                                          Navigator.of(context).pop();
-                                                                                        },
-                                                                                        child: const Text('关闭'),
-                                                                                      ),
-                                                                                    ],
-                                                                                  );
-                                                                                },
-                                                                              );
-                                                                            },
-                                                                            child: const Text('丢弃1'),
-                                                                          ),
-                                                                        )),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                Navigator.of(context).pop();
-                                                              },
-                                                              child: const Text('关闭'),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      },
-                                                    );
-                                                  },
-                                                  child: const Text('丢弃1'),
-                                                ),
-                                              )),
-                                    ],
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('关闭'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
+                          // 显示简化的丢弃物品对话框
+                          _showDropItemDialog(
+                              context, entry.key, entry.value, events);
                         },
                       );
                     },
@@ -548,9 +440,13 @@ class CombatScreen extends StatelessWidget {
                       foregroundColor: Colors.black, // 黑色文字
                       side: const BorderSide(color: Colors.black), // 黑色边框
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                          horizontal: 6, vertical: 3),
+                      minimumSize: const Size(0, 28), // 减少最小高度
                     ),
-                    child: const Text('拿取', style: TextStyle(fontSize: 12)),
+                    child: const Text(
+                      '拿取',
+                      style: TextStyle(fontSize: 10),
+                    ),
                   ),
                 ],
               ),
@@ -559,11 +455,14 @@ class CombatScreen extends StatelessWidget {
         ] else ...[
           const Text(
             '没有战利品',
-            style: TextStyle(color: Colors.black), // 黑色文字
+            style: TextStyle(
+              color: Colors.black, // 黑色文字
+              fontSize: 12,
+            ),
           ),
         ],
 
-        const SizedBox(height: 20),
+        const SizedBox(height: 12),
 
         // 离开按钮
         ElevatedButton(
@@ -572,11 +471,87 @@ class CombatScreen extends StatelessWidget {
             backgroundColor: Colors.red[100], // 浅红色背景
             foregroundColor: Colors.black, // 黑色文字
             side: const BorderSide(color: Colors.red), // 红色边框
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            minimumSize: const Size(0, 36),
           ),
-          child: const Text('离开'),
+          child: const Text(
+            '离开',
+            style: TextStyle(fontSize: 12),
+          ),
         ),
       ],
+    );
+  }
+
+  /// 显示简化的丢弃物品对话框
+  void _showDropItemDialog(
+      BuildContext context, String itemKey, int itemValue, Events events) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('背包空间不足'),
+          content: SizedBox(
+            width: 300,
+            height: 200,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('请选择要丢弃的物品以腾出空间：'),
+                  const SizedBox(height: 8),
+                  ...Path()
+                      .outfit
+                      .entries
+                      .where((e) => e.value > 0)
+                      .map((e) => Container(
+                            margin: const EdgeInsets.symmetric(vertical: 2),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '${_getItemDisplayName(e.key)} x${e.value}',
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Path().outfit[e.key] = e.value - 1;
+                                    StateManager().set('outfit["${e.key}"]',
+                                        Path().outfit[e.key]);
+                                    Path().updateOutfitting();
+                                    Navigator.of(context).pop();
+                                    // 重新尝试拾取物品
+                                    events.getLoot(itemKey, itemValue);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    minimumSize: const Size(0, 28),
+                                  ),
+                                  child: const Text(
+                                    '丢弃1',
+                                    style: TextStyle(fontSize: 10),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('关闭'),
+            ),
+          ],
+        );
+      },
     );
   }
 
