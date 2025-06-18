@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -106,6 +107,34 @@ class _WorldScreenState extends State<WorldScreen> {
                           _buildBagspace(world),
 
                           const SizedBox(height: 16),
+
+                          // 调试按钮（仅在调试模式下显示）
+                          if (kDebugMode)
+                            Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () => world.testCurrentTile(),
+                                      child: const Text('检查地形'),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    ElevatedButton(
+                                      onPressed: () => world.testMarkVisited(),
+                                      child: const Text('标记已访问'),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                ElevatedButton(
+                                  onPressed: () => world.testFindCoalMines(),
+                                  child: const Text('查找C地标'),
+                                ),
+                              ],
+                            ),
+
+                          if (kDebugMode) const SizedBox(height: 16),
 
                           // 地图区域 - 固定大小，不滚动
                           _buildMap(world),

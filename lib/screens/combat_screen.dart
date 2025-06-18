@@ -1,9 +1,11 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../modules/events.dart';
 import '../modules/world.dart';
 import '../modules/path.dart';
 import '../core/state_manager.dart';
+import '../core/logger.dart';
 
 /// 战斗界面 - 完整翻译自原游戏的战斗系统
 class CombatScreen extends StatelessWidget {
@@ -464,23 +466,128 @@ class CombatScreen extends StatelessWidget {
 
         const SizedBox(height: 12),
 
-        // 离开按钮
-        ElevatedButton(
-          onPressed: () => events.endEvent(),
+        // 显示场景定义中的按钮，而不是固定的离开按钮
+        _buildSceneButtons(context, events, scene),
+      ],
+    );
+  }
+
+  /// 构建场景按钮 - 显示场景定义中的按钮
+  Widget _buildSceneButtons(
+      BuildContext context, Events events, Map<String, dynamic> scene) {
+    final buttons = scene['buttons'] as Map<String, dynamic>? ?? {};
+
+    if (buttons.isEmpty) {
+      // 如果没有定义按钮，显示默认的离开按钮
+      return ElevatedButton(
+        onPressed: () => events.endEvent(),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red[100], // 浅红色背景
+          foregroundColor: Colors.black, // 黑色文字
+          side: const BorderSide(color: Colors.red), // 红色边框
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          minimumSize: const Size(0, 36),
+        ),
+        child: const Text(
+          '离开',
+          style: TextStyle(fontSize: 12),
+        ),
+      );
+    }
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      alignment: WrapAlignment.center,
+      children: buttons.entries.map((entry) {
+        final buttonConfig = entry.value as Map<String, dynamic>;
+        final text = buttonConfig['text'] ?? entry.key;
+
+        return ElevatedButton(
+          onPressed: () =>
+              _handleSceneButtonPress(events, entry.key, buttonConfig),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red[100], // 浅红色背景
+            backgroundColor: Colors.white, // 白色背景
             foregroundColor: Colors.black, // 黑色文字
-            side: const BorderSide(color: Colors.red), // 红色边框
+            side: const BorderSide(color: Colors.black), // 黑色边框
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             minimumSize: const Size(0, 36),
           ),
-          child: const Text(
-            '离开',
-            style: TextStyle(fontSize: 12),
+          child: Text(
+            text,
+            style: const TextStyle(fontSize: 12),
           ),
-        ),
-      ],
+        );
+      }).toList(),
     );
+  }
+
+  /// 处理场景按钮点击
+  void _handleSceneButtonPress(
+      Events events, String buttonKey, Map<String, dynamic> buttonConfig) {
+    Logger.info('🎮 战利品界面按钮点击: $buttonKey');
+
+    // 处理冷却时间
+    final cooldown = buttonConfig['cooldown'];
+    if (cooldown != null) {
+      // 这里可以添加冷却时间处理逻辑
+    }
+
+    // 处理消耗品
+    final cost = buttonConfig['cost'] as Map<String, dynamic>?;
+    if (cost != null) {
+      final sm = StateManager();
+      for (final entry in cost.entries) {
+        final current = sm.get('stores["${entry.key}"]', true) ?? 0;
+        if (current < entry.value) {
+          Logger.info('⚠️ 资源不足: ${entry.key} 需要${entry.value}，当前$current');
+          return;
+        }
+      }
+      // 扣除消耗品
+      for (final entry in cost.entries) {
+        final current = sm.get('stores["${entry.key}"]', true) ?? 0;
+        sm.set('stores["${entry.key}"]', current - entry.value);
+      }
+    }
+
+    // 处理下一个场景
+    final nextScene = buttonConfig['nextScene'];
+    if (nextScene != null) {
+      if (nextScene is String) {
+        if (nextScene == 'end') {
+          events.endEvent();
+        } else {
+          events.loadScene(nextScene);
+        }
+      } else if (nextScene is Map<String, dynamic>) {
+        // 处理概率场景选择
+        final random = Random().nextDouble();
+        String? selectedScene;
+
+        final sortedEntries = nextScene.entries.toList()
+          ..sort((a, b) => double.parse(a.key).compareTo(double.parse(b.key)));
+
+        for (final entry in sortedEntries) {
+          final probability = double.parse(entry.key);
+          if (random <= probability) {
+            selectedScene = entry.value;
+            break;
+          }
+        }
+
+        if (selectedScene != null) {
+          if (selectedScene == 'end') {
+            events.endEvent();
+          } else {
+            events.loadScene(selectedScene);
+          }
+        }
+      }
+    } else {
+      // 如果没有定义nextScene，默认结束事件
+      events.endEvent();
+    }
   }
 
   /// 显示简化的丢弃物品对话框
