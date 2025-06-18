@@ -1724,46 +1724,6 @@ class World extends ChangeNotifier {
     }
   }
 
-  /// 测试函数：手动标记位置为已访问（用于调试）
-  void testMarkVisited() {
-    Logger.info('🧪 测试标记当前位置为已访问');
-    markVisited(curPos[0], curPos[1]);
-    notifyListeners(); // 确保UI更新
-  }
-
-  /// 测试函数：检查当前位置的地图字符
-  void testCurrentTile() {
-    if (state != null && state!['map'] != null) {
-      final currentTile = state!['map'][curPos[0]][curPos[1]];
-      Logger.info('🧪 当前位置 [${curPos[0]}, ${curPos[1]}] 的地图字符: "$currentTile"');
-      Logger.info('🧪 字符长度: ${currentTile.length}');
-      if (currentTile.length > 1) {
-        Logger.info(
-            '🧪 原始字符: "${currentTile[0]}", 是否已访问: ${currentTile.endsWith('!')}');
-      }
-    }
-  }
-
-  /// 测试函数：查找并显示所有C地标的位置和状态
-  void testFindCoalMines() {
-    if (state != null && state!['map'] != null) {
-      final map = List<List<String>>.from(
-          state!['map'].map((row) => List<String>.from(row)));
-
-      Logger.info('🧪 开始搜索所有C地标...');
-      for (int x = 0; x < map.length; x++) {
-        for (int y = 0; y < map[x].length; y++) {
-          final tile = map[x][y];
-          if (tile == 'C' || tile == 'C!') {
-            final isVisited = tile.endsWith('!');
-            Logger.info('🧪 发现C地标在位置 [$x, $y]: "$tile" (已访问: $isVisited)');
-          }
-        }
-      }
-      Logger.info('🧪 C地标搜索完成');
-    }
-  }
-
   /// 深拷贝世界状态 - 参考原游戏的$.extend(true, {}, obj)
   Map<String, dynamic> _deepCopyWorldState(Map<String, dynamic> original) {
     final copy = <String, dynamic>{};
