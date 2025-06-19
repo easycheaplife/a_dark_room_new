@@ -583,6 +583,12 @@ class _StoresWidgetState extends State<_StoresWidget> {
       'cask': '水桶',
       'water tank': '水箱',
       'compass': '指南针',
+      'charm': '护身符',
+      'rucksack': '背包',
+      'l armour': '皮甲',
+      'i armour': '铁甲',
+      's armour': '钢甲',
+      'medicine': '药品',
     };
     return resourceNames[resourceKey] ?? resourceKey;
   }

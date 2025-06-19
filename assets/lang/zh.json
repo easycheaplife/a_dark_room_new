@@ -217,7 +217,9 @@
     "energy cell": "能量电池",
     "energy_cell": "能量电池",
     "alien alloy": "外星合金",
-    "alien_alloy": "外星合金"
+    "alien_alloy": "外星合金",
+    "charm": "护身符",
+    "cloth": "布料"
   },
 
   "buildings": {
