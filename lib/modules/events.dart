@@ -1244,7 +1244,21 @@ class Events extends ChangeNotifier {
 
     // 跳转到下一个场景
     if (buttonConfig['nextScene'] != null) {
-      final nextScene = buttonConfig['nextScene'] as String;
+      final nextSceneConfig = buttonConfig['nextScene'];
+      String nextScene;
+
+      if (nextSceneConfig is String) {
+        // 固定场景跳转
+        nextScene = nextSceneConfig;
+      } else if (nextSceneConfig is Map<String, dynamic>) {
+        // 概率性场景跳转
+        nextScene = _selectRandomScene(nextSceneConfig);
+      } else {
+        Logger.error('❌ 无效的nextScene配置: $nextSceneConfig');
+        endEvent();
+        return;
+      }
+
       if (nextScene == 'end') {
         endEvent();
       } else {
@@ -1253,6 +1267,37 @@ class Events extends ChangeNotifier {
     } else {
       endEvent();
     }
+  }
+
+  /// 根据概率选择场景
+  String _selectRandomScene(Map<String, dynamic> sceneConfig) {
+    final random = Random().nextDouble();
+
+    // 将概率键转换为数字并排序
+    final probabilities = <double, String>{};
+    for (final entry in sceneConfig.entries) {
+      final prob = double.tryParse(entry.key);
+      if (prob != null) {
+        probabilities[prob] = entry.value as String;
+      }
+    }
+
+    // 按概率升序排序
+    final sortedProbs = probabilities.keys.toList()..sort();
+
+    // 选择第一个大于等于随机数的概率
+    for (final prob in sortedProbs) {
+      if (random <= prob) {
+        final selectedScene = probabilities[prob]!;
+        Logger.info('🎲 概率性场景选择: $random <= $prob -> $selectedScene');
+        return selectedScene;
+      }
+    }
+
+    // 如果没有匹配，返回最后一个场景
+    final fallbackScene = probabilities[sortedProbs.last]!;
+    Logger.info('🎲 概率性场景选择(fallback): -> $fallbackScene');
+    return fallbackScene;
   }
 
   /// 处理状态更新
