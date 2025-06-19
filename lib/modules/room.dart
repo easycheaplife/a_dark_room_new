@@ -464,11 +464,11 @@ class Room with ChangeNotifier {
 
     // 设置初始温度和火焰状态
     if (sm.get('game.temperature.value') == null) {
-      sm.set('game.temperature', tempEnum['Freezing']!['value']);
+      sm.set('game.temperature.value', tempEnum['Freezing']!['value']);
     }
 
     if (sm.get('game.fire.value') == null) {
-      sm.set('game.fire', fireEnum['Dead']!['value']);
+      sm.set('game.fire.value', fireEnum['Dead']!['value']);
     }
 
     // 设置路径发现
