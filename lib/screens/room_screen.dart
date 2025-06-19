@@ -140,7 +140,7 @@ class RoomScreen extends StatelessWidget {
     final hasWorkshop =
         (stateManager.get('game.buildings.workshop', true) ?? 0) > 0;
 
-    // 只有当有工作坊时才显示制作按钮
+    // 只有当有工坊时才显示制作按钮
     if (!hasWorkshop) {
       return const SizedBox.shrink();
     }
@@ -162,7 +162,7 @@ class RoomScreen extends StatelessWidget {
 
           const SizedBox(height: 5),
 
-          // 制作按钮列表 - 只显示需要工作坊的物品
+          // 制作按钮列表 - 只显示需要工坊的物品
           ...room.craftables.entries
               .where((entry) => room.needsWorkshop(entry.value['type']))
               .map((entry) => _buildCraftableButton(
@@ -410,12 +410,12 @@ class RoomScreen extends StatelessWidget {
       'alien alloy': '外星合金',
       'energy cell': '能量电池',
       'torch': '火把',
-      'waterskin': '水袋',
+      'waterskin': '水壶',
       'cask': '水桶',
-      'water tank': '水箱',
+      'water tank': '水罐',
       'compass': '指南针',
       'charm': '护身符',
-      'rucksack': '背包',
+      'rucksack': '双肩包',
       'l armour': '皮甲',
       'i armour': '铁甲',
       's armour': '钢甲',
@@ -427,7 +427,7 @@ class RoomScreen extends StatelessWidget {
   // 获取本地化武器名称
   String _getLocalizedWeaponName(String weaponKey) {
     const weaponNames = {
-      'bone spear': '骨矛',
+      'bone spear': '骨枪',
       'iron sword': '铁剑',
       'steel sword': '钢剑',
       'rifle': '步枪',

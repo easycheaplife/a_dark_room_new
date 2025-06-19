@@ -513,7 +513,7 @@ class _WorldScreenState extends State<WorldScreen> {
       case 'cured meat':
         return '熏肉';
       case 'bone spear':
-        return '骨矛';
+        return '骨枪';
       case 'iron sword':
         return '铁剑';
       case 'steel sword':
@@ -537,7 +537,7 @@ class _WorldScreenState extends State<WorldScreen> {
       case 'hypo':
         return '注射器';
       case 'rucksack':
-        return '背包';
+        return '双肩包';
       default:
         return itemName;
     }

@@ -130,10 +130,10 @@ class Localization extends ChangeNotifier {
       'hut': '小屋',
       'lodge': '小屋',
       'trading post': '贸易站',
-      'tannery': '制革厂',
-      'smokehouse': '熏制房',
+      'tannery': '制革屋',
+      'smokehouse': '熏肉房',
       'workshop': '工坊',
-      'steelworks': '钢铁厂',
+      'steelworks': '炼钢坊',
       'armoury': '军械库',
 
       // 状态描述

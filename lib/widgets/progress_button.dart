@@ -81,9 +81,9 @@ class _ProgressButtonState extends State<ProgressButton>
       'alien alloy': '外星合金',
       'energy cell': '能量电池',
       'torch': '火把',
-      'waterskin': '水袋',
+      'waterskin': '水壶',
       'cask': '水桶',
-      'water tank': '水箱',
+      'water tank': '水罐',
       'compass': '指南针',
     };
     return resourceNames[resourceKey] ?? resourceKey;

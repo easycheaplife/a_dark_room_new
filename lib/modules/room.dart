@@ -1092,7 +1092,7 @@ class Room with ChangeNotifier {
     return false;
   }
 
-  // 检查是否需要工作坊
+  // 检查是否需要工坊
   bool needsWorkshop(String type) {
     return type == 'weapon' || type == 'upgrade' || type == 'tool';
   }
@@ -1172,31 +1172,31 @@ class Room with ChangeNotifier {
       case 'trading post':
         return '贸易站';
       case 'tannery':
-        return '制革厂';
+        return '制革屋';
       case 'smokehouse':
-        return '熏制房';
+        return '熏肉房';
       case 'workshop':
-        return '工作坊';
+        return '工坊';
       case 'steelworks':
-        return '钢铁厂';
+        return '炼钢坊';
       case 'armoury':
         return '军械库';
       case 'torch':
         return '火把';
       case 'waterskin':
-        return '水袋';
+        return '水壶';
       case 'cask':
         return '水桶';
       case 'water tank':
-        return '水箱';
+        return '水罐';
       case 'rucksack':
-        return '背包';
+        return '双肩包';
       case 'wagon':
         return '马车';
       case 'convoy':
         return '车队';
       case 'bone spear':
-        return '骨矛';
+        return '骨枪';
       case 'iron sword':
         return '铁剑';
       case 'steel sword':

@@ -862,7 +862,7 @@ class _CombatScreenState extends State<CombatScreen> {
       case 'fists':
         return '拳头';
       case 'bone spear':
-        return '骨矛';
+        return '骨枪';
       case 'iron sword':
         return '铁剑';
       case 'steel sword':

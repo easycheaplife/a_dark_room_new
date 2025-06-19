@@ -364,7 +364,7 @@ class PathScreen extends StatelessWidget {
       'charm': '护身符',
       'alien alloy': '外星合金',
       'medicine': '药品',
-      'bone spear': '骨矛',
+      'bone spear': '骨枪',
       'iron sword': '铁剑',
       'steel sword': '钢剑',
       'rifle': '步枪',

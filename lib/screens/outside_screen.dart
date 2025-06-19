@@ -289,7 +289,7 @@ class OutsideScreen extends StatelessWidget {
         return (stateManager.get('game.buildings.tannery', true) ?? 0) > 0;
       case 'charcutier':
         return (stateManager.get('game.buildings.smokehouse', true) ?? 0) >
-            0; // 熏肉师由熏制房解锁
+            0; // 熏肉师由熏肉房解锁
       case 'steelworker':
         return (stateManager.get('game.buildings.steelworks', true) ?? 0) > 0;
       default:
@@ -390,9 +390,9 @@ class OutsideScreen extends StatelessWidget {
       'alien alloy': '外星合金',
       'energy cell': '能量电池',
       'torch': '火把',
-      'waterskin': '水袋',
+      'waterskin': '水壶',
       'cask': '水桶',
-      'water tank': '水箱',
+      'water tank': '水罐',
       'compass': '指南针',
     };
     return resourceNames[resourceKey] ?? resourceKey;
@@ -579,12 +579,12 @@ class _StoresWidgetState extends State<_StoresWidget> {
       'alien alloy': '外星合金',
       'energy cell': '能量电池',
       'torch': '火把',
-      'waterskin': '水袋',
+      'waterskin': '水壶',
       'cask': '水桶',
-      'water tank': '水箱',
+      'water tank': '水罐',
       'compass': '指南针',
       'charm': '护身符',
-      'rucksack': '背包',
+      'rucksack': '双肩包',
       'l armour': '皮甲',
       'i armour': '铁甲',
       's armour': '钢甲',
@@ -853,13 +853,13 @@ class _VillageWidgetState extends State<_VillageWidget> {
       case 'trading post':
         return '贸易站';
       case 'tannery':
-        return '制革厂';
+        return '制革屋';
       case 'smokehouse':
-        return '熏制房';
+        return '熏肉房';
       case 'workshop':
-        return '工作坊';
+        return '工坊';
       case 'steelworks':
-        return '钢铁厂';
+        return '炼钢坊';
       case 'armoury':
         return '军械库';
       default:

@@ -111,7 +111,7 @@ void useHypo() {
 ```javascript
 // 25%概率找到补给品并补满水
 'supplies': {
-  'text': ['找到了一些补给品', '水袋装满了'],
+  'text': ['找到了一些补给品', '水壶装满了'],
   'onLoad': function() {
     // 补满水
     World.setWater(World.getMaxWater());
