@@ -25,6 +25,7 @@ import 'screens/world_screen.dart';
 import 'screens/fabricator_screen.dart';
 import 'screens/ship_screen.dart';
 import 'screens/combat_screen.dart';
+import 'screens/events_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -192,6 +193,11 @@ class _GameScreenState extends State<GameScreen> {
                   width: 200,
                   height: 700,
                   child: NotificationDisplay(),
+                ),
+
+                // 事件界面 - 全屏覆盖
+                const Positioned.fill(
+                  child: EventsScreen(),
                 ),
 
                 // 战斗界面 - 全屏覆盖

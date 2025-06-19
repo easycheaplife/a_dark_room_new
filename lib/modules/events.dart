@@ -656,12 +656,80 @@ class Events extends ChangeNotifier {
 
   /// 触发事件
   void triggerEvent() {
-    if (eventPool.isNotEmpty) {
-      final random = Random();
-      final event = eventPool[random.nextInt(eventPool.length)];
-      startEvent(event);
+    // 根据当前场景筛选合适的事件
+    final currentModule = Engine().activeModule?.name ?? 'Room';
+    Logger.info('🎭 当前模块: $currentModule');
+
+    List<Map<String, dynamic>> contextEvents = [];
+
+    // 根据当前场景选择合适的事件类型
+    switch (currentModule) {
+      case 'Room':
+        // 房间中只触发房间事件和全局事件，不触发战斗事件
+        contextEvents = [
+          ...RoomEvents.events,
+          ...GlobalEvents.events,
+        ];
+        break;
+      case 'Outside':
+      case '外部':
+        // 外部场景触发外部事件和全局事件
+        contextEvents = [
+          ...OutsideEvents.events,
+          ...GlobalEvents.events,
+        ];
+        break;
+      case 'World':
+      case '世界':
+        // 世界地图中触发战斗事件（encounters）
+        contextEvents = [
+          ...encounters,
+        ];
+        break;
+      default:
+        // 其他场景使用全局事件
+        contextEvents = [
+          ...GlobalEvents.events,
+        ];
+        break;
+    }
+
+    if (contextEvents.isNotEmpty) {
+      // 筛选可用的事件
+      final availableEvents = <Map<String, dynamic>>[];
+      for (final event in contextEvents) {
+        if (isEventAvailable(event)) {
+          availableEvents.add(event);
+        }
+      }
+
+      Logger.info(
+          '🎭 ${currentModule}场景可用事件数量: ${availableEvents.length}/${contextEvents.length}');
+
+      if (availableEvents.isNotEmpty) {
+        final random = Random();
+        final event = availableEvents[random.nextInt(availableEvents.length)];
+        Logger.info('🎭 触发事件: ${event['title']}');
+        startEvent(event);
+      } else {
+        Logger.info('🎭 ${currentModule}场景没有可用的事件');
+      }
     }
     scheduleNextEvent();
+  }
+
+  /// 检查事件是否可用
+  bool isEventAvailable(Map<String, dynamic> event) {
+    final isAvailable = event['isAvailable'];
+    if (isAvailable is Function) {
+      try {
+        return isAvailable();
+      } catch (e) {
+        Logger.error('🎭 检查事件可用性时出错: ${event['title']} - $e');
+        return false;
+      }
+    }
+    return true; // 如果没有可用性检查函数，默认可用
   }
 
   /// 开始事件
@@ -824,20 +892,34 @@ class Events extends ChangeNotifier {
     currentLoot.clear();
 
     for (final entry in lootList.entries) {
-      final loot = entry.value as Map<String, dynamic>;
-      final chance = (loot['chance'] ?? 1.0) as double;
-      final randomValue = Random().nextDouble();
+      final lootData = entry.value;
 
-      Logger.info('🎁 物品: ${entry.key}, 概率: $chance, 随机值: $randomValue');
-
-      if (randomValue < chance) {
-        final min = (loot['min'] ?? 1) as int;
-        final max = (loot['max'] ?? 1) as int;
+      // 支持两种格式：数组格式 [min, max] 和对象格式 {min: x, max: y, chance: z}
+      if (lootData is List<int>) {
+        // 数组格式：[min, max]
+        final min = lootData[0];
+        final max = lootData[1];
         final num = Random().nextInt(max - min + 1) + min;
-        currentLoot[entry.key] = num;
-        Logger.info('🎁 生成战利品: ${entry.key} x$num');
-      } else {
-        Logger.info('🎁 未生成战利品: ${entry.key} (概率不足)');
+        if (num > 0) {
+          currentLoot[entry.key] = num;
+          Logger.info('🎁 生成战利品: ${entry.key} x$num');
+        }
+      } else if (lootData is Map<String, dynamic>) {
+        // 对象格式：{min: x, max: y, chance: z}
+        final chance = (lootData['chance'] ?? 1.0) as double;
+        final randomValue = Random().nextDouble();
+
+        Logger.info('🎁 物品: ${entry.key}, 概率: $chance, 随机值: $randomValue');
+
+        if (randomValue < chance) {
+          final min = (lootData['min'] ?? 1) as int;
+          final max = (lootData['max'] ?? 1) as int;
+          final num = Random().nextInt(max - min + 1) + min;
+          currentLoot[entry.key] = num;
+          Logger.info('🎁 生成战利品: ${entry.key} x$num');
+        } else {
+          Logger.info('🎁 未生成战利品: ${entry.key} (概率不足)');
+        }
       }
     }
 

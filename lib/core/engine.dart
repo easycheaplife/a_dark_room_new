@@ -13,6 +13,7 @@ import '../modules/outside.dart';
 import '../modules/path.dart';
 import '../modules/fabricator.dart';
 import '../modules/ship.dart';
+import '../modules/events.dart';
 import 'logger.dart';
 
 /// Engine是游戏的核心引擎，负责协调所有游戏系统
@@ -102,6 +103,10 @@ class Engine with ChangeNotifier {
 
     // 初始化模块
     await Room().init();
+
+    // 初始化事件系统
+    Events().init();
+    Logger.info('🎭 Events module initialized');
 
     // 检查是否应该初始化外部 - 只有在森林已解锁时才初始化
     if (sm.get('features.location.outside') == true) {
