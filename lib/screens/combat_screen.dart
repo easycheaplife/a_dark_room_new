@@ -7,8 +7,18 @@ import '../modules/path.dart';
 import '../core/state_manager.dart';
 
 /// 战斗界面 - 完整翻译自原游戏的战斗系统
-class CombatScreen extends StatelessWidget {
+class CombatScreen extends StatefulWidget {
   const CombatScreen({super.key});
+
+  @override
+  State<CombatScreen> createState() => _CombatScreenState();
+}
+
+class _CombatScreenState extends State<CombatScreen> {
+  // 用于跟踪是否显示丢弃界面
+  bool _showDropInterface = false;
+  String? _pendingLootKey;
+  int? _pendingLootValue;
 
   @override
   Widget build(BuildContext context) {
@@ -399,98 +409,292 @@ class CombatScreen extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          // 战利品区域 - 参考原游戏的左右两列布局
-          if (events.currentLoot.isNotEmpty) ...[
-            const Text(
-              '获得:',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+          // 主要内容区域 - 根据是否显示丢弃界面来决定布局
+          if (_showDropInterface) ...[
+            // 显示丢弃界面
+            _buildDropInterface(context, events),
+          ] else ...[
+            // 显示正常的战利品界面
+            if (events.currentLoot.isNotEmpty) ...[
+              const Text(
+                '获得:',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
+              const SizedBox(height: 8),
 
-            // 战利品网格布局 - 左边物品，右边按钮
-            Container(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: Table(
-                columnWidths: const {
-                  0: FlexColumnWidth(2), // 物品名称列
-                  1: FlexColumnWidth(1), // 按钮列
-                },
-                children: events.currentLoot.entries.map((entry) {
-                  return TableRow(
-                    children: [
-                      // 左列：物品名称和数量
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 4, horizontal: 8),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          color: Colors.white,
+              // 战利品网格布局 - 左边物品，右边按钮
+              Container(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: Table(
+                  columnWidths: const {
+                    0: FlexColumnWidth(2), // 物品名称列
+                    1: FlexColumnWidth(1), // 按钮列
+                  },
+                  children: events.currentLoot.entries.map((entry) {
+                    return TableRow(
+                      children: [
+                        // 左列：物品名称和数量
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 4, horizontal: 8),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            color: Colors.white,
+                          ),
+                          child: Text(
+                            '${_getItemDisplayName(entry.key)} [${entry.value}]',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                            ),
+                          ),
                         ),
+                        // 右列：带走所有按钮
+                        Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            color: Colors.white,
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              events.getLoot(
+                                entry.key,
+                                entry.value,
+                                onBagFull: () {
+                                  setState(() {
+                                    _showDropInterface = true;
+                                    _pendingLootKey = entry.key;
+                                    _pendingLootValue = entry.value;
+                                  });
+                                },
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black,
+                              side: const BorderSide(color: Colors.black),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              minimumSize: const Size(0, 24),
+                            ),
+                            child: Text(
+                              _showDropInterface ? '带走 0' : '带走 所有',
+                              style: const TextStyle(fontSize: 10),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+            ] else ...[
+              const Text(
+                '没有战利品',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+
+            const SizedBox(height: 12),
+
+            // 底部按钮区域 - 参考原游戏的按钮布局
+            _buildLootActionButtons(context, events, scene),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 构建丢弃界面 - 参考原游戏的丢弃物品界面
+  Widget _buildDropInterface(BuildContext context, Events events) {
+    final outfitItems =
+        Path().outfit.entries.where((e) => e.value > 0).toList();
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // 获得区域 - 显示待拾取的物品但按钮显示"带走 0"
+        if (_pendingLootKey != null && _pendingLootValue != null) ...[
+          const Text(
+            '获得:',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: Table(
+              columnWidths: const {
+                0: FlexColumnWidth(2),
+                1: FlexColumnWidth(1),
+              },
+              children: [
+                TableRow(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 4, horizontal: 8),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                        color: Colors.white,
+                      ),
+                      child: Text(
+                        '${_getItemDisplayName(_pendingLootKey!)} [${_pendingLootValue!}]',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                        color: Colors.white,
+                      ),
+                      child: ElevatedButton(
+                        onPressed: null, // 禁用状态
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey[300],
+                          foregroundColor: Colors.grey[600],
+                          side: const BorderSide(color: Colors.grey),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          minimumSize: const Size(0, 24),
+                        ),
+                        child: const Text(
+                          '带走 0',
+                          style: TextStyle(fontSize: 10),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
+
+        // 丢弃区域
+        const Text(
+          '丢弃:',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        // 背包物品列表
+        Container(
+          constraints: const BoxConstraints(maxWidth: 400, maxHeight: 200),
+          child: SingleChildScrollView(
+            child: Column(
+              children: outfitItems.map((entry) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 1),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    color: Colors.white,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
                         child: Text(
-                          '${_getItemDisplayName(entry.key)} [${entry.value}]',
+                          '${_getItemDisplayName(entry.key)} x${entry.value}',
                           style: const TextStyle(
                             color: Colors.black,
                             fontSize: 12,
                           ),
                         ),
                       ),
-                      // 右列：带走所有按钮
-                      Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          color: Colors.white,
-                        ),
-                        child: ElevatedButton(
-                          onPressed: () {
+                      ElevatedButton(
+                        onPressed: () {
+                          // 丢弃一个物品
+                          Path().outfit[entry.key] = entry.value - 1;
+                          StateManager().set('outfit["${entry.key}"]',
+                              Path().outfit[entry.key]);
+                          Path().updateOutfitting();
+
+                          // 尝试拾取待处理的物品
+                          if (_pendingLootKey != null &&
+                              _pendingLootValue != null) {
                             events.getLoot(
-                              entry.key,
-                              entry.value,
-                              onBagFull: () {
-                                _showDropItemDialog(
-                                    context, entry.key, entry.value, events);
-                              },
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
-                            side: const BorderSide(color: Colors.black),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            minimumSize: const Size(0, 24),
-                          ),
-                          child: const Text(
-                            '带走 所有',
-                            style: TextStyle(fontSize: 10),
-                          ),
+                                _pendingLootKey!, _pendingLootValue!);
+                          }
+
+                          // 关闭丢弃界面
+                          setState(() {
+                            _showDropInterface = false;
+                            _pendingLootKey = null;
+                            _pendingLootValue = null;
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          side: const BorderSide(color: Colors.black),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          minimumSize: const Size(0, 20),
+                        ),
+                        child: const Text(
+                          '一',
+                          style: TextStyle(fontSize: 10),
                         ),
                       ),
                     ],
-                  );
-                }).toList(),
-              ),
+                  ),
+                );
+              }).toList(),
             ),
-          ] else ...[
-            const Text(
-              '没有战利品',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 12,
-              ),
+          ),
+        ),
+
+        const SizedBox(height: 12),
+
+        // 无所获按钮
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(vertical: 2),
+          child: ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _showDropInterface = false;
+                _pendingLootKey = null;
+                _pendingLootValue = null;
+              });
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              side: const BorderSide(color: Colors.black),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              minimumSize: const Size(0, 32),
             ),
-          ],
-
-          const SizedBox(height: 12),
-
-          // 底部按钮区域 - 参考原游戏的按钮布局
-          _buildLootActionButtons(context, events, scene),
-        ],
-      ),
+            child: const Text(
+              '一无所获',
+              style: TextStyle(fontSize: 12),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -509,20 +713,32 @@ class CombatScreen extends StatelessWidget {
               onPressed: () {
                 // 拿取所有物品
                 final lootEntries = List.from(events.currentLoot.entries);
+                bool bagFull = false;
+
                 for (final entry in lootEntries) {
                   events.getLoot(
                     entry.key,
                     entry.value,
                     onBagFull: () {
-                      _showDropItemDialog(
-                          context, entry.key, entry.value, events);
+                      bagFull = true;
+                      setState(() {
+                        _showDropInterface = true;
+                        _pendingLootKey = entry.key;
+                        _pendingLootValue = entry.value;
+                      });
                     },
                   );
+
+                  // 如果背包满了，停止拿取
+                  if (bagFull) break;
                 }
-                // 拿取完毕后离开
-                Timer(const Duration(milliseconds: 500), () {
-                  events.endEvent();
-                });
+
+                // 只有在背包没满的情况下才离开
+                if (!bagFull) {
+                  Timer(const Duration(milliseconds: 500), () {
+                    events.endEvent();
+                  });
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
@@ -582,78 +798,6 @@ class CombatScreen extends StatelessWidget {
             ),
           ),
       ],
-    );
-  }
-
-  /// 显示简化的丢弃物品对话框
-  void _showDropItemDialog(
-      BuildContext context, String itemKey, int itemValue, Events events) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('背包空间不足'),
-          content: SizedBox(
-            width: 300,
-            height: 200,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('请选择要丢弃的物品以腾出空间：'),
-                  const SizedBox(height: 8),
-                  ...Path()
-                      .outfit
-                      .entries
-                      .where((e) => e.value > 0)
-                      .map((e) => Container(
-                            margin: const EdgeInsets.symmetric(vertical: 2),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    '${_getItemDisplayName(e.key)} x${e.value}',
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Path().outfit[e.key] = e.value - 1;
-                                    StateManager().set('outfit["${e.key}"]',
-                                        Path().outfit[e.key]);
-                                    Path().updateOutfitting();
-                                    Navigator.of(context).pop();
-                                    // 重新尝试拾取物品
-                                    events.getLoot(itemKey, itemValue);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                    minimumSize: const Size(0, 28),
-                                  ),
-                                  child: const Text(
-                                    '丢弃1',
-                                    style: TextStyle(fontSize: 10),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('关闭'),
-            ),
-          ],
-        );
-      },
     );
   }
 
