@@ -4,6 +4,11 @@ import 'dart:math';
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/audio_engine.dart';
+import '../core/logger.dart';
+import 'global_events.dart';
+import 'room_events.dart';
+import 'outside_events.dart';
+import 'world_events.dart';
 
 /// 事件系统 - 处理随机事件和战斗
 class Events extends ChangeNotifier {
@@ -51,16 +56,17 @@ class Events extends ChangeNotifier {
   void init() {
     // 构建事件池
     eventPool = [
-      // 这里将添加各种事件
-      // ...globalEvents,
-      // ...roomEvents,
-      // ...outsideEvents,
-      // ...marketingEvents,
+      ...GlobalEvents.events,
+      ...RoomEvents.events,
+      ...OutsideEvents.events,
+      ...WorldEvents.events,
     ];
 
     eventStack = [];
     scheduleNextEvent();
     initDelay();
+
+    Logger.info('🎭 事件系统已初始化，共${eventPool.length}个事件');
   }
 
   /// 安排下一个事件
@@ -138,8 +144,15 @@ class Events extends ChangeNotifier {
 
     // 奖励
     if (scene['reward'] != null) {
-      // final sm = StateManager();
-      // sm.addM('stores', scene['reward']); // 暂时注释掉，直到StateManager有addM方法
+      final sm = StateManager();
+      final rewards = scene['reward'] as Map<String, dynamic>;
+      for (final entry in rewards.entries) {
+        final key = entry.key;
+        final value = entry.value as int;
+        final current = sm.get('stores.$key', true) ?? 0;
+        sm.set('stores.$key', current + value);
+        Logger.info('🎁 获得奖励: $key +$value');
+      }
     }
 
     if (scene['combat'] == true) {
@@ -163,7 +176,8 @@ class Events extends ChangeNotifier {
     // 设置特殊技能计时器
     if (scene['specials'] != null) {
       _specialTimers = (scene['specials'] as List).map((s) {
-        return Timer.periodic(Duration(milliseconds: (s['delay'] * 1000).round()), (timer) {
+        return Timer.periodic(
+            Duration(milliseconds: (s['delay'] * 1000).round()), (timer) {
           final text = s['action']();
           if (text != null) {
             // 显示浮动文本
@@ -190,7 +204,8 @@ class Events extends ChangeNotifier {
     final scene = _activeEvent!['scenes'][activeScene];
     final attackDelay = delay ?? scene['attackDelay'] ?? 2.0;
 
-    _enemyAttackTimer = Timer.periodic(Duration(milliseconds: (attackDelay * 1000).round()), (timer) {
+    _enemyAttackTimer = Timer.periodic(
+        Duration(milliseconds: (attackDelay * 1000).round()), (timer) {
       enemyAttack();
     });
   }
@@ -277,6 +292,58 @@ class Events extends ChangeNotifier {
   /// 获取当前活动事件
   Map<String, dynamic>? activeEvent() {
     return _activeEvent;
+  }
+
+  /// 处理按钮点击
+  void handleButtonClick(String buttonKey, Map<String, dynamic> buttonConfig) {
+    final sm = StateManager();
+
+    // 检查成本
+    if (buttonConfig['cost'] != null) {
+      final costs = buttonConfig['cost'] as Map<String, dynamic>;
+      for (final entry in costs.entries) {
+        final key = entry.key;
+        final cost = entry.value as int;
+        final current = sm.get('stores.$key', true) ?? 0;
+        if (current < cost) {
+          NotificationManager().notify('events', '资源不足: $key');
+          return;
+        }
+      }
+
+      // 扣除成本
+      for (final entry in costs.entries) {
+        final key = entry.key;
+        final cost = entry.value as int;
+        final current = sm.get('stores.$key', true) ?? 0;
+        sm.set('stores.$key', current - cost);
+        Logger.info('💰 消耗: $key -$cost');
+      }
+    }
+
+    // 给予奖励
+    if (buttonConfig['reward'] != null) {
+      final rewards = buttonConfig['reward'] as Map<String, dynamic>;
+      for (final entry in rewards.entries) {
+        final key = entry.key;
+        final value = entry.value as int;
+        final current = sm.get('stores.$key', true) ?? 0;
+        sm.set('stores.$key', current + value);
+        Logger.info('🎁 获得奖励: $key +$value');
+      }
+    }
+
+    // 跳转到下一个场景
+    if (buttonConfig['nextScene'] != null) {
+      final nextScene = buttonConfig['nextScene'] as String;
+      if (nextScene == 'end') {
+        endEvent();
+      } else {
+        loadScene(nextScene);
+      }
+    } else {
+      endEvent();
+    }
   }
 
   /// 结束事件

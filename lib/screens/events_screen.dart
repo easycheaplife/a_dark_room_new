@@ -230,49 +230,8 @@ class _EventsScreenState extends State<EventsScreen> {
       Events events, String buttonKey, Map<String, dynamic> buttonConfig) {
     Logger.info('🎮 事件按钮点击: $buttonKey');
 
-    // 处理冷却时间
-    final cooldown = buttonConfig['cooldown'];
-    if (cooldown != null) {
-      // 这里可以添加冷却时间处理逻辑
-    }
-
-    // 处理下一个场景
-    final nextScene = buttonConfig['nextScene'];
-    if (nextScene != null) {
-      if (nextScene == 'finish') {
-        // 结束事件
-        events.endEvent();
-      } else if (nextScene is String) {
-        // 加载指定场景
-        events.loadScene(nextScene);
-      } else if (nextScene is Map<String, dynamic>) {
-        // 随机选择场景 - 使用累积概率
-        final random = Random().nextDouble();
-        String? selectedScene;
-
-        // 将概率键转换为数字并排序
-        final sortedEntries = nextScene.entries.toList()
-          ..sort((a, b) => (double.tryParse(a.key) ?? 0.0)
-              .compareTo(double.tryParse(b.key) ?? 0.0));
-
-        for (final entry in sortedEntries) {
-          final chance = double.tryParse(entry.key) ?? 0.0;
-          if (random <= chance) {
-            selectedScene = entry.value;
-            break;
-          }
-        }
-
-        // 如果没有选中任何场景，选择最后一个（概率为1.0的场景）
-        if (selectedScene == null && sortedEntries.isNotEmpty) {
-          selectedScene = sortedEntries.last.value;
-        }
-
-        if (selectedScene != null) {
-          events.loadScene(selectedScene);
-        }
-      }
-    }
+    // 使用事件系统的统一按钮处理逻辑
+    events.handleButtonClick(buttonKey, buttonConfig);
   }
 
   /// 构建丢弃界面 - 参考战斗结算界面的丢弃界面

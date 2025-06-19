@@ -8,6 +8,10 @@ import 'path.dart';
 import 'world.dart';
 import 'setpieces.dart';
 import '../core/logger.dart';
+import '../events/global_events.dart';
+import '../events/room_events.dart';
+import '../events/outside_events.dart';
+import '../events/world_events.dart';
 
 /// 事件模块 - 处理随机事件系统
 /// 包括战斗、故事事件、战利品系统等功能
@@ -80,10 +84,11 @@ class Events extends ChangeNotifier {
 
     // 构建事件池
     eventPool = [
-      ...globalEvents,
-      ...roomEvents,
-      ...outsideEvents,
-      ...marketingEvents,
+      ...GlobalEvents.events,
+      ...RoomEvents.events,
+      ...OutsideEvents.events,
+      ...WorldEvents.events,
+      ...encounters, // 保留原有的战斗遭遇事件
     ];
 
     eventStack = [];
@@ -94,26 +99,6 @@ class Events extends ChangeNotifier {
 
     notifyListeners();
   }
-
-  /// 全局事件
-  List<Map<String, dynamic>> get globalEvents => [
-        // 这里将包含全局事件定义
-      ];
-
-  /// 房间事件
-  List<Map<String, dynamic>> get roomEvents => [
-        // 这里将包含房间事件定义
-      ];
-
-  /// 外部事件
-  List<Map<String, dynamic>> get outsideEvents => [
-        // 这里将包含外部事件定义
-      ];
-
-  /// 营销事件
-  List<Map<String, dynamic>> get marketingEvents => [
-        // 这里将包含营销事件定义
-      ];
 
   /// 战斗遭遇事件列表 - 完整翻译自原游戏encounters.js
   List<Map<String, dynamic>> get encounters => [
@@ -1123,6 +1108,68 @@ class Events extends ChangeNotifier {
       default:
         Logger.info('⚠️ 未知的onLoad回调: $callbackName');
         break;
+    }
+  }
+
+  /// 处理按钮点击
+  void handleButtonClick(String buttonKey, Map<String, dynamic> buttonConfig) {
+    final sm = StateManager();
+
+    // 检查成本
+    if (buttonConfig['cost'] != null) {
+      final costs = buttonConfig['cost'] as Map<String, dynamic>;
+      for (final entry in costs.entries) {
+        final key = entry.key;
+        final cost = entry.value as int;
+        final current = sm.get('stores.$key', true) ?? 0;
+        if (current < cost) {
+          NotificationManager().notify(name, '资源不足: $key');
+          return;
+        }
+      }
+
+      // 扣除成本
+      for (final entry in costs.entries) {
+        final key = entry.key;
+        final cost = entry.value as int;
+        final current = sm.get('stores.$key', true) ?? 0;
+        sm.set('stores.$key', current - cost);
+        Logger.info('💰 消耗: $key -$cost');
+      }
+    }
+
+    // 给予奖励
+    if (buttonConfig['reward'] != null) {
+      final rewards = buttonConfig['reward'] as Map<String, dynamic>;
+      for (final entry in rewards.entries) {
+        final key = entry.key;
+        final value = entry.value as int;
+        final current = sm.get('stores.$key', true) ?? 0;
+        sm.set('stores.$key', current + value);
+        Logger.info('🎁 获得奖励: $key +$value');
+      }
+    }
+
+    // 执行onLoad回调
+    if (buttonConfig['onLoad'] != null) {
+      final onLoad = buttonConfig['onLoad'];
+      if (onLoad is Function) {
+        onLoad();
+      } else if (onLoad is String) {
+        _handleOnLoadCallback(onLoad);
+      }
+    }
+
+    // 跳转到下一个场景
+    if (buttonConfig['nextScene'] != null) {
+      final nextScene = buttonConfig['nextScene'] as String;
+      if (nextScene == 'end') {
+        endEvent();
+      } else {
+        loadScene(nextScene);
+      }
+    } else {
+      endEvent();
     }
   }
 
