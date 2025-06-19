@@ -10,6 +10,8 @@ class GameButton extends StatefulWidget {
   final double? width;
   final bool disabled;
   final bool free;
+  final String? disabledReason; // 禁用原因
+  final VoidCallback? onDisabledTap; // 禁用时的点击回调
 
   const GameButton({
     super.key,
@@ -19,6 +21,8 @@ class GameButton extends StatefulWidget {
     this.width,
     this.disabled = false,
     this.free = false,
+    this.disabledReason,
+    this.onDisabledTap,
   });
 
   @override
@@ -104,6 +108,91 @@ class _GameButtonState extends State<GameButton> {
     _overlayEntry = null;
   }
 
+  void _showDisabledTooltip(BuildContext context, Localization localization) {
+    _removeTooltip();
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        width: 200, // 禁用tooltip稍微宽一些，因为要显示更多信息
+        child: CompositedTransformFollower(
+          link: _layerLink,
+          targetAnchor: Alignment.bottomLeft,
+          followerAnchor: Alignment.topLeft,
+          offset: const Offset(2, 30),
+          child: Material(
+            elevation: 999,
+            color: Colors.transparent,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.black, width: 1),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0xFF666666),
+                    offset: Offset(-1, 3),
+                    blurRadius: 2,
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 显示禁用原因
+                  Text(
+                    widget.disabledReason!,
+                    style: const TextStyle(
+                      color: Color(0xFFB2B2B2), // 灰色文字
+                      fontSize: 12,
+                      fontFamily: 'Times New Roman',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (widget.cost!.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    const Text(
+                      '所需资源：',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontFamily: 'Times New Roman',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    ...widget.cost!.entries.map((entry) => Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              _getLocalizedResourceName(entry.key),
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontFamily: 'Times New Roman',
+                              ),
+                            ),
+                            Text(
+                              '${entry.value}',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontFamily: 'Times New Roman',
+                              ),
+                            ),
+                          ],
+                        )),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
   // 获取本地化资源名称
   String _getLocalizedResourceName(String resourceKey) {
     const resourceNames = {
@@ -148,9 +237,13 @@ class _GameButtonState extends State<GameButton> {
                 // 显示tooltip（如果满足条件）
                 if (widget.cost != null &&
                     widget.cost!.isNotEmpty &&
-                    !widget.free &&
-                    !widget.disabled) {
-                  _showTooltip(context, localization);
+                    !widget.free) {
+                  // 对于禁用按钮，显示包含禁用原因的tooltip
+                  if (widget.disabled && widget.disabledReason != null) {
+                    _showDisabledTooltip(context, localization);
+                  } else if (!widget.disabled) {
+                    _showTooltip(context, localization);
+                  }
                 }
               },
               onExit: (_) {
@@ -158,7 +251,8 @@ class _GameButtonState extends State<GameButton> {
                 _removeTooltip();
               },
               child: GestureDetector(
-                onTap: widget.disabled ? null : widget.onPressed,
+                onTap:
+                    widget.disabled ? widget.onDisabledTap : widget.onPressed,
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

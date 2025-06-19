@@ -480,12 +480,23 @@ class RoomScreen extends StatelessWidget {
     // 按钮只有在有足够资源且未达到最大数量时才可用
     final isEnabled = canAfford && !hasReachedMaximum;
 
+    // 生成禁用原因
+    String? disabledReason;
+    if (!isEnabled) {
+      if (hasReachedMaximum) {
+        disabledReason = '已达到最大数量限制';
+      } else if (!canAfford) {
+        disabledReason = '资源不足';
+      }
+    }
+
     return GameButton(
       text: localizedName,
       onPressed: isEnabled ? () => room.buildItem(key) : null,
       cost: cost,
       width: 130,
       disabled: !isEnabled,
+      disabledReason: disabledReason,
     );
   }
 
@@ -525,12 +536,23 @@ class RoomScreen extends StatelessWidget {
     // 按钮只有在有足够资源且未达到最大数量时才可用
     final isEnabled = canAfford && !hasReachedMaximum;
 
+    // 生成禁用原因
+    String? disabledReason;
+    if (!isEnabled) {
+      if (hasReachedMaximum) {
+        disabledReason = '已达到最大数量限制';
+      } else if (!canAfford) {
+        disabledReason = '资源不足';
+      }
+    }
+
     return GameButton(
       text: localizedName,
       onPressed: isEnabled ? () => room.buyItem(key) : null,
       cost: cost,
       width: 130,
       disabled: !isEnabled,
+      disabledReason: disabledReason,
     );
   }
 }
