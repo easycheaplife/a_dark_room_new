@@ -276,7 +276,7 @@ class _WorldScreenState extends State<WorldScreen> {
           final styleResult = _getLandmarkStyle(originalTile);
           tooltip = styleResult['tooltip'];
         } else {
-          // 普通地形或已使用的前哨站
+          // 普通地形
           color = _getTerrainColor(displayChar);
         }
         isLandmarkStyle = false;

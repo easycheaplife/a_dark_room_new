@@ -278,7 +278,6 @@ class Setpieces extends ChangeNotifier {
         },
         'end': {
           'text': ['离开了洞穴，回到了荒野中。'],
-          'onLoad': 'markVisited',
           'buttons': {
             'continue': {'text': '继续', 'nextScene': 'finish'}
           }

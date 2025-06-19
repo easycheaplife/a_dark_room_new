@@ -815,36 +815,59 @@ class World extends ChangeNotifier {
           Logger.info('🔮 执行者地标已访问，跳过事件');
         }
       }
-    } else if (landmarks.containsKey(originalTile)) {
-      // 检查是否是地标（使用原始字符检查）
-      Logger.info('🏛️ 触发地标事件: $originalTile (visited: $isVisited)');
-      if (originalTile != tile['outpost'] || !outpostUsed()) {
-        // 只有未访问的地标才触发事件
-        if (!isVisited) {
-          // 触发地标建筑事件
-          final landmarkInfo = landmarks[originalTile];
-          if (landmarkInfo != null && landmarkInfo['scene'] != null) {
-            final setpieces = Setpieces();
-            final sceneName = landmarkInfo['scene'];
+    } else if (originalTile == tile['outpost']) {
+      // 前哨站特殊处理
+      Logger.info('🏛️ 到达前哨站: $originalTile (已使用: ${outpostUsed()})');
+      if (!outpostUsed()) {
+        // 前哨站未使用，触发前哨站事件
+        final landmarkInfo = landmarks[originalTile];
+        if (landmarkInfo != null && landmarkInfo['scene'] != null) {
+          final setpieces = Setpieces();
+          final sceneName = landmarkInfo['scene'];
 
-            // 检查场景是否存在
-            if (setpieces.isSetpieceAvailable(sceneName)) {
-              Logger.info('🏛️ 启动Setpiece场景: $sceneName');
-              setpieces.startSetpiece(sceneName);
-            } else {
-              // 为缺失的场景提供默认处理
-              Logger.info('🏛️ 场景不存在，使用默认处理: $sceneName');
-              _handleMissingSetpiece(originalTile, landmarkInfo);
-            }
+          // 检查场景是否存在
+          if (setpieces.isSetpieceAvailable(sceneName)) {
+            Logger.info('🏛️ 启动前哨站Setpiece场景: $sceneName');
+            setpieces.startSetpiece(sceneName);
           } else {
-            Logger.info('🏛️ 地标信息无效: $landmarkInfo');
-            _handleMissingSetpiece(originalTile, {'label': '未知地标'});
+            // 为缺失的场景提供默认处理 - 直接使用前哨站
+            Logger.info('🏛️ 前哨站场景不存在，直接使用前哨站');
+            useOutpost();
           }
         } else {
-          Logger.info('🏛️ 地标已访问，跳过事件');
+          Logger.info('🏛️ 前哨站地标信息无效，直接使用前哨站');
+          useOutpost();
         }
       } else {
         Logger.info('🏛️ 前哨站已使用，跳过事件');
+      }
+      // 注意：前哨站事件不消耗补给！
+    } else if (landmarks.containsKey(originalTile)) {
+      // 检查是否是其他地标（使用原始字符检查）
+      Logger.info('🏛️ 触发地标事件: $originalTile (visited: $isVisited)');
+      // 只有未访问的地标才触发事件
+      if (!isVisited) {
+        // 触发地标建筑事件
+        final landmarkInfo = landmarks[originalTile];
+        if (landmarkInfo != null && landmarkInfo['scene'] != null) {
+          final setpieces = Setpieces();
+          final sceneName = landmarkInfo['scene'];
+
+          // 检查场景是否存在
+          if (setpieces.isSetpieceAvailable(sceneName)) {
+            Logger.info('🏛️ 启动Setpiece场景: $sceneName');
+            setpieces.startSetpiece(sceneName);
+          } else {
+            // 为缺失的场景提供默认处理
+            Logger.info('🏛️ 场景不存在，使用默认处理: $sceneName');
+            _handleMissingSetpiece(originalTile, landmarkInfo);
+          }
+        } else {
+          Logger.info('🏛️ 地标信息无效: $landmarkInfo');
+          _handleMissingSetpiece(originalTile, {'label': '未知地标'});
+        }
+      } else {
+        Logger.info('🏛️ 地标已访问，跳过事件');
       }
       // 注意：地标事件不消耗补给！
     } else {
@@ -1525,6 +1548,9 @@ class World extends ChangeNotifier {
     // 标记前哨站为已使用
     markOutpostUsed();
 
+    // 标记前哨站为已访问，使其变成灰色的P!
+    markVisited(curPos[0], curPos[1]);
+
     Logger.info('🏛️ 前哨站已使用，水补充到: $water');
     notifyListeners();
   }
@@ -1540,6 +1566,7 @@ class World extends ChangeNotifier {
 
         if (x >= 0 && x < map.length && y >= 0 && y < map[x].length) {
           final currentTile = map[x][y];
+
           if (!currentTile.endsWith('!')) {
             map[x][y] = currentTile + '!';
             Logger.info('🗺️ 标记位置 ($x, $y) 为已访问: ${map[x][y]}');
@@ -1577,6 +1604,7 @@ class World extends ChangeNotifier {
             curPos[1] >= 0 &&
             curPos[1] < map[curPos[0]].length) {
           final oldTile = map[curPos[0]][curPos[1]];
+          // 确保前哨站不带已访问标记，始终显示为黑色
           map[curPos[0]][curPos[1]] = tile['outpost']!;
 
           Logger.info(
@@ -1588,8 +1616,8 @@ class World extends ChangeNotifier {
           // 绘制道路连接到前哨站 - 参考原游戏的drawRoad函数
           drawRoad();
 
-          // 标记前哨站为已使用（因为玩家刚刚清理了这里）
-          markOutpostUsed();
+          // 注意：不要立即标记前哨站为已使用
+          // 新创建的前哨站应该可以立即使用来补充水源
 
           // 重新绘制地图以更新显示 - 关键！
           notifyListeners();
