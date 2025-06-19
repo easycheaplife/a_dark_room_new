@@ -587,111 +587,130 @@ class _CombatScreenState extends State<CombatScreen> {
           const SizedBox(height: 12),
         ],
 
-        // 丢弃区域
-        const Text(
-          '丢弃:',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-
-        // 背包物品列表
+        // 丢弃区域 - 参考原游戏的边框样式
         Container(
-          constraints: const BoxConstraints(maxWidth: 400, maxHeight: 200),
-          child: SingleChildScrollView(
-            child: Column(
-              children: outfitItems.map((entry) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(vertical: 1),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                    color: Colors.white,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          '${_getItemDisplayName(entry.key)} x${entry.value}',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          // 丢弃一个物品
-                          Path().outfit[entry.key] = entry.value - 1;
-                          StateManager().set('outfit["${entry.key}"]',
-                              Path().outfit[entry.key]);
-                          Path().updateOutfitting();
-
-                          // 尝试拾取待处理的物品
-                          if (_pendingLootKey != null &&
-                              _pendingLootValue != null) {
-                            events.getLoot(
-                                _pendingLootKey!, _pendingLootValue!);
-                          }
-
-                          // 关闭丢弃界面
-                          setState(() {
-                            _showDropInterface = false;
-                            _pendingLootKey = null;
-                            _pendingLootValue = null;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          side: const BorderSide(color: Colors.black),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          minimumSize: const Size(0, 20),
-                        ),
-                        child: const Text(
-                          '一',
-                          style: TextStyle(fontSize: 10),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
+          constraints: const BoxConstraints(maxWidth: 400),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.black, width: 2),
+            color: Colors.white,
           ),
-        ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 丢弃标题
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                decoration: const BoxDecoration(
+                  border: Border(bottom: BorderSide(color: Colors.black)),
+                ),
+                child: const Text(
+                  '丢弃:',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
 
-        const SizedBox(height: 12),
+              // 背包物品列表
+              Container(
+                constraints: const BoxConstraints(maxHeight: 200),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: outfitItems.map((entry) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 4, horizontal: 8),
+                        decoration: const BoxDecoration(
+                          border: Border(
+                              bottom:
+                                  BorderSide(color: Colors.black, width: 0.5)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '${_getItemDisplayName(entry.key)} x${entry.value}',
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                // 丢弃一个物品
+                                Path().outfit[entry.key] = entry.value - 1;
+                                StateManager().set('outfit["${entry.key}"]',
+                                    Path().outfit[entry.key]);
+                                Path().updateOutfitting();
 
-        // 无所获按钮
-        Container(
-          width: double.infinity,
-          margin: const EdgeInsets.symmetric(vertical: 2),
-          child: ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _showDropInterface = false;
-                _pendingLootKey = null;
-                _pendingLootValue = null;
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-              side: const BorderSide(color: Colors.black),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              minimumSize: const Size(0, 32),
-            ),
-            child: const Text(
-              '一无所获',
-              style: TextStyle(fontSize: 12),
-            ),
+                                // 尝试拾取待处理的物品
+                                if (_pendingLootKey != null &&
+                                    _pendingLootValue != null) {
+                                  events.getLoot(
+                                      _pendingLootKey!, _pendingLootValue!);
+                                }
+
+                                // 关闭丢弃界面
+                                setState(() {
+                                  _showDropInterface = false;
+                                  _pendingLootKey = null;
+                                  _pendingLootValue = null;
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.black,
+                                side: const BorderSide(color: Colors.black),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
+                                minimumSize: const Size(24, 20),
+                              ),
+                              child: const Text(
+                                '一',
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+
+              // 一无所获按钮
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(8),
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _showDropInterface = false;
+                      _pendingLootKey = null;
+                      _pendingLootValue = null;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    side: const BorderSide(color: Colors.black),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    minimumSize: const Size(0, 32),
+                  ),
+                  child: const Text(
+                    '一无所获',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
