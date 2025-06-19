@@ -403,7 +403,20 @@ class RoomEventsExtended {
                 },
                 'onChoose': () {
                   _sm.set('character.perks.barbarian', true);
-                  Logger.info('💪 学会了力量技能');
+                  Logger.info('💪 学会了野蛮人技能');
+                },
+                'nextScene': 'end'
+              },
+              'boxing': {
+                'text': '拳击',
+                'available': () {
+                  final hasBoxerPerk =
+                      _sm.get('character.perks.boxer', true) ?? false;
+                  return !hasBoxerPerk;
+                },
+                'onChoose': () {
+                  _sm.set('character.perks.boxer', true);
+                  Logger.info('👊 学会了拳击手技能');
                 },
                 'nextScene': 'end'
               },
@@ -465,6 +478,140 @@ class RoomEventsExtended {
             'text': ['那人表达了感谢，然后蹒跚着离开了。'],
             'buttons': {
               'bye': {'text': '告别', 'nextScene': 'end'}
+            }
+          }
+        }
+      };
+
+  /// 武术大师事件
+  static Map<String, dynamic> get martialMaster => {
+        'title': '武术大师',
+        'isAvailable': () {
+          final fire = _sm.get('game.fire.value', true) ?? 0;
+          final hasBoxer = _sm.get('character.perks.boxer', true) ?? false;
+          final population = _sm.get('game.population', true) ?? 0;
+          return fire > 0 && hasBoxer && population >= 50;
+        },
+        'scenes': {
+          'start': {
+            'text': ['一个神秘的武术大师来到村庄。', '他看到你已经掌握了基础拳击技巧。', '"我可以教你更高深的武艺，"他说。'],
+            'notification': '一个武术大师到达',
+            'buttons': {
+              'learn': {
+                'text': '学习武艺',
+                'cost': {'cured meat': 200, 'fur': 200},
+                'nextScene': 'learn'
+              },
+              'decline': {'text': '谢绝', 'nextScene': 'end'}
+            }
+          },
+          'learn': {
+            'text': ['大师传授了他的武艺。'],
+            'buttons': {
+              'martial_artist': {
+                'text': '武术家',
+                'available': () {
+                  final hasMartialArtist =
+                      _sm.get('character.perks.martial artist', true) ?? false;
+                  return !hasMartialArtist;
+                },
+                'onChoose': () {
+                  _sm.set('character.perks.martial artist', true);
+                  Logger.info('🥋 学会了武术家技能');
+                },
+                'nextScene': 'end'
+              },
+              'unarmed_master': {
+                'text': '徒手大师',
+                'available': () {
+                  final hasMartialArtist =
+                      _sm.get('character.perks.martial artist', true) ?? false;
+                  final hasUnarmedMaster =
+                      _sm.get('character.perks.unarmed master', true) ?? false;
+                  return hasMartialArtist && !hasUnarmedMaster;
+                },
+                'onChoose': () {
+                  _sm.set('character.perks.unarmed master', true);
+                  Logger.info('🥊 学会了徒手大师技能');
+                },
+                'nextScene': 'end'
+              },
+              'nothing': {'text': '什么都不学', 'nextScene': 'end'}
+            }
+          }
+        }
+      };
+
+  /// 沙漠向导事件
+  static Map<String, dynamic> get desertGuide => {
+        'title': '沙漠向导',
+        'isAvailable': () {
+          final fire = _sm.get('game.fire.value', true) ?? 0;
+          final worldUnlocked =
+              _sm.get('features.location.world', true) ?? false;
+          final water = _sm.get('stores.water', true) ?? 0;
+          return fire > 0 && worldUnlocked && water >= 100;
+        },
+        'scenes': {
+          'start': {
+            'text': [
+              '一个经验丰富的沙漠向导来到村庄。',
+              '他的皮肤被太阳晒得黝黑，眼神深邃。',
+              '"我可以教你在荒野中生存的技巧，"他说。'
+            ],
+            'notification': '一个沙漠向导到达',
+            'buttons': {
+              'learn': {
+                'text': '学习生存技巧',
+                'cost': {'water': 100, 'cured meat': 50},
+                'nextScene': 'learn'
+              },
+              'decline': {'text': '谢绝', 'nextScene': 'end'}
+            }
+          },
+          'learn': {
+            'text': ['向导传授了他的生存智慧。'],
+            'buttons': {
+              'slow_metabolism': {
+                'text': '缓慢新陈代谢',
+                'available': () {
+                  final hasSlowMetabolism =
+                      _sm.get('character.perks.slow metabolism', true) ?? false;
+                  return !hasSlowMetabolism;
+                },
+                'onChoose': () {
+                  _sm.set('character.perks.slow metabolism', true);
+                  Logger.info('🐌 学会了缓慢新陈代谢技能');
+                },
+                'nextScene': 'end'
+              },
+              'desert_rat': {
+                'text': '沙漠鼠',
+                'available': () {
+                  final hasDesertRat =
+                      _sm.get('character.perks.desert rat', true) ?? false;
+                  return !hasDesertRat;
+                },
+                'onChoose': () {
+                  _sm.set('character.perks.desert rat', true);
+                  Logger.info('🐭 学会了沙漠鼠技能');
+                },
+                'nextScene': 'end'
+              },
+              'stealthy': {
+                'text': '潜行',
+                'available': () {
+                  final hasStealthy =
+                      _sm.get('character.perks.stealthy', true) ?? false;
+                  return !hasStealthy;
+                },
+                'onChoose': () {
+                  _sm.set('character.perks.stealthy', true);
+                  Logger.info('👤 学会了潜行技能');
+                },
+                'nextScene': 'end'
+              },
+              'nothing': {'text': '什么都不学', 'nextScene': 'end'}
             }
           }
         }

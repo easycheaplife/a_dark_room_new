@@ -20,6 +20,8 @@ class RoomEvents {
         RoomEventsExtended.mysteriousWandererFur,
         RoomEventsExtended.scout,
         RoomEventsExtended.master,
+        RoomEventsExtended.martialMaster,
+        RoomEventsExtended.desertGuide,
         RoomEventsExtended.sickMan,
         straycat,
         wounded,

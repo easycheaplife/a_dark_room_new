@@ -504,8 +504,11 @@ class Events extends ChangeNotifier {
     final scene = event['scenes'][activeScene];
     if (scene == null) return;
 
-    final toHit = scene['hit'] ?? 0.8;
-    // toHit *= sm.hasPerk('evasive') ? 0.8 : 1; // 暂时注释掉技能系统
+    double toHit = (scene['hit'] ?? 0.8).toDouble();
+    // 闪避技能：减少20%被击中概率
+    if (StateManager().hasPerk('evasive')) {
+      toHit *= 0.8;
+    }
 
     int dmg = -1;
     if (meditateDmg > 0) {
@@ -802,13 +805,38 @@ class Events extends ChangeNotifier {
 
     // 计算伤害
     int dmg = -1;
-    if (Random().nextDouble() <= World().getHitChance()) {
+    double hitChance = World().getHitChance();
+
+    // 精准技能：增加10%命中率
+    if (StateManager().hasPerk('precise')) {
+      hitChance += 0.1;
+    }
+
+    if (Random().nextDouble() <= hitChance) {
       dmg = weapon['damage'] ?? 1;
 
-      // 技能加成（暂时注释掉）
-      // if (weapon['type'] == 'unarmed' && sm.hasPerk('boxer')) {
-      //   dmg *= 2;
-      // }
+      // 技能加成
+      final weaponType = weapon['type'] ?? 'unarmed';
+
+      // 拳击手技能：徒手伤害翻倍
+      if (weaponType == 'unarmed' && StateManager().hasPerk('boxer')) {
+        dmg *= 2;
+      }
+
+      // 武术家技能：徒手伤害额外加成
+      if (weaponType == 'unarmed' && StateManager().hasPerk('martial artist')) {
+        dmg = (dmg * 1.5).round();
+      }
+
+      // 徒手大师技能：徒手伤害更大加成
+      if (weaponType == 'unarmed' && StateManager().hasPerk('unarmed master')) {
+        dmg *= 2;
+      }
+
+      // 野蛮人技能：近战武器伤害加成
+      if (weaponType == 'melee' && StateManager().hasPerk('barbarian')) {
+        dmg = (dmg * 1.5).round();
+      }
     }
 
     // 执行攻击

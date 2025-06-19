@@ -84,7 +84,9 @@ class OutsideEvents {
         'scenes': {
           'start': {
             'text': ['一群袭击者出现在村庄边缘。', '他们看起来很危险，想要抢夺你的资源。', '战斗不可避免！'],
-            'nextScene': 'combat'
+            'buttons': {
+              'fight': {'text': '战斗', 'nextScene': 'combat'}
+            }
           },
           'combat': {
             'combat': true,
@@ -299,7 +301,7 @@ class OutsideEvents {
                       _sm.get('character.perks.scout', true) ?? false;
                   return hasScoutPerk;
                 },
-                'nextScene': {'0.5': 'catch', '1.0': 'lose'}
+                'nextScene': {'0.7': 'catch', '1.0': 'lose'} // 侦察技能提高成功率到70%
               },
               'ignore': {'text': '忽视它', 'nextScene': 'end'}
             }

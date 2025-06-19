@@ -1048,7 +1048,10 @@ class World extends ChangeNotifier {
 
     // 食物
     int currentMovesPerFood = movesPerFood;
-    // currentMovesPerFood *= sm.hasPerk('slow metabolism') ? 2 : 1; // 暂时注释掉技能系统
+    // 缓慢新陈代谢技能：食物消耗减半
+    if (StateManager().hasPerk('slow metabolism')) {
+      currentMovesPerFood *= 2;
+    }
 
     if (foodMove >= currentMovesPerFood) {
       foodMove = 0;
@@ -1098,7 +1101,10 @@ class World extends ChangeNotifier {
 
     // 水
     int currentMovesPerWater = movesPerWater;
-    // currentMovesPerWater *= sm.hasPerk('desert rat') ? 2 : 1; // 暂时注释掉技能系统
+    // 沙漠鼠技能：水消耗减半
+    if (StateManager().hasPerk('desert rat')) {
+      currentMovesPerWater *= 2;
+    }
 
     if (waterMove >= currentMovesPerWater) {
       waterMove = 0;
@@ -1143,7 +1149,10 @@ class World extends ChangeNotifier {
 
     if (fightMove > fightDelay) {
       double chance = fightChance;
-      // chance *= sm.hasPerk('stealthy') ? 0.5 : 1; // 暂时注释掉技能系统
+      // 潜行技能：减少50%战斗概率
+      if (StateManager().hasPerk('stealthy')) {
+        chance *= 0.5;
+      }
       final randomValue = Random().nextDouble();
       Logger.info('🎯 战斗检查 - chance: $chance, random: $randomValue');
 
@@ -1178,8 +1187,12 @@ class World extends ChangeNotifier {
 
   /// 获取肉类治疗量
   int meatHealAmount() {
-    // return meatHeal * (sm.hasPerk('gastronome') ? 2 : 1); // 暂时注释掉技能系统
-    return meatHeal;
+    int healAmount = meatHeal;
+    // 美食家技能：食物治疗效果翻倍
+    if (StateManager().hasPerk('gastronome')) {
+      healAmount *= 2;
+    }
+    return healAmount;
   }
 
   /// 获取药物治疗量
@@ -1210,11 +1223,12 @@ class World extends ChangeNotifier {
 
   /// 获取命中率
   double getHitChance() {
-    // final sm = StateManager();
-    // if (sm.hasPerk('precise')) {
-    //   return baseHitChance + 0.1;
-    // }
-    return baseHitChance;
+    double hitChance = baseHitChance;
+    // 精准技能：增加10%命中率
+    if (StateManager().hasPerk('precise')) {
+      hitChance += 0.1;
+    }
+    return hitChance;
   }
 
   /// 获取最大水量
