@@ -1,7 +1,9 @@
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/logger.dart';
+import '../modules/world.dart';
 import 'dart:math';
+import 'dart:async';
 
 /// 扩展房间事件定义
 class RoomEventsExtended {
@@ -194,8 +196,14 @@ class RoomEventsExtended {
             'onLoad': () {
               // 50%概率在60秒后返回300木材
               if (Random().nextDouble() < 0.5) {
-                // TODO: 实现延迟奖励机制
-                Logger.info('🎲 神秘流浪者将在60秒后返回');
+                // 使用延迟奖励机制
+                Timer(Duration(seconds: 60), () {
+                  _sm.add('stores.wood', 300);
+                  // 通知系统暂时用Logger代替
+                  Logger.info('📢 神秘流浪者返回了，车上堆满了木材。');
+                  Logger.info('🎁 神秘流浪者返回奖励: 300木材');
+                });
+                Logger.info('⏰ 神秘流浪者将在60秒后返回');
               }
             },
             'buttons': {
@@ -207,8 +215,13 @@ class RoomEventsExtended {
             'onLoad': () {
               // 30%概率在60秒后返回1500木材
               if (Random().nextDouble() < 0.3) {
-                // TODO: 实现延迟奖励机制
-                Logger.info('🎲 神秘流浪者将在60秒后返回');
+                // 使用延迟奖励机制
+                Timer(Duration(seconds: 60), () {
+                  _sm.add('stores.wood', 1500);
+                  Logger.info('📢 神秘流浪者返回了，车上堆满了木材。');
+                  Logger.info('🎁 神秘流浪者返回奖励: 1500木材');
+                });
+                Logger.info('⏰ 神秘流浪者将在60秒后返回');
               }
             },
             'buttons': {
@@ -249,8 +262,12 @@ class RoomEventsExtended {
             'onLoad': () {
               // 50%概率在60秒后返回300毛皮
               if (Random().nextDouble() < 0.5) {
-                // TODO: 实现延迟奖励机制
-                Logger.info('🎲 神秘流浪者将在60秒后返回');
+                Timer(Duration(seconds: 60), () {
+                  _sm.add('stores.fur', 300);
+                  Logger.info('📢 神秘流浪者返回了，车上堆满了毛皮。');
+                  Logger.info('🎁 神秘流浪者返回奖励: 300毛皮');
+                });
+                Logger.info('⏰ 神秘流浪者将在60秒后返回');
               }
             },
             'buttons': {
@@ -262,8 +279,12 @@ class RoomEventsExtended {
             'onLoad': () {
               // 30%概率在60秒后返回1500毛皮
               if (Random().nextDouble() < 0.3) {
-                // TODO: 实现延迟奖励机制
-                Logger.info('🎲 神秘流浪者将在60秒后返回');
+                Timer(Duration(seconds: 60), () {
+                  _sm.add('stores.fur', 1500);
+                  Logger.info('📢 神秘流浪者返回了，车上堆满了毛皮。');
+                  Logger.info('🎁 神秘流浪者返回奖励: 1500毛皮');
+                });
+                Logger.info('⏰ 神秘流浪者将在60秒后返回');
               }
             },
             'buttons': {
@@ -291,13 +312,16 @@ class RoomEventsExtended {
                 'text': '购买地图',
                 'cost': {'fur': 200, 'scales': 10},
                 'available': () {
-                  // TODO: 检查是否已经看过所有地图
-                  return true;
+                  // 检查是否已经看过所有地图
+                  final world = World.instance;
+                  return !world.seenAll;
                 },
                 'notification': '地图揭示了世界的一部分',
                 'onChoose': () {
-                  // TODO: 应用地图效果
-                  Logger.info('🗺️ 应用地图效果');
+                  // 应用地图效果
+                  final world = World.instance;
+                  world.applyMap();
+                  Logger.info('🗺️ 地图已购买并应用');
                 }
               },
               'learn': {

@@ -603,6 +603,44 @@ class World extends ChangeNotifier {
     }
   }
 
+  /// 应用地图 - 揭示世界的一部分（侦察兵购买地图功能）
+  void applyMap() {
+    if (!seenAll) {
+      final sm = StateManager();
+      final mask = sm.get('game.world.mask');
+
+      if (mask != null && mask is List && mask.isNotEmpty && mask[0] is List) {
+        try {
+          // 转换为正确的类型
+          final maskList =
+              List<List<bool>>.from(mask.map((row) => List<bool>.from(row)));
+
+          int x, y;
+          final random = Random();
+
+          // 找到一个未探索的区域
+          do {
+            x = random.nextInt(radius * 2 + 1);
+            y = random.nextInt(radius * 2 + 1);
+          } while (maskList[x][y]);
+
+          // 揭示该区域周围5格范围
+          uncoverMap(x, y, 5, maskList);
+
+          // 保存更新的遮罩
+          sm.set('game.world.mask', maskList);
+
+          Logger.info('🗺️ 地图已应用，揭示了位置 [$x, $y] 周围的区域');
+        } catch (e) {
+          Logger.info('⚠️ applyMap错误: $e');
+        }
+      }
+    }
+
+    // 重新检查是否全部可见
+    testMap();
+  }
+
   /// 移动方法
   void moveNorth() {
     // Engine().log('北'); // 暂时注释掉

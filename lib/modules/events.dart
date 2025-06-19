@@ -1300,6 +1300,38 @@ class Events extends ChangeNotifier {
     return fallbackScene;
   }
 
+  /// 延迟奖励系统
+  final Map<String, Timer> _delayedRewards = {};
+
+  /// 保存延迟奖励
+  void saveDelayedReward(String key, VoidCallback action, int delaySeconds) {
+    // 取消现有的延迟奖励（如果有）
+    _delayedRewards[key]?.cancel();
+
+    // 创建新的延迟奖励
+    _delayedRewards[key] = Timer(Duration(seconds: delaySeconds), () {
+      action();
+      _delayedRewards.remove(key);
+      Logger.info('🎁 延迟奖励执行: $key');
+    });
+
+    Logger.info('⏰ 延迟奖励已设置: $key (${delaySeconds}秒后执行)');
+  }
+
+  /// 取消延迟奖励
+  void cancelDelayedReward(String key) {
+    _delayedRewards[key]?.cancel();
+    _delayedRewards.remove(key);
+  }
+
+  /// 清理所有延迟奖励
+  void clearAllDelayedRewards() {
+    for (final timer in _delayedRewards.values) {
+      timer.cancel();
+    }
+    _delayedRewards.clear();
+  }
+
   /// 处理状态更新
   void handleStateUpdates(Map<String, dynamic> event) {
     // 在Flutter中，状态更新将通过状态管理自动处理
