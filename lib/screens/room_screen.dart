@@ -5,6 +5,7 @@ import '../core/state_manager.dart';
 import '../core/localization.dart';
 import '../widgets/game_button.dart';
 import '../widgets/progress_button.dart';
+import '../widgets/stores_display.dart';
 
 /// 房间界面 - 显示火焰状态、建筑和交易
 class RoomScreen extends StatelessWidget {
@@ -229,189 +230,29 @@ class RoomScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 库存区域
-        _buildStoresDisplay(stateManager),
+        const StoresDisplay(
+          style: StoresDisplayStyle.light,
+          type: StoresDisplayType.resourcesOnly,
+          collapsible: false,
+          showIncomeInfo: false,
+          customTitle: null, // 使用默认标题
+        ),
 
         const SizedBox(height: 15),
 
         // 武器区域
-        _buildWeaponsDisplay(stateManager),
+        const StoresDisplay(
+          style: StoresDisplayStyle.light,
+          type: StoresDisplayType.weaponsOnly,
+          collapsible: false,
+          showIncomeInfo: false,
+          customTitle: '武器', // 自定义武器标题
+        ),
       ],
     );
   }
 
-  // 库存显示 - 模拟原游戏的 stores 容器
-  Widget _buildStoresDisplay(StateManager stateManager) {
-    final stores = stateManager.get('stores', true) ?? {};
-    final resourceStores = <String, dynamic>{};
 
-    // 过滤出资源类物品（非武器、非升级、非建筑）
-    for (var entry in stores.entries) {
-      final key = entry.key;
-      if (key.contains('blueprint')) continue; // 跳过蓝图
-
-      // 这里需要根据物品类型分类，暂时显示所有非武器物品
-      if (!_isWeapon(key)) {
-        resourceStores[key] = entry.value;
-      }
-    }
-
-    if (resourceStores.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return Container(
-      width: 200,
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.black),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题 - 模拟原游戏的 data-legend 属性
-          Container(
-            transform: Matrix4.translationValues(8, -13, 0),
-            child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: Consumer<Localization>(
-                builder: (context, localization, child) {
-                  return Text(
-                    localization.translate('ui.menus.stores'),
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontFamily: 'Times New Roman',
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-
-          // 资源列表
-          ...resourceStores.entries.map((entry) => Padding(
-                padding: const EdgeInsets.only(bottom: 2),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _getLocalizedResourceName(entry.key),
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontFamily: 'Times New Roman',
-                      ),
-                    ),
-                    Text(
-                      '${entry.value}',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontFamily: 'Times New Roman',
-                      ),
-                    ),
-                  ],
-                ),
-              )),
-        ],
-      ),
-    );
-  }
-
-  // 武器显示 - 模拟原游戏的 weapons 容器
-  Widget _buildWeaponsDisplay(StateManager stateManager) {
-    final stores = stateManager.get('stores', true) ?? {};
-    final weaponStores = <String, dynamic>{};
-
-    // 过滤出武器类物品
-    for (var entry in stores.entries) {
-      final key = entry.key;
-      if (_isWeapon(key)) {
-        weaponStores[key] = entry.value;
-      }
-    }
-
-    if (weaponStores.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return Container(
-      width: 200,
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.black),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题 - 模拟原游戏的 data-legend 属性
-          Container(
-            transform: Matrix4.translationValues(8, -13, 0),
-            child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: Consumer<Localization>(
-                builder: (context, localization, child) {
-                  return Text(
-                    localization.translate('ui.menus.weapons'),
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontFamily: 'Times New Roman',
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-
-          // 武器列表
-          ...weaponStores.entries.map((entry) => Padding(
-                padding: const EdgeInsets.only(bottom: 2),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _getLocalizedWeaponName(entry.key),
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontFamily: 'Times New Roman',
-                      ),
-                    ),
-                    Text(
-                      '${entry.value}',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontFamily: 'Times New Roman',
-                      ),
-                    ),
-                  ],
-                ),
-              )),
-        ],
-      ),
-    );
-  }
-
-  // 判断是否为武器
-  bool _isWeapon(String itemName) {
-    const weapons = [
-      'bone spear',
-      'iron sword',
-      'steel sword',
-      'rifle',
-      'bolas',
-      'grenade',
-      'bayonet',
-      'laser rifle'
-    ];
-    return weapons.contains(itemName);
-  }
 
   // 获取本地化资源名称
   String _getLocalizedResourceName(String resourceKey) {
@@ -425,16 +266,7 @@ class RoomScreen extends StatelessWidget {
     return localizedName;
   }
 
-  // 获取本地化武器名称
-  String _getLocalizedWeaponName(String weaponKey) {
-    final localization = Localization();
-    String localizedName = localization.translate('resources.$weaponKey');
-    if (localizedName == 'resources.$weaponKey') {
-      // 如果没有找到翻译，使用原名称
-      return weaponKey;
-    }
-    return localizedName;
-  }
+
 
   // 构建可制作物品按钮
   Widget _buildCraftableButton(String key, Map<String, dynamic> item, Room room,

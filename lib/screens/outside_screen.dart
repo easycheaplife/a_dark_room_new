@@ -4,6 +4,7 @@ import '../modules/outside.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
 import '../widgets/progress_button.dart';
+import '../widgets/stores_display.dart';
 
 /// 外部界面 - 显示村庄状态、建筑和工人管理
 /// 使用与房间界面一致的UI风格
@@ -19,43 +20,35 @@ class OutsideScreen extends StatelessWidget {
           height: 700,
           color: Colors.white,
           child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            child: SizedBox(
+              width: 700,
+              height: 1000, // 确保有足够的高度支持滚动
+              child: Stack(
                 children: [
-                  // 顶部行：收集按钮、工人管理、村庄状态
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 收集木材按钮区域
-                      _buildGatheringButtons(outside, stateManager),
-
-                      const SizedBox(width: 20),
-
-                      // 工人管理区域
-                      Expanded(
-                        child: Consumer<Localization>(
-                          builder: (context, localization, child) {
-                            return _buildWorkersButtons(
-                                outside, stateManager, localization);
-                          },
-                        ),
-                      ),
-
-                      const SizedBox(width: 20),
-
-                      // 村庄状态区域
-                      _buildVillageStatus(outside, stateManager),
-                    ],
+                  // 收集木材按钮区域 - 左上角
+                  Positioned(
+                    left: 10,
+                    top: 10,
+                    child: _buildGatheringButtons(outside, stateManager),
                   ),
 
-                  const SizedBox(height: 20),
+                  // 工人管理区域 - 中间位置
+                  Positioned(
+                    left: 140,
+                    top: 10,
+                    child: Consumer<Localization>(
+                      builder: (context, localization, child) {
+                        return _buildWorkersButtons(
+                            outside, stateManager, localization);
+                      },
+                    ),
+                  ),
 
-                  // 底部：库存容器
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: _buildStoresContainer(stateManager),
+                  // 右侧信息栏 - 参考房间界面的库存和武器布局
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: _buildRightInfoPanel(outside, stateManager),
                   ),
                 ],
               ),
@@ -103,7 +96,28 @@ class OutsideScreen extends StatelessWidget {
     );
   }
 
-  // 村庄状态区域 - 模拟原游戏的 village 容器，支持折叠显示
+  // 右侧信息栏 - 参考房间界面的库存和武器布局方式
+  Widget _buildRightInfoPanel(Outside outside, StateManager stateManager) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 库存区域 - 与房间界面相同的配置
+        const StoresDisplay(
+          style: StoresDisplayStyle.light,
+          type: StoresDisplayType.resourcesOnly,
+          collapsible: false,
+          showIncomeInfo: false,
+        ),
+
+        const SizedBox(height: 15), // 与房间界面相同的间距
+
+        // 村庄状态区域 - 排在库存下面
+        _buildVillageStatus(outside, stateManager),
+      ],
+    );
+  }
+
+  // 村庄状态区域 - 模拟原游戏的 village 容器
   Widget _buildVillageStatus(Outside outside, StateManager stateManager) {
     final numHuts = stateManager.get('game.buildings.hut', true) ?? 0;
 
@@ -399,234 +413,6 @@ class OutsideScreen extends StatelessWidget {
     return effects.join('\n');
   }
 
-  // 库存容器 - 模拟原游戏的 storesContainer，支持折叠显示
-  Widget _buildStoresContainer(StateManager stateManager) {
-    return Consumer<Localization>(
-      builder: (context, localization, child) {
-        return _StoresWidget(
-            stateManager: stateManager, localization: localization);
-      },
-    );
-  }
-}
-
-// 可折叠的库存显示组件
-class _StoresWidget extends StatefulWidget {
-  final StateManager stateManager;
-  final Localization localization;
-
-  const _StoresWidget({
-    required this.stateManager,
-    required this.localization,
-  });
-
-  @override
-  State<_StoresWidget> createState() => _StoresWidgetState();
-}
-
-class _StoresWidgetState extends State<_StoresWidget> {
-  bool _isExpanded = true; // 默认展开
-
-  @override
-  Widget build(BuildContext context) {
-    final stores = widget.stateManager.get('stores', true) ?? {};
-    final resourceStores = <String, dynamic>{};
-
-    // 过滤出资源类物品（非武器、非升级、非建筑）
-    for (var entry in stores.entries) {
-      final key = entry.key;
-      if (key.contains('blueprint')) continue; // 跳过蓝图
-
-      // 这里需要根据物品类型分类，暂时显示所有非武器物品
-      if (!_isWeapon(key)) {
-        resourceStores[key] = entry.value;
-      }
-    }
-
-    if (resourceStores.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return Container(
-      width: 200,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.black),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 可点击的标题栏
-          InkWell(
-            onTap: () {
-              setState(() {
-                _isExpanded = !_isExpanded;
-              });
-            },
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              child: Stack(
-                children: [
-                  // 标题 - 模拟原游戏的 data-legend 属性
-                  Container(
-                    transform: Matrix4.translationValues(8, -13, 0),
-                    child: Container(
-                      color: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            widget.localization.translate('resources.title'),
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontFamily: 'Times New Roman',
-                            ),
-                          ),
-                          const SizedBox(width: 5),
-                          Icon(
-                            _isExpanded
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down,
-                            size: 16,
-                            color: Colors.black,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // 可折叠的资源列表
-          if (_isExpanded) ...[
-            Container(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-              child: Column(
-                children: resourceStores.entries
-                    .map((entry) => Padding(
-                          padding: const EdgeInsets.only(bottom: 2),
-                          child: Tooltip(
-                            message: _getResourceIncomeInfo(entry.key),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  _getLocalizedResourceName(entry.key),
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontFamily: 'Times New Roman',
-                                  ),
-                                ),
-                                Text(
-                                  '${entry.value}',
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontFamily: 'Times New Roman',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ))
-                    .toList(),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  // 判断是否为武器
-  bool _isWeapon(String itemName) {
-    const weapons = [
-      'bone spear',
-      'iron sword',
-      'steel sword',
-      'rifle',
-      'bolas',
-      'grenade',
-      'bayonet',
-      'laser rifle'
-    ];
-    return weapons.contains(itemName);
-  }
-
-  // 获取本地化资源名称
-  String _getLocalizedResourceName(String resourceKey) {
-    String localizedName =
-        widget.localization.translate('resources.$resourceKey');
-    if (localizedName == 'resources.$resourceKey') {
-      // 如果没有找到翻译，使用原名称
-      return resourceKey;
-    }
-    return localizedName;
-  }
-
-  // 获取资源的收入信息
-  String _getResourceIncomeInfo(String resourceKey) {
-    final income = widget.stateManager.get('income', true) ?? {};
-    List<String> effects = [];
-
-    // 遍历所有收入来源，查找影响此资源的
-    for (final entry in income.entries) {
-      final sourceName = entry.key;
-      final incomeData = entry.value;
-      final stores = incomeData['stores'] as Map<String, dynamic>? ?? {};
-      final delay = incomeData['delay'] as int? ?? 10;
-
-      if (stores.containsKey(resourceKey)) {
-        final rate = stores[resourceKey] as num;
-        if (rate != 0) {
-          final sourceDisplayName = _getWorkerDisplayName(sourceName);
-          final prefix = rate > 0 ? '+' : '';
-          final everyText = widget.localization.translate('worker_info.every');
-          final secondsText =
-              widget.localization.translate('worker_info.seconds');
-          effects.add(
-              '$sourceDisplayName: $prefix${rate.toStringAsFixed(1)} $everyText$delay$secondsText');
-        }
-      }
-    }
-
-    if (effects.isEmpty) {
-      return widget.localization.translate('worker_info.no_production');
-    }
-
-    // 计算总计
-    double totalRate = 0;
-    int commonDelay = 10;
-    for (final entry in income.entries) {
-      final incomeData = entry.value;
-      final stores = incomeData['stores'] as Map<String, dynamic>? ?? {};
-      if (stores.containsKey(resourceKey)) {
-        totalRate += (stores[resourceKey] as num).toDouble();
-      }
-    }
-
-    if (totalRate != 0) {
-      final prefix = totalRate > 0 ? '+' : '';
-      final totalText = widget.localization.translate('worker_info.total');
-      final everyText = widget.localization.translate('worker_info.every');
-      final secondsText = widget.localization.translate('worker_info.seconds');
-      effects.add(
-          '$totalText: $prefix${totalRate.toStringAsFixed(1)} $everyText$commonDelay$secondsText');
-    }
-
-    return effects.join('\n');
-  }
-
-  // 获取工人显示名称
-  String _getWorkerDisplayName(String workerKey) {
-    return widget.localization.translate('workers.$workerKey');
-  }
 }
 
 // 可折叠的村庄状态显示组件
@@ -646,8 +432,6 @@ class _VillageWidget extends StatefulWidget {
 }
 
 class _VillageWidgetState extends State<_VillageWidget> {
-  bool _isExpanded = true; // 默认展开
-
   @override
   Widget build(BuildContext context) {
     final population = widget.stateManager.get('game.population', true) ?? 0;
@@ -664,62 +448,40 @@ class _VillageWidgetState extends State<_VillageWidget> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 可点击的村庄标题栏
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    _isExpanded = !_isExpanded;
-                  });
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(10),
-                  child: Stack(
-                    children: [
-                      // 村庄标题 - 模拟原游戏的 data-legend 属性
-                      Container(
-                        transform: Matrix4.translationValues(-8, -13, 0),
-                        child: Container(
-                          color: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                villageTitle,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontFamily: 'Times New Roman',
-                                ),
-                              ),
-                              const SizedBox(width: 5),
-                              Icon(
-                                _isExpanded
-                                    ? Icons.keyboard_arrow_up
-                                    : Icons.keyboard_arrow_down,
-                                size: 16,
-                                color: Colors.black,
-                              ),
-                            ],
+              // 村庄标题栏 - 不可点击，与库存显示风格一致
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                child: Stack(
+                  children: [
+                    // 村庄标题 - 模拟原游戏的 data-legend 属性
+                    Container(
+                      transform: Matrix4.translationValues(-8, -13, 0),
+                      child: Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: Text(
+                          villageTitle,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontFamily: 'Times New Roman',
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
 
-              // 可折叠的建筑物列表
-              if (_isExpanded) ...[
-                Container(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _buildBuildingsList(),
-                  ),
+              // 建筑物列表 - 始终显示
+              Container(
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _buildBuildingsList(),
                 ),
-              ],
+              ),
             ],
           ),
 

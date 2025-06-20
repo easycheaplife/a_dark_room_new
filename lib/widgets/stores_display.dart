@@ -3,9 +3,70 @@ import 'package:provider/provider.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
 
-/// StoresDisplay shows the player's resources
-class StoresDisplay extends StatelessWidget {
-  const StoresDisplay({super.key});
+/// 库存显示样式枚举
+enum StoresDisplayStyle {
+  /// 黑色背景样式（原始样式）
+  dark,
+  /// 白色背景带边框样式（房间和外部界面）
+  light,
+}
+
+/// 库存显示类型枚举
+enum StoresDisplayType {
+  /// 显示所有物品
+  all,
+  /// 只显示资源（非武器）
+  resourcesOnly,
+  /// 只显示武器
+  weaponsOnly,
+}
+
+/// 统一的库存显示组件 - 支持不同样式和类型
+class StoresDisplay extends StatefulWidget {
+  /// 显示样式
+  final StoresDisplayStyle style;
+
+  /// 显示类型
+  final StoresDisplayType type;
+
+  /// 是否可折叠
+  final bool collapsible;
+
+  /// 初始展开状态（仅在可折叠时有效）
+  final bool initiallyExpanded;
+
+  /// 自定义宽度
+  final double? width;
+
+  /// 自定义标题
+  final String? customTitle;
+
+  /// 是否显示收入信息（tooltip）
+  final bool showIncomeInfo;
+
+  const StoresDisplay({
+    super.key,
+    this.style = StoresDisplayStyle.dark,
+    this.type = StoresDisplayType.all,
+    this.collapsible = false,
+    this.initiallyExpanded = true,
+    this.width,
+    this.customTitle,
+    this.showIncomeInfo = false,
+  });
+
+  @override
+  State<StoresDisplay> createState() => _StoresDisplayState();
+}
+
+class _StoresDisplayState extends State<StoresDisplay> {
+  late bool _isExpanded;
+
+  @override
+  void initState() {
+    super.initState();
+    _isExpanded = widget.initiallyExpanded;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +83,14 @@ class StoresDisplay extends StatelessWidget {
         // 分类资源
         for (final entry in stores.entries) {
           final value = entry.value as num? ?? 0;
-          // 显示所有资源，包括0值的资源（玩家需要看到当前状态）
+
+          // 根据显示类型过滤
+          if (widget.type == StoresDisplayType.weaponsOnly && !_isWeapon(entry.key)) {
+            continue;
+          }
+          if (widget.type == StoresDisplayType.resourcesOnly && _isWeapon(entry.key)) {
+            continue;
+          }
 
           switch (entry.key) {
             case 'wood':
@@ -41,6 +109,7 @@ class StoresDisplay extends StatelessWidget {
             case 'medicine':
             case 'energy cell':
             case 'alien alloy':
+            case 'cloth':
               resources[entry.key] = value;
               break;
             case 'iron sword':
@@ -69,67 +138,237 @@ class StoresDisplay extends StatelessWidget {
           }
         }
 
-        return Container(
-          width: 200,
-          color: Colors.black,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Resources
-              if (resources.isNotEmpty) ...[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    localization.translate('resources.title'),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                ...resources.entries
-                    .map((entry) => _buildResourceRow(entry.key, entry.value, localization)),
-              ],
+        // 根据显示类型决定显示哪些分类
+        final showResources = widget.type != StoresDisplayType.weaponsOnly && resources.isNotEmpty;
+        final showWeapons = widget.type != StoresDisplayType.resourcesOnly && weapons.isNotEmpty;
+        final showSpecial = widget.type != StoresDisplayType.resourcesOnly && special.isNotEmpty;
 
-              // Special items
-              if (special.isNotEmpty) ...[
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    '特殊物品',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                ...special.entries
-                    .map((entry) => _buildResourceRow(entry.key, entry.value, localization)),
-              ],
+        // 如果没有任何物品，不显示
+        if (!showResources && !showWeapons && !showSpecial) {
+          return const SizedBox.shrink();
+        }
 
-              // Weapons
-              if (weapons.isNotEmpty) ...[
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    '武器',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                ...weapons.entries
-                    .map((entry) => _buildResourceRow(entry.key, entry.value, localization)),
-              ],
-            ],
-          ),
+        return _buildContainer(
+          stateManager,
+          localization,
+          showResources ? resources : {},
+          showWeapons ? weapons : {},
+          showSpecial ? special : {},
         );
       },
     );
   }
 
-  Widget _buildResourceRow(String name, num value, Localization localization) {
+  /// 构建容器
+  Widget _buildContainer(
+    StateManager stateManager,
+    Localization localization,
+    Map<String, num> resources,
+    Map<String, num> weapons,
+    Map<String, num> special,
+  ) {
+    final isLight = widget.style == StoresDisplayStyle.light;
+    final backgroundColor = isLight ? Colors.white : Colors.black;
+    final textColor = isLight ? Colors.black : Colors.white;
+    final containerWidth = widget.width ?? 200.0;
+
+    Widget content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 标题部分
+        _buildTitle(localization, textColor),
+
+        // 内容部分（可折叠）
+        if (!widget.collapsible || _isExpanded) ...[
+          _buildContent(stateManager, localization, resources, weapons, special, textColor),
+        ],
+      ],
+    );
+
+    if (isLight) {
+      return Container(
+        width: containerWidth,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          border: Border.all(color: Colors.black),
+        ),
+        child: content,
+      );
+    } else {
+      return Container(
+        width: containerWidth,
+        color: backgroundColor,
+        child: content,
+      );
+    }
+  }
+
+  /// 构建标题
+  Widget _buildTitle(Localization localization, Color textColor) {
+    final title = widget.customTitle ?? _getDefaultTitle(localization);
+
+    if (!widget.collapsible) {
+      // 不可折叠的标题
+      if (widget.style == StoresDisplayStyle.light) {
+        return Container(
+          padding: const EdgeInsets.all(10),
+          child: Container(
+            transform: Matrix4.translationValues(8, -13, 0),
+            child: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
+            ),
+          ),
+        );
+      } else {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            title,
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
+      }
+    } else {
+      // 可折叠的标题
+      return InkWell(
+        onTap: () {
+          setState(() {
+            _isExpanded = !_isExpanded;
+          });
+        },
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(10),
+          child: Container(
+            transform: Matrix4.translationValues(8, -13, 0),
+            child: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontFamily: 'Times New Roman',
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Icon(
+                    _isExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    size: 16,
+                    color: Colors.black,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
+  /// 构建内容
+  Widget _buildContent(
+    StateManager stateManager,
+    Localization localization,
+    Map<String, num> resources,
+    Map<String, num> weapons,
+    Map<String, num> special,
+    Color textColor,
+  ) {
+    final isLight = widget.style == StoresDisplayStyle.light;
+    final padding = isLight
+        ? const EdgeInsets.fromLTRB(10, 0, 10, 10)
+        : const EdgeInsets.symmetric(horizontal: 16, vertical: 4);
+
+    return Container(
+      padding: padding,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Resources
+          if (resources.isNotEmpty) ...[
+            if (widget.type == StoresDisplayType.all && !isLight) ...[
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Text(
+                  localization.translate('resources.title'),
+                  style: TextStyle(
+                    color: textColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+            ...resources.entries.map((entry) =>
+                _buildResourceRow(stateManager, entry.key, entry.value, localization, textColor)),
+          ],
+
+          // Special items
+          if (special.isNotEmpty) ...[
+            if (widget.type == StoresDisplayType.all && !isLight) ...[
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                child: Text(
+                  '特殊物品',
+                  style: TextStyle(
+                    color: textColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+            ...special.entries.map((entry) =>
+                _buildResourceRow(stateManager, entry.key, entry.value, localization, textColor)),
+          ],
+
+          // Weapons
+          if (weapons.isNotEmpty) ...[
+            if (widget.type == StoresDisplayType.all && !isLight) ...[
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                child: Text(
+                  '武器',
+                  style: TextStyle(
+                    color: textColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+            ...weapons.entries.map((entry) =>
+                _buildResourceRow(stateManager, entry.key, entry.value, localization, textColor)),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 构建资源行
+  Widget _buildResourceRow(
+    StateManager stateManager,
+    String name,
+    num value,
+    Localization localization,
+    Color textColor,
+  ) {
     // 获取本地化的资源名称
     String localizedName = localization.translate('resources.$name');
     if (localizedName == 'resources.$name') {
@@ -137,25 +376,130 @@ class StoresDisplay extends StatelessWidget {
       localizedName = name;
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            localizedName,
-            style: const TextStyle(
-              color: Colors.white,
-            ),
+    final isLight = widget.style == StoresDisplayStyle.light;
+    final fontSize = isLight ? 16.0 : 14.0;
+    final fontFamily = isLight ? 'Times New Roman' : null;
+
+    Widget row = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          localizedName,
+          style: TextStyle(
+            color: textColor,
+            fontSize: fontSize,
+            fontFamily: fontFamily,
           ),
-          Text(
-            value.floor().toString(),
-            style: const TextStyle(
-              color: Colors.white,
-            ),
+        ),
+        Text(
+          value.floor().toString(),
+          style: TextStyle(
+            color: textColor,
+            fontSize: fontSize,
+            fontFamily: fontFamily,
           ),
-        ],
-      ),
+        ),
+      ],
     );
+
+    // 如果需要显示收入信息，添加tooltip
+    if (widget.showIncomeInfo) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 2),
+        child: Tooltip(
+          message: _getResourceIncomeInfo(stateManager, localization, name),
+          child: row,
+        ),
+      );
+    } else {
+      return Padding(
+        padding: isLight ? const EdgeInsets.only(bottom: 2) : const EdgeInsets.symmetric(vertical: 4),
+        child: row,
+      );
+    }
+  }
+
+  /// 获取默认标题
+  String _getDefaultTitle(Localization localization) {
+    switch (widget.type) {
+      case StoresDisplayType.all:
+        return localization.translate('resources.title');
+      case StoresDisplayType.resourcesOnly:
+        return localization.translate('resources.title');
+      case StoresDisplayType.weaponsOnly:
+        return '武器';
+    }
+  }
+
+  /// 判断是否为武器
+  bool _isWeapon(String itemName) {
+    const weapons = [
+      'bone spear',
+      'iron sword',
+      'steel sword',
+      'rifle',
+      'bolas',
+      'grenade',
+      'bayonet',
+      'laser rifle'
+    ];
+    return weapons.contains(itemName);
+  }
+
+  /// 获取资源的收入信息
+  String _getResourceIncomeInfo(StateManager stateManager, Localization localization, String resourceKey) {
+    final income = stateManager.get('income', true) ?? {};
+    List<String> effects = [];
+
+    // 遍历所有收入来源，查找影响此资源的
+    for (final entry in income.entries) {
+      final sourceName = entry.key;
+      final incomeData = entry.value;
+      final stores = incomeData['stores'] as Map<String, dynamic>? ?? {};
+      final delay = incomeData['delay'] as int? ?? 10;
+
+      if (stores.containsKey(resourceKey)) {
+        final rate = stores[resourceKey] as num;
+        if (rate != 0) {
+          final sourceDisplayName = _getWorkerDisplayName(localization, sourceName);
+          final prefix = rate > 0 ? '+' : '';
+          final everyText = localization.translate('worker_info.every');
+          final secondsText = localization.translate('worker_info.seconds');
+          effects.add(
+              '$sourceDisplayName: $prefix${rate.toStringAsFixed(1)} $everyText$delay$secondsText');
+        }
+      }
+    }
+
+    if (effects.isEmpty) {
+      return localization.translate('worker_info.no_production');
+    }
+
+    // 计算总计
+    double totalRate = 0;
+    int commonDelay = 10;
+    for (final entry in income.entries) {
+      final incomeData = entry.value;
+      final stores = incomeData['stores'] as Map<String, dynamic>? ?? {};
+      if (stores.containsKey(resourceKey)) {
+        totalRate += (stores[resourceKey] as num).toDouble();
+      }
+    }
+
+    if (totalRate != 0) {
+      final prefix = totalRate > 0 ? '+' : '';
+      final totalText = localization.translate('worker_info.total');
+      final everyText = localization.translate('worker_info.every');
+      final secondsText = localization.translate('worker_info.seconds');
+      effects.add(
+          '$totalText: $prefix${totalRate.toStringAsFixed(1)} $everyText$commonDelay$secondsText');
+    }
+
+    return effects.join('\n');
+  }
+
+  /// 获取工人显示名称
+  String _getWorkerDisplayName(Localization localization, String workerKey) {
+    return localization.translate('workers.$workerKey');
   }
 }
