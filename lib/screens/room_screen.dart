@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../modules/room.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
+import '../core/localization_helper.dart';
 import '../widgets/game_button.dart';
 import '../widgets/progress_button.dart';
 
@@ -77,7 +78,7 @@ class RoomScreen extends StatelessWidget {
     if (fireValue == Room.fireEnum['Dead']!['value']) {
       // 火焰熄灭 - 显示点火按钮
       return ProgressButton(
-        text: '点燃火堆',
+        text: LocalizationHelper().localizeButtonText('light fire'),
         onPressed: () => room.lightFire(),
         cost: isFree ? null : {'wood': 5},
         width: 80,
@@ -88,7 +89,7 @@ class RoomScreen extends StatelessWidget {
     } else {
       // 火焰燃烧 - 显示添柴按钮
       return ProgressButton(
-        text: '添柴',
+        text: LocalizationHelper().localizeButtonText('stoke fire'),
         onPressed: () => room.stokeFire(),
         cost: isFree ? null : {'wood': 1},
         width: 80,
@@ -259,9 +260,9 @@ class RoomScreen extends StatelessWidget {
             child: Container(
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: const Text(
-                '库存',
-                style: TextStyle(
+              child: Text(
+                LocalizationHelper().localizeMenuText('库存'),
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 16,
                   fontFamily: 'Times New Roman',
@@ -333,9 +334,9 @@ class RoomScreen extends StatelessWidget {
             child: Container(
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: const Text(
-                '武器',
-                style: TextStyle(
+              child: Text(
+                LocalizationHelper().localizeMenuText('武器'),
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 16,
                   fontFamily: 'Times New Roman',
@@ -391,52 +392,12 @@ class RoomScreen extends StatelessWidget {
 
   // 获取本地化资源名称
   String _getLocalizedResourceName(String resourceKey) {
-    const resourceNames = {
-      'wood': '木材',
-      'fur': '毛皮',
-      'meat': '肉类',
-      'bait': '诱饵',
-      'leather': '皮革',
-      'cured meat': '熏肉',
-      'iron': '铁',
-      'coal': '煤炭',
-      'sulphur': '硫磺',
-      'steel': '钢铁',
-      'bullets': '子弹',
-      'cloth': '布料',
-      'teeth': '牙齿',
-      'scales': '鳞片',
-      'bone': '骨头',
-      'alien alloy': '外星合金',
-      'energy cell': '能量电池',
-      'torch': '火把',
-      'waterskin': '水壶',
-      'cask': '水桶',
-      'water tank': '水罐',
-      'compass': '指南针',
-      'charm': '护身符',
-      'rucksack': '双肩包',
-      'l armour': '皮甲',
-      'i armour': '铁甲',
-      's armour': '钢甲',
-      'medicine': '药品',
-    };
-    return resourceNames[resourceKey] ?? resourceKey;
+    return LocalizationHelper().localizeButtonText(resourceKey);
   }
 
   // 获取本地化武器名称
   String _getLocalizedWeaponName(String weaponKey) {
-    const weaponNames = {
-      'bone spear': '骨枪',
-      'iron sword': '铁剑',
-      'steel sword': '钢剑',
-      'rifle': '步枪',
-      'bolas': '流星锤',
-      'grenade': '手榴弹',
-      'bayonet': '刺刀',
-      'laser rifle': '激光步枪',
-    };
-    return weaponNames[weaponKey] ?? weaponKey;
+    return LocalizationHelper().localizeButtonText(weaponKey);
   }
 
   // 构建可制作物品按钮
@@ -490,9 +451,9 @@ class RoomScreen extends StatelessWidget {
     String? disabledReason;
     if (!isEnabled) {
       if (hasReachedMaximum) {
-        disabledReason = '已达到最大数量限制';
+        disabledReason = LocalizationHelper().localizeEventText('已达到最大数量限制');
       } else if (!canAfford) {
-        disabledReason = '资源不足';
+        disabledReason = LocalizationHelper().localizeEventText('资源不足');
       }
     }
 
@@ -546,9 +507,9 @@ class RoomScreen extends StatelessWidget {
     String? disabledReason;
     if (!isEnabled) {
       if (hasReachedMaximum) {
-        disabledReason = '已达到最大数量限制';
+        disabledReason = LocalizationHelper().localizeEventText('已达到最大数量限制');
       } else if (!canAfford) {
-        disabledReason = '资源不足';
+        disabledReason = LocalizationHelper().localizeEventText('资源不足');
       }
     }
 

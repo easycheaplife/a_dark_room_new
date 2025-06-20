@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/localization.dart';
+import '../core/localization_helper.dart';
 
 /// 游戏按钮组件 - 模拟原游戏的按钮样式
 class GameButton extends StatefulWidget {
@@ -151,9 +152,11 @@ class _GameButtonState extends State<GameButton> {
                   ),
                   if (widget.cost!.isNotEmpty) ...[
                     const SizedBox(height: 4),
-                    const Text(
-                      '所需资源：',
-                      style: TextStyle(
+                    Text(
+                      LocalizationHelper().currentLanguage == 'zh'
+                          ? '所需资源：'
+                          : 'Required:',
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 12,
                         fontFamily: 'Times New Roman',
@@ -272,7 +275,7 @@ class _GameButtonState extends State<GameButton> {
                     ),
                   ),
                   child: Text(
-                    widget.text,
+                    LocalizationHelper().localizeButtonText(widget.text),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: widget.disabled

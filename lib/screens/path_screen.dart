@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../modules/path.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
+import '../core/localization_helper.dart';
 import '../widgets/game_button.dart';
 import '../core/logger.dart';
 
@@ -105,23 +106,23 @@ class PathScreen extends StatelessWidget {
 
   /// 构建护甲行
   Widget _buildArmourRow(StateManager stateManager) {
-    String armour = "无";
+    String armour = LocalizationHelper().localizeButtonText("none");
     if ((stateManager.get('stores["kinetic armour"]', true) ?? 0) > 0) {
-      armour = "动能";
+      armour = LocalizationHelper().localizeButtonText("kinetic");
     } else if ((stateManager.get('stores["s armour"]', true) ?? 0) > 0) {
-      armour = "钢制";
+      armour = LocalizationHelper().localizeButtonText("steel");
     } else if ((stateManager.get('stores["i armour"]', true) ?? 0) > 0) {
-      armour = "铁制";
+      armour = LocalizationHelper().localizeButtonText("iron");
     } else if ((stateManager.get('stores["l armour"]', true) ?? 0) > 0) {
-      armour = "皮革";
+      armour = LocalizationHelper().localizeButtonText("leather");
     }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
-          '护甲',
-          style: TextStyle(
+        Text(
+          LocalizationHelper().localizeButtonText('armour'),
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 16,
             fontFamily: 'Times New Roman',
@@ -147,9 +148,9 @@ class PathScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
-          '水',
-          style: TextStyle(
+        Text(
+          LocalizationHelper().localizeButtonText('water'),
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 16,
             fontFamily: 'Times New Roman',
@@ -173,16 +174,28 @@ class PathScreen extends StatelessWidget {
 
     // 可携带物品配置 - 基于原游戏的carryable对象
     final carryableItems = {
-      'cured meat': {'type': 'tool', 'desc': '恢复 2 生命值'},
-      'bullets': {'type': 'tool', 'desc': '配合步枪使用'},
+      'cured meat': {
+        'type': 'tool',
+        'desc': LocalizationHelper().localizeEventText('恢复 2 生命值')
+      },
+      'bullets': {
+        'type': 'tool',
+        'desc': LocalizationHelper().localizeEventText('配合步枪使用')
+      },
       'grenade': {'type': 'weapon'},
       'bolas': {'type': 'weapon'},
       'laser rifle': {'type': 'weapon'},
-      'energy cell': {'type': 'tool', 'desc': '发出柔和的红光'},
+      'energy cell': {
+        'type': 'tool',
+        'desc': LocalizationHelper().localizeEventText('发出柔和的红光')
+      },
       'bayonet': {'type': 'weapon'},
       'charm': {'type': 'tool'},
       'alien alloy': {'type': 'tool'},
-      'medicine': {'type': 'tool', 'desc': '恢复 20 生命值'},
+      'medicine': {
+        'type': 'tool',
+        'desc': LocalizationHelper().localizeEventText('恢复 20 生命值')
+      },
       // 从Room.Craftables添加
       'bone spear': {'type': 'weapon'},
       'iron sword': {'type': 'weapon'},
@@ -353,23 +366,7 @@ class PathScreen extends StatelessWidget {
 
   /// 获取本地化物品名称
   String _getLocalizedItemName(String itemName) {
-    const itemNames = {
-      'cured meat': '熏肉',
-      'bullets': '子弹',
-      'grenade': '手榴弹',
-      'bolas': '流星锤',
-      'laser rifle': '激光步枪',
-      'energy cell': '能量电池',
-      'bayonet': '刺刀',
-      'charm': '护身符',
-      'alien alloy': '外星合金',
-      'medicine': '药品',
-      'bone spear': '骨枪',
-      'iron sword': '铁剑',
-      'steel sword': '钢剑',
-      'rifle': '步枪',
-    };
-    return itemNames[itemName] ?? itemName;
+    return LocalizationHelper().localizeButtonText(itemName);
   }
 
   /// 获取物品提示信息
@@ -395,9 +392,11 @@ class PathScreen extends StatelessWidget {
     Logger.info('🎯 PathScreen: canEmbark=$canEmbark');
 
     return Tooltip(
-      message: canEmbark ? '前往世界地图' : '需要携带熏肉才能出发',
+      message: canEmbark
+          ? LocalizationHelper().localizeEventText('前往世界地图')
+          : LocalizationHelper().localizeEventText('需要携带熏肉才能出发'),
       child: GameButton(
-        text: '出发',
+        text: LocalizationHelper().localizeButtonText('embark'),
         onPressed: canEmbark
             ? () {
                 Logger.info('🎯 PathScreen: 出发按钮被点击');
@@ -437,9 +436,9 @@ class PathScreen extends StatelessWidget {
                 child: Container(
                   color: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: const Text(
-                    '技能',
-                    style: TextStyle(
+                  child: Text(
+                    LocalizationHelper().localizeMenuText('技能'),
+                    style: const TextStyle(
                       color: Colors.black,
                       fontSize: 16,
                       fontFamily: 'Times New Roman',
@@ -492,33 +491,11 @@ class PathScreen extends StatelessWidget {
 
   /// 获取本地化技能名称
   String _getLocalizedPerkName(String perkName) {
-    const perkNames = {
-      'boxer': '拳击手',
-      'martial artist': '武术家',
-      'unarmed master': '徒手大师',
-      'barbarian': '野蛮人',
-      'slow metabolism': '缓慢代谢',
-      'desert rat': '沙漠老鼠',
-      'evasive': '闪避',
-      'precise': '精准',
-      'scout': '侦察兵',
-    };
-    return perkNames[perkName] ?? perkName;
+    return LocalizationHelper().localizeButtonText(perkName);
   }
 
   /// 获取技能描述
   String _getPerkDescription(String perkName) {
-    const perkDescriptions = {
-      'boxer': '徒手攻击伤害+1',
-      'martial artist': '徒手攻击伤害+2',
-      'unarmed master': '徒手攻击伤害+3',
-      'barbarian': '所有攻击伤害+1',
-      'slow metabolism': '食物消耗减半',
-      'desert rat': '水消耗减半',
-      'evasive': '被击中几率-10%',
-      'precise': '命中率+10%',
-      'scout': '遭遇敌人几率-10%',
-    };
-    return perkDescriptions[perkName] ?? '未知技能';
+    return LocalizationHelper().localizeEventText('${perkName}_desc');
   }
 }

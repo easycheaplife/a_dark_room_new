@@ -245,7 +245,8 @@ class StateManager with ChangeNotifier {
       if (kDebugMode) {
         Logger.info('⚠️ StateManager: stores值不能为负数，将 $path 从 $value 设置为 0');
       }
-      // 重新设置为0
+      // 重新设置为0，确保类型一致性
+      final zeroValue = value is int ? 0 : 0.0;
       if (lastPart.contains('[') && lastPart.contains(']')) {
         int startBracket = lastPart.indexOf('[');
         int endBracket = lastPart.indexOf(']');
@@ -256,9 +257,9 @@ class StateManager with ChangeNotifier {
         if (current[objName] == null) {
           current[objName] = {};
         }
-        current[objName][key] = 0;
+        current[objName][key] = zeroValue;
       } else {
-        current[lastPart] = 0;
+        current[lastPart] = zeroValue;
       }
     }
 
@@ -304,7 +305,14 @@ class StateManager with ChangeNotifier {
   // 一次添加多个值
   void addM(String path, Map<String, dynamic> values, [bool noNotify = false]) {
     for (String key in values.keys) {
-      add('$path.$key', values[key], true);
+      final value = values[key];
+      // 确保数值类型一致性 - 将所有数值转换为int（原游戏使用整数）
+      if (value is num && value != value.toInt()) {
+        // 如果是小数，四舍五入到最近的整数
+        add('$path.$key', value.round(), true);
+      } else {
+        add('$path.$key', value, true);
+      }
     }
 
     if (!noNotify) {

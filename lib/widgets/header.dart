@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../core/engine.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
+import '../core/localization_helper.dart';
 import '../modules/room.dart';
 import '../modules/outside.dart';
 import '../modules/path.dart';
@@ -49,7 +50,7 @@ class Header extends StatelessWidget {
         if (_isPathUnlocked(stateManager)) {
           tabs.add(_buildTab(
             context,
-            '漫漫尘途',
+            LocalizationHelper().localizeMenuText('path'),
             activeModuleName == 'Path',
             onTap: () => _navigateToModule(context, 'Path'),
           ));
@@ -62,7 +63,7 @@ class Header extends StatelessWidget {
         if (_isFabricatorUnlocked(stateManager)) {
           tabs.add(_buildTab(
             context,
-            '嗡嗡作响的制造器',
+            LocalizationHelper().localizeMenuText('humming fabricator'),
             activeModuleName == 'Fabricator',
             onTap: () => _navigateToModule(context, 'Fabricator'),
           ));
@@ -72,7 +73,7 @@ class Header extends StatelessWidget {
         if (_isShipUnlocked(stateManager)) {
           tabs.add(_buildTab(
             context,
-            '飞船',
+            LocalizationHelper().localizeMenuText('ship'),
             activeModuleName == 'Ship',
             onTap: () => _navigateToModule(context, 'Ship'),
           ));
@@ -92,6 +93,54 @@ class Header extends StatelessWidget {
               // 右侧空间填充
               const Spacer(),
 
+              // 语言切换按钮
+              Container(
+                margin: const EdgeInsets.only(right: 5),
+                child: PopupMenuButton<String>(
+                  onSelected: (String language) =>
+                      _switchLanguage(context, language),
+                  icon: const Icon(
+                    Icons.language,
+                    color: Colors.black,
+                    size: 20,
+                  ),
+                  tooltip: LocalizationHelper().localizeMenuText('language'),
+                  itemBuilder: (BuildContext context) {
+                    // 只支持中文和英文
+                    final supportedLanguages = {
+                      'zh': '中文',
+                      'en': 'English',
+                    };
+
+                    return supportedLanguages.entries.map((entry) {
+                      return PopupMenuItem<String>(
+                        value: entry.key,
+                        child: Row(
+                          children: [
+                            Text(
+                              entry.value,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight:
+                                    entry.key == localization.currentLanguage
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                              ),
+                            ),
+                            if (entry.key == localization.currentLanguage)
+                              const Padding(
+                                padding: EdgeInsets.only(left: 8),
+                                child: Icon(Icons.check,
+                                    color: Colors.green, size: 16),
+                              ),
+                          ],
+                        ),
+                      );
+                    }).toList();
+                  },
+                ),
+              ),
+
               // 导入/导出按钮
               Container(
                 margin: const EdgeInsets.only(right: 5),
@@ -102,7 +151,8 @@ class Header extends StatelessWidget {
                     color: Colors.black,
                     size: 20,
                   ),
-                  tooltip: '导入/导出存档',
+                  tooltip:
+                      LocalizationHelper().localizeMenuText('import/export'),
                 ),
               ),
 
@@ -116,7 +166,7 @@ class Header extends StatelessWidget {
                     color: Colors.black,
                     size: 20,
                   ),
-                  tooltip: '游戏设置',
+                  tooltip: LocalizationHelper().localizeMenuText('settings'),
                 ),
               ),
             ],
@@ -167,6 +217,12 @@ class Header extends StatelessWidget {
     );
   }
 
+  // 切换语言
+  void _switchLanguage(BuildContext context, String language) {
+    final localization = Provider.of<Localization>(context, listen: false);
+    localization.switchLanguage(language);
+  }
+
   // 检查森林是否解锁
   bool _isOutsideUnlocked(StateManager stateManager) {
     return stateManager.get('features.location.outside') == true;
@@ -195,7 +251,9 @@ class Header extends StatelessWidget {
   // 获取房间标题（根据火焰状态）
   String _getRoomTitle(StateManager stateManager) {
     final fireValue = stateManager.get('game.fire.value', true) ?? 0;
-    return fireValue < 2 ? '小黑屋' : '生火间';
+    return fireValue < 2
+        ? LocalizationHelper().localizeMenuText('dark room')
+        : LocalizationHelper().localizeMenuText('lit room');
   }
 
   // 获取外部区域标题（根据小屋数量）
@@ -204,17 +262,17 @@ class Header extends StatelessWidget {
         (stateManager.get('game.buildings["hut"]', true) ?? 0) as int;
 
     if (numHuts == 0) {
-      return "静谧森林";
+      return LocalizationHelper().localizeMenuText("quiet forest");
     } else if (numHuts == 1) {
-      return "孤独小屋";
+      return LocalizationHelper().localizeMenuText("lonely hut");
     } else if (numHuts <= 4) {
-      return "小型村落";
+      return LocalizationHelper().localizeMenuText("small village");
     } else if (numHuts <= 8) {
-      return "中型村落";
+      return LocalizationHelper().localizeMenuText("medium village");
     } else if (numHuts <= 14) {
-      return "大型村落";
+      return LocalizationHelper().localizeMenuText("large village");
     } else {
-      return "喧嚣小镇";
+      return LocalizationHelper().localizeMenuText("bustling town");
     }
   }
 

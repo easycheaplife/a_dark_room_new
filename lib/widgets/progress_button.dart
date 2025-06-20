@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../core/localization_helper.dart';
 
 /// 带进度条的按钮组件
 class ProgressButton extends StatefulWidget {
@@ -145,7 +146,7 @@ class _ProgressButtonState extends State<ProgressButton>
                       // 按钮文本
                       Flexible(
                         child: Text(
-                          widget.text,
+                          LocalizationHelper().localizeButtonText(widget.text),
                           style: TextStyle(
                             color: isDisabled ? Colors.grey[600] : Colors.black,
                             fontSize: 11,
@@ -188,7 +189,9 @@ class _ProgressButtonState extends State<ProgressButton>
                         const SizedBox(height: 1),
                         Flexible(
                           child: Text(
-                            '(免费)',
+                            LocalizationHelper().currentLanguage == 'zh'
+                                ? '(免费)'
+                                : '(free)',
                             style: TextStyle(
                               color: isDisabled
                                   ? Colors.grey[600]

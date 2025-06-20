@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../modules/outside.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
+import '../core/localization_helper.dart';
 import '../widgets/progress_button.dart';
 
 /// 外部界面 - 显示村庄状态、建筑和工人管理
@@ -69,21 +70,29 @@ class OutsideScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 伐木按钮
-        ProgressButton(
-          text: '伐木',
-          onPressed: () => outside.gatherWood(),
-          width: 100,
-          progressDuration: 1000, // 1秒收集时间
+        Consumer<Localization>(
+          builder: (context, localization, child) {
+            return ProgressButton(
+              text: LocalizationHelper().localizeButtonText('gather wood'),
+              onPressed: () => outside.gatherWood(),
+              width: 100,
+              progressDuration: 1000, // 1秒收集时间
+            );
+          },
         ),
 
         // 如果有陷阱，显示检查陷阱按钮
         if (numTraps > 0) ...[
           const SizedBox(height: 10), // 垂直间距
-          ProgressButton(
-            text: '查看陷阱',
-            onPressed: () => outside.checkTraps(),
-            width: 100,
-            progressDuration: 1500, // 1.5秒检查时间
+          Consumer<Localization>(
+            builder: (context, localization, child) {
+              return ProgressButton(
+                text: LocalizationHelper().localizeButtonText('check traps'),
+                onPressed: () => outside.checkTraps(),
+                width: 100,
+                progressDuration: 1500, // 1.5秒检查时间
+              );
+            },
           ),
         ],
       ],
@@ -125,12 +134,27 @@ class OutsideScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 工人管理按钮
-          _buildWorkerButton('伐木者', 'gatherer', outside, stateManager),
-          _buildWorkerButton('猎人', 'hunter', outside, stateManager),
-          _buildWorkerButton('陷阱师', 'trapper', outside, stateManager),
-          _buildWorkerButton('制革工', 'tanner', outside, stateManager),
-          _buildWorkerButton('熏肉师', 'charcutier', outside, stateManager),
-          _buildWorkerButton('制钢工', 'steelworker', outside, stateManager),
+          _buildWorkerButton(
+              LocalizationHelper().localizeButtonText('gatherer'),
+              'gatherer',
+              outside,
+              stateManager),
+          _buildWorkerButton(LocalizationHelper().localizeButtonText('hunter'),
+              'hunter', outside, stateManager),
+          _buildWorkerButton(LocalizationHelper().localizeButtonText('trapper'),
+              'trapper', outside, stateManager),
+          _buildWorkerButton(LocalizationHelper().localizeButtonText('tanner'),
+              'tanner', outside, stateManager),
+          _buildWorkerButton(
+              LocalizationHelper().localizeButtonText('charcutier'),
+              'charcutier',
+              outside,
+              stateManager),
+          _buildWorkerButton(
+              LocalizationHelper().localizeButtonText('steelworker'),
+              'steelworker',
+              outside,
+              stateManager),
         ],
       ),
     );
@@ -354,7 +378,8 @@ class OutsideScreen extends StatelessWidget {
         final totalRate = currentWorkers * rate;
 
         if (totalRate != 0) {
-          final resourceName = _getLocalizedResourceName(resource);
+          final resourceName =
+              LocalizationHelper().localizeButtonText(resource);
           final prefix = totalRate > 0 ? '+' : '';
           effects.add(
               '${totalRate > 0 ? '生产' : '消耗'}: $prefix${totalRate.toStringAsFixed(1)} $resourceName 每$delay秒');
@@ -367,35 +392,6 @@ class OutsideScreen extends StatelessWidget {
     }
 
     return effects.join('\n');
-  }
-
-  // 获取本地化资源名称
-  String _getLocalizedResourceName(String resourceKey) {
-    const resourceNames = {
-      'wood': '木材',
-      'fur': '毛皮',
-      'meat': '肉类',
-      'bait': '诱饵',
-      'leather': '皮革',
-      'cured meat': '熏肉',
-      'iron': '铁',
-      'coal': '煤炭',
-      'sulphur': '硫磺',
-      'steel': '钢铁',
-      'bullets': '子弹',
-      'cloth': '布料',
-      'teeth': '牙齿',
-      'scales': '鳞片',
-      'bone': '骨头',
-      'alien alloy': '外星合金',
-      'energy cell': '能量电池',
-      'torch': '火把',
-      'waterskin': '水壶',
-      'cask': '水桶',
-      'water tank': '水罐',
-      'compass': '指南针',
-    };
-    return resourceNames[resourceKey] ?? resourceKey;
   }
 
   // 库存容器 - 模拟原游戏的 storesContainer，支持折叠显示
@@ -476,9 +472,9 @@ class _StoresWidgetState extends State<_StoresWidget> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text(
-                            '库存',
-                            style: TextStyle(
+                          Text(
+                            LocalizationHelper().localizeMenuText('库存'),
+                            style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
                               fontFamily: 'Times New Roman',
@@ -560,37 +556,7 @@ class _StoresWidgetState extends State<_StoresWidget> {
 
   // 获取本地化资源名称
   String _getLocalizedResourceName(String resourceKey) {
-    const resourceNames = {
-      'wood': '木材',
-      'fur': '毛皮',
-      'meat': '肉类',
-      'bait': '诱饵',
-      'leather': '皮革',
-      'cured meat': '熏肉',
-      'iron': '铁',
-      'coal': '煤炭',
-      'sulphur': '硫磺',
-      'steel': '钢铁',
-      'bullets': '子弹',
-      'cloth': '布料',
-      'teeth': '牙齿',
-      'scales': '鳞片',
-      'bone': '骨头',
-      'alien alloy': '外星合金',
-      'energy cell': '能量电池',
-      'torch': '火把',
-      'waterskin': '水壶',
-      'cask': '水桶',
-      'water tank': '水罐',
-      'compass': '指南针',
-      'charm': '护身符',
-      'rucksack': '双肩包',
-      'l armour': '皮甲',
-      'i armour': '铁甲',
-      's armour': '钢甲',
-      'medicine': '药品',
-    };
-    return resourceNames[resourceKey] ?? resourceKey;
+    return LocalizationHelper().localizeButtonText(resourceKey);
   }
 
   // 获取资源的收入信息
