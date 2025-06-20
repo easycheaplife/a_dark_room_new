@@ -1016,10 +1016,11 @@ class Events extends ChangeNotifier {
   /// 获取物品显示名称 - 用于通知
   String _getItemDisplayName(String itemName) {
     final localization = Localization();
-    final translatedName = localization.translate('resources.$itemName');
+    // 使用新的翻译逻辑，它会自动尝试所有类别
+    final translatedName = localization.translate(itemName);
 
     // 如果翻译存在且不等于原键名，返回翻译
-    if (translatedName != 'resources.$itemName') {
+    if (translatedName != itemName) {
       return translatedName;
     }
 

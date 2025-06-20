@@ -111,23 +111,55 @@ class Localization with ChangeNotifier {
 
   // Translate a string with support for nested keys
   String translate(String key, [List<dynamic>? args]) {
-    dynamic translation = _getNestedValue(key);
+    // Try different translation categories
+    List<String> categories = [
+      'ui',
+      'buildings',
+      'crafting',
+      'world.crafting',
+      'resources',
+      'workers',
+      'weapons',
+      'skills',
+      'events',
+      'messages'
+    ];
 
-    // If translation is not found or not a string, return the key
-    if (translation == null || translation is! String) {
-      return key;
-    }
+    for (String category in categories) {
+      String fullKey = '$category.$key';
+      dynamic value = _getNestedValue(fullKey);
 
-    String result = translation;
+      if (value != null && value is String) {
+        String result = value;
 
-    // Replace placeholders with arguments
-    if (args != null && args.isNotEmpty) {
-      for (int i = 0; i < args.length; i++) {
-        result = result.replaceAll('{$i}', args[i].toString());
+        // Replace placeholders with arguments
+        if (args != null && args.isNotEmpty) {
+          for (int i = 0; i < args.length; i++) {
+            result = result.replaceAll('{$i}', args[i].toString());
+          }
+        }
+
+        return result;
       }
     }
 
-    return result;
+    // Try direct key lookup
+    dynamic directValue = _getNestedValue(key);
+    if (directValue != null && directValue is String) {
+      String result = directValue;
+
+      // Replace placeholders with arguments
+      if (args != null && args.isNotEmpty) {
+        for (int i = 0; i < args.length; i++) {
+          result = result.replaceAll('{$i}', args[i].toString());
+        }
+      }
+
+      return result;
+    }
+
+    // Return the key itself if no translation found
+    return key;
   }
 
   // Get nested value from translations using dot notation

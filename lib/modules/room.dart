@@ -1156,21 +1156,11 @@ class Room with ChangeNotifier {
   String getLocalizedName(String itemName) {
     final localization = Localization();
 
-    // 首先尝试建筑物翻译
-    String translatedName = localization.translate('buildings.$itemName');
-    if (translatedName != 'buildings.$itemName') {
-      return translatedName;
-    }
+    // 直接使用新的翻译逻辑，它会自动尝试所有类别
+    String translatedName = localization.translate(itemName);
 
-    // 然后尝试制作物品翻译
-    translatedName = localization.translate('crafting.$itemName');
-    if (translatedName != 'crafting.$itemName') {
-      return translatedName;
-    }
-
-    // 最后尝试资源翻译
-    translatedName = localization.translate('resources.$itemName');
-    if (translatedName != 'resources.$itemName') {
+    // 如果翻译成功（不等于原名称），返回翻译
+    if (translatedName != itemName) {
       return translatedName;
     }
 

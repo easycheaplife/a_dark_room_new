@@ -416,8 +416,9 @@ class RoomScreen extends StatelessWidget {
   // 获取本地化资源名称
   String _getLocalizedResourceName(String resourceKey) {
     final localization = Localization();
-    String localizedName = localization.translate('resources.$resourceKey');
-    if (localizedName == 'resources.$resourceKey') {
+    // 使用新的翻译逻辑，它会自动尝试所有类别
+    String localizedName = localization.translate(resourceKey);
+    if (localizedName == resourceKey) {
       // 如果没有找到翻译，使用原名称
       return resourceKey;
     }
