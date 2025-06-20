@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/localization.dart';
-import '../core/localization_helper.dart';
 
 /// 游戏按钮组件 - 模拟原游戏的按钮样式
 class GameButton extends StatefulWidget {
@@ -76,7 +75,8 @@ class _GameButtonState extends State<GameButton> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              _getLocalizedResourceName(entry.key),
+                              _getLocalizedResourceName(
+                                  entry.key, localization),
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 14,
@@ -153,9 +153,7 @@ class _GameButtonState extends State<GameButton> {
                   if (widget.cost!.isNotEmpty) ...[
                     const SizedBox(height: 4),
                     Text(
-                      LocalizationHelper().currentLanguage == 'zh'
-                          ? '所需资源：'
-                          : 'Required:',
+                      '所需资源：',
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 12,
@@ -167,7 +165,8 @@ class _GameButtonState extends State<GameButton> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              _getLocalizedResourceName(entry.key),
+                              _getLocalizedResourceName(
+                                  entry.key, localization),
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 12,
@@ -197,38 +196,14 @@ class _GameButtonState extends State<GameButton> {
   }
 
   // 获取本地化资源名称
-  String _getLocalizedResourceName(String resourceKey) {
-    const resourceNames = {
-      'wood': '木材',
-      'fur': '毛皮',
-      'meat': '肉类',
-      'bait': '诱饵',
-      'leather': '皮革',
-      'cured meat': '熏肉',
-      'iron': '铁',
-      'coal': '煤炭',
-      'sulphur': '硫磺',
-      'steel': '钢铁',
-      'bullets': '子弹',
-      'cloth': '布料',
-      'teeth': '牙齿',
-      'scales': '鳞片',
-      'bone': '骨头',
-      'alien alloy': '外星合金',
-      'energy cell': '能量电池',
-      'torch': '火把',
-      'waterskin': '水壶',
-      'cask': '水桶',
-      'water tank': '水罐',
-      'compass': '指南针',
-      'charm': '护身符',
-      'rucksack': '双肩包',
-      'l armour': '皮甲',
-      'i armour': '铁甲',
-      's armour': '钢甲',
-      'medicine': '药品',
-    };
-    return resourceNames[resourceKey] ?? resourceKey;
+  String _getLocalizedResourceName(
+      String resourceKey, Localization localization) {
+    String localizedName = localization.translate('resources.$resourceKey');
+    if (localizedName == 'resources.$resourceKey') {
+      // 如果没有找到翻译，使用原名称
+      return resourceKey;
+    }
+    return localizedName;
   }
 
   @override
@@ -275,7 +250,7 @@ class _GameButtonState extends State<GameButton> {
                     ),
                   ),
                   child: Text(
-                    LocalizationHelper().localizeButtonText(widget.text),
+                    widget.text,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: widget.disabled

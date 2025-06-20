@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../core/engine.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
-import '../core/localization_helper.dart';
 import '../modules/room.dart';
 import '../modules/outside.dart';
 import '../modules/path.dart';
@@ -30,7 +29,7 @@ class Header extends StatelessWidget {
         // Room tab - 总是显示，根据火焰状态显示不同标题
         tabs.add(_buildTab(
           context,
-          _getRoomTitle(stateManager),
+          _getRoomTitle(stateManager, localization),
           activeModuleName == 'Room',
           onTap: () => _navigateToModule(context, 'Room'),
           isFirst: true, // 第一个页签
@@ -40,7 +39,7 @@ class Header extends StatelessWidget {
         if (_isOutsideUnlocked(stateManager)) {
           tabs.add(_buildTab(
             context,
-            _getOutsideTitle(stateManager),
+            _getOutsideTitle(stateManager, localization),
             activeModuleName == 'Outside',
             onTap: () => _navigateToModule(context, 'Outside'),
           ));
@@ -50,7 +49,7 @@ class Header extends StatelessWidget {
         if (_isPathUnlocked(stateManager)) {
           tabs.add(_buildTab(
             context,
-            LocalizationHelper().localizeMenuText('path'),
+            localization.translate('ui.menus.path'),
             activeModuleName == 'Path',
             onTap: () => _navigateToModule(context, 'Path'),
           ));
@@ -63,7 +62,7 @@ class Header extends StatelessWidget {
         if (_isFabricatorUnlocked(stateManager)) {
           tabs.add(_buildTab(
             context,
-            LocalizationHelper().localizeMenuText('humming fabricator'),
+            localization.translate('ui.menus.fabricator'),
             activeModuleName == 'Fabricator',
             onTap: () => _navigateToModule(context, 'Fabricator'),
           ));
@@ -73,7 +72,7 @@ class Header extends StatelessWidget {
         if (_isShipUnlocked(stateManager)) {
           tabs.add(_buildTab(
             context,
-            LocalizationHelper().localizeMenuText('ship'),
+            localization.translate('ui.menus.ship'),
             activeModuleName == 'Ship',
             onTap: () => _navigateToModule(context, 'Ship'),
           ));
@@ -104,7 +103,7 @@ class Header extends StatelessWidget {
                     color: Colors.black,
                     size: 20,
                   ),
-                  tooltip: LocalizationHelper().localizeMenuText('language'),
+                  tooltip: localization.translate('ui.menus.language'),
                   itemBuilder: (BuildContext context) {
                     // 只支持中文和英文
                     final supportedLanguages = {
@@ -151,8 +150,7 @@ class Header extends StatelessWidget {
                     color: Colors.black,
                     size: 20,
                   ),
-                  tooltip:
-                      LocalizationHelper().localizeMenuText('import/export'),
+                  tooltip: localization.translate('ui.menus.import_export'),
                 ),
               ),
 
@@ -166,7 +164,7 @@ class Header extends StatelessWidget {
                     color: Colors.black,
                     size: 20,
                   ),
-                  tooltip: LocalizationHelper().localizeMenuText('settings'),
+                  tooltip: localization.translate('ui.menus.settings'),
                 ),
               ),
             ],
@@ -249,30 +247,31 @@ class Header extends StatelessWidget {
   }
 
   // 获取房间标题（根据火焰状态）
-  String _getRoomTitle(StateManager stateManager) {
+  String _getRoomTitle(StateManager stateManager, Localization localization) {
     final fireValue = stateManager.get('game.fire.value', true) ?? 0;
     return fireValue < 2
-        ? LocalizationHelper().localizeMenuText('dark room')
-        : LocalizationHelper().localizeMenuText('lit room');
+        ? localization.translate('ui.titles.dark_room')
+        : localization.translate('ui.titles.lit_room');
   }
 
   // 获取外部区域标题（根据小屋数量）
-  String _getOutsideTitle(StateManager stateManager) {
+  String _getOutsideTitle(
+      StateManager stateManager, Localization localization) {
     final numHuts =
         (stateManager.get('game.buildings["hut"]', true) ?? 0) as int;
 
     if (numHuts == 0) {
-      return LocalizationHelper().localizeMenuText("quiet forest");
+      return localization.translate("ui.titles.quiet_forest");
     } else if (numHuts == 1) {
-      return LocalizationHelper().localizeMenuText("lonely hut");
+      return localization.translate("ui.titles.lonely_hut");
     } else if (numHuts <= 4) {
-      return LocalizationHelper().localizeMenuText("small village");
+      return localization.translate("ui.titles.small_village");
     } else if (numHuts <= 8) {
-      return LocalizationHelper().localizeMenuText("medium village");
+      return localization.translate("ui.titles.medium_village");
     } else if (numHuts <= 14) {
-      return LocalizationHelper().localizeMenuText("large village");
+      return localization.translate("ui.titles.large_village");
     } else {
-      return LocalizationHelper().localizeMenuText("bustling town");
+      return localization.translate("ui.titles.bustling_town");
     }
   }
 

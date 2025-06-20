@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../modules/outside.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
-import '../core/localization_helper.dart';
 import '../widgets/progress_button.dart';
 
 /// 外部界面 - 显示村庄状态、建筑和工人管理
@@ -73,7 +72,7 @@ class OutsideScreen extends StatelessWidget {
         Consumer<Localization>(
           builder: (context, localization, child) {
             return ProgressButton(
-              text: LocalizationHelper().localizeButtonText('gather wood'),
+              text: localization.translate('ui.buttons.gather_wood'),
               onPressed: () => outside.gatherWood(),
               width: 100,
               progressDuration: 1000, // 1秒收集时间
@@ -87,7 +86,7 @@ class OutsideScreen extends StatelessWidget {
           Consumer<Localization>(
             builder: (context, localization, child) {
               return ProgressButton(
-                text: LocalizationHelper().localizeButtonText('check traps'),
+                text: localization.translate('ui.buttons.check_traps'),
                 onPressed: () => outside.checkTraps(),
                 width: 100,
                 progressDuration: 1500, // 1.5秒检查时间
@@ -134,27 +133,12 @@ class OutsideScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 工人管理按钮
-          _buildWorkerButton(
-              LocalizationHelper().localizeButtonText('gatherer'),
-              'gatherer',
-              outside,
-              stateManager),
-          _buildWorkerButton(LocalizationHelper().localizeButtonText('hunter'),
-              'hunter', outside, stateManager),
-          _buildWorkerButton(LocalizationHelper().localizeButtonText('trapper'),
-              'trapper', outside, stateManager),
-          _buildWorkerButton(LocalizationHelper().localizeButtonText('tanner'),
-              'tanner', outside, stateManager),
-          _buildWorkerButton(
-              LocalizationHelper().localizeButtonText('charcutier'),
-              'charcutier',
-              outside,
-              stateManager),
-          _buildWorkerButton(
-              LocalizationHelper().localizeButtonText('steelworker'),
-              'steelworker',
-              outside,
-              stateManager),
+          _buildWorkerButton('代木者', 'gatherer', outside, stateManager),
+          _buildWorkerButton('猎人', 'hunter', outside, stateManager),
+          _buildWorkerButton('陷阱师', 'trapper', outside, stateManager),
+          _buildWorkerButton('制革工', 'tanner', outside, stateManager),
+          _buildWorkerButton('熏肉师', 'charcutier', outside, stateManager),
+          _buildWorkerButton('钢铁工', 'steelworker', outside, stateManager),
         ],
       ),
     );
@@ -378,8 +362,7 @@ class OutsideScreen extends StatelessWidget {
         final totalRate = currentWorkers * rate;
 
         if (totalRate != 0) {
-          final resourceName =
-              LocalizationHelper().localizeButtonText(resource);
+          final resourceName = resource;
           final prefix = totalRate > 0 ? '+' : '';
           effects.add(
               '${totalRate > 0 ? '生产' : '消耗'}: $prefix${totalRate.toStringAsFixed(1)} $resourceName 每$delay秒');
@@ -473,7 +456,7 @@ class _StoresWidgetState extends State<_StoresWidget> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            LocalizationHelper().localizeMenuText('库存'),
+                            '库存',
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -556,7 +539,13 @@ class _StoresWidgetState extends State<_StoresWidget> {
 
   // 获取本地化资源名称
   String _getLocalizedResourceName(String resourceKey) {
-    return LocalizationHelper().localizeButtonText(resourceKey);
+    String localizedName =
+        widget.localization.translate('resources.$resourceKey');
+    if (localizedName == 'resources.$resourceKey') {
+      // 如果没有找到翻译，使用原名称
+      return resourceKey;
+    }
+    return localizedName;
   }
 
   // 获取资源的收入信息

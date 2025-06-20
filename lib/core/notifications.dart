@@ -62,7 +62,31 @@ class NotificationManager with ChangeNotifier {
     try {
       final localization = Localization();
 
-      // 定义通知消息的本地化映射
+      // 检查是否是组合消息格式（如 "notifications.the_room_is temperature.cold"）
+      if (message.contains(' ')) {
+        final parts = message.split(' ');
+        if (parts.length == 2) {
+          final prefix = parts[0];
+          final suffix = parts[1];
+
+          // 尝试翻译每个部分
+          String translatedPrefix = localization.translate(prefix);
+          String translatedSuffix = localization.translate(suffix);
+
+          // 如果翻译成功，组合结果
+          if (translatedPrefix != prefix && translatedSuffix != suffix) {
+            return '$translatedPrefix$translatedSuffix';
+          }
+        }
+      }
+
+      // 尝试直接翻译整个消息
+      String directTranslation = localization.translate(message);
+      if (directTranslation != message) {
+        return directTranslation;
+      }
+
+      // 定义通知消息的本地化映射（作为后备）
       final notificationMessages = {
         'zh': {
           // 房间相关

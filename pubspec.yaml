@@ -31,7 +31,8 @@ flutter:
   assets:
     - assets/audio/
     - assets/images/
-    - assets/lang/
+    - assets/lang/zh.json
+    - assets/lang/en.json
 
 # 暂时注释掉字体配置，直到我们有字体文件
 #  fonts:

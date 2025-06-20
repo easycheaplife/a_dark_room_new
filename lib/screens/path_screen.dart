@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../modules/path.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
-import '../core/localization_helper.dart';
 import '../widgets/game_button.dart';
 import '../core/logger.dart';
 
@@ -72,7 +71,7 @@ class PathScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 2),
                   width: 300, // 设置宽度以容纳完整的标题行
                   child: Text(
-                    '供应:——背包剩余空间: ${path.getFreeSpace().floor()}/${path.getCapacity()}',
+                    '${localization.translate('messages.supply')}:——${localization.translate('messages.backpack')}${localization.translate('messages.space')}: ${path.getFreeSpace().floor()}/${path.getCapacity()}',
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 16,
@@ -86,17 +85,17 @@ class PathScreen extends StatelessWidget {
               const SizedBox(height: 10),
 
               // 护甲行
-              _buildArmourRow(stateManager),
+              _buildArmourRow(stateManager, localization),
 
               const SizedBox(height: 10),
 
               // 水行
-              _buildWaterRow(stateManager),
+              _buildWaterRow(stateManager, localization),
 
               const SizedBox(height: 10),
 
               // 装备物品列表
-              ..._buildOutfitItems(path, stateManager),
+              ..._buildOutfitItems(path, stateManager, localization),
             ],
           ),
         ],
@@ -105,23 +104,23 @@ class PathScreen extends StatelessWidget {
   }
 
   /// 构建护甲行
-  Widget _buildArmourRow(StateManager stateManager) {
-    String armour = LocalizationHelper().localizeButtonText("none");
+  Widget _buildArmourRow(StateManager stateManager, Localization localization) {
+    String armour = localization.translate('ui.status.none');
     if ((stateManager.get('stores["kinetic armour"]', true) ?? 0) > 0) {
-      armour = LocalizationHelper().localizeButtonText("kinetic");
+      armour = localization.translate('ui.status.kinetic');
     } else if ((stateManager.get('stores["s armour"]', true) ?? 0) > 0) {
-      armour = LocalizationHelper().localizeButtonText("steel");
+      armour = localization.translate('ui.status.steel');
     } else if ((stateManager.get('stores["i armour"]', true) ?? 0) > 0) {
-      armour = LocalizationHelper().localizeButtonText("iron");
+      armour = localization.translate('ui.status.iron');
     } else if ((stateManager.get('stores["l armour"]', true) ?? 0) > 0) {
-      armour = LocalizationHelper().localizeButtonText("leather");
+      armour = localization.translate('ui.status.leather');
     }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          LocalizationHelper().localizeButtonText('armour'),
+          localization.translate('resources.armour'),
           style: const TextStyle(
             color: Colors.black,
             fontSize: 16,
@@ -141,7 +140,7 @@ class PathScreen extends StatelessWidget {
   }
 
   /// 构建水行
-  Widget _buildWaterRow(StateManager stateManager) {
+  Widget _buildWaterRow(StateManager stateManager, Localization localization) {
     // 这里应该从World模块获取最大水量，暂时使用固定值
     final maxWater = 10;
 
@@ -149,7 +148,7 @@ class PathScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          LocalizationHelper().localizeButtonText('water'),
+          localization.translate('resources.water'),
           style: const TextStyle(
             color: Colors.black,
             fontSize: 16,
@@ -169,33 +168,22 @@ class PathScreen extends StatelessWidget {
   }
 
   /// 构建装备物品列表
-  List<Widget> _buildOutfitItems(Path path, StateManager stateManager) {
+  List<Widget> _buildOutfitItems(
+      Path path, StateManager stateManager, Localization localization) {
     final List<Widget> items = [];
 
     // 可携带物品配置 - 基于原游戏的carryable对象
     final carryableItems = {
-      'cured meat': {
-        'type': 'tool',
-        'desc': LocalizationHelper().localizeEventText('恢复 2 生命值')
-      },
-      'bullets': {
-        'type': 'tool',
-        'desc': LocalizationHelper().localizeEventText('配合步枪使用')
-      },
+      'cured meat': {'type': 'tool', 'desc_key': 'messages.restores_2_health'},
+      'bullets': {'type': 'tool', 'desc_key': 'messages.for_use_with_rifle'},
       'grenade': {'type': 'weapon'},
       'bolas': {'type': 'weapon'},
       'laser rifle': {'type': 'weapon'},
-      'energy cell': {
-        'type': 'tool',
-        'desc': LocalizationHelper().localizeEventText('发出柔和的红光')
-      },
+      'energy cell': {'type': 'tool', 'desc_key': 'messages.glows_softly_red'},
       'bayonet': {'type': 'weapon'},
       'charm': {'type': 'tool'},
       'alien alloy': {'type': 'tool'},
-      'medicine': {
-        'type': 'tool',
-        'desc': LocalizationHelper().localizeEventText('恢复 20 生命值')
-      },
+      'medicine': {'type': 'tool', 'desc_key': 'messages.restores_20_health'},
       // 从Room.Craftables添加
       'bone spear': {'type': 'weapon'},
       'iron sword': {'type': 'weapon'},
@@ -211,8 +199,8 @@ class PathScreen extends StatelessWidget {
 
       if (have > 0 &&
           (itemConfig['type'] == 'tool' || itemConfig['type'] == 'weapon')) {
-        items.add(_buildOutfitRow(
-            itemName, equipped, have, itemConfig, path, stateManager));
+        items.add(_buildOutfitRow(itemName, equipped, have, itemConfig, path,
+            stateManager, localization));
       }
     }
 
@@ -220,14 +208,20 @@ class PathScreen extends StatelessWidget {
   }
 
   /// 构建装备行
-  Widget _buildOutfitRow(String itemName, int equipped, int available,
-      Map<String, dynamic> config, Path path, StateManager stateManager) {
-    final localizedName = _getLocalizedItemName(itemName);
+  Widget _buildOutfitRow(
+      String itemName,
+      int equipped,
+      int available,
+      Map<String, dynamic> config,
+      Path path,
+      StateManager stateManager,
+      Localization localization) {
+    final localizedName = _getLocalizedItemName(itemName, localization);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       child: Tooltip(
-        message: _getItemTooltip(itemName, config),
+        message: _getItemTooltip(itemName, config, localization),
         child: Row(
           children: [
             // 物品名称
@@ -365,22 +359,24 @@ class PathScreen extends StatelessWidget {
   }
 
   /// 获取本地化物品名称
-  String _getLocalizedItemName(String itemName) {
-    return LocalizationHelper().localizeButtonText(itemName);
+  String _getLocalizedItemName(String itemName, Localization localization) {
+    return localization.translate('resources.$itemName');
   }
 
   /// 获取物品提示信息
-  String _getItemTooltip(String itemName, Map<String, dynamic> config) {
+  String _getItemTooltip(
+      String itemName, Map<String, dynamic> config, Localization localization) {
     final List<String> tooltipLines = [];
 
     if (config['type'] == 'weapon') {
       // 这里应该从World模块获取伤害值，暂时使用固定值
-      tooltipLines.add('伤害: 1');
-    } else if (config['desc'] != null) {
-      tooltipLines.add(config['desc']);
+      tooltipLines.add('${localization.translate('ui.status.damage')}: 1');
+    } else if (config['desc_key'] != null) {
+      tooltipLines.add(localization.translate(config['desc_key']));
     }
 
-    tooltipLines.add('重量: ${Path().getWeight(itemName)}');
+    tooltipLines.add(
+        '${localization.translate('ui.status.weight')}: ${Path().getWeight(itemName)}');
 
     return tooltipLines.join('\n');
   }
@@ -393,10 +389,10 @@ class PathScreen extends StatelessWidget {
 
     return Tooltip(
       message: canEmbark
-          ? LocalizationHelper().localizeEventText('前往世界地图')
-          : LocalizationHelper().localizeEventText('需要携带熏肉才能出发'),
+          ? localization.translate('messages.go_to_world_map')
+          : localization.translate('messages.need_cured_meat_to_embark'),
       child: GameButton(
-        text: LocalizationHelper().localizeButtonText('embark'),
+        text: localization.translate('ui.buttons.embark'),
         onPressed: canEmbark
             ? () {
                 Logger.info('🎯 PathScreen: 出发按钮被点击');
@@ -437,7 +433,7 @@ class PathScreen extends StatelessWidget {
                   color: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 2),
                   child: Text(
-                    LocalizationHelper().localizeMenuText('技能'),
+                    localization.translate('ui.menus.skills'),
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 16,
@@ -450,7 +446,7 @@ class PathScreen extends StatelessWidget {
               const SizedBox(height: 10),
 
               // 技能列表
-              ..._buildPerksList(perks as Map<String, dynamic>),
+              ..._buildPerksList(perks as Map<String, dynamic>, localization),
             ],
           ),
         ],
@@ -459,7 +455,8 @@ class PathScreen extends StatelessWidget {
   }
 
   /// 构建技能列表
-  List<Widget> _buildPerksList(Map<String, dynamic> perks) {
+  List<Widget> _buildPerksList(
+      Map<String, dynamic> perks, Localization localization) {
     final List<Widget> perkWidgets = [];
 
     for (final entry in perks.entries) {
@@ -471,9 +468,9 @@ class PathScreen extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(bottom: 5),
             child: Tooltip(
-              message: _getPerkDescription(perkName),
+              message: _getPerkDescription(perkName, localization),
               child: Text(
-                _getLocalizedPerkName(perkName),
+                _getLocalizedPerkName(perkName, localization),
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 14,
@@ -490,12 +487,12 @@ class PathScreen extends StatelessWidget {
   }
 
   /// 获取本地化技能名称
-  String _getLocalizedPerkName(String perkName) {
-    return LocalizationHelper().localizeButtonText(perkName);
+  String _getLocalizedPerkName(String perkName, Localization localization) {
+    return localization.translate('skills.$perkName');
   }
 
   /// 获取技能描述
-  String _getPerkDescription(String perkName) {
-    return LocalizationHelper().localizeEventText('${perkName}_desc');
+  String _getPerkDescription(String perkName, Localization localization) {
+    return localization.translate('skill_descriptions.$perkName');
   }
 }

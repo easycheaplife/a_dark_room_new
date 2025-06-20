@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../modules/room.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
-import '../core/localization_helper.dart';
 import '../widgets/game_button.dart';
 import '../widgets/progress_button.dart';
 
@@ -78,7 +77,7 @@ class RoomScreen extends StatelessWidget {
     if (fireValue == Room.fireEnum['Dead']!['value']) {
       // 火焰熄灭 - 显示点火按钮
       return ProgressButton(
-        text: LocalizationHelper().localizeButtonText('light fire'),
+        text: '点火',
         onPressed: () => room.lightFire(),
         cost: isFree ? null : {'wood': 5},
         width: 80,
@@ -89,7 +88,7 @@ class RoomScreen extends StatelessWidget {
     } else {
       // 火焰燃烧 - 显示添柴按钮
       return ProgressButton(
-        text: LocalizationHelper().localizeButtonText('stoke fire'),
+        text: '添柴',
         onPressed: () => room.stokeFire(),
         cost: isFree ? null : {'wood': 1},
         width: 80,
@@ -261,7 +260,7 @@ class RoomScreen extends StatelessWidget {
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 2),
               child: Text(
-                LocalizationHelper().localizeMenuText('库存'),
+                '库存',
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 16,
@@ -335,7 +334,7 @@ class RoomScreen extends StatelessWidget {
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 2),
               child: Text(
-                LocalizationHelper().localizeMenuText('武器'),
+                '武器',
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 16,
@@ -392,12 +391,24 @@ class RoomScreen extends StatelessWidget {
 
   // 获取本地化资源名称
   String _getLocalizedResourceName(String resourceKey) {
-    return LocalizationHelper().localizeButtonText(resourceKey);
+    final localization = Localization();
+    String localizedName = localization.translate('resources.$resourceKey');
+    if (localizedName == 'resources.$resourceKey') {
+      // 如果没有找到翻译，使用原名称
+      return resourceKey;
+    }
+    return localizedName;
   }
 
   // 获取本地化武器名称
   String _getLocalizedWeaponName(String weaponKey) {
-    return LocalizationHelper().localizeButtonText(weaponKey);
+    final localization = Localization();
+    String localizedName = localization.translate('resources.$weaponKey');
+    if (localizedName == 'resources.$weaponKey') {
+      // 如果没有找到翻译，使用原名称
+      return weaponKey;
+    }
+    return localizedName;
   }
 
   // 构建可制作物品按钮
@@ -451,9 +462,9 @@ class RoomScreen extends StatelessWidget {
     String? disabledReason;
     if (!isEnabled) {
       if (hasReachedMaximum) {
-        disabledReason = LocalizationHelper().localizeEventText('已达到最大数量限制');
+        disabledReason = '已达到最大数量限制';
       } else if (!canAfford) {
-        disabledReason = LocalizationHelper().localizeEventText('资源不足');
+        disabledReason = '资源不足';
       }
     }
 
@@ -507,9 +518,9 @@ class RoomScreen extends StatelessWidget {
     String? disabledReason;
     if (!isEnabled) {
       if (hasReachedMaximum) {
-        disabledReason = LocalizationHelper().localizeEventText('已达到最大数量限制');
+        disabledReason = '已达到最大数量限制';
       } else if (!canAfford) {
-        disabledReason = LocalizationHelper().localizeEventText('资源不足');
+        disabledReason = '资源不足';
       }
     }
 

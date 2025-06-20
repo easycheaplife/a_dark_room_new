@@ -112,8 +112,9 @@ class _GameScreenState extends State<GameScreen> {
   void initState() {
     super.initState();
 
-    // Initialize the game engine
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Initialize the localization and game engine
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Localization().init();
       Engine().init();
     });
   }
