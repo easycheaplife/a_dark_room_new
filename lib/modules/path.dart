@@ -3,6 +3,7 @@ import 'dart:math';
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/engine.dart';
+import '../core/localization.dart';
 import 'room.dart';
 import 'world.dart';
 import '../core/logger.dart';
@@ -259,7 +260,8 @@ class Path extends ChangeNotifier {
 
   /// 出发到世界地图
   void embark() {
-    Logger.info('🚀 Path.embark() 被调用');
+    final localization = Localization();
+    Logger.info('🚀 Path.embark() ${localization.translateLog('called')}');
     final sm = StateManager();
 
     try {
@@ -285,9 +287,9 @@ class Path extends ChangeNotifier {
       for (final entry in outfit.entries) {
         sm.set('outfit["${entry.key}"]', entry.value);
       }
-      Logger.info('🎒 装备状态已保存到StateManager');
+      Logger.info('🎒 ${localization.translateLog('equipment_status_saved')}');
 
-      Logger.info('🌍 初始化World模块...');
+      Logger.info('🌍 ${localization.translateLog('initializing_world_module')}...');
       // 初始化World模块
       World().init();
 

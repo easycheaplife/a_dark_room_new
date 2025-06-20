@@ -229,7 +229,8 @@ class _EventsScreenState extends State<EventsScreen> {
   /// 处理按钮点击
   void _handleButtonPress(
       Events events, String buttonKey, Map<String, dynamic> buttonConfig) {
-    Logger.info('🎮 事件按钮点击: $buttonKey');
+    final localization = Localization();
+    Logger.info('🎮 ${localization.translateLog('event_button_clicked')}: $buttonKey');
 
     // 使用事件系统的统一按钮处理逻辑
     events.handleButtonClick(buttonKey, buttonConfig);

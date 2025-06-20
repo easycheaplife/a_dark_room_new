@@ -395,7 +395,7 @@ class PathScreen extends StatelessWidget {
         text: localization.translate('ui.buttons.embark'),
         onPressed: canEmbark
             ? () {
-                Logger.info('🎯 PathScreen: 出发按钮被点击');
+                Logger.info('🎯 PathScreen: ${localization.translateLog('embark_button_clicked')}');
                 path.embark();
               }
             : null,

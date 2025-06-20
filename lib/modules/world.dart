@@ -165,22 +165,22 @@ class World extends ChangeNotifier {
 
   /// 初始化世界模块
   void init([Map<String, dynamic>? options]) {
-    Logger.info('World.init() 开始');
+    final localization = Localization();
+    Logger.info('World.init() ${localization.translateLog('start')}');
     if (options != null) {
       this.options = {...this.options, ...options};
     }
 
     final sm = StateManager();
 
-    Logger.info('设置地形概率...');
+    Logger.info(localization.translateLog('setting_terrain_probabilities'));
     // 设置地形概率，总和必须等于1
     tileProbs[tile['forest']!] = 0.15;
     tileProbs[tile['field']!] = 0.35;
     tileProbs[tile['barrens']!] = 0.5;
-    Logger.info('地形概率设置完成');
+    Logger.info(localization.translateLog('terrain_probabilities_set'));
 
     // 地标定义
-    final localization = Localization();
     landmarks[tile['outpost']!] = {
       'num': 0,
       'minRadius': 0,
@@ -284,12 +284,12 @@ class World extends ChangeNotifier {
       };
     }
 
-    Logger.info('🌍 初始化世界状态...');
+    Logger.info('🌍 ${localization.translateLog('initializing_world_state')}...');
     // 初始化世界状态
     final worldFeature = sm.get('features.location.world', true);
     final worldData = sm.get('game.world', true);
-    Logger.info('🌍 检查世界功能状态: $worldFeature');
-    Logger.info('🌍 检查世界数据状态: $worldData');
+    Logger.info('🌍 ${localization.translateLog('checking_world_function_status')}: $worldFeature');
+    Logger.info('🌍 ${localization.translateLog('checking_world_data_status')}: $worldData');
 
     // 如果世界功能未解锁或者世界数据不存在，则生成新地图
     if (worldFeature == null || worldData == null || worldData is! Map) {

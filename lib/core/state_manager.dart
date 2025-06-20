@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'logger.dart';
+import 'localization.dart';
 
 /// StateManager (SM) 是游戏的中央状态管理系统
 /// 它替代了原始游戏中的 JavaScript $SM 对象
@@ -362,7 +363,8 @@ class StateManager with ChangeNotifier {
       // 如果时间到了，收集收入
       if (income['timeLeft'] <= 0) {
         if (kDebugMode) {
-          Logger.info('🏭 收集来自 $source 的收入');
+          final localization = Localization();
+          Logger.info('🏭 ${localization.translateLog('collecting_income_from')} $source ${localization.translateLog('income_suffix')}');
         }
 
         // 检查是否有足够的资源（对于消耗型工人）
@@ -377,7 +379,8 @@ class StateManager with ChangeNotifier {
               if (have + cost < 0) {
                 canProduce = false;
                 if (kDebugMode) {
-                  Logger.error('⚠️ $source 缺少 $store 资源，无法生产');
+                  final localization = Localization();
+                  Logger.error('⚠️ $source ${localization.translateLog('lacks')} $store ${localization.translateLog('resources_cannot_produce')}');
                 }
                 break;
               }

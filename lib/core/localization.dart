@@ -162,6 +162,11 @@ class Localization with ChangeNotifier {
     return key;
   }
 
+  // Translate log messages using the logs category
+  String translateLog(String logKey, [List<dynamic>? args]) {
+    return translate('logs.$logKey', args);
+  }
+
   // Get nested value from translations using dot notation
   dynamic _getNestedValue(String key) {
     List<String> keys = key.split('.');
