@@ -74,7 +74,8 @@ class Localization with ChangeNotifier {
 
     try {
       // Load translations from asset file
-      String jsonString = await rootBundle.loadString('assets/lang/$language.json');
+      String jsonString =
+          await rootBundle.loadString('assets/lang/$language.json');
       Map<String, dynamic> jsonMap = json.decode(jsonString);
 
       // Store the full JSON structure

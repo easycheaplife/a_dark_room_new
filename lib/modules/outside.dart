@@ -34,52 +34,52 @@ class Outside extends ChangeNotifier {
   // 收入配置
   static const Map<String, Map<String, dynamic>> _income = {
     'gatherer': {
-      'name': '采集者',
+      'name': 'gatherer',
       'delay': 10,
       'stores': {'wood': 1}
     },
     'hunter': {
-      'name': '猎人',
+      'name': 'hunter',
       'delay': 10,
       'stores': {'fur': 0.5, 'meat': 0.5}
     },
     'trapper': {
-      'name': '陷阱师',
+      'name': 'trapper',
       'delay': 10,
       'stores': {'meat': -1, 'bait': 1}
     },
     'tanner': {
-      'name': '皮革师',
+      'name': 'tanner',
       'delay': 10,
       'stores': {'fur': -5, 'leather': 1}
     },
     'charcutier': {
-      'name': '熏肉师',
+      'name': 'charcutier',
       'delay': 10,
       'stores': {'meat': -5, 'wood': -5, 'cured meat': 1}
     },
     'iron miner': {
-      'name': '铁矿工',
+      'name': 'iron_miner',
       'delay': 10,
       'stores': {'cured meat': -1, 'iron': 1}
     },
     'coal miner': {
-      'name': '煤矿工',
+      'name': 'coal_miner',
       'delay': 10,
       'stores': {'cured meat': -1, 'coal': 1}
     },
     'sulphur miner': {
-      'name': '硫磺矿工',
+      'name': 'sulphur_miner',
       'delay': 10,
       'stores': {'cured meat': -1, 'sulphur': 1}
     },
     'steelworker': {
-      'name': '钢铁工',
+      'name': 'steelworker',
       'delay': 10,
       'stores': {'iron': -1, 'coal': -1, 'steel': 1}
     },
     'armourer': {
-      'name': '军械师',
+      'name': 'armourer',
       'delay': 10,
       'stores': {'steel': -1, 'sulphur': -1, 'bullets': 1}
     }
@@ -87,12 +87,12 @@ class Outside extends ChangeNotifier {
 
   // 陷阱掉落物配置
   static const List<Map<String, dynamic>> trapDrops = [
-    {'rollUnder': 0.5, 'name': 'fur', 'message': '毛皮碎片'},
-    {'rollUnder': 0.75, 'name': 'meat', 'message': '肉块'},
-    {'rollUnder': 0.85, 'name': 'scales', 'message': '奇怪的鳞片'},
-    {'rollUnder': 0.93, 'name': 'teeth', 'message': '散落的牙齿'},
-    {'rollUnder': 0.995, 'name': 'cloth', 'message': '破烂的布料'},
-    {'rollUnder': 1.0, 'name': 'charm', 'message': '粗制的护身符'}
+    {'rollUnder': 0.5, 'name': 'fur', 'message': 'some_fur'},
+    {'rollUnder': 0.75, 'name': 'meat', 'message': 'some_meat'},
+    {'rollUnder': 0.85, 'name': 'scales', 'message': 'some_scales'},
+    {'rollUnder': 0.93, 'name': 'teeth', 'message': 'some_teeth'},
+    {'rollUnder': 0.995, 'name': 'cloth', 'message': 'some_cloth'},
+    {'rollUnder': 1.0, 'name': 'charm', 'message': 'a_charm'}
   ];
 
   // 状态变量
@@ -427,19 +427,20 @@ class Outside extends ChangeNotifier {
   String getTitle() {
     final sm = StateManager();
     final numHuts = (sm.get('game.buildings["hut"]', true) ?? 0) as int;
+    final localization = Localization();
 
     if (numHuts == 0) {
-      return "静谧森林";
+      return localization.translate('ui.titles.quiet_forest');
     } else if (numHuts == 1) {
-      return "孤独小屋";
+      return localization.translate('ui.titles.lonely_hut');
     } else if (numHuts <= 4) {
-      return "小型村落";
+      return localization.translate('ui.titles.small_village');
     } else if (numHuts <= 8) {
-      return "中型村落";
+      return localization.translate('ui.titles.medium_village');
     } else if (numHuts <= 14) {
-      return "大型村落";
+      return localization.translate('ui.titles.large_village');
     } else {
-      return "喧嚣小镇";
+      return localization.translate('ui.titles.bustling_town');
     }
   }
 
@@ -449,7 +450,9 @@ class Outside extends ChangeNotifier {
     setTitle();
 
     if (sm.get('game.outside.seenForest', true) != true) {
-      NotificationManager().notify(name, "天空是灰色的，风无情地吹着");
+      final localization = Localization();
+      NotificationManager().notify(name,
+          localization.translate('game_states.dry_brush_and_dead_branches'));
       sm.set('game.outside.seenForest', true);
     }
 

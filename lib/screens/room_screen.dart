@@ -73,30 +73,34 @@ class RoomScreen extends StatelessWidget {
     final wood = stateManager.get('stores.wood', true) ?? 0;
     final bool isFree = wood == 0;
 
-    // 根据原始游戏逻辑：火焰熄灭时显示点火按钮，否则显示添柴按钮
-    if (fireValue == Room.fireEnum['Dead']!['value']) {
-      // 火焰熄灭 - 显示点火按钮
-      return ProgressButton(
-        text: '点火',
-        onPressed: () => room.lightFire(),
-        cost: isFree ? null : {'wood': 5},
-        width: 80,
-        free: isFree,
-        showCost: true, // 显示成本信息，与原游戏一致
-        progressDuration: 10000, // 10秒点火时间，与原游戏一致
-      );
-    } else {
-      // 火焰燃烧 - 显示添柴按钮
-      return ProgressButton(
-        text: '添柴',
-        onPressed: () => room.stokeFire(),
-        cost: isFree ? null : {'wood': 1},
-        width: 80,
-        free: isFree,
-        showCost: true, // 显示成本信息，与原游戏一致
-        progressDuration: 10000, // 10秒添柴冷却时间，与原游戏一致
-      );
-    }
+    return Consumer<Localization>(
+      builder: (context, localization, child) {
+        // 根据原始游戏逻辑：火焰熄灭时显示点火按钮，否则显示添柴按钮
+        if (fireValue == Room.fireEnum['Dead']!['value']) {
+          // 火焰熄灭 - 显示点火按钮
+          return ProgressButton(
+            text: localization.translate('ui.buttons.light_fire'),
+            onPressed: () => room.lightFire(),
+            cost: isFree ? null : {'wood': 5},
+            width: 80,
+            free: isFree,
+            showCost: true, // 显示成本信息，与原游戏一致
+            progressDuration: 10000, // 10秒点火时间，与原游戏一致
+          );
+        } else {
+          // 火焰燃烧 - 显示添柴按钮
+          return ProgressButton(
+            text: localization.translate('ui.buttons.stoke_fire'),
+            onPressed: () => room.stokeFire(),
+            cost: isFree ? null : {'wood': 1},
+            width: 80,
+            free: isFree,
+            showCost: true, // 显示成本信息，与原游戏一致
+            progressDuration: 10000, // 10秒添柴冷却时间，与原游戏一致
+          );
+        }
+      },
+    );
   }
 
   // 建筑按钮区域
@@ -108,30 +112,34 @@ class RoomScreen extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return SizedBox(
-      width: 140,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题 - 模拟原游戏的 data-legend 属性
-          const Text(
-            '建造:',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 16,
-              fontFamily: 'Times New Roman',
-            ),
+    return Consumer<Localization>(
+      builder: (context, localization, child) {
+        return SizedBox(
+          width: 140,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 标题 - 模拟原游戏的 data-legend 属性
+              Text(
+                '${localization.translate('ui.buttons.build')}:',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
+
+              const SizedBox(height: 5),
+
+              // 建筑按钮列表
+              ...room.craftables.entries
+                  .where((entry) => entry.value['type'] == 'building')
+                  .map((entry) => _buildCraftableButton(
+                      entry.key, entry.value, room, stateManager)),
+            ],
           ),
-
-          const SizedBox(height: 5),
-
-          // 建筑按钮列表
-          ...room.craftables.entries
-              .where((entry) => entry.value['type'] == 'building')
-              .map((entry) => _buildCraftableButton(
-                  entry.key, entry.value, room, stateManager)),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -145,30 +153,34 @@ class RoomScreen extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return SizedBox(
-      width: 140,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题 - 模拟原游戏的 data-legend 属性
-          const Text(
-            '制作:',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 16,
-              fontFamily: 'Times New Roman',
-            ),
+    return Consumer<Localization>(
+      builder: (context, localization, child) {
+        return SizedBox(
+          width: 140,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 标题 - 模拟原游戏的 data-legend 属性
+              Text(
+                '${localization.translate('ui.buttons.craft')}:',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
+
+              const SizedBox(height: 5),
+
+              // 制作按钮列表 - 只显示需要工坊的物品
+              ...room.craftables.entries
+                  .where((entry) => room.needsWorkshop(entry.value['type']))
+                  .map((entry) => _buildCraftableButton(
+                      entry.key, entry.value, room, stateManager)),
+            ],
           ),
-
-          const SizedBox(height: 5),
-
-          // 制作按钮列表 - 只显示需要工坊的物品
-          ...room.craftables.entries
-              .where((entry) => room.needsWorkshop(entry.value['type']))
-              .map((entry) => _buildCraftableButton(
-                  entry.key, entry.value, room, stateManager)),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -182,28 +194,32 @@ class RoomScreen extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return SizedBox(
-      width: 140,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题 - 模拟原游戏的 data-legend 属性
-          const Text(
-            '购买:',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 16,
-              fontFamily: 'Times New Roman',
-            ),
+    return Consumer<Localization>(
+      builder: (context, localization, child) {
+        return SizedBox(
+          width: 140,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 标题 - 模拟原游戏的 data-legend 属性
+              Text(
+                '${localization.translate('ui.buttons.buy')}:',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
+
+              const SizedBox(height: 5),
+
+              // 购买按钮列表
+              ...room.tradeGoods.entries.map((entry) => _buildTradeButton(
+                  entry.key, entry.value, room, stateManager)),
+            ],
           ),
-
-          const SizedBox(height: 5),
-
-          // 购买按钮列表
-          ...room.tradeGoods.entries.map((entry) =>
-              _buildTradeButton(entry.key, entry.value, room, stateManager)),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -259,13 +275,17 @@ class RoomScreen extends StatelessWidget {
             child: Container(
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: Text(
-                '库存',
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontFamily: 'Times New Roman',
-                ),
+              child: Consumer<Localization>(
+                builder: (context, localization, child) {
+                  return Text(
+                    localization.translate('ui.menus.stores'),
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontFamily: 'Times New Roman',
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -333,13 +353,17 @@ class RoomScreen extends StatelessWidget {
             child: Container(
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: Text(
-                '武器',
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontFamily: 'Times New Roman',
-                ),
+              child: Consumer<Localization>(
+                builder: (context, localization, child) {
+                  return Text(
+                    localization.translate('ui.menus.weapons'),
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontFamily: 'Times New Roman',
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -461,10 +485,12 @@ class RoomScreen extends StatelessWidget {
     // 生成禁用原因
     String? disabledReason;
     if (!isEnabled) {
+      final localization = Localization();
       if (hasReachedMaximum) {
-        disabledReason = '已达到最大数量限制';
+        disabledReason = localization.translate('messages.maximum_reached');
       } else if (!canAfford) {
-        disabledReason = '资源不足';
+        disabledReason =
+            localization.translate('messages.not_enough_resources');
       }
     }
 
@@ -517,10 +543,12 @@ class RoomScreen extends StatelessWidget {
     // 生成禁用原因
     String? disabledReason;
     if (!isEnabled) {
+      final localization = Localization();
       if (hasReachedMaximum) {
-        disabledReason = '已达到最大数量限制';
+        disabledReason = localization.translate('messages.maximum_reached');
       } else if (!canAfford) {
-        disabledReason = '资源不足';
+        disabledReason =
+            localization.translate('messages.not_enough_resources');
       }
     }
 

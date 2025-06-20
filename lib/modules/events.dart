@@ -4,6 +4,7 @@ import 'dart:math';
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/engine.dart';
+import '../core/localization.dart';
 import 'path.dart';
 import 'world.dart';
 import 'setpieces.dart';
@@ -1014,40 +1015,16 @@ class Events extends ChangeNotifier {
 
   /// 获取物品显示名称 - 用于通知
   String _getItemDisplayName(String itemName) {
-    switch (itemName) {
-      case 'fur':
-        return '毛皮';
-      case 'meat':
-        return '肉';
-      case 'scales':
-        return '鳞片';
-      case 'teeth':
-        return '牙齿';
-      case 'cloth':
-        return '布料';
-      case 'leather':
-        return '皮革';
-      case 'iron':
-        return '铁';
-      case 'coal':
-        return '煤炭';
-      case 'steel':
-        return '钢铁';
-      case 'sulphur':
-        return '硫磺';
-      case 'energy cell':
-        return '能量电池';
-      case 'bullets':
-        return '子弹';
-      case 'medicine':
-        return '药物';
-      case 'cured meat':
-        return '熏肉';
-      case 'rifle':
-        return '步枪';
-      default:
-        return itemName;
+    final localization = Localization();
+    final translatedName = localization.translate('resources.$itemName');
+
+    // 如果翻译存在且不等于原键名，返回翻译
+    if (translatedName != 'resources.$itemName') {
+      return translatedName;
     }
+
+    // 否则返回原名称
+    return itemName;
   }
 
   /// 吃肉

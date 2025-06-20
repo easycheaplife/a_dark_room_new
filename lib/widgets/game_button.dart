@@ -153,7 +153,7 @@ class _GameButtonState extends State<GameButton> {
                   if (widget.cost!.isNotEmpty) ...[
                     const SizedBox(height: 4),
                     Text(
-                      '所需资源：',
+                      '${localization.translate('ui.tooltip.required_resources')}：',
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 12,

@@ -73,9 +73,18 @@ class NotificationManager with ChangeNotifier {
           String translatedPrefix = localization.translate(prefix);
           String translatedSuffix = localization.translate(suffix);
 
-          // 如果翻译成功，组合结果
+          // 如果两个部分都翻译成功，组合结果（中文不需要空格）
           if (translatedPrefix != prefix && translatedSuffix != suffix) {
             return '$translatedPrefix$translatedSuffix';
+          }
+
+          // 如果只有一个部分翻译成功，也尝试组合
+          if (translatedPrefix != prefix || translatedSuffix != suffix) {
+            // 对于中文，不添加空格；对于英文，添加空格
+            final currentLang = localization.currentLanguage;
+            return currentLang == 'zh'
+                ? '$translatedPrefix$translatedSuffix'
+                : '$translatedPrefix $translatedSuffix';
           }
         }
       }

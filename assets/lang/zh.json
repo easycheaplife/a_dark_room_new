@@ -92,6 +92,9 @@
       "leather": "皮革",
       "damage": "伤害",
       "weight": "重量"
+    },
+    "tooltip": {
+      "required_resources": "所需资源"
     }
   },
   "resources": {
@@ -137,15 +140,19 @@
   },
   "buildings": {
     "trap": "陷阱",
+    "baited_trap": "有饵陷阱",
     "cart": "手推车",
     "hut": "小屋",
     "lodge": "狩猎小屋",
-    "trading_post": "贸易站",
+    "trading post": "贸易站",
     "tannery": "制革屋",
     "smokehouse": "熏肉房",
     "workshop": "工坊",
     "steelworks": "炼钢坊",
-    "armoury": "军械库"
+    "armoury": "军械库",
+    "iron mine": "铁矿",
+    "coal mine": "煤矿",
+    "sulphur mine": "硫磺矿"
   },
   "workers": {
     "gatherer": "代木者",
@@ -253,7 +260,12 @@
   },
   "notifications": {
     "the_room_is": "房间",
-    "the_fire_is": "火焰"
+    "the_fire_is": "火焰",
+    "nothing_in_traps": "陷阱里什么都没有",
+    "traps_yield": "陷阱里有{0}"
+  },
+  "formats": {
+    "and": "和"
   },
   "temperature": {
     "freezing": "冰冷",
@@ -293,5 +305,114 @@
     "检查世界功能状态": "检查世界功能状态",
     "检查世界数据状态": "检查世界数据状态",
     "可以出发": "可以出发"
+  },
+  "worker_info": {
+    "produces": "生产",
+    "consumes": "消耗",
+    "every": "每",
+    "seconds": "秒",
+    "no_production": "当前无生产/消耗",
+    "total": "总计"
+  },
+  "world": {
+    "title": "荒芜世界",
+    "wanderer": "流浪者",
+    "map_not_initialized": "地图未初始化",
+    "map_data_empty": "地图数据为空",
+    "map_render_error": "地图渲染错误",
+    "terrain": {
+      "forest": "森林",
+      "field": "田野",
+      "barrens": "荒地",
+      "road": "道路",
+      "village": "村庄",
+      "old_house": "旧房子",
+      "damp_cave": "潮湿洞穴",
+      "abandoned_town": "废弃小镇",
+      "ruined_city": "废墟城市",
+      "outpost": "前哨站",
+      "crashed_starship": "坠毁星舰",
+      "iron_mine": "铁矿",
+      "coal_mine": "煤矿",
+      "sulphur_mine": "硫磺矿",
+      "borehole": "钻孔",
+      "battlefield": "战场",
+      "dark_swamp": "阴暗沼泽",
+      "destroyed_village": "被摧毁的村庄",
+      "destroyed_starship": "被摧毁的战舰",
+      "unknown_terrain": "未知地形"
+    },
+    "landmarks": {
+      "outpost": "前哨站",
+      "iron_mine": "铁矿",
+      "coal_mine": "煤矿",
+      "sulphur_mine": "硫磺矿",
+      "old_house": "旧房子",
+      "damp_cave": "潮湿洞穴",
+      "abandoned_town": "废弃小镇",
+      "ruined_city": "废墟城市",
+      "crashed_starship": "坠毁星舰",
+      "borehole": "钻孔",
+      "battlefield": "战场",
+      "dark_swamp": "阴暗沼泽",
+      "destroyed_starship": "被摧毁的战舰",
+      "destroyed_village": "被摧毁的村庄"
+    },
+    "status": {
+      "health": "生命值",
+      "distance": "距离"
+    },
+    "bagspace": {
+      "backpack": "背包",
+      "pocket": "口袋",
+      "remaining": "剩余",
+      "water": "水",
+      "cured_meat": "熏肉"
+    },
+    "movement": {
+      "forest_to_field": "树木让位给干草。泛黄的灌木在风中沙沙作响。",
+      "forest_to_barrens": "树木消失了。干裂的土地和飞扬的尘土是糟糕的替代品。",
+      "field_to_forest": "树木在地平线上隐约可见。草地逐渐让位给满是干枝和落叶的森林地面。",
+      "field_to_barrens": "草地变稀薄。很快，只剩下尘土。",
+      "barrens_to_field": "荒地在一片垂死的草海中断裂，在干燥的微风中摇摆。",
+      "barrens_to_forest": "一堵扭曲的树墙从尘土中升起。它们的枝条扭曲成头顶的骨架状树冠。"
+    },
+    "notifications": {
+      "compass_points_east": "指南针指向东方",
+      "you_are_dead": "你已经死了，无法移动",
+      "dangerous_far_from_village": "离村庄这么远而没有适当保护是危险的",
+      "safer_here": "这里更安全",
+      "world_fades": "世界渐渐消失了",
+      "returned_to_dark_room": "返回小黑屋"
+    },
+    "weapons": {
+      "punch": "拳击",
+      "stab": "刺击",
+      "slash": "挥砍",
+      "strike": "斩击",
+      "thrust": "突刺",
+      "shoot": "射击",
+      "laser": "激光",
+      "throw": "投掷",
+      "entangle": "缠绕",
+      "disintegrate": "分解",
+      "slice": "切割",
+      "stun": "眩晕"
+    },
+    "crafting": {
+      "torch": "火把",
+      "waterskin": "水壶",
+      "cask": "水桶",
+      "water tank": "水罐",
+      "rucksack": "双肩包",
+      "wagon": "马车",
+      "convoy": "车队",
+      "bone spear": "骨枪",
+      "iron sword": "铁剑",
+      "steel sword": "钢剑",
+      "rifle": "步枪",
+      "leather armor": "皮甲",
+      "iron armor": "铁甲"
+    }
   }
 }

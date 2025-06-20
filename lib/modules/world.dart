@@ -5,6 +5,7 @@ import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/engine.dart';
 import '../core/logger.dart';
+import '../core/localization.dart';
 import 'path.dart';
 import 'events.dart';
 import 'setpieces.dart';
@@ -24,7 +25,7 @@ class World extends ChangeNotifier {
   World._internal();
 
   // 模块名称
-  final String name = "世界";
+  String get name => Localization().translate('world.title');
 
   // 常量
   static const int radius = 30;
@@ -80,54 +81,64 @@ class World extends ChangeNotifier {
 
   // 武器配置
   static const Map<String, Map<String, dynamic>> weapons = {
-    'fists': {'verb': '拳击', 'type': 'unarmed', 'damage': 1, 'cooldown': 2},
-    'bone spear': {'verb': '刺击', 'type': 'melee', 'damage': 2, 'cooldown': 2},
-    'iron sword': {'verb': '挥砍', 'type': 'melee', 'damage': 4, 'cooldown': 2},
-    'steel sword': {'verb': '斩击', 'type': 'melee', 'damage': 6, 'cooldown': 2},
-    'bayonet': {'verb': '突刺', 'type': 'melee', 'damage': 8, 'cooldown': 2},
+    'fists': {'verb': 'punch', 'type': 'unarmed', 'damage': 1, 'cooldown': 2},
+    'bone spear': {'verb': 'stab', 'type': 'melee', 'damage': 2, 'cooldown': 2},
+    'iron sword': {
+      'verb': 'slash',
+      'type': 'melee',
+      'damage': 4,
+      'cooldown': 2
+    },
+    'steel sword': {
+      'verb': 'strike',
+      'type': 'melee',
+      'damage': 6,
+      'cooldown': 2
+    },
+    'bayonet': {'verb': 'thrust', 'type': 'melee', 'damage': 8, 'cooldown': 2},
     'rifle': {
-      'verb': '射击',
+      'verb': 'shoot',
       'type': 'ranged',
       'damage': 5,
       'cooldown': 1,
       'cost': {'bullets': 1}
     },
     'laser rifle': {
-      'verb': '激光',
+      'verb': 'laser',
       'type': 'ranged',
       'damage': 8,
       'cooldown': 1,
       'cost': {'energy cell': 1}
     },
     'grenade': {
-      'verb': '投掷',
+      'verb': 'throw',
       'type': 'ranged',
       'damage': 15,
       'cooldown': 5,
       'cost': {'grenade': 1}
     },
     'bolas': {
-      'verb': '缠绕',
+      'verb': 'entangle',
       'type': 'ranged',
       'damage': 'stun',
       'cooldown': 15,
       'cost': {'bolas': 1}
     },
     'plasma rifle': {
-      'verb': '分解',
+      'verb': 'disintegrate',
       'type': 'ranged',
       'damage': 12,
       'cooldown': 1,
       'cost': {'energy cell': 1}
     },
     'energy blade': {
-      'verb': '切割',
+      'verb': 'slice',
       'type': 'melee',
       'damage': 10,
       'cooldown': 2
     },
     'disruptor': {
-      'verb': '眩晕',
+      'verb': 'stun',
       'type': 'ranged',
       'damage': 'stun',
       'cooldown': 15
@@ -150,7 +161,7 @@ class World extends ChangeNotifier {
   bool seenAll = false;
   Map<String, bool> usedOutposts = {};
   List<Map<String, int>> ship = [];
-  String dir = '东方';
+  String dir = 'east';
 
   /// 初始化世界模块
   void init([Map<String, dynamic>? options]) {
@@ -169,96 +180,97 @@ class World extends ChangeNotifier {
     Logger.info('地形概率设置完成');
 
     // 地标定义
+    final localization = Localization();
     landmarks[tile['outpost']!] = {
       'num': 0,
       'minRadius': 0,
       'maxRadius': 0,
       'scene': 'outpost',
-      'label': '前哨站'
+      'label': localization.translate('world.terrain.outpost')
     };
     landmarks[tile['ironMine']!] = {
       'num': 1,
       'minRadius': 5,
       'maxRadius': 5,
       'scene': 'ironmine',
-      'label': '铁矿'
+      'label': localization.translate('world.terrain.iron_mine')
     };
     landmarks[tile['coalMine']!] = {
       'num': 1,
       'minRadius': 10,
       'maxRadius': 10,
       'scene': 'coalmine',
-      'label': '煤矿'
+      'label': localization.translate('world.terrain.coal_mine')
     };
     landmarks[tile['sulphurMine']!] = {
       'num': 1,
       'minRadius': 20,
       'maxRadius': 20,
       'scene': 'sulphurmine',
-      'label': '硫磺矿'
+      'label': localization.translate('world.terrain.sulphur_mine')
     };
     landmarks[tile['house']!] = {
       'num': 10,
       'minRadius': 0,
       'maxRadius': (radius * 1.5).round(),
       'scene': 'house',
-      'label': '旧房子'
+      'label': localization.translate('world.terrain.old_house')
     };
     landmarks[tile['cave']!] = {
       'num': 5,
       'minRadius': 3,
       'maxRadius': 10,
       'scene': 'cave',
-      'label': '潮湿洞穴'
+      'label': localization.translate('world.terrain.damp_cave')
     };
     landmarks[tile['town']!] = {
       'num': 10,
       'minRadius': 10,
       'maxRadius': 20,
       'scene': 'town',
-      'label': '废弃小镇'
+      'label': localization.translate('world.terrain.abandoned_town')
     };
     landmarks[tile['city']!] = {
       'num': 20,
       'minRadius': 20,
       'maxRadius': (radius * 1.5).round(),
       'scene': 'city',
-      'label': '废墟城市'
+      'label': localization.translate('world.terrain.ruined_city')
     };
     landmarks[tile['ship']!] = {
       'num': 1,
       'minRadius': 28,
       'maxRadius': 28,
       'scene': 'ship',
-      'label': '坠毁星舰'
+      'label': localization.translate('world.terrain.crashed_starship')
     };
     landmarks[tile['borehole']!] = {
       'num': 10,
       'minRadius': 15,
       'maxRadius': (radius * 1.5).round(),
       'scene': 'borehole',
-      'label': '钻孔'
+      'label': localization.translate('world.terrain.borehole')
     };
     landmarks[tile['battlefield']!] = {
       'num': 5,
       'minRadius': 18,
       'maxRadius': (radius * 1.5).round(),
       'scene': 'battlefield',
-      'label': '战场'
+      'label': localization.translate('world.terrain.battlefield')
     };
     landmarks[tile['swamp']!] = {
       'num': 1,
       'minRadius': 15,
       'maxRadius': (radius * 1.5).round(),
       'scene': 'swamp',
-      'label': '阴暗沼泽'
+      'label': localization.translate('world.terrain.dark_swamp')
     };
     landmarks[tile['executioner']!] = {
       'num': 1,
       'minRadius': 28,
       'maxRadius': 28,
       'scene': 'executioner',
-      'label': '被摧毁的战舰'
+      'label': localization.translate('world.terrain.destroyed_starship')
     };
 
     // 只有在有声望数据时才添加缓存
@@ -268,7 +280,7 @@ class World extends ChangeNotifier {
         'minRadius': 10,
         'maxRadius': (radius * 1.5).round(),
         'scene': 'cache',
-        'label': '被摧毁的村庄'
+        'label': localization.translate('world.terrain.destroyed_village')
       };
     }
 
@@ -671,7 +683,9 @@ class World extends ChangeNotifier {
 
     // 检查是否死亡，死亡状态下不能移动
     if (dead) {
-      NotificationManager().notify(name, '你已经死了，无法移动');
+      final localization = Localization();
+      NotificationManager().notify(
+          name, localization.translate('world.notifications.you_are_dead'));
       Logger.error('move() - 玩家已死亡，无法移动');
       return;
     }
@@ -706,10 +720,15 @@ class World extends ChangeNotifier {
     // AudioEngine().playSound('footsteps_$randomFootstep');
 
     if (checkDanger()) {
+      final localization = Localization();
       if (danger) {
-        NotificationManager().notify(name, '离村庄这么远而没有适当保护是危险的');
+        NotificationManager().notify(
+            name,
+            localization
+                .translate('world.notifications.dangerous_far_from_village'));
       } else {
-        NotificationManager().notify(name, '这里更安全');
+        NotificationManager().notify(
+            name, localization.translate('world.notifications.safer_here'));
       }
     }
 
@@ -719,35 +738,36 @@ class World extends ChangeNotifier {
   /// 叙述移动
   void narrateMove(String oldTile, String newTile) {
     String? msg;
+    final localization = Localization();
 
     switch (oldTile) {
       case ';': // 森林
         switch (newTile) {
           case ',': // 田野
-            msg = "树木让位给干草。泛黄的灌木在风中沙沙作响。";
+            msg = localization.translate('world.movement.forest_to_field');
             break;
           case '.': // 荒地
-            msg = "树木消失了。干裂的土地和飞扬的尘土是糟糕的替代品。";
+            msg = localization.translate('world.movement.forest_to_barrens');
             break;
         }
         break;
       case ',': // 田野
         switch (newTile) {
           case ';': // 森林
-            msg = "树木在地平线上隐约可见。草地逐渐让位给满是干枝和落叶的森林地面。";
+            msg = localization.translate('world.movement.field_to_forest');
             break;
           case '.': // 荒地
-            msg = "草地变稀薄。很快，只剩下尘土。";
+            msg = localization.translate('world.movement.field_to_barrens');
             break;
         }
         break;
       case '.': // 荒地
         switch (newTile) {
           case ',': // 田野
-            msg = "荒地在一片垂死的草海中断裂，在干燥的微风中摇摆。";
+            msg = localization.translate('world.movement.barrens_to_field');
             break;
           case ';': // 森林
-            msg = "一堵扭曲的树墙从尘土中升起。它们的枝条扭曲成头顶的骨架状树冠。";
+            msg = localization.translate('world.movement.barrens_to_forest');
             break;
         }
         break;
@@ -802,6 +822,16 @@ class World extends ChangeNotifier {
   /// 获取伤害
   dynamic getDamage(String thing) {
     return weapons[thing]?['damage'];
+  }
+
+  /// 获取本地化的武器动词
+  String getWeaponVerb(String weaponName) {
+    final verbKey = weapons[weaponName]?['verb'];
+    if (verbKey != null) {
+      final localization = Localization();
+      return localization.translate('world.weapons.$verbKey');
+    }
+    return weaponName;
   }
 
   /// 处理空间事件 - 参考原游戏的doSpace函数
@@ -1367,7 +1397,9 @@ class World extends ChangeNotifier {
       Logger.info('💀 玩家死亡');
 
       // 显示死亡通知
-      NotificationManager().notify(name, '世界渐渐消失了');
+      final localization = Localization();
+      NotificationManager().notify(
+          name, localization.translate('world.notifications.world_fades'));
 
       // 清空世界状态和装备 - 参考原游戏逻辑
       state = null;
@@ -1498,47 +1530,49 @@ class World extends ChangeNotifier {
   /// 获取当前地形名称
   String getCurrentTerrainName() {
     final terrain = getTerrain();
+    final localization = Localization();
+
     switch (terrain) {
       case ';':
-        return '森林';
+        return localization.translate('world.terrain.forest');
       case ',':
-        return '田野';
+        return localization.translate('world.terrain.field');
       case '.':
-        return '荒地';
+        return localization.translate('world.terrain.barrens');
       case '#':
-        return '道路';
+        return localization.translate('world.terrain.road');
       case 'A':
-        return '村庄';
+        return localization.translate('world.terrain.village');
       case 'H':
-        return '旧房子';
+        return localization.translate('world.terrain.old_house');
       case 'V':
-        return '潮湿洞穴';
+        return localization.translate('world.terrain.damp_cave');
       case 'O':
-        return '废弃小镇';
+        return localization.translate('world.terrain.abandoned_town');
       case 'Y':
-        return '废墟城市';
+        return localization.translate('world.terrain.ruined_city');
       case 'P':
-        return '前哨站';
+        return localization.translate('world.terrain.outpost');
       case 'W':
-        return '坠毁星舰';
+        return localization.translate('world.terrain.crashed_starship');
       case 'I':
-        return '铁矿';
+        return localization.translate('world.terrain.iron_mine');
       case 'C':
-        return '煤矿';
+        return localization.translate('world.terrain.coal_mine');
       case 'S':
-        return '硫磺矿';
+        return localization.translate('world.terrain.sulphur_mine');
       case 'B':
-        return '钻孔';
+        return localization.translate('world.terrain.borehole');
       case 'F':
-        return '战场';
+        return localization.translate('world.terrain.battlefield');
       case 'M':
-        return '阴暗沼泽';
+        return localization.translate('world.terrain.dark_swamp');
       case 'U':
-        return '被摧毁的村庄';
+        return localization.translate('world.terrain.destroyed_village');
       case 'X':
-        return '被摧毁的战舰';
+        return localization.translate('world.terrain.destroyed_starship');
       default:
-        return '未知地形';
+        return localization.translate('world.terrain.unknown_terrain');
     }
   }
 

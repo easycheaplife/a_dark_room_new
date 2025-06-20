@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../modules/events.dart';
 import '../modules/path.dart';
 import '../core/state_manager.dart';
+import '../core/localization.dart';
 import '../widgets/game_button.dart';
 import '../core/logger.dart';
 
@@ -440,51 +441,15 @@ class _EventsScreenState extends State<EventsScreen> {
 
   /// 获取物品显示名称
   String _getItemDisplayName(String itemName) {
-    switch (itemName) {
-      case 'fur':
-        return '毛皮';
-      case 'meat':
-        return '肉';
-      case 'cured meat':
-        return '熏肉';
-      case 'scales':
-        return '鳞片';
-      case 'teeth':
-        return '牙齿';
-      case 'cloth':
-        return '布料';
-      case 'leather':
-        return '皮革';
-      case 'iron':
-        return '铁';
-      case 'steel':
-        return '钢';
-      case 'coal':
-        return '煤炭';
-      case 'sulphur':
-        return '硫磺';
-      case 'medicine':
-        return '药剂';
-      case 'bullets':
-        return '子弹';
-      case 'energy cell':
-        return '能量电池';
-      case 'laser rifle':
-        return '激光步枪';
-      case 'rifle':
-        return '步枪';
-      case 'bayonet':
-        return '刺刀';
-      case 'grenade':
-        return '手榴弹';
-      case 'bolas':
-        return '流星锤';
-      case 'alien alloy':
-        return '外星合金';
-      case 'charm':
-        return '护身符';
-      default:
-        return itemName;
+    final localization = Localization();
+    final translatedName = localization.translate('resources.$itemName');
+
+    // 如果翻译存在且不等于原键名，返回翻译
+    if (translatedName != 'resources.$itemName') {
+      return translatedName;
     }
+
+    // 否则返回原名称
+    return itemName;
   }
 }

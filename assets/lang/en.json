@@ -92,6 +92,9 @@
       "leather": "leather",
       "damage": "damage",
       "weight": "weight"
+    },
+    "tooltip": {
+      "required_resources": "required resources"
     }
   },
   "resources": {
@@ -144,15 +147,19 @@
   },
   "buildings": {
     "trap": "trap",
+    "baited_trap": "baited trap",
     "cart": "cart",
     "hut": "hut",
     "lodge": "lodge",
-    "trading_post": "trading post",
+    "trading post": "trading post",
     "tannery": "tannery",
     "smokehouse": "smokehouse",
     "workshop": "workshop",
     "steelworks": "steelworks",
-    "armoury": "armoury"
+    "armoury": "armoury",
+    "iron mine": "iron mine",
+    "coal mine": "coal mine",
+    "sulphur mine": "sulphur mine"
   },
   "workers": {
     "gatherer": "gatherer",
@@ -260,7 +267,12 @@
   },
   "notifications": {
     "the_room_is": "the room is",
-    "the_fire_is": "the fire is"
+    "the_fire_is": "the fire is",
+    "nothing_in_traps": "the traps contain nothing",
+    "traps_yield": "the traps contain {0}"
+  },
+  "formats": {
+    "and": "and"
   },
   "temperature": {
     "freezing": "freezing",
@@ -300,5 +312,114 @@
     "检查世界功能状态": "checking world function status",
     "检查世界数据状态": "checking world data status",
     "可以出发": "can embark"
+  },
+  "worker_info": {
+    "produces": "produces",
+    "consumes": "consumes",
+    "every": "every",
+    "seconds": "seconds",
+    "no_production": "no production/consumption",
+    "total": "total"
+  },
+  "world": {
+    "title": "A Barren World",
+    "wanderer": "wanderer",
+    "map_not_initialized": "map not initialized",
+    "map_data_empty": "map data is empty",
+    "map_render_error": "map render error",
+    "terrain": {
+      "forest": "forest",
+      "field": "field",
+      "barrens": "barrens",
+      "road": "road",
+      "village": "village",
+      "old_house": "old house",
+      "damp_cave": "damp cave",
+      "abandoned_town": "abandoned town",
+      "ruined_city": "ruined city",
+      "outpost": "outpost",
+      "crashed_starship": "crashed starship",
+      "iron_mine": "iron mine",
+      "coal_mine": "coal mine",
+      "sulphur_mine": "sulphur mine",
+      "borehole": "borehole",
+      "battlefield": "battlefield",
+      "dark_swamp": "dark swamp",
+      "destroyed_village": "destroyed village",
+      "destroyed_starship": "destroyed starship",
+      "unknown_terrain": "unknown terrain"
+    },
+    "landmarks": {
+      "outpost": "outpost",
+      "iron_mine": "iron mine",
+      "coal_mine": "coal mine",
+      "sulphur_mine": "sulphur mine",
+      "old_house": "old house",
+      "damp_cave": "damp cave",
+      "abandoned_town": "abandoned town",
+      "ruined_city": "ruined city",
+      "crashed_starship": "crashed starship",
+      "borehole": "borehole",
+      "battlefield": "battlefield",
+      "dark_swamp": "dark swamp",
+      "destroyed_starship": "destroyed starship",
+      "destroyed_village": "destroyed village"
+    },
+    "status": {
+      "health": "health",
+      "distance": "distance"
+    },
+    "bagspace": {
+      "backpack": "backpack",
+      "pocket": "pocket",
+      "remaining": "remaining",
+      "water": "water",
+      "cured_meat": "cured meat"
+    },
+    "movement": {
+      "forest_to_field": "the trees give way to grass. yellowed brush rustles in the wind.",
+      "forest_to_barrens": "the trees are gone. parched earth and blowing dust are poor replacements.",
+      "field_to_forest": "trees loom on the horizon. grass gives way to a forest floor of dry branches and fallen leaves.",
+      "field_to_barrens": "the grass is patchy. soon, only dust remains.",
+      "barrens_to_field": "the barrens break at a sea of dying grass, swaying in the arid breeze.",
+      "barrens_to_forest": "a wall of gnarled trees rises from the dust. their branches twist into a skeletal canopy overhead."
+    },
+    "notifications": {
+      "compass_points_east": "the compass points east",
+      "you_are_dead": "you are dead, cannot move",
+      "dangerous_far_from_village": "it is dangerous to be this far from the village without proper protection",
+      "safer_here": "it is safer here",
+      "world_fades": "the world fades",
+      "returned_to_dark_room": "returned to the dark room"
+    },
+    "weapons": {
+      "punch": "punch",
+      "stab": "stab",
+      "slash": "slash",
+      "strike": "strike",
+      "thrust": "thrust",
+      "shoot": "shoot",
+      "laser": "laser",
+      "throw": "throw",
+      "entangle": "entangle",
+      "disintegrate": "disintegrate",
+      "slice": "slice",
+      "stun": "stun"
+    },
+    "crafting": {
+      "torch": "torch",
+      "waterskin": "waterskin",
+      "cask": "cask",
+      "water tank": "water tank",
+      "rucksack": "rucksack",
+      "wagon": "wagon",
+      "convoy": "convoy",
+      "bone spear": "bone spear",
+      "iron sword": "iron sword",
+      "steel sword": "steel sword",
+      "rifle": "rifle",
+      "leather armor": "leather armor",
+      "iron armor": "iron armor"
+    }
   }
 }

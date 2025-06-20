@@ -35,7 +35,12 @@ class OutsideScreen extends StatelessWidget {
 
                       // 工人管理区域
                       Expanded(
-                        child: _buildWorkersButtons(outside, stateManager),
+                        child: Consumer<Localization>(
+                          builder: (context, localization, child) {
+                            return _buildWorkersButtons(
+                                outside, stateManager, localization);
+                          },
+                        ),
                       ),
 
                       const SizedBox(width: 20),
@@ -119,7 +124,8 @@ class OutsideScreen extends StatelessWidget {
   }
 
   // 工人管理区域 - 模拟原游戏的 workers 容器
-  Widget _buildWorkersButtons(Outside outside, StateManager stateManager) {
+  Widget _buildWorkersButtons(
+      Outside outside, StateManager stateManager, Localization localization) {
     final population = stateManager.get('game.population', true) ?? 0;
 
     // 如果没有人口，不显示工人管理
@@ -133,20 +139,26 @@ class OutsideScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 工人管理按钮
-          _buildWorkerButton('代木者', 'gatherer', outside, stateManager),
-          _buildWorkerButton('猎人', 'hunter', outside, stateManager),
-          _buildWorkerButton('陷阱师', 'trapper', outside, stateManager),
-          _buildWorkerButton('制革工', 'tanner', outside, stateManager),
-          _buildWorkerButton('熏肉师', 'charcutier', outside, stateManager),
-          _buildWorkerButton('钢铁工', 'steelworker', outside, stateManager),
+          _buildWorkerButton(localization.translate('workers.gatherer'),
+              'gatherer', outside, stateManager, localization),
+          _buildWorkerButton(localization.translate('workers.hunter'), 'hunter',
+              outside, stateManager, localization),
+          _buildWorkerButton(localization.translate('workers.trapper'),
+              'trapper', outside, stateManager, localization),
+          _buildWorkerButton(localization.translate('workers.tanner'), 'tanner',
+              outside, stateManager, localization),
+          _buildWorkerButton(localization.translate('workers.charcutier'),
+              'charcutier', outside, stateManager, localization),
+          _buildWorkerButton(localization.translate('workers.steelworker'),
+              'steelworker', outside, stateManager, localization),
         ],
       ),
     );
   }
 
   // 构建工人按钮 - 模拟原游戏的 workerRow 样式
-  Widget _buildWorkerButton(
-      String name, String type, Outside outside, StateManager stateManager) {
+  Widget _buildWorkerButton(String name, String type, Outside outside,
+      StateManager stateManager, Localization localization) {
     final currentWorkers = stateManager.get('game.workers["$type"]', true) ?? 0;
     final population = stateManager.get('game.population', true) ?? 0;
     final totalWorkers = stateManager
@@ -163,7 +175,8 @@ class OutsideScreen extends StatelessWidget {
     }
 
     // 获取工人的生产/消耗信息
-    final workerInfo = _getWorkerInfo(type, currentWorkers, availableWorkers);
+    final workerInfo =
+        _getWorkerInfo(type, currentWorkers, availableWorkers, localization);
 
     // 对于伐木者，显示剩余人口数量，不显示调整按钮
     if (type == 'gatherer') {
@@ -306,36 +319,31 @@ class OutsideScreen extends StatelessWidget {
   }
 
   // 获取工人的生产/消耗信息
-  String _getWorkerInfo(String type, int currentWorkers, int availableWorkers) {
+  String _getWorkerInfo(String type, int currentWorkers, int availableWorkers,
+      [Localization? localization]) {
     // 基于原游戏的收入配置
     const incomeConfig = {
       'gatherer': {
-        'name': '伐木者',
         'delay': 10,
         'stores': {'wood': 1}
       },
       'hunter': {
-        'name': '猎人',
         'delay': 10,
         'stores': {'fur': 0.5, 'meat': 0.5}
       },
       'trapper': {
-        'name': '陷阱师',
         'delay': 10,
         'stores': {'meat': -1, 'bait': 1}
       },
       'tanner': {
-        'name': '皮革师',
         'delay': 10,
         'stores': {'fur': -5, 'leather': 1}
       },
       'charcutier': {
-        'name': '熏肉师',
         'delay': 10,
         'stores': {'meat': -5, 'wood': -5, 'cured meat': 1}
       },
       'steelworker': {
-        'name': '钢铁工',
         'delay': 10,
         'stores': {'coal': -1, 'iron': -1, 'steel': 1}
       },
@@ -353,7 +361,14 @@ class OutsideScreen extends StatelessWidget {
     if (type == 'gatherer') {
       final totalProduction = availableWorkers * (stores['wood'] as num);
       if (totalProduction > 0) {
-        effects.add('生产: +${totalProduction.toStringAsFixed(1)} 木材 每$delay秒');
+        final producesText =
+            localization?.translate('worker_info.produces') ?? '生产';
+        final everyText = localization?.translate('worker_info.every') ?? '每';
+        final secondsText =
+            localization?.translate('worker_info.seconds') ?? '秒';
+        final woodText = localization?.translate('resources.wood') ?? '木材';
+        effects.add(
+            '$producesText: +${totalProduction.toStringAsFixed(1)} $woodText $everyText$delay$secondsText');
       }
     } else {
       for (final entry in stores.entries) {
@@ -362,16 +377,23 @@ class OutsideScreen extends StatelessWidget {
         final totalRate = currentWorkers * rate;
 
         if (totalRate != 0) {
-          final resourceName = resource;
+          final resourceName =
+              localization?.translate('resources.$resource') ?? resource;
           final prefix = totalRate > 0 ? '+' : '';
+          final actionText = totalRate > 0
+              ? (localization?.translate('worker_info.produces') ?? '生产')
+              : (localization?.translate('worker_info.consumes') ?? '消耗');
+          final everyText = localization?.translate('worker_info.every') ?? '每';
+          final secondsText =
+              localization?.translate('worker_info.seconds') ?? '秒';
           effects.add(
-              '${totalRate > 0 ? '生产' : '消耗'}: $prefix${totalRate.toStringAsFixed(1)} $resourceName 每$delay秒');
+              '$actionText: $prefix${totalRate.toStringAsFixed(1)} $resourceName $everyText$delay$secondsText');
         }
       }
     }
 
     if (effects.isEmpty) {
-      return '当前无生产/消耗';
+      return localization?.translate('worker_info.no_production') ?? '当前无生产/消耗';
     }
 
     return effects.join('\n');
@@ -456,7 +478,7 @@ class _StoresWidgetState extends State<_StoresWidget> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            '库存',
+                            widget.localization.translate('resources.title'),
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -565,14 +587,17 @@ class _StoresWidgetState extends State<_StoresWidget> {
         if (rate != 0) {
           final sourceDisplayName = _getWorkerDisplayName(sourceName);
           final prefix = rate > 0 ? '+' : '';
+          final everyText = widget.localization.translate('worker_info.every');
+          final secondsText =
+              widget.localization.translate('worker_info.seconds');
           effects.add(
-              '$sourceDisplayName: $prefix${rate.toStringAsFixed(1)} 每$delay秒');
+              '$sourceDisplayName: $prefix${rate.toStringAsFixed(1)} $everyText$delay$secondsText');
         }
       }
     }
 
     if (effects.isEmpty) {
-      return '无生产/消耗';
+      return widget.localization.translate('worker_info.no_production');
     }
 
     // 计算总计
@@ -588,7 +613,11 @@ class _StoresWidgetState extends State<_StoresWidget> {
 
     if (totalRate != 0) {
       final prefix = totalRate > 0 ? '+' : '';
-      effects.add('总计: $prefix${totalRate.toStringAsFixed(1)} 每$commonDelay秒');
+      final totalText = widget.localization.translate('worker_info.total');
+      final everyText = widget.localization.translate('worker_info.every');
+      final secondsText = widget.localization.translate('worker_info.seconds');
+      effects.add(
+          '$totalText: $prefix${totalRate.toStringAsFixed(1)} $everyText$commonDelay$secondsText');
     }
 
     return effects.join('\n');
@@ -596,16 +625,7 @@ class _StoresWidgetState extends State<_StoresWidget> {
 
   // 获取工人显示名称
   String _getWorkerDisplayName(String workerKey) {
-    const workerNames = {
-      'gatherer': '伐木者',
-      'hunter': '猎人',
-      'trapper': '陷阱师',
-      'tanner': '制革工',
-      'charcutier': '熏肉师',
-      'steelworker': '钢铁工',
-      'thieves': '小偷',
-    };
-    return workerNames[workerKey] ?? workerKey;
+    return widget.localization.translate('workers.$workerKey');
   }
 }
 
@@ -711,7 +731,7 @@ class _VillageWidgetState extends State<_VillageWidget> {
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 2),
               child: Text(
-                '人口 $population/${widget.outside.getMaxPopulation()}',
+                '${widget.localization.translate('ui.status.population')} $population/${widget.outside.getMaxPopulation()}',
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 16,
@@ -747,7 +767,7 @@ class _VillageWidgetState extends State<_VillageWidget> {
               Padding(
                 padding: const EdgeInsets.only(top: 5),
                 child: Text(
-                  '陷阱: $unbaitedTraps',
+                  '${widget.localization.translate('buildings.trap')}: $unbaitedTraps',
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -763,7 +783,7 @@ class _VillageWidgetState extends State<_VillageWidget> {
               Padding(
                 padding: const EdgeInsets.only(top: 5),
                 child: Text(
-                  '有饵陷阱: $baitedTraps',
+                  '${widget.localization.translate('buildings.baited_trap')}: $baitedTraps',
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -798,27 +818,15 @@ class _VillageWidgetState extends State<_VillageWidget> {
 
   // 获取建筑物的本地化名称
   String _getBuildingLocalizedName(String buildingName) {
-    switch (buildingName) {
-      case 'hut':
-        return '小屋';
-      case 'cart':
-        return '手推车';
-      case 'lodge':
-        return '狩猎小屋';
-      case 'trading post':
-        return '贸易站';
-      case 'tannery':
-        return '制革屋';
-      case 'smokehouse':
-        return '熏肉房';
-      case 'workshop':
-        return '工坊';
-      case 'steelworks':
-        return '炼钢坊';
-      case 'armoury':
-        return '军械库';
-      default:
-        return buildingName;
+    final translatedName =
+        widget.localization.translate('buildings.$buildingName');
+
+    // 如果翻译存在且不等于原键名，返回翻译
+    if (translatedName != 'buildings.$buildingName') {
+      return translatedName;
     }
+
+    // 否则返回原名称
+    return buildingName;
   }
 }

@@ -520,12 +520,11 @@ class Room with ChangeNotifier {
       }
     }
 
-    final localizedTempText = _localization.translate('temperature.$tempText');
-    final localizedFireText = _localization.translate('fire.$fireText');
-    NotificationManager().notify(name,
-        '${_localization.translate('notifications.the_room_is')} $localizedTempText');
-    NotificationManager().notify(name,
-        '${_localization.translate('notifications.the_fire_is')} $localizedFireText');
+    // 传递原始键给通知管理器，让它处理本地化
+    NotificationManager()
+        .notify(name, 'notifications.the_room_is temperature.$tempText');
+    NotificationManager()
+        .notify(name, 'notifications.the_fire_is fire.$fireText');
 
     // 启动收入系统
     Engine().setTimeout(() => sm.collectIncome(), 1000);
@@ -559,13 +558,11 @@ class Room with ChangeNotifier {
         }
       }
 
-      final localizedTempText =
-          _localization.translate('temperature.$tempText');
-      final localizedFireText = _localization.translate('fire.$fireText');
-      NotificationManager().notify(name,
-          '${_localization.translate('notifications.the_room_is')} $localizedTempText');
-      NotificationManager().notify(name,
-          '${_localization.translate('notifications.the_fire_is')} $localizedFireText');
+      // 传递原始键给通知管理器，让它处理本地化
+      NotificationManager()
+          .notify(name, 'notifications.the_room_is temperature.$tempText');
+      NotificationManager()
+          .notify(name, 'notifications.the_fire_is fire.$fireText');
       changed = false;
     }
 
@@ -664,9 +661,9 @@ class Room with ChangeNotifier {
       }
     }
 
-    final localizedFireText = _localization.translate('fire.$fireText');
-    NotificationManager().notify(name,
-        '${_localization.translate('notifications.the_fire_is')} $localizedFireText',
+    // 传递原始键给通知管理器，让它处理本地化
+    NotificationManager().notify(
+        name, 'notifications.the_fire_is fire.$fireText',
         noQueue: true);
 
     if (fireValue > 1 && sm.get('game.builder.level') < 0) {
@@ -733,10 +730,9 @@ class Room with ChangeNotifier {
         }
       }
 
-      final localizedTempText =
-          _localization.translate('temperature.$tempText');
-      NotificationManager().notify(name,
-          '${_localization.translate('notifications.the_room_is')} $localizedTempText',
+      // 传递原始键给通知管理器，让它处理本地化
+      NotificationManager().notify(
+          name, 'notifications.the_room_is temperature.$tempText',
           noQueue: true);
     }
 
@@ -752,10 +748,9 @@ class Room with ChangeNotifier {
         }
       }
 
-      final localizedTempText =
-          _localization.translate('temperature.$tempText');
-      NotificationManager().notify(name,
-          '${_localization.translate('notifications.the_room_is')} $localizedTempText',
+      // 传递原始键给通知管理器，让它处理本地化
+      NotificationManager().notify(
+          name, 'notifications.the_room_is temperature.$tempText',
           noQueue: true);
     }
 
@@ -1159,73 +1154,28 @@ class Room with ChangeNotifier {
 
   // 获取物品的本地化名称
   String getLocalizedName(String itemName) {
-    // 这里可以添加本地化逻辑
-    switch (itemName) {
-      case 'trap':
-        return '陷阱';
-      case 'cart':
-        return '货车';
-      case 'hut':
-        return '小屋';
-      case 'lodge':
-        return '狩猎小屋';
-      case 'trading post':
-        return '贸易站';
-      case 'tannery':
-        return '制革屋';
-      case 'smokehouse':
-        return '熏肉房';
-      case 'workshop':
-        return '工坊';
-      case 'steelworks':
-        return '炼钢坊';
-      case 'armoury':
-        return '军械库';
-      case 'torch':
-        return '火把';
-      case 'waterskin':
-        return '水壶';
-      case 'cask':
-        return '水桶';
-      case 'water tank':
-        return '水罐';
-      case 'rucksack':
-        return '双肩包';
-      case 'wagon':
-        return '马车';
-      case 'convoy':
-        return '车队';
-      case 'bone spear':
-        return '骨枪';
-      case 'iron sword':
-        return '铁剑';
-      case 'steel sword':
-        return '钢剑';
-      case 'rifle':
-        return '步枪';
-      case 'l armour':
-        return '皮甲';
-      case 'i armour':
-        return '铁甲';
-      case 's armour':
-        return '钢甲';
-      case 'scales':
-        return '鳞片';
-      case 'teeth':
-        return '牙齿';
-      case 'bolas':
-        return '流星锤';
-      case 'grenade':
-        return '手榴弹';
-      case 'bayonet':
-        return '刺刀';
-      case 'alien alloy':
-        return '外星合金';
-      case 'compass':
-        return '指南针';
-      default:
-        return itemName;
+    final localization = Localization();
+
+    // 首先尝试建筑物翻译
+    String translatedName = localization.translate('buildings.$itemName');
+    if (translatedName != 'buildings.$itemName') {
+      return translatedName;
     }
+
+    // 然后尝试制作物品翻译
+    translatedName = localization.translate('crafting.$itemName');
+    if (translatedName != 'crafting.$itemName') {
+      return translatedName;
+    }
+
+    // 最后尝试资源翻译
+    translatedName = localization.translate('resources.$itemName');
+    if (translatedName != 'resources.$itemName') {
+      return translatedName;
+    }
+
+    // 如果都没有找到，返回原名称
+    return itemName;
   }
 
   // 处理状态更新

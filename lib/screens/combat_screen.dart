@@ -5,6 +5,7 @@ import '../modules/events.dart';
 import '../modules/world.dart';
 import '../modules/path.dart';
 import '../core/state_manager.dart';
+import '../core/localization.dart';
 
 /// 战斗界面 - 完整翻译自原游戏的战斗系统
 class CombatScreen extends StatefulWidget {
@@ -822,38 +823,16 @@ class _CombatScreenState extends State<CombatScreen> {
 
   /// 获取物品显示名称
   String _getItemDisplayName(String itemName) {
-    switch (itemName) {
-      case 'fur':
-        return '毛皮';
-      case 'meat':
-        return '肉';
-      case 'scales':
-        return '鳞片';
-      case 'teeth':
-        return '牙齿';
-      case 'cloth':
-        return '布料';
-      case 'leather':
-        return '皮革';
-      case 'iron':
-        return '铁';
-      case 'coal':
-        return '煤炭';
-      case 'steel':
-        return '钢铁';
-      case 'sulphur':
-        return '硫磺';
-      case 'energy cell':
-        return '能量电池';
-      case 'bullets':
-        return '子弹';
-      case 'medicine':
-        return '药物';
-      case 'cured meat':
-        return '熏肉';
-      default:
-        return itemName;
+    final localization = Localization();
+    final translatedName = localization.translate('resources.$itemName');
+
+    // 如果翻译存在且不等于原键名，返回翻译
+    if (translatedName != 'resources.$itemName') {
+      return translatedName;
     }
+
+    // 否则返回原名称
+    return itemName;
   }
 
   /// 获取武器显示名称

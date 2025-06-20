@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../modules/world.dart';
 import '../modules/path.dart';
 import '../core/state_manager.dart';
+import '../core/localization.dart';
 import '../screens/events_screen.dart';
 import '../screens/combat_screen.dart';
 
@@ -59,13 +60,17 @@ class _WorldScreenState extends State<WorldScreen> {
                             BorderSide(color: Colors.black, width: 1), // 黑色底边框
                       ),
                     ),
-                    child: const Text(
-                      '荒芜世界',
-                      style: TextStyle(
-                        color: Colors.black, // 黑色文字
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child: Consumer<Localization>(
+                      builder: (context, localization, child) {
+                        return Text(
+                          localization.translate('world.title'),
+                          style: const TextStyle(
+                            color: Colors.black, // 黑色文字
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      },
                     ),
                   ),
 
@@ -80,18 +85,23 @@ class _WorldScreenState extends State<WorldScreen> {
                             BorderSide(color: Colors.black, width: 1), // 黑色底边框
                       ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          '生命值: ${world.health}',
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                        Text(
-                          '距离: ${world.getDistance()}',
-                          style: const TextStyle(color: Colors.black), // 黑色文字
-                        ),
-                      ],
+                    child: Consumer<Localization>(
+                      builder: (context, localization, child) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(
+                              '${localization.translate('world.status.health')}: ${world.health}',
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                            Text(
+                              '${localization.translate('world.status.distance')}: ${world.getDistance()}',
+                              style:
+                                  const TextStyle(color: Colors.black), // 黑色文字
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ),
 
@@ -135,11 +145,15 @@ class _WorldScreenState extends State<WorldScreen> {
       final maskData = world.state?['mask'];
 
       if (mapData == null || maskData == null) {
-        return const Center(
-          child: Text(
-            '地图未初始化',
-            style: TextStyle(color: Colors.black), // 黑色文字
-          ),
+        return Consumer<Localization>(
+          builder: (context, localization, child) {
+            return Center(
+              child: Text(
+                localization.translate('world.map_not_initialized'),
+                style: const TextStyle(color: Colors.black), // 黑色文字
+              ),
+            );
+          },
         );
       }
 
@@ -151,11 +165,15 @@ class _WorldScreenState extends State<WorldScreen> {
 
       // 确保地图数据有效
       if (map.isEmpty || map[0].isEmpty || mask.isEmpty || mask[0].isEmpty) {
-        return const Center(
-          child: Text(
-            '地图数据为空',
-            style: TextStyle(color: Colors.black), // 黑色文字
-          ),
+        return Consumer<Localization>(
+          builder: (context, localization, child) {
+            return Center(
+              child: Text(
+                localization.translate('world.map_data_empty'),
+                style: const TextStyle(color: Colors.black), // 黑色文字
+              ),
+            );
+          },
         );
       }
 
@@ -210,11 +228,15 @@ class _WorldScreenState extends State<WorldScreen> {
         ),
       );
     } catch (e) {
-      return Center(
-        child: Text(
-          '地图渲染错误: $e',
-          style: const TextStyle(color: Colors.red),
-        ),
+      return Consumer<Localization>(
+        builder: (context, localization, child) {
+          return Center(
+            child: Text(
+              '${localization.translate('world.map_render_error')}: $e',
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
+        },
       );
     }
   }
@@ -246,7 +268,7 @@ class _WorldScreenState extends State<WorldScreen> {
     if (isPlayer) {
       displayChar = '@';
       color = Colors.yellow;
-      tooltip = '流浪者';
+      tooltip = Localization().translate('world.wanderer');
       isLandmarkStyle = true;
     } else {
       // 参考原游戏的地标显示逻辑
@@ -331,37 +353,83 @@ class _WorldScreenState extends State<WorldScreen> {
 
   /// 获取地标样式 - 参考原游戏，所有未访问地标都使用黑色粗体
   Map<String, dynamic> _getLandmarkStyle(String tile) {
+    final localization = Localization();
     switch (tile) {
       case 'A': // 村庄
-        return {'color': Colors.black, 'tooltip': '村庄'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.village')
+        };
       case 'H': // 房子
-        return {'color': Colors.black, 'tooltip': '旧房子'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.old_house')
+        };
       case 'V': // 洞穴
-        return {'color': Colors.black, 'tooltip': '潮湿洞穴'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.damp_cave')
+        };
       case 'O': // 小镇
-        return {'color': Colors.black, 'tooltip': '废弃小镇'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.abandoned_town')
+        };
       case 'Y': // 城市
-        return {'color': Colors.black, 'tooltip': '废墟城市'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.ruined_city')
+        };
       case 'P': // 前哨站
-        return {'color': Colors.black, 'tooltip': '前哨站'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.outpost')
+        };
       case 'W': // 飞船
-        return {'color': Colors.black, 'tooltip': '坠毁星舰'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.crashed_starship')
+        };
       case 'I': // 铁矿
-        return {'color': Colors.black, 'tooltip': '铁矿'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.iron_mine')
+        };
       case 'C': // 煤矿
-        return {'color': Colors.black, 'tooltip': '煤矿'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.coal_mine')
+        };
       case 'S': // 硫磺矿
-        return {'color': Colors.black, 'tooltip': '硫磺矿'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.sulphur_mine')
+        };
       case 'B': // 钻孔
-        return {'color': Colors.black, 'tooltip': '钻孔'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.borehole')
+        };
       case 'F': // 战场
-        return {'color': Colors.black, 'tooltip': '战场'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.battlefield')
+        };
       case 'M': // 沼泽
-        return {'color': Colors.black, 'tooltip': '阴暗沼泽'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.dark_swamp')
+        };
       case 'U': // 缓存
-        return {'color': Colors.black, 'tooltip': '被摧毁的村庄'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.destroyed_village')
+        };
       case 'X': // 执行者
-        return {'color': Colors.black, 'tooltip': '被摧毁的战舰'};
+        return {
+          'color': Colors.black,
+          'tooltip': localization.translate('world.terrain.destroyed_starship')
+        };
       default:
         return {'color': Colors.black, 'tooltip': null};
     }
@@ -381,7 +449,9 @@ class _WorldScreenState extends State<WorldScreen> {
 
         // 参考原游戏逻辑：首先添加水
         if (world.water > 0) {
-          supplies.add(_buildSupplyItem('水', world.water));
+          final localization = Localization();
+          supplies.add(_buildSupplyItem(
+              localization.translate('world.bagspace.water'), world.water));
         }
 
         // 然后按照原游戏逻辑添加其他物品
@@ -392,12 +462,15 @@ class _WorldScreenState extends State<WorldScreen> {
           if (num > 0) {
             if (itemName == 'cured meat') {
               // 熏肉：如果有水则在水后面，否则在最前面
+              final localization = Localization();
+              final curedMeatText =
+                  localization.translate('world.bagspace.cured_meat');
               if (world.water > 0) {
                 // 在水后面插入（这里简化为直接添加）
-                supplies.add(_buildSupplyItem('熏肉', num));
+                supplies.add(_buildSupplyItem(curedMeatText, num));
               } else {
                 // 在最前面插入
-                supplies.insert(0, _buildSupplyItem('熏肉', num));
+                supplies.insert(0, _buildSupplyItem(curedMeatText, num));
               }
             } else {
               // 其他物品添加到末尾
@@ -429,15 +502,20 @@ class _WorldScreenState extends State<WorldScreen> {
                 child: Container(
                   color: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(
-                    (StateManager().get('stores["rucksack"]', true) ?? 0) > 0
-                        ? '背包'
-                        : '口袋',
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Consumer<Localization>(
+                    builder: (context, localization, child) {
+                      return Text(
+                        (StateManager().get('stores["rucksack"]', true) ?? 0) >
+                                0
+                            ? localization.translate('world.bagspace.backpack')
+                            : localization.translate('world.bagspace.pocket'),
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -449,12 +527,16 @@ class _WorldScreenState extends State<WorldScreen> {
                 child: Container(
                   color: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(
-                    '剩余 ${freeSpace.floor()}/${capacity.floor()}',
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 12,
-                    ),
+                  child: Consumer<Localization>(
+                    builder: (context, localization, child) {
+                      return Text(
+                        '${localization.translate('world.bagspace.remaining')} ${freeSpace.floor()}/${capacity.floor()}',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -483,64 +565,16 @@ class _WorldScreenState extends State<WorldScreen> {
 
   /// 获取物品显示名称 - 参考原游戏的物品翻译
   String _getItemDisplayName(String itemName) {
-    switch (itemName) {
-      case 'fur':
-        return '毛皮';
-      case 'meat':
-        return '肉';
-      case 'scales':
-        return '鳞片';
-      case 'teeth':
-        return '牙齿';
-      case 'cloth':
-        return '布料';
-      case 'leather':
-        return '皮革';
-      case 'iron':
-        return '铁';
-      case 'coal':
-        return '煤炭';
-      case 'steel':
-        return '钢铁';
-      case 'sulphur':
-        return '硫磺';
-      case 'energy cell':
-        return '能量电池';
-      case 'bullets':
-        return '子弹';
-      case 'medicine':
-        return '药物';
-      case 'cured meat':
-        return '熏肉';
-      case 'bone spear':
-        return '骨枪';
-      case 'iron sword':
-        return '铁剑';
-      case 'steel sword':
-        return '钢剑';
-      case 'bayonet':
-        return '刺刀';
-      case 'rifle':
-        return '步枪';
-      case 'laser rifle':
-        return '激光步枪';
-      case 'grenade':
-        return '手榴弹';
-      case 'bolas':
-        return '流星锤';
-      case 'plasma rifle':
-        return '等离子步枪';
-      case 'energy blade':
-        return '能量剑';
-      case 'disruptor':
-        return '干扰器';
-      case 'hypo':
-        return '注射器';
-      case 'rucksack':
-        return '双肩包';
-      default:
-        return itemName;
+    final localization = Localization();
+    final translatedName = localization.translate('resources.$itemName');
+
+    // 如果翻译存在且不等于原键名，返回翻译
+    if (translatedName != 'resources.$itemName') {
+      return translatedName;
     }
+
+    // 否则返回原名称
+    return itemName;
   }
 
   /// 构建补给品项目

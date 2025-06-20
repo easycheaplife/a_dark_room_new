@@ -228,6 +228,7 @@ class _GameScreenState extends State<GameScreen> {
         return const PathScreen();
       case 'World':
       case '世界': // 支持中文模块名
+      case '荒芜世界': // 支持完整的中文模块名
         return const WorldScreen();
       case 'Fabricator':
         return const FabricatorScreen();
