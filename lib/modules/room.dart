@@ -925,7 +925,7 @@ class Room with ChangeNotifier {
       final have = sm.get('stores.${entry.key}', true) ?? 0;
       if (have < entry.value) {
         NotificationManager().notify(name,
-            '${_localization.translate('notifications.not_enough')} ${_localization.translate('resources.${entry.key}')}');
+            '${_localization.translate('notifications.not_enough')} ${_localization.translate(entry.key)}');
         return false;
       } else {
         storeMod[entry.key] = have - entry.value;
@@ -980,7 +980,7 @@ class Room with ChangeNotifier {
       final have = sm.get('stores.${entry.key}', true) ?? 0;
       if (have < entry.value) {
         NotificationManager().notify(name,
-            '${_localization.translate('notifications.not_enough')} ${_localization.translate('resources.${entry.key}')}');
+            '${_localization.translate('notifications.not_enough')} ${_localization.translate(entry.key)}');
         return false;
       } else {
         storeMod[entry.key] = have - entry.value;
