@@ -112,26 +112,50 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'cabin': {
-          'text': ['沼泽深处有一间长满苔藓的小屋。', '一个老流浪者坐在里面，似乎在恍惚中。'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.swamp.cabin.text1'),
+              localization.translate('setpieces.swamp.cabin.text2')
+            ];
+          }(),
           'buttons': {
             'talk': {
               'cost': {'charm': 1},
-              'text': '交谈',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.talk');
+              }(),
               'nextScene': {'1': 'talk'}
             },
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'talk': {
-          'text': [
-            '流浪者接过护身符，慢慢点头。',
-            '他说起曾经带领伟大的舰队前往新世界。',
-            '为了满足流浪者的饥饿而进行的不可理解的破坏。',
-            '他在这里的时间，现在，是他的忏悔。'
-          ],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.swamp.talk.text1'),
+              localization.translate('setpieces.swamp.talk.text2'),
+              localization.translate('setpieces.swamp.talk.text3'),
+              localization.translate('setpieces.swamp.talk.text4')
+            ];
+          }(),
           'onLoad': 'addGastronomePerk',
           'buttons': {
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         }
       },
@@ -140,18 +164,39 @@ class Setpieces extends ChangeNotifier {
 
     // 潮湿洞穴
     'cave': {
-      'title': '潮湿洞穴',
+      'title': () {
+        final localization = Localization();
+        return localization.translate('setpieces.cave.title');
+      }(),
       'scenes': {
         'start': {
-          'text': ['洞穴的入口又宽又黑。', '看不清里面有什么。'],
-          'notification': '这里的大地裂开了，仿佛承受着古老的伤口',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.cave.start.text1'),
+              localization.translate('setpieces.cave.start.text2')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.cave.start.notification');
+          }(),
           'buttons': {
             'enter': {
-              'text': '进入',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.enter');
+              }(),
               'cost': {'torch': 1},
               'nextScene': {'0.3': 'a1', '0.6': 'a2', '1': 'a3'}
             },
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'a1': {
@@ -327,9 +372,18 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'end': {
-          'text': ['离开了洞穴，回到了荒野中。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.cave.end_text')];
+          }(),
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'finish'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'finish'
+            }
           }
         }
       },
@@ -338,21 +392,42 @@ class Setpieces extends ChangeNotifier {
 
     // 旧房子
     'house': {
-      'title': '旧房子',
+      'title': () {
+        final localization = Localization();
+        return localization.translate('setpieces.house.title');
+      }(),
       'scenes': {
         'start': {
-          'text': ['一座旧房子仍然矗立在这里，曾经白色的壁板已经发黄剥落。', '门敞开着。'],
-          'notification': '旧房子的遗迹作为更简单时代的纪念碑矗立着',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.house.start.text1'),
+              localization.translate('setpieces.house.start.text2')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.house.start.notification');
+          }(),
           'buttons': {
             'enter': {
-              'text': '进入',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.enter');
+              }(),
               'nextScene': {
                 '0.25': 'medicine',
                 '0.75': 'supplies',
                 '1': 'occupied'
               }
             },
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'supplies': {
@@ -397,9 +472,18 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'end': {
-          'text': ['离开了旧房子，回到了荒野中。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.house.end_text')];
+          }(),
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'finish'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'finish'
+            }
           }
         }
       },
@@ -408,17 +492,38 @@ class Setpieces extends ChangeNotifier {
 
     // 废弃城镇
     'town': {
-      'title': '废弃城镇',
+      'title': () {
+        final localization = Localization();
+        return localization.translate('setpieces.town.title');
+      }(),
       'scenes': {
         'start': {
-          'text': ['前方是一个小郊区，空房子被烧焦和剥落。', '破碎的路灯矗立着，生锈。光明很久没有照耀过这个地方了。'],
-          'notification': '城镇被遗弃，居民早已死去',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.town.start.text1'),
+              localization.translate('setpieces.town.start.text2')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.town.start.notification');
+          }(),
           'buttons': {
             'enter': {
-              'text': '探索',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.explore');
+              }(),
               'nextScene': {'0.3': 'a1', '0.7': 'a3', '1': 'a2'}
             },
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'a1': {
@@ -512,10 +617,19 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'end': {
-          'text': ['离开了废弃的城镇，回到了荒野中。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.town.end_text')];
+          }(),
           'onLoad': 'markVisited',
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'finish'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'finish'
+            }
           }
         }
       },
@@ -524,22 +638,40 @@ class Setpieces extends ChangeNotifier {
 
     // 铁矿
     'ironmine': {
-      'title': '铁矿',
+      'title': () {
+        final localization = Localization();
+        return localization.translate('setpieces.ironmine.title');
+      }(),
       'scenes': {
         'start': {
-          'text': [
-            '一个古老的铁矿坐落在这里，工具被遗弃并生锈。',
-            '漂白的骨头散落在入口周围。许多骨头上都有锯齿状的深深凹槽。',
-            '野性的嚎叫从黑暗中回荡出来。'
-          ],
-          'notification': '小径通向一个废弃的矿井',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.ironmine.start.text1'),
+              localization.translate('setpieces.ironmine.start.text2'),
+              localization.translate('setpieces.ironmine.start.text3')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.ironmine.start.notification');
+          }(),
           'buttons': {
             'enter': {
-              'text': '进入',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.enter');
+              }(),
               'nextScene': {'1': 'enter'},
               'cost': {'torch': 1}
             },
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'enter': {
@@ -573,9 +705,18 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'end': {
-          'text': ['离开了铁矿，回到了荒野中。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.ironmine.end_text')];
+          }(),
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'finish'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'finish'
+            }
           }
         }
       },
@@ -584,17 +725,38 @@ class Setpieces extends ChangeNotifier {
 
     // 煤矿
     'coalmine': {
-      'title': '煤矿',
+      'title': () {
+        final localization = Localization();
+        return localization.translate('setpieces.coalmine.title');
+      }(),
       'scenes': {
         'start': {
-          'text': ['营火在矿井入口燃烧。', '男人们四处走动，武器准备就绪。'],
-          'notification': '这个旧矿井并没有被遗弃',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.coalmine.start.text1'),
+              localization.translate('setpieces.coalmine.start.text2')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.coalmine.start.notification');
+          }(),
           'buttons': {
             'attack': {
-              'text': '攻击',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.attack');
+              }(),
               'nextScene': {'1': 'a1'}
             },
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'a1': {

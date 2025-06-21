@@ -108,7 +108,10 @@ class Events extends ChangeNotifier {
   List<Map<String, dynamic>> get encounters => [
         // Tier 1 - 距离 <= 10
         {
-          'title': '咆哮的野兽',
+          'title': () {
+            final localization = Localization();
+            return localization.translate('events.encounters.snarling_beast.title');
+          }(),
           'isAvailable': () {
             final world = World();
             return world.getDistance() <= 10 && world.getTerrain() == ';'; // 森林
@@ -117,8 +120,14 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'snarling beast',
-              'enemyName': '咆哮的野兽',
-              'deathMessage': '咆哮的野兽死了',
+              'enemyName': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.snarling_beast.enemy_name');
+              }(),
+              'deathMessage': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.snarling_beast.death_message');
+              }(),
               'chara': 'R',
               'damage': 1,
               'hit': 0.8,
@@ -129,12 +138,18 @@ class Events extends ChangeNotifier {
                 'meat': {'min': 1, 'max': 3, 'chance': 1.0},
                 'teeth': {'min': 1, 'max': 3, 'chance': 0.8}
               },
-              'notification': '一只咆哮的野兽从灌木丛中跳了出来'
+              'notification': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.snarling_beast.notification');
+              }()
             }
           }
         },
         {
-          'title': '憔悴的人',
+          'title': () {
+            final localization = Localization();
+            return localization.translate('events.encounters.gaunt_man.title');
+          }(),
           'isAvailable': () {
             final world = World();
             return world.getDistance() <= 10 && world.getTerrain() == '.'; // 荒地
@@ -143,8 +158,14 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'gaunt man',
-              'enemyName': '憔悴的人',
-              'deathMessage': '憔悴的人死了',
+              'enemyName': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.gaunt_man.enemy_name');
+              }(),
+              'deathMessage': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.gaunt_man.death_message');
+              }(),
               'chara': 'E',
               'damage': 2,
               'hit': 0.8,
@@ -155,12 +176,18 @@ class Events extends ChangeNotifier {
                 'teeth': {'min': 1, 'max': 2, 'chance': 0.8},
                 'leather': {'min': 1, 'max': 2, 'chance': 0.5}
               },
-              'notification': '一个憔悴的人ximity，眼中带着疯狂的神色'
+              'notification': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.gaunt_man.notification');
+              }()
             }
           }
         },
         {
-          'title': '奇怪的鸟',
+          'title': () {
+            final localization = Localization();
+            return localization.translate('events.encounters.strange_bird.title');
+          }(),
           'isAvailable': () {
             final world = World();
             return world.getDistance() <= 10 && world.getTerrain() == ','; // 田野
@@ -169,8 +196,14 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'strange bird',
-              'enemyName': '奇怪的鸟',
-              'deathMessage': '奇怪的鸟死了',
+              'enemyName': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.strange_bird.enemy_name');
+              }(),
+              'deathMessage': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.strange_bird.death_message');
+              }(),
               'chara': 'R',
               'damage': 3,
               'hit': 0.8,
@@ -181,13 +214,19 @@ class Events extends ChangeNotifier {
                 'teeth': {'min': 1, 'max': 2, 'chance': 0.5},
                 'meat': {'min': 1, 'max': 3, 'chance': 0.8}
               },
-              'notification': '一只奇怪的鸟在平原上快速穿过'
+              'notification': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.strange_bird.notification');
+              }()
             }
           }
         },
         // Tier 2 - 距离 10-20
         {
-          'title': '颤抖的人',
+          'title': () {
+            final localization = Localization();
+            return localization.translate('events.encounters.shivering_man.title');
+          }(),
           'isAvailable': () {
             final world = World();
             return world.getDistance() > 10 &&
@@ -198,8 +237,14 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'shivering man',
-              'enemyName': '颤抖的人',
-              'deathMessage': '颤抖的人死了',
+              'enemyName': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.shivering_man.enemy_name');
+              }(),
+              'deathMessage': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.shivering_man.death_message');
+              }(),
               'chara': 'E',
               'damage': 5,
               'hit': 0.5,
@@ -211,12 +256,18 @@ class Events extends ChangeNotifier {
                 'leather': {'min': 1, 'max': 1, 'chance': 0.2},
                 'medicine': {'min': 1, 'max': 3, 'chance': 0.7}
               },
-              'notification': '一个颤抖的人ximity，以惊人的力量发起攻击'
+              'notification': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.shivering_man.notification');
+              }()
             }
           }
         },
         {
-          'title': '食人者',
+          'title': () {
+            final localization = Localization();
+            return localization.translate('events.encounters.man_eater.title');
+          }(),
           'isAvailable': () {
             final world = World();
             return world.getDistance() > 10 &&
@@ -227,8 +278,14 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'man-eater',
-              'enemyName': '食人者',
-              'deathMessage': '食人者死了',
+              'enemyName': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.man_eater.enemy_name');
+              }(),
+              'deathMessage': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.man_eater.death_message');
+              }(),
               'chara': 'T',
               'damage': 3,
               'hit': 0.8,
@@ -239,7 +296,10 @@ class Events extends ChangeNotifier {
                 'meat': {'min': 5, 'max': 10, 'chance': 1.0},
                 'teeth': {'min': 5, 'max': 10, 'chance': 0.8}
               },
-              'notification': '一只大型生物发起攻击，爪子上还沾着新鲜的血迹'
+              'notification': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.man_eater.notification');
+              }()
             }
           }
         },
@@ -302,7 +362,10 @@ class Events extends ChangeNotifier {
         },
         // Tier 3 - 距离 > 20
         {
-          'title': '野性恐兽',
+          'title': () {
+            final localization = Localization();
+            return localization.translate('events.encounters.feral_terror.title');
+          }(),
           'isAvailable': () {
             final world = World();
             return world.getDistance() > 20 && world.getTerrain() == ';'; // 森林
@@ -311,8 +374,14 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'feral terror',
-              'enemyName': '野性恐兽',
-              'deathMessage': '野性恐兽死了',
+              'enemyName': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.feral_terror.enemy_name');
+              }(),
+              'deathMessage': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.feral_terror.death_message');
+              }(),
               'chara': 'T',
               'damage': 6,
               'hit': 0.8,
@@ -323,7 +392,10 @@ class Events extends ChangeNotifier {
                 'meat': {'min': 5, 'max': 10, 'chance': 1.0},
                 'teeth': {'min': 5, 'max': 10, 'chance': 0.8}
               },
-              'notification': '一只比想象中更野性的野兽从树叶中爆发而出'
+              'notification': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.feral_terror.notification');
+              }()
             }
           }
         },

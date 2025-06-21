@@ -68,7 +68,9 @@
       "give": "给他食物",
       "chase": "追赶小偷",
       "drop_one": "一",
-      "leave_empty": "一无所获"
+      "leave_empty": "一无所获",
+      "enter": "进入",
+      "attack": "攻击"
     },
     "menus": {
       "stores": "库存",
@@ -716,14 +718,6 @@
       }
     }
   },
-  "setpieces": {
-    "outpost": {
-      "title": "前哨站",
-      "start_text": "荒野中的安全之地。",
-      "end_text": "离开了前哨站，回到了荒野中。",
-      "notification": "荒野中的安全之地。"
-    }
-  },
   "world": {
     "title": "荒芜世界",
     "wanderer": "流浪者",
@@ -988,6 +982,68 @@
       "text2": "村民们惊慌失措。",
       "notification": "火焰吞噬了小屋",
       "mourn": "哀悼死者"
+    },
+    "encounters": {
+      "snarling_beast": {
+        "title": "咆哮的野兽",
+        "enemy_name": "咆哮的野兽",
+        "death_message": "咆哮的野兽死了",
+        "notification": "一只咆哮的野兽从灌木丛中跳了出来"
+      },
+      "gaunt_man": {
+        "title": "憔悴的人",
+        "enemy_name": "憔悴的人",
+        "death_message": "憔悴的人死了",
+        "notification": "一个憔悴的人靠近，眼中带着疯狂的神色"
+      },
+      "strange_bird": {
+        "title": "奇怪的鸟",
+        "enemy_name": "奇怪的鸟",
+        "death_message": "奇怪的鸟死了",
+        "notification": "一只奇怪的鸟在平原上快速穿过"
+      },
+      "shivering_man": {
+        "title": "颤抖的人",
+        "enemy_name": "颤抖的人",
+        "death_message": "颤抖的人死了",
+        "notification": "一个颤抖的人靠近，以惊人的力量发起攻击"
+      },
+      "man_eater": {
+        "title": "食人者",
+        "enemy_name": "食人者",
+        "death_message": "食人者死了",
+        "notification": "一只大型生物发起攻击，爪子上还沾着新鲜的血迹"
+      },
+      "scavenger": {
+        "title": "拾荒者",
+        "enemy_name": "拾荒者",
+        "death_message": "拾荒者死了",
+        "notification": "一个拾荒者靠近，希望能轻松得手"
+      },
+      "lizard": {
+        "title": "巨大蜥蜴",
+        "enemy_name": "蜥蜴",
+        "death_message": "蜥蜴死了",
+        "notification": "草丛剧烈摇摆，一只巨大的蜥蜴冲了出来"
+      },
+      "feral_terror": {
+        "title": "野性恐兽",
+        "enemy_name": "野性恐兽",
+        "death_message": "野性恐兽死了",
+        "notification": "一只比想象中更野性的野兽从树叶中爆发而出"
+      },
+      "soldier": {
+        "title": "士兵",
+        "enemy_name": "士兵",
+        "death_message": "士兵死了",
+        "notification": "一名士兵从沙漠对面开火"
+      },
+      "sniper": {
+        "title": "狙击手",
+        "enemy_name": "狙击手",
+        "death_message": "狙击手死了",
+        "notification": "枪声响起，来自长草丛中的某个地方"
+      }
     }
   },
   "outside_events_extended": {
@@ -1110,6 +1166,78 @@
       "text3": "这里似乎有什么特别的东西。",
       "investigate_text1": "你在沼泽中发现了一些奇异的植物。",
       "investigate_text2": "品尝后，你感觉自己对食物有了更深的理解。"
+    }
+  },
+  "setpieces": {
+    "module_name": "场景事件",
+    "outpost": {
+      "title": "友好前哨站",
+      "start_text": "一个友好的前哨站。商人们在这里交易。",
+      "notification": "发现了一个友好的前哨站",
+      "end_text": "离开了前哨站，回到了荒野中。"
+    },
+    "swamp": {
+      "title": "阴暗沼泽",
+      "start": {
+        "text1": "一片阴暗的沼泽地。",
+        "text2": "空气中弥漫着腐朽的气味。",
+        "notification": "发现了一片阴暗的沼泽"
+      },
+      "cabin": {
+        "text1": "沼泽深处有一间长满苔藓的小屋。",
+        "text2": "一个老流浪者坐在里面，似乎在恍惚中。"
+      },
+      "talk": {
+        "text1": "流浪者接过护身符，慢慢点头。",
+        "text2": "他说起曾经带领伟大的舰队前往新世界。",
+        "text3": "为了满足流浪者的饥饿而进行的不可理解的破坏。",
+        "text4": "他在这里的时间，现在，是他的忏悔。"
+      }
+    },
+    "cave": {
+      "title": "潮湿洞穴",
+      "start": {
+        "text1": "洞穴的入口又宽又黑。",
+        "text2": "看不清里面有什么。",
+        "notification": "这里的大地裂开了，仿佛承受着古老的伤口"
+      },
+      "end_text": "离开了洞穴，回到了荒野中。"
+    },
+    "house": {
+      "title": "旧房子",
+      "start": {
+        "text1": "一座旧房子仍然矗立在这里，曾经白色的壁板已经发黄剥落。",
+        "text2": "门敞开着。",
+        "notification": "旧房子的遗迹作为更简单时代的纪念碑矗立着"
+      },
+      "end_text": "离开了旧房子，回到了荒野中。"
+    },
+    "town": {
+      "title": "废弃城镇",
+      "start": {
+        "text1": "前方是一个小郊区，空房子被烧焦和剥落。",
+        "text2": "破碎的路灯矗立着，生锈。光明很久没有照耀过这个地方了。",
+        "notification": "城镇被遗弃，居民早已死去"
+      },
+      "end_text": "离开了废弃的城镇，回到了荒野中。"
+    },
+    "ironmine": {
+      "title": "铁矿",
+      "start": {
+        "text1": "一个古老的铁矿坐落在这里，工具被遗弃并生锈。",
+        "text2": "漂白的骨头散落在入口周围。许多骨头上都有锯齿状的深深凹槽。",
+        "text3": "野性的嚎叫从黑暗中回荡出来。",
+        "notification": "小径通向一个废弃的矿井"
+      },
+      "end_text": "离开了铁矿，回到了荒野中。"
+    },
+    "coalmine": {
+      "title": "煤矿",
+      "start": {
+        "text1": "营火在矿井入口燃烧。",
+        "text2": "男人们四处走动，武器准备就绪。",
+        "notification": "这个旧矿井并没有被遗弃"
+      }
     }
   }
 }
