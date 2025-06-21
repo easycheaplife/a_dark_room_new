@@ -62,7 +62,9 @@
       "investigate": "调查",
       "back_inside": "回到屋内",
       "give": "给他食物",
-      "chase": "追赶小偷"
+      "chase": "追赶小偷",
+      "drop_one": "一",
+      "leave_empty": "一无所获"
     },
     "menus": {
       "stores": "库存",
@@ -237,7 +239,8 @@
     "glows_softly_red": "发出柔和的红光",
     "restores_20_health": "恢复 20 生命值",
     "backpack_full": "背包空间不足",
-    "found": "发现了："
+    "found": "发现了：",
+    "drop": "丢弃:"
   },
   "import_export": {
     "title": "导入/导出存档",
@@ -782,6 +785,13 @@
     "choose_weapon": "选择武器:",
     "flee": "逃跑",
     "enemy_dead": "敌人死了",
+    "wanderer": "流浪者",
+    "eat_meat": "吃肉",
+    "use_medicine": "用药",
+    "use_hypo": "注射器",
+    "no_loot": "没有战利品",
+    "take_all_and_leave": "拿走一切以及离开",
+    "leave": "离开",
     "weapons": {
       "fists": "拳头",
       "bone spear": "骨枪",

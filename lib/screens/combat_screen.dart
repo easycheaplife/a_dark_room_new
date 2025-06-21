@@ -109,7 +109,7 @@ class _CombatScreenState extends State<CombatScreen> {
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 400),
                               child: _buildFighterDiv(
-                                '流浪者',
+                                Localization().translate('combat.wanderer'),
                                 '@',
                                 world.health,
                                 world.getMaxHealth(),
@@ -333,7 +333,7 @@ class _CombatScreenState extends State<CombatScreen> {
               minimumSize: const Size(0, 32), // 减少最小高度
             ),
             child: Text(
-              '吃肉 (${path.outfit['cured meat']})',
+              '${Localization().translate('combat.eat_meat')} (${path.outfit['cured meat']})',
               style: const TextStyle(fontSize: 11),
             ),
           ),
@@ -350,7 +350,7 @@ class _CombatScreenState extends State<CombatScreen> {
               minimumSize: const Size(0, 32), // 减少最小高度
             ),
             child: Text(
-              '用药 (${path.outfit['medicine']})',
+              '${Localization().translate('combat.use_medicine')} (${path.outfit['medicine']})',
               style: const TextStyle(fontSize: 11),
             ),
           ),
@@ -367,7 +367,7 @@ class _CombatScreenState extends State<CombatScreen> {
               minimumSize: const Size(0, 32), // 减少最小高度
             ),
             child: Text(
-              '注射器 (${path.outfit['hypo']})',
+              '${Localization().translate('combat.use_hypo')} (${path.outfit['hypo']})',
               style: const TextStyle(fontSize: 11),
             ),
           ),
@@ -417,9 +417,9 @@ class _CombatScreenState extends State<CombatScreen> {
           ] else ...[
             // 显示正常的战利品界面
             if (events.currentLoot.isNotEmpty) ...[
-              const Text(
-                '获得:',
-                style: TextStyle(
+              Text(
+                Localization().translate('messages.gained'),
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -484,7 +484,7 @@ class _CombatScreenState extends State<CombatScreen> {
                               minimumSize: const Size(0, 24),
                             ),
                             child: Text(
-                              _showDropInterface ? '带走 0' : '带走 所有',
+                              _showDropInterface ? '${Localization().translate('ui.buttons.take_all').split(' ')[0]} 0' : Localization().translate('ui.buttons.take_all'),
                               style: const TextStyle(fontSize: 10),
                             ),
                           ),
@@ -495,9 +495,9 @@ class _CombatScreenState extends State<CombatScreen> {
                 ),
               ),
             ] else ...[
-              const Text(
-                '没有战利品',
-                style: TextStyle(
+              Text(
+                Localization().translate('combat.no_loot'),
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 12,
                 ),
@@ -524,9 +524,9 @@ class _CombatScreenState extends State<CombatScreen> {
       children: [
         // 获得区域 - 显示待拾取的物品但按钮显示"带走 0"
         if (_pendingLootKey != null && _pendingLootValue != null) ...[
-          const Text(
-            '获得:',
-            style: TextStyle(
+          Text(
+            Localization().translate('messages.gained'),
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -574,9 +574,9 @@ class _CombatScreenState extends State<CombatScreen> {
                               horizontal: 8, vertical: 4),
                           minimumSize: const Size(0, 24),
                         ),
-                        child: const Text(
-                          '带走 0',
-                          style: TextStyle(fontSize: 10),
+                        child: Text(
+                          '${Localization().translate('ui.buttons.take_all').split(' ')[0]} 0',
+                          style: const TextStyle(fontSize: 10),
                         ),
                       ),
                     ),
@@ -606,9 +606,9 @@ class _CombatScreenState extends State<CombatScreen> {
                 decoration: const BoxDecoration(
                   border: Border(bottom: BorderSide(color: Colors.black)),
                 ),
-                child: const Text(
-                  '丢弃:',
-                  style: TextStyle(
+                child: Text(
+                  Localization().translate('messages.drop'),
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -672,9 +672,9 @@ class _CombatScreenState extends State<CombatScreen> {
                                     horizontal: 8, vertical: 2),
                                 minimumSize: const Size(24, 20),
                               ),
-                              child: const Text(
-                                '一',
-                                style: TextStyle(fontSize: 10),
+                              child: Text(
+                                Localization().translate('ui.buttons.drop_one'),
+                                style: const TextStyle(fontSize: 10),
                               ),
                             ),
                           ],
@@ -705,9 +705,9 @@ class _CombatScreenState extends State<CombatScreen> {
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     minimumSize: const Size(0, 32),
                   ),
-                  child: const Text(
-                    '一无所获',
-                    style: TextStyle(fontSize: 12),
+                  child: Text(
+                    Localization().translate('ui.buttons.leave_empty'),
+                    style: const TextStyle(fontSize: 12),
                   ),
                 ),
               ),
@@ -768,9 +768,9 @@ class _CombatScreenState extends State<CombatScreen> {
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 minimumSize: const Size(0, 32),
               ),
-              child: const Text(
-                '拿走一切以及离开',
-                style: TextStyle(fontSize: 12),
+              child: Text(
+                Localization().translate('combat.take_all_and_leave'),
+                style: const TextStyle(fontSize: 12),
               ),
             ),
           ),
@@ -788,9 +788,9 @@ class _CombatScreenState extends State<CombatScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               minimumSize: const Size(0, 32),
             ),
-            child: const Text(
-              '离开',
-              style: TextStyle(fontSize: 12),
+            child: Text(
+              Localization().translate('combat.leave'),
+              style: const TextStyle(fontSize: 12),
             ),
           ),
         ),
@@ -811,9 +811,9 @@ class _CombatScreenState extends State<CombatScreen> {
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 minimumSize: const Size(0, 32),
               ),
-              child: const Text(
-                '吃肉',
-                style: TextStyle(fontSize: 12),
+              child: Text(
+                Localization().translate('combat.eat_meat'),
+                style: const TextStyle(fontSize: 12),
               ),
             ),
           ),

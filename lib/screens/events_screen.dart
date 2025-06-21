@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../modules/events.dart';
@@ -246,13 +245,17 @@ class _EventsScreenState extends State<EventsScreen> {
       children: [
         // 获得区域 - 显示待拾取的物品但按钮显示"带走 0"
         if (_pendingLootKey != null && _pendingLootValue != null) ...[
-          const Text(
-            '获得:',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+          Consumer<Localization>(
+            builder: (context, localization, child) {
+              return Text(
+                localization.translate('messages.gained'),
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            },
           ),
           const SizedBox(height: 8),
           Container(
@@ -296,9 +299,13 @@ class _EventsScreenState extends State<EventsScreen> {
                               horizontal: 8, vertical: 4),
                           minimumSize: const Size(0, 24),
                         ),
-                        child: const Text(
-                          '带走 0',
-                          style: TextStyle(fontSize: 10),
+                        child: Consumer<Localization>(
+                          builder: (context, localization, child) {
+                            return Text(
+                              '${localization.translate('ui.buttons.take_all').split(' ')[0]} 0',
+                              style: const TextStyle(fontSize: 10),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -328,13 +335,17 @@ class _EventsScreenState extends State<EventsScreen> {
                 decoration: const BoxDecoration(
                   border: Border(bottom: BorderSide(color: Colors.black)),
                 ),
-                child: const Text(
-                  '丢弃:',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Consumer<Localization>(
+                  builder: (context, localization, child) {
+                    return Text(
+                      localization.translate('messages.drop'),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
                 ),
               ),
 
@@ -394,9 +405,13 @@ class _EventsScreenState extends State<EventsScreen> {
                                     horizontal: 8, vertical: 2),
                                 minimumSize: const Size(24, 20),
                               ),
-                              child: const Text(
-                                '一',
-                                style: TextStyle(fontSize: 10),
+                              child: Consumer<Localization>(
+                                builder: (context, localization, child) {
+                                  return Text(
+                                    localization.translate('ui.buttons.drop_one'),
+                                    style: const TextStyle(fontSize: 10),
+                                  );
+                                },
                               ),
                             ),
                           ],
@@ -427,9 +442,13 @@ class _EventsScreenState extends State<EventsScreen> {
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     minimumSize: const Size(0, 32),
                   ),
-                  child: const Text(
-                    '一无所获',
-                    style: TextStyle(fontSize: 12),
+                  child: Consumer<Localization>(
+                    builder: (context, localization, child) {
+                      return Text(
+                        localization.translate('ui.buttons.leave_empty'),
+                        style: const TextStyle(fontSize: 12),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -460,7 +479,7 @@ class _EventsScreenState extends State<EventsScreen> {
     final title = event['title'] ?? localization.translate('events.default_title');
 
     // 特殊处理神秘流浪者事件
-    if (title == '神秘流浪者' || title == '神秘陌生人') {
+    if (title == 'mysterious wanderer' || title == 'mysterious stranger') {
       String translatedTitle = localization.translate('events.mysterious_wanderer_event.title');
       if (translatedTitle != 'events.mysterious_wanderer_event.title') {
         return translatedTitle;
@@ -493,59 +512,41 @@ class _EventsScreenState extends State<EventsScreen> {
   String _getLocalizedEventText(String text) {
     final localization = Localization();
 
-    // 定义文本映射 - 将中文文本映射到翻译键
-    final textMappings = {
-      '一个陌生人出现在火堆旁。': 'events.stranger_event.text1',
-      '他穿着厚重的斗篷，看不清面容。': 'events.stranger_event.text2',
-      '"我需要一些木材来修理我的工具，"他说，"我可以给你一些回报。"': 'events.stranger_event.text3',
-      '陌生人接过木材，从斗篷下取出一些物品。': 'events.stranger_event.trade_text1',
-      '"这些应该对你有用，"他说着消失在黑暗中。': 'events.stranger_event.trade_text2',
-      '陌生人点点头，没有说什么。': 'events.stranger_event.decline_text1',
-      '他转身离开，消失在夜色中。': 'events.stranger_event.decline_text2',
-      '一个神秘的陌生人从黑暗中走来。': 'events.mysterious_wanderer_event.text1',
-      '他的眼中闪着奇异的光芒。': 'events.mysterious_wanderer_event.text2',
-      '"我有些东西可能对你有用。"他说道。': 'events.mysterious_wanderer_event.text3',
+    // 尝试直接从本地化系统获取翻译
+    String directTranslation = localization.translate(text);
+    if (directTranslation != text) {
+      return directTranslation;
+    }
 
-      // 房间事件
-      '建造者看起来更加熟练了。': 'events.room_events.builder.text1',
-      '他开始制作更复杂的工具。': 'events.room_events.builder.text2',
-      '火光在黑暗中摇曳。': 'events.room_events.firekeeper.text1',
-      '一个身影从阴影中走出。': 'events.room_events.firekeeper.text2',
-      '建造者已经到来。': 'events.room_events.firekeeper.text3',
-      '一个游牧商人走近火堆。': 'events.room_events.nomad.text1',
-      '他提议用毛皮换取有用的物品。': 'events.room_events.nomad.text2',
-      '一只流浪猫走进房间。': 'events.room_events.straycat.text1',
-      '它看起来又饿又冷。': 'events.room_events.straycat.text2',
-      '一个受伤的人跌跌撞撞地走进房间。': 'events.room_events.wounded.text1',
-      '他需要医疗救助。': 'events.room_events.wounded.text2',
-      '奇怪的声音从外面传来。': 'events.room_events.noisesOutside.text1',
-      '黑暗中有什么东西在移动。': 'events.room_events.noisesOutside.text2',
+    // 如果没有直接翻译，尝试从事件文本中查找
+    final eventTextKeys = [
+      'events.stranger_event',
+      'events.mysterious_wanderer_event',
+      'events.room_events.builder',
+      'events.room_events.firekeeper',
+      'events.room_events.nomad',
+      'events.room_events.straycat',
+      'events.room_events.wounded',
+      'events.room_events.noises_outside',
+      'events.mysterious_wanderer_wood',
+      'events.mysterious_wanderer_fur',
+    ];
 
-      // 全局事件 - 神秘流浪者（更新现有条目）
-      '陌生人微笑着从袍子里取出一些物品。': 'events.mysterious_wanderer_event.talk_text1',
-      '"这些可能在你的旅程中派上用场。"': 'events.mysterious_wanderer_event.talk_text2',
-      '你选择忽视这个陌生人。': 'events.mysterious_wanderer_event.ignore_text1',
-      '他摇摇头，消失在黑暗中。': 'events.mysterious_wanderer_event.ignore_text2',
-      '也许你错过了什么重要的东西。': 'events.mysterious_wanderer_event.ignore_text3',
+    for (final baseKey in eventTextKeys) {
+      final textKeys = ['text1', 'text2', 'text3', 'trade_text1', 'trade_text2',
+                       'decline_text1', 'decline_text2', 'talk_text1', 'talk_text2',
+                       'ignore_text1', 'ignore_text2', 'ignore_text3', 'leave_text'];
 
-      // 房间扩展事件 - 神秘流浪者木材版
-      '一个流浪者带着空车到达。说如果他带着木材离开，他会带着更多回来。': 'events.mysterious_wanderer_wood.text1',
-      '建造者不确定他是否值得信任。': 'events.mysterious_wanderer_wood.text2',
-      '流浪者离开了，车上装满了木材': 'events.mysterious_wanderer_wood.leave_text',
-
-      // 房间扩展事件 - 神秘流浪者毛皮版
-      '一个流浪者带着空车到达。说如果她带着毛皮离开，她会带着更多回来。': 'events.mysterious_wanderer_fur.text1',
-      '建造者不确定她是否值得信任。': 'events.mysterious_wanderer_fur.text2',
-      '流浪者离开了，车上装满了毛皮': 'events.mysterious_wanderer_fur.leave_text',
-    };
-
-    // 查找对应的翻译键
-    if (textMappings.containsKey(text)) {
-      final translatedText = localization.translate(textMappings[text]!);
-      if (translatedText != textMappings[text]) {
-        return translatedText;
+      for (final textKey in textKeys) {
+        final fullKey = '$baseKey.$textKey';
+        final translatedText = localization.translate(fullKey);
+        if (translatedText != fullKey && translatedText == text) {
+          return translatedText;
+        }
       }
     }
+
+
 
     // 如果没有找到映射，返回原文本
     return text;
@@ -555,25 +556,30 @@ class _EventsScreenState extends State<EventsScreen> {
   String _getLocalizedButtonText(String text) {
     final localization = Localization();
 
-    // 定义按钮文本映射
-    final buttonMappings = {
-      '交易': 'events.stranger_event.trade_button',
-      '拒绝': 'events.stranger_event.decline_button',
-      '继续': 'events.stranger_event.continue_button',
-      '与他交谈': 'events.mysterious_wanderer_event.talk_button',
-      '忽视他': 'events.mysterious_wanderer_event.ignore_button',
-      '感谢他': 'events.mysterious_wanderer_event.thank_button',
-      '给100': 'events.mysterious_wanderer_wood.give100_button',
-      '给500': 'events.mysterious_wanderer_wood.give500_button',
-      '拒绝他': 'events.mysterious_wanderer_wood.deny_button',
-      '拒绝她': 'events.mysterious_wanderer_fur.deny_button',
-      '告别': 'events.mysterious_wanderer.leave_button',
-    };
+    // 尝试直接从本地化系统获取翻译
+    String directTranslation = localization.translate(text);
+    if (directTranslation != text) {
+      return directTranslation;
+    }
 
-    // 查找对应的翻译键
-    if (buttonMappings.containsKey(text)) {
-      final translatedText = localization.translate(buttonMappings[text]!);
-      if (translatedText != buttonMappings[text]) {
+    // 尝试从事件按钮翻译中获取
+    final buttonKeys = [
+      'events.stranger_event.trade_button',
+      'events.stranger_event.decline_button',
+      'events.stranger_event.continue_button',
+      'events.mysterious_wanderer_event.talk_button',
+      'events.mysterious_wanderer_event.ignore_button',
+      'events.mysterious_wanderer_event.thank_button',
+      'events.mysterious_wanderer_wood.give100_button',
+      'events.mysterious_wanderer_wood.give500_button',
+      'events.mysterious_wanderer_wood.deny_button',
+      'events.mysterious_wanderer_fur.deny_button',
+      'events.mysterious_wanderer.leave_button',
+    ];
+
+    for (final key in buttonKeys) {
+      final translatedText = localization.translate(key);
+      if (translatedText != key && translatedText == text) {
         return translatedText;
       }
     }
@@ -592,18 +598,12 @@ class _EventsScreenState extends State<EventsScreen> {
   String _getLocalizedText(String chineseText, String englishText) {
     final localization = Localization();
 
-    // 定义文本映射
-    final textMappings = {
-      '发现了：': 'messages.found',
-      '带走 所有': 'ui.buttons.take_all',
-    };
-
-    // 如果是中文文本，尝试查找翻译
-    if (textMappings.containsKey(chineseText)) {
-      final translatedText = localization.translate(textMappings[chineseText]!);
-      if (translatedText != textMappings[chineseText]) {
-        return translatedText;
-      }
+    // 尝试从本地化系统获取翻译
+    if (chineseText == '发现了：') {
+      return localization.translate('messages.found');
+    }
+    if (chineseText == '带走 所有') {
+      return localization.translate('ui.buttons.take_all');
     }
 
     // 否则根据当前语言返回对应文本

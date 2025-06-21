@@ -413,11 +413,11 @@ class OutsideScreen extends StatelessWidget {
       final totalProduction = availableWorkers * (stores['wood'] as num);
       if (totalProduction > 0) {
         final producesText =
-            localization?.translate('worker_info.produces') ?? '生产';
-        final everyText = localization?.translate('worker_info.every') ?? '每';
+            localization?.translate('worker_info.produces') ?? 'produces';
+        final everyText = localization?.translate('worker_info.every') ?? 'every';
         final secondsText =
-            localization?.translate('worker_info.seconds') ?? '秒';
-        final woodText = localization?.translate('resources.wood') ?? '木材';
+            localization?.translate('worker_info.seconds') ?? 'seconds';
+        final woodText = localization?.translate('resources.wood') ?? 'wood';
         effects.add(
             '$producesText: +${totalProduction.toStringAsFixed(1)} $woodText $everyText$delay$secondsText');
       }
@@ -432,11 +432,11 @@ class OutsideScreen extends StatelessWidget {
               localization?.translate('resources.$resource') ?? resource;
           final prefix = totalRate > 0 ? '+' : '';
           final actionText = totalRate > 0
-              ? (localization?.translate('worker_info.produces') ?? '生产')
-              : (localization?.translate('worker_info.consumes') ?? '消耗');
-          final everyText = localization?.translate('worker_info.every') ?? '每';
+              ? (localization?.translate('worker_info.produces') ?? 'produces')
+              : (localization?.translate('worker_info.consumes') ?? 'consumes');
+          final everyText = localization?.translate('worker_info.every') ?? 'every';
           final secondsText =
-              localization?.translate('worker_info.seconds') ?? '秒';
+              localization?.translate('worker_info.seconds') ?? 'seconds';
           effects.add(
               '$actionText: $prefix${totalRate.toStringAsFixed(1)} $resourceName $everyText$delay$secondsText');
         }
@@ -444,7 +444,7 @@ class OutsideScreen extends StatelessWidget {
     }
 
     if (effects.isEmpty) {
-      return localization?.translate('worker_info.no_production') ?? '当前无生产/消耗';
+      return localization?.translate('worker_info.no_production') ?? 'no production/consumption';
     }
 
     return effects.join('\n');

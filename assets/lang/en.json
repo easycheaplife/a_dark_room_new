@@ -63,7 +63,9 @@
       "investigate": "investigate",
       "back_inside": "back inside",
       "give": "give food",
-      "chase": "chase thief"
+      "chase": "chase thief",
+      "drop_one": "one",
+      "leave_empty": "leave with nothing"
     },
     "menus": {
       "stores": "stores",
@@ -245,7 +247,8 @@
     "glows_softly_red": "glows softly red",
     "restores_20_health": "restores 20 health",
     "found": "found:",
-    "backpack_full": "backpack is full"
+    "backpack_full": "backpack is full",
+    "drop": "drop:"
   },
   "import_export": {
     "title": "import/export save",
@@ -790,6 +793,13 @@
     "choose_weapon": "choose weapon:",
     "flee": "flee",
     "enemy_dead": "enemy is dead",
+    "wanderer": "wanderer",
+    "eat_meat": "eat meat",
+    "use_medicine": "use medicine",
+    "use_hypo": "use hypo",
+    "no_loot": "no loot",
+    "take_all_and_leave": "take all and leave",
+    "leave": "leave",
     "weapons": {
       "fists": "fists",
       "bone spear": "bone spear",
