@@ -54,7 +54,16 @@
       "take_all": "take all",
       "decline": "decline",
       "talk": "talk to him",
-      "thank": "thank him"
+      "thank": "thank him",
+      "feed": "feed",
+      "buy_scales": "buy scales",
+      "buy_teeth": "buy teeth",
+      "buy_bait": "buy bait",
+      "buy_compass": "buy compass",
+      "investigate": "investigate",
+      "back_inside": "back inside",
+      "give": "give food",
+      "chase": "chase thief"
     },
     "menus": {
       "stores": "stores",
@@ -66,7 +75,8 @@
       "import_export": "import/export",
       "path": "a dusty path",
       "fabricator": "a humming fabricator",
-      "ship": "ship"
+      "ship": "ship",
+      "special_items": "special items"
     },
     "modules": {
       "path": "a dusty path",
@@ -215,93 +225,6 @@
     "precise": "accuracy +10%",
     "scout": "enemy encounter chance -10%"
   },
-  "events": {
-    "room_events": {
-      "builder": {
-        "title": "builder",
-        "text1": "the builder looks more skilled.",
-        "text2": "he begins crafting more complex tools.",
-        "notification": "builder skill improved"
-      },
-      "firekeeper": {
-        "title": "firekeeper",
-        "text1": "the firelight flickers in the darkness.",
-        "text2": "a figure emerges from the shadows.",
-        "text3": "the builder has arrived.",
-        "notification": "the builder has arrived"
-      },
-      "nomad": {
-        "title": "nomad trader",
-        "text1": "a nomad trader approaches the fire.",
-        "text2": "he offers to trade furs for useful items.",
-        "notification": "a nomad trader arrives"
-      },
-      "straycat": {
-        "title": "stray cat",
-        "text1": "a stray cat wanders into the room.",
-        "text2": "it looks hungry and cold.",
-        "notification": "a stray cat appears"
-      },
-      "wounded": {
-        "title": "wounded man",
-        "text1": "a wounded man stumbles into the room.",
-        "text2": "he needs medical attention.",
-        "notification": "a wounded man arrives"
-      },
-      "noisesOutside": {
-        "title": "noises",
-        "text1": "strange noises echo from outside.",
-        "text2": "something is moving in the darkness.",
-        "notification": "noises outside"
-      }
-    },
-    "stranger_event": {
-      "title": "stranger",
-      "text1": "a stranger appears by the fire.",
-      "text2": "he wears a heavy cloak, his face hidden.",
-      "text3": "\"i need some wood to repair my tools,\" he says, \"i can give you something in return.\"",
-      "trade_text1": "the stranger takes the wood and produces some items from under his cloak.",
-      "trade_text2": "\"these should be useful to you,\" he says as he disappears into the darkness.",
-      "decline_text1": "the stranger nods, saying nothing.",
-      "decline_text2": "he turns and leaves, disappearing into the night.",
-      "trade_button": "trade",
-      "decline_button": "decline",
-      "continue_button": "continue"
-    },
-    "mysterious_wanderer_event": {
-      "title": "mysterious wanderer",
-      "text1": "a mysterious stranger emerges from the darkness.",
-      "text2": "his eyes flash with strange light.",
-      "text3": "\"i have something that might be useful to you,\" he says.",
-      "talk_text1": "the stranger smiles and produces some items from his robe.",
-      "talk_text2": "\"these might come in handy on your journey.\"",
-      "ignore_text1": "you choose to ignore this stranger.",
-      "ignore_text2": "he shakes his head and disappears into the darkness.",
-      "ignore_text3": "perhaps you missed something important.",
-      "talk_button": "talk to him",
-      "ignore_button": "ignore him",
-      "thank_button": "thank him"
-    },
-    "mysterious_wanderer_wood": {
-      "title": "mysterious wanderer",
-      "text1": "a wanderer arrives with an empty cart. says if he leaves with wood, he'll return with more.",
-      "text2": "the builder is not sure he can be trusted.",
-      "leave_text": "the wanderer leaves, cart loaded with wood",
-      "give100_button": "give 100",
-      "give500_button": "give 500",
-      "deny_button": "refuse him"
-    },
-    "mysterious_wanderer_fur": {
-      "title": "mysterious wanderer",
-      "text1": "a wanderer arrives with an empty cart. says if she leaves with fur, she'll return with more.",
-      "text2": "the builder is not sure she can be trusted.",
-      "leave_text": "the wanderer leaves, cart loaded with fur",
-      "deny_button": "refuse her"
-    },
-    "mysterious_wanderer": {
-      "leave_button": "farewell"
-    }
-  },
   "messages": {
     "not_enough_resources": "not enough resources",
     "insufficient": "insufficient",
@@ -347,6 +270,7 @@
     "no_save_record": "no save record",
     "auto_save_info": "game auto-saves every 30 seconds",
     "import_export_info": "📋 import/export",
+    "import_export_title": "import/export save",
     "import_export_description": "• export: save current game progress as text, can be backed up or shared\n• import: restore game progress from exported text\n• fully compatible with original game save format",
     "import_export_instruction": "to import or export game saves, click the import/export button in the top right corner 📥",
     "danger_section": "⚠️ danger zone",
@@ -544,6 +468,120 @@
         "trade_text2": "\"these should be useful to you,\" he says as he disappears into the darkness.",
         "decline_text1": "the stranger nods, saying nothing.",
         "decline_text2": "he turns and leaves, disappearing into the night."
+      },
+      "straycat": {
+        "title": "stray cat",
+        "text1": "a scrawny cat approaches the fire.",
+        "text2": "it looks hungry, gazing at you expectantly.",
+        "text3": "perhaps it smells the meat.",
+        "feed_text1": "the cat gratefully eats the meat you give it.",
+        "feed_text2": "it curls up contentedly by the fire.",
+        "feed_text3": "from now on, it becomes your faithful companion.",
+        "ignore_text1": "the cat leaves disappointed.",
+        "ignore_text2": "it disappears into the darkness, never to return."
+      },
+      "wounded": {
+        "title": "wounded man",
+        "text1": "a wounded man drags his heavy steps toward the fire.",
+        "text2": "his arm is bleeding and needs bandaging.",
+        "text3": "\"please help me...\" he says weakly.",
+        "help_text1": "you bandage his wound with cloth.",
+        "help_text2": "he looks at you gratefully.",
+        "help_text3": "\"thank you for saving my life. this is all i have, please take it.\"",
+        "refuse_text1": "you choose not to help the wounded man.",
+        "refuse_text2": "he leaves disappointed, bloodstained.",
+        "refuse_text3": "you feel guilty."
+      },
+      "nomad": {
+        "title": "nomad trader",
+        "text1": "a nomad trader drags a crude pack into view, bound with rough rope bags.",
+        "text2": "unwilling to say where he comes from, but clearly he won't stay long.",
+        "notification": "a nomad trader arrives, wanting to trade",
+        "bait_notification": "with bait, the traps will be more effective.",
+        "compass_notification": "this old compass has some dents and dust, but looks like it still works."
+      },
+      "noises_outside": {
+        "title": "noises",
+        "text1": "through the walls, shuffling noises can be heard.",
+        "text2": "can't tell what they're up to.",
+        "notification": "strange noises can be heard through the walls",
+        "nothing_text1": "vague shapes move, just out of sight.",
+        "nothing_text2": "the noises stop.",
+        "stuff_text1": "a bundle of sticks lies just beyond the threshold, wrapped in rough furs.",
+        "stuff_text2": "the night is silent."
+      },
+      "noises_inside": {
+        "title": "noises",
+        "text1": "scratching noises can be heard from the store room.",
+        "text2": "something's in there.",
+        "notification": "something's in the store room",
+        "scales_text1": "some wood is missing.",
+        "scales_text2": "small scales are scattered on the floor",
+        "teeth_text1": "some wood is missing.",
+        "teeth_text2": "small teeth are scattered on the floor",
+        "cloth_text1": "some wood is missing.",
+        "cloth_text2": "cloth scraps are scattered on the floor"
+      },
+      "beggar": {
+        "title": "beggar",
+        "text1": "a beggar arrives.",
+        "text2": "asks for some spare furs to keep warm at night.",
+        "notification": "a beggar arrives",
+        "scales_text1": "the beggar expresses his gratitude.",
+        "scales_text2": "leaves behind a pile of small scales.",
+        "teeth_text1": "the beggar expresses his gratitude.",
+        "teeth_text2": "leaves behind a pile of small teeth.",
+        "cloth_text1": "the beggar expresses his gratitude.",
+        "cloth_text2": "leaves behind some cloth scraps."
+      },
+      "shady_builder": {
+        "title": "shady builder",
+        "text1": "a shady builder passes through",
+        "text2": "says he can build you a hut for less wood",
+        "notification": "a shady builder passes through",
+        "steal_text": "the shady builder runs off with your wood",
+        "steal_notification": "the shady builder runs off with your wood",
+        "build_text": "the shady builder builds a hut",
+        "build_notification": "the shady builder builds a hut"
+      }
+    },
+    "global_events": {
+      "nomadic_tribe": {
+        "title": "nomadic tribe",
+        "text1": "a nomadic tribe sets up camp near your village.",
+        "text2": "they look friendly and want to trade.",
+        "trade_text1": "the tribe's chief is happy to trade with you.",
+        "trade_text2": "they give you some precious items in return.",
+        "decline_text1": "the tribe members look somewhat disappointed.",
+        "decline_text2": "they pack up and continue their journey."
+      },
+      "scavenger": {
+        "title": "scavenger",
+        "text1": "a scavenger arrives at your village with a cart of scrap.",
+        "text2": "\"i have some useful things,\" he says, \"but i need wood to repair my cart.\"",
+        "trade_text1": "the scavenger happily accepts your wood.",
+        "trade_text2": "he unloads some useful items from his cart.",
+        "refuse_text1": "the scavenger shrugs and continues his journey.",
+        "refuse_text2": "perhaps you missed a good opportunity."
+      },
+      "beggar_global": {
+        "title": "beggar",
+        "text1": "a hungry beggar comes to your village.",
+        "text2": "\"i haven't eaten for days,\" he pleads, \"could you spare some food?\"",
+        "give_text1": "the beggar gratefully accepts the food.",
+        "give_text2": "\"may the gods bless your kindness,\" he says, \"i have nothing to repay you with, but please accept this.\"",
+        "refuse_text1": "the beggar leaves disappointed.",
+        "refuse_text2": "you watch him disappear into the distance."
+      },
+      "thief": {
+        "title": "thief",
+        "text1": "in the dead of night, you hear suspicious sounds.",
+        "text2": "a thief is trying to steal your supplies!",
+        "chase_text1": "you successfully catch the thief.",
+        "chase_text2": "he begs for your forgiveness and hands over the stolen goods.",
+        "chase_text3": "as compensation, he also gives you some additional items.",
+        "ignore_text1": "you choose to ignore the thief.",
+        "ignore_text2": "the next morning, you find some supplies missing."
       }
     }
   },

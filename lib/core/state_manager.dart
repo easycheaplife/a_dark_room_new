@@ -244,7 +244,7 @@ class StateManager with ChangeNotifier {
     // 重要：stores值不能为负数（按照原游戏逻辑）
     if (path.startsWith('stores') && value is num && value < 0) {
       if (kDebugMode) {
-        Logger.info('⚠️ StateManager: stores值不能为负数，将 $path 从 $value 设置为 0');
+        Logger.info('⚠️ StateManager: stores value cannot be negative, setting $path from $value to 0');
       }
       // 重新设置为0，确保类型一致性
       final zeroValue = value is int ? 0 : 0.0;
@@ -453,7 +453,7 @@ class StateManager with ChangeNotifier {
       }
     } catch (e) {
       if (kDebugMode) {
-        Logger.error('❌ 保存游戏失败: $e');
+        Logger.error('❌ Failed to save game: $e');
       }
     }
   }
@@ -521,7 +521,7 @@ class StateManager with ChangeNotifier {
       remove('outside.workers.hunter', true);
       remove('income.hunter', true);
       if (kDebugMode) {
-        Logger.info('升级存档到 v1.1');
+        Logger.info('Upgrading save to v1.1');
       }
       version = 1.1;
     }
@@ -533,7 +533,7 @@ class StateManager with ChangeNotifier {
         // World.placeLandmark(15, World.RADIUS * 1.5, World.TILE.SWAMP, get('world.map'));
       }
       if (kDebugMode) {
-        Logger.info('升级存档到 v1.2');
+        Logger.info('Upgrading save to v1.2');
       }
       version = 1.2;
     }
@@ -656,7 +656,7 @@ class StateManager with ChangeNotifier {
       }
     } catch (e) {
       if (kDebugMode) {
-        Logger.error('警告：尝试移除不存在的状态 \'$path\'。');
+        Logger.error('Warning: Attempting to remove non-existent state \'$path\'.');
       }
     }
 
@@ -802,7 +802,7 @@ class StateManager with ChangeNotifier {
       return jsonEncode(exportData);
     } catch (e) {
       if (kDebugMode) {
-        Logger.error('❌ 导出游戏状态失败: $e');
+        Logger.error('❌ Failed to export game state: $e');
       }
       rethrow;
     }
@@ -816,7 +816,7 @@ class StateManager with ChangeNotifier {
       // 验证导入数据的基本结构
       if (!_validateImportData(importedData)) {
         if (kDebugMode) {
-          Logger.error('❌ 导入数据格式无效');
+          Logger.error('❌ Invalid import data format');
         }
         return false;
       }
@@ -845,8 +845,8 @@ class StateManager with ChangeNotifier {
         notifyListeners();
 
         if (kDebugMode) {
-          Logger.info('✅ 游戏状态导入成功');
-          Logger.info('📊 导入后的木材数量: ${_state['stores']?['wood']}');
+          Logger.info('✅ Game state imported successfully');
+          Logger.info('📊 Wood count after import: ${_state['stores']?['wood']}');
         }
 
         return true;
@@ -856,13 +856,13 @@ class StateManager with ChangeNotifier {
         notifyListeners();
 
         if (kDebugMode) {
-          Logger.error('❌ 导入失败，已恢复原状态: $e');
+          Logger.error('❌ Import failed, restored original state: $e');
         }
         return false;
       }
     } catch (e) {
       if (kDebugMode) {
-        Logger.error('❌ 解析导入数据失败: $e');
+        Logger.error('❌ Failed to parse import data: $e');
       }
       return false;
     }
@@ -896,20 +896,20 @@ class StateManager with ChangeNotifier {
         final difference = now.difference(saveTime);
 
         if (difference.inDays > 0) {
-          return '${difference.inDays}天前';
+          return '${difference.inDays} days ago';
         } else if (difference.inHours > 0) {
-          return '${difference.inHours}小时前';
+          return '${difference.inHours} hours ago';
         } else if (difference.inMinutes > 0) {
-          return '${difference.inMinutes}分钟前';
+          return '${difference.inMinutes} minutes ago';
         } else {
-          return '刚刚';
+          return 'just now';
         }
       }
 
       return null;
     } catch (e) {
       if (kDebugMode) {
-        Logger.error('❌ 获取保存时间失败: $e');
+        Logger.error('❌ Failed to get save time: $e');
       }
       return null;
     }
@@ -927,11 +927,11 @@ class StateManager with ChangeNotifier {
       init();
 
       if (kDebugMode) {
-        Logger.info('🗑️ 游戏数据已清除');
+        Logger.info('🗑️ Game data cleared');
       }
     } catch (e) {
       if (kDebugMode) {
-        Logger.error('❌ 清除游戏数据失败: $e');
+        Logger.error('❌ Failed to clear game data: $e');
       }
     }
   }

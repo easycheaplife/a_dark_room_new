@@ -151,7 +151,7 @@ class Events extends ChangeNotifier {
         final value = entry.value as int;
         final current = sm.get('stores.$key', true) ?? 0;
         sm.set('stores.$key', current + value);
-        Logger.info('🎁 获得奖励: $key +$value');
+        Logger.info('🎁 Reward gained: $key +$value');
       }
     }
 
@@ -306,7 +306,7 @@ class Events extends ChangeNotifier {
         final cost = entry.value as int;
         final current = sm.get('stores.$key', true) ?? 0;
         if (current < cost) {
-          NotificationManager().notify('events', '资源不足: $key');
+          NotificationManager().notify('events', 'Insufficient resources: $key');
           return;
         }
       }
@@ -317,7 +317,7 @@ class Events extends ChangeNotifier {
         final cost = entry.value as int;
         final current = sm.get('stores.$key', true) ?? 0;
         sm.set('stores.$key', current - cost);
-        Logger.info('💰 消耗: $key -$cost');
+        Logger.info('💰 Cost: $key -$cost');
       }
     }
 
@@ -329,7 +329,7 @@ class Events extends ChangeNotifier {
         final value = entry.value as int;
         final current = sm.get('stores.$key', true) ?? 0;
         sm.set('stores.$key', current + value);
-        Logger.info('🎁 获得奖励: $key +$value');
+        Logger.info('🎁 Reward gained: $key +$value');
       }
     }
 

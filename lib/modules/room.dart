@@ -1270,7 +1270,7 @@ class Room with ChangeNotifier {
     for (var k in cost.keys) {
       final have = sm.get('stores["$k"]', true) ?? 0;
       if (have < cost[k]!) {
-        NotificationManager().notify(name, '没有足够的 $k');
+        NotificationManager().notify(name, 'Not enough $k');
         return;
       } else {
         storeMod[k] = have - cost[k]!;
@@ -1346,7 +1346,7 @@ class Room with ChangeNotifier {
     for (var k in cost.keys) {
       final have = sm.get('stores["$k"]', true) ?? 0;
       if (have < cost[k]!) {
-        NotificationManager().notify(name, '没有足够的 $k');
+        NotificationManager().notify(name, 'Not enough $k');
         return;
       } else {
         storeMod[k] = have - cost[k]!;

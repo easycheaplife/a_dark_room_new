@@ -327,7 +327,7 @@ class _StoresDisplayState extends State<StoresDisplay> {
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                 child: Text(
-                  '特殊物品',
+                  localization.translate('ui.menus.special_items'),
                   style: TextStyle(
                     color: textColor,
                     fontWeight: FontWeight.bold,

@@ -53,7 +53,16 @@
       "move_on": "继续前进",
       "take_all": "带走 所有",
       "talk": "与他交谈",
-      "thank": "感谢他"
+      "thank": "感谢他",
+      "feed": "喂食",
+      "buy_scales": "购买鳞片",
+      "buy_teeth": "购买牙齿",
+      "buy_bait": "购买诱饵",
+      "buy_compass": "购买指南针",
+      "investigate": "调查",
+      "back_inside": "回到屋内",
+      "give": "给他食物",
+      "chase": "追赶小偷"
     },
     "menus": {
       "stores": "库存",
@@ -65,7 +74,8 @@
       "import_export": "导入/导出存档",
       "path": "漫漫尘途",
       "fabricator": "嗡嗡作响的制造器",
-      "ship": "飞船"
+      "ship": "飞船",
+      "special_items": "特殊物品"
     },
     "modules": {
       "path": "漫漫尘途",
@@ -207,119 +217,6 @@
     "precise": "命中率+10%",
     "scout": "遭遇敌人几率-10%"
   },
-  "events": {
-    "stranger": "陌生人",
-    "mysterious_wanderer": "神秘流浪者",
-    "suspicious_builder": "可疑建造者",
-    "scout": "侦察兵",
-    "sick_man": "病人",
-    "convoy": "商队",
-    "raiders": "袭击者",
-    "beast": "野兽",
-    "trader": "商人",
-    "refugees": "难民",
-    "ruined_trap": "损坏的陷阱",
-    "fire": "火灾",
-    "sickness": "疾病",
-    "plague": "瘟疫",
-    "beast_attack": "野兽袭击",
-    "military_raid": "军事突袭",
-    "titles": {
-      "stranger": "陌生人",
-      "mysterious_wanderer": "神秘陌生人",
-      "builder": "建造者",
-      "firekeeper": "守火人",
-      "nomad": "游牧商人",
-      "straycat": "流浪猫",
-      "wounded": "受伤的人",
-      "noisesOutside": "声音"
-    },
-    "room_events": {
-      "builder": {
-        "title": "建造者",
-        "text1": "建造者看起来更加熟练了。",
-        "text2": "他开始制作更复杂的工具。",
-        "notification": "建造者技能提升"
-      },
-      "firekeeper": {
-        "title": "守火人",
-        "text1": "火光在黑暗中摇曳。",
-        "text2": "一个身影从阴影中走出。",
-        "text3": "建造者已经到来。",
-        "notification": "建造者已经到来"
-      },
-      "nomad": {
-        "title": "游牧商人",
-        "text1": "一个游牧商人走近火堆。",
-        "text2": "他提议用毛皮换取有用的物品。",
-        "notification": "游牧商人到来"
-      },
-      "straycat": {
-        "title": "流浪猫",
-        "text1": "一只流浪猫走进房间。",
-        "text2": "它看起来又饿又冷。",
-        "notification": "流浪猫出现"
-      },
-      "wounded": {
-        "title": "受伤的人",
-        "text1": "一个受伤的人跌跌撞撞地走进房间。",
-        "text2": "他需要医疗救助。",
-        "notification": "受伤的人到来"
-      },
-      "noisesOutside": {
-        "title": "声音",
-        "text1": "奇怪的声音从外面传来。",
-        "text2": "黑暗中有什么东西在移动。",
-        "notification": "外面有声音"
-      }
-    },
-    "stranger_event": {
-      "title": "陌生人",
-      "text1": "一个陌生人出现在火堆旁。",
-      "text2": "他穿着厚重的斗篷，看不清面容。",
-      "text3": "\"我需要一些木材来修理我的工具，\"他说，\"我可以给你一些回报。\"",
-      "trade_text1": "陌生人接过木材，从斗篷下取出一些物品。",
-      "trade_text2": "\"这些应该对你有用，\"他说着消失在黑暗中。",
-      "decline_text1": "陌生人点点头，没有说什么。",
-      "decline_text2": "他转身离开，消失在夜色中。",
-      "trade_button": "交易",
-      "decline_button": "拒绝",
-      "continue_button": "继续"
-    },
-    "mysterious_wanderer_event": {
-      "title": "神秘流浪者",
-      "text1": "一个神秘的陌生人从黑暗中走来。",
-      "text2": "他的眼中闪烁着奇异的光芒。",
-      "text3": "\"我有些东西可能对你有用。\"他说道。",
-      "talk_text1": "陌生人微笑着从袍子里取出一些物品。",
-      "talk_text2": "\"这些可能在你的旅程中派上用场。\"",
-      "ignore_text1": "你选择忽视这个陌生人。",
-      "ignore_text2": "他摇摇头，消失在黑暗中。",
-      "ignore_text3": "也许你错过了什么重要的东西。",
-      "talk_button": "与他交谈",
-      "ignore_button": "忽视他",
-      "thank_button": "感谢他"
-    },
-    "mysterious_wanderer_wood": {
-      "title": "神秘流浪者",
-      "text1": "一个流浪者带着空车到达。说如果他带着木材离开，他会带着更多回来。",
-      "text2": "建造者不确定他是否值得信任。",
-      "leave_text": "流浪者离开了，车上装满了木材",
-      "give100_button": "给100",
-      "give500_button": "给500",
-      "deny_button": "拒绝他"
-    },
-    "mysterious_wanderer_fur": {
-      "title": "神秘流浪者",
-      "text1": "一个流浪者带着空车到达。说如果她带着毛皮离开，她会带着更多回来。",
-      "text2": "建造者不确定她是否值得信任。",
-      "leave_text": "流浪者离开了，车上装满了毛皮",
-      "deny_button": "拒绝她"
-    },
-    "mysterious_wanderer": {
-      "leave_button": "告别"
-    }
-  },
   "messages": {
     "not_enough_resources": "资源不足",
     "insufficient": "不足",
@@ -365,6 +262,7 @@
     "no_save_record": "暂无保存记录",
     "auto_save_info": "游戏每30秒自动保存一次",
     "import_export_info": "📋 导入/导出",
+    "import_export_title": "导入/导出存档",
     "import_export_description": "• 导出：将当前游戏进度保存为文本，可以备份或分享\n• 导入：从导出的文本恢复游戏进度\n• 完全兼容原游戏存档格式",
     "import_export_instruction": "要导入或导出游戏存档，请点击右上角的导入/导出按钮 📥",
     "danger_section": "⚠️ 危险操作",
@@ -562,6 +460,120 @@
         "trade_text2": "\"这些应该对你有用，\"他说着消失在黑暗中。",
         "decline_text1": "陌生人点点头，没有说什么。",
         "decline_text2": "他转身离开，消失在夜色中。"
+      },
+      "straycat": {
+        "title": "流浪猫",
+        "text1": "一只瘦弱的猫咪走向火堆。",
+        "text2": "它看起来很饿，用期待的眼神看着你。",
+        "text3": "也许它闻到了肉的味道。",
+        "feed_text1": "猫咪感激地吃着你给的肉。",
+        "feed_text2": "它满足地蜷缩在火堆旁。",
+        "feed_text3": "从此以后，它成为了你忠实的伙伴。",
+        "ignore_text1": "猫咪失望地离开了。",
+        "ignore_text2": "它消失在黑暗中，再也没有回来。"
+      },
+      "wounded": {
+        "title": "受伤的人",
+        "text1": "一个受伤的人拖着沉重的脚步走向火堆。",
+        "text2": "他的手臂在流血，需要包扎。",
+        "text3": "\"请帮帮我...\"他虚弱地说道。",
+        "help_text1": "你用布料为他包扎伤口。",
+        "help_text2": "他感激地看着你。",
+        "help_text3": "\"谢谢你救了我的命。这是我仅有的，请收下。\"",
+        "refuse_text1": "你选择不帮助这个受伤的人。",
+        "refuse_text2": "他失望地离开了，血迹斑斑。",
+        "refuse_text3": "你感到良心不安。"
+      },
+      "nomad": {
+        "title": "游牧商人",
+        "text1": "一个游牧商人拖着简陋的行囊走进视野，身上绑着粗糙的麻绳制成的袋子。",
+        "text2": "不愿说出他来自何方，但显然他不会久留。",
+        "notification": "一个游牧商人到达，想要交易",
+        "bait_notification": "有了诱饵，陷阱会更有效。",
+        "compass_notification": "这个旧指南针有些凹痕和灰尘，但看起来还能用。"
+      },
+      "noises_outside": {
+        "title": "声音",
+        "text1": "透过墙壁，可以听到窸窸窣窣的声音。",
+        "text2": "不知道它们在做什么。",
+        "notification": "透过墙壁可以听到奇怪的声音",
+        "nothing_text1": "模糊的形状在移动，就在视线之外。",
+        "nothing_text2": "声音停止了。",
+        "stuff_text1": "门槛外放着一捆木棍，用粗糙的毛皮包着。",
+        "stuff_text2": "夜晚很安静。"
+      },
+      "noises_inside": {
+        "title": "声音",
+        "text1": "从储藏室可以听到抓挠的声音。",
+        "text2": "里面有什么东西。",
+        "notification": "储藏室里有什么东西",
+        "scales_text1": "一些木材不见了。",
+        "scales_text2": "地上散落着小鳞片",
+        "teeth_text1": "一些木材不见了。",
+        "teeth_text2": "地上散落着小牙齿",
+        "cloth_text1": "一些木材不见了。",
+        "cloth_text2": "地上散落着布料碎片"
+      },
+      "beggar": {
+        "title": "乞丐",
+        "text1": "一个乞丐到达。",
+        "text2": "请求一些多余的毛皮来在夜晚保暖。",
+        "notification": "一个乞丐到达",
+        "scales_text1": "乞丐表达了他的感谢。",
+        "scales_text2": "留下了一堆小鳞片。",
+        "teeth_text1": "乞丐表达了他的感谢。",
+        "teeth_text2": "留下了一堆小牙齿。",
+        "cloth_text1": "乞丐表达了他的感谢。",
+        "cloth_text2": "留下了一些布料碎片。"
+      },
+      "shady_builder": {
+        "title": "可疑建造者",
+        "text1": "一个可疑的建造者路过",
+        "text2": "说他可以用更少的木材为你建造一间小屋",
+        "notification": "一个可疑的建造者路过",
+        "steal_text": "可疑的建造者带着你的木材跑了",
+        "steal_notification": "可疑的建造者带着你的木材跑了",
+        "build_text": "可疑的建造者建造了一间小屋",
+        "build_notification": "可疑的建造者建造了一间小屋"
+      }
+    },
+    "global_events": {
+      "nomadic_tribe": {
+        "title": "游牧部落",
+        "text1": "一个游牧部落在你的村庄附近扎营。",
+        "text2": "他们看起来很友善，想要进行贸易。",
+        "trade_text1": "部落的首领很高兴与你交易。",
+        "trade_text2": "他们给了你一些珍贵的物品作为回报。",
+        "decline_text1": "部落的人们看起来有些失望。",
+        "decline_text2": "他们收拾行装，继续他们的旅程。"
+      },
+      "scavenger": {
+        "title": "拾荒者",
+        "text1": "一个拾荒者带着一车废料来到你的村庄。",
+        "text2": "\"我有一些有用的东西，\"他说，\"但我需要木材来修理我的车。\"",
+        "trade_text1": "拾荒者很高兴地接受了你的木材。",
+        "trade_text2": "他从车上卸下了一些有用的物品。",
+        "refuse_text1": "拾荒者耸耸肩，继续他的旅程。",
+        "refuse_text2": "也许你错过了一个好机会。"
+      },
+      "beggar_global": {
+        "title": "乞丐",
+        "text1": "一个饥饿的乞丐来到你的村庄。",
+        "text2": "\"我已经好几天没吃东西了，\"他恳求道，\"能给我一些食物吗？\"",
+        "give_text1": "乞丐感激地接受了食物。",
+        "give_text2": "\"愿神明保佑你的善良，\"他说，\"我没有什么可以回报的，但请接受这个。\"",
+        "refuse_text1": "乞丐失望地离开了。",
+        "refuse_text2": "你看着他消失在远方。"
+      },
+      "thief": {
+        "title": "小偷",
+        "text1": "夜深人静时，你听到了可疑的声音。",
+        "text2": "一个小偷正试图偷取你的物资！",
+        "chase_text1": "你成功抓住了小偷。",
+        "chase_text2": "他恳求你的宽恕，并交出了偷来的东西。",
+        "chase_text3": "作为补偿，他还给了你一些额外的物品。",
+        "ignore_text1": "你选择忽视小偷。",
+        "ignore_text2": "第二天早上，你发现一些物资不见了。"
       }
     }
   },

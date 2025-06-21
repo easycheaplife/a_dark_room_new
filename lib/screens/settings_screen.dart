@@ -131,14 +131,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '💾 导入/导出存档',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Times New Roman',
-              color: Colors.black,
-            ),
+          Consumer<Localization>(
+            builder: (context, localization, child) {
+              return Text(
+                '💾 ${localization.translate('settings.import_export_title')}',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Times New Roman',
+                  color: Colors.black,
+                ),
+              );
+            },
           ),
           const SizedBox(height: 10),
           Text(
