@@ -792,7 +792,10 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'a3': {
-          'text': ['一座废弃的商店，门窗都被木板封住了。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.town_scenes.town_a3_text')];
+          }(),
           'loot': {
             'cured meat': {'min': 1, 'max': 3, 'chance': 0.8},
             'cloth': {'min': 2, 'max': 5, 'chance': 0.6}
@@ -815,48 +818,108 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'b1': {
-          'text': ['学校里空荡荡的，只有灰尘和破碎的桌椅。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.town_scenes.town_b1_text')];
+          }(),
           'loot': {
             'cloth': {'min': 3, 'max': 8, 'chance': 1.0},
             'cured meat': {'min': 1, 'max': 2, 'chance': 0.3}
           },
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'end'},
-            'leave': {'text': '离开城镇', 'nextScene': 'end'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'end'
+            },
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('setpieces.town_scenes.leave_town');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'b2': {
-          'text': ['在学校的角落里发现了一些有用的物品。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.town_scenes.town_b2_text')];
+          }(),
           'loot': {
             'medicine': {'min': 1, 'max': 2, 'chance': 0.5},
             'cloth': {'min': 5, 'max': 10, 'chance': 1.0}
           },
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'end'},
-            'leave': {'text': '离开城镇', 'nextScene': 'end'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'end'
+            },
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('setpieces.town_scenes.leave_town');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'b3': {
-          'text': ['街道上散落着各种废弃物品。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.town_scenes.town_b3_text')];
+          }(),
           'loot': {
             'iron': {'min': 2, 'max': 5, 'chance': 0.7},
             'leather': {'min': 1, 'max': 3, 'chance': 0.5}
           },
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'end'},
-            'leave': {'text': '离开城镇', 'nextScene': 'end'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'end'
+            },
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('setpieces.town_scenes.leave_town');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'b4': {
-          'text': ['在一栋房子里发现了一个小储藏室。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.town_scenes.town_b4_text')];
+          }(),
           'loot': {
             'cured meat': {'min': 3, 'max': 8, 'chance': 1.0},
             'medicine': {'min': 1, 'max': 3, 'chance': 0.4},
             'steel': {'min': 1, 'max': 2, 'chance': 0.2}
           },
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'end'},
-            'leave': {'text': '离开城镇', 'nextScene': 'end'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'end'
+            },
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('setpieces.town_scenes.leave_town');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'end': {
@@ -1219,7 +1282,10 @@ class Setpieces extends ChangeNotifier {
           }(),
           'buttons': {
             'continue': {
-              'text': '继续',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
               'cooldown': 1,
               'nextScene': {'1': 'a2'}
             },
@@ -1253,11 +1319,21 @@ class Setpieces extends ChangeNotifier {
           }(),
           'buttons': {
             'continue': {
-              'text': '继续',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
               'cooldown': 1,
               'nextScene': {'1': 'a3'}
             },
-            'run': {'text': '逃跑', 'cooldown': 1, 'nextScene': 'end'}
+            'run': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.run');
+              }(),
+              'cooldown': 1,
+              'nextScene': 'end'
+            }
           }
         },
         'a3': {
@@ -1278,7 +1354,10 @@ class Setpieces extends ChangeNotifier {
           }(),
           'buttons': {
             'continue': {
-              'text': '继续',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
               'cooldown': 1,
               'nextScene': {'1': 'cleared'}
             }
@@ -1389,39 +1468,90 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'a2': {
-          'text': ['一个小定居点在街道的尽头。', '人们在废墟中搭建了临时住所。'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.city_scenes.settlement_text1'),
+              localization.translate('setpieces.city_scenes.settlement_text2')
+            ];
+          }(),
           'buttons': {
             'continue': {
-              'text': '继续',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
               'nextScene': {'0.5': 'b3', '1': 'b4'}
             },
-            'leave': {'text': '离开城市', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave_city');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'a3': {
-          'text': ['一座医院的废墟矗立在前方。', '绿色十字架在肮脏的窗户后面勉强可见。'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.city_scenes.hospital_text1'),
+              localization.translate('setpieces.city_scenes.hospital_text2')
+            ];
+          }(),
           'buttons': {
             'enter': {
-              'text': '进入',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.enter');
+              }(),
               'cost': {'torch': 1},
               'nextScene': {'0.5': 'b5', '1': 'b6'}
             },
-            'leave': {'text': '离开城市', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave_city');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'a4': {
-          'text': ['地铁入口通向地下。', '台阶消失在黑暗中。'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.city_scenes.subway_text1'),
+              localization.translate('setpieces.city_scenes.subway_text2')
+            ];
+          }(),
           'buttons': {
             'enter': {
-              'text': '进入',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.enter');
+              }(),
               'cost': {'torch': 1},
               'nextScene': {'0.5': 'b7', '1': 'b8'}
             },
-            'leave': {'text': '离开城市', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave_city');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'b1': {
-          'text': ['一个小商店的废墟。', '货架上散落着一些有用的物品。'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.city_scenes.store_ruins_text1'),
+              localization.translate('setpieces.city_scenes.store_ruins_text2')
+            ];
+          }(),
           'loot': {
             'cured meat': {'min': 1, 'max': 5, 'chance': 0.8},
             'cloth': {'min': 1, 'max': 5, 'chance': 0.5},
@@ -1429,11 +1559,21 @@ class Setpieces extends ChangeNotifier {
           },
           'buttons': {
             'continue': {
-              'text': '继续',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
               'cooldown': 1,
               'nextScene': {'0.5': 'c1', '1': 'c2'}
             },
-            'leave': {'text': '离开城市', 'cooldown': 1, 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave_city');
+              }(),
+              'cooldown': 1,
+              'nextScene': 'end'
+            }
           }
         },
         'b2': {
@@ -1455,15 +1595,31 @@ class Setpieces extends ChangeNotifier {
           }(),
           'buttons': {
             'continue': {
-              'text': '继续',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
               'cooldown': 1,
               'nextScene': {'0.5': 'c2', '1': 'c3'}
             },
-            'leave': {'text': '离开城市', 'cooldown': 1, 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave_city');
+              }(),
+              'cooldown': 1,
+              'nextScene': 'end'
+            }
           }
         },
         'end1': {
-          'text': ['鸟儿一定喜欢闪亮的东西。', '一些好东西编织在它的巢穴里。'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.city_scenes.bird_nest_text1'),
+              localization.translate('setpieces.city_scenes.bird_nest_text2')
+            ];
+          }(),
           'onLoad': 'clearCity',
           'loot': {
             'bullets': {'min': 5, 'max': 10, 'chance': 0.8},
@@ -1471,7 +1627,14 @@ class Setpieces extends ChangeNotifier {
             'alien alloy': {'min': 1, 'max': 1, 'chance': 0.5}
           },
           'buttons': {
-            'leave': {'text': '离开城市', 'cooldown': 1, 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave_city');
+              }(),
+              'cooldown': 1,
+              'nextScene': 'end'
+            }
           }
         },
         'end': {
@@ -1676,11 +1839,20 @@ class Setpieces extends ChangeNotifier {
           }(),
           'buttons': {
             'enter': {
-              'text': '进入',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.enter');
+              }(),
               'cost': {'torch': 1},
               'nextScene': 'interior'
             },
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'interior': {
@@ -1692,8 +1864,20 @@ class Setpieces extends ChangeNotifier {
             ];
           }(),
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'discovery'},
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'discovery'
+            },
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'discovery': {
@@ -1793,7 +1977,13 @@ class Setpieces extends ChangeNotifier {
             'wood': {'min': 20, 'max': 50, 'chance': 1.0}
           },
           'buttons': {
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'end': {
