@@ -793,7 +793,13 @@
       "dangerous_far_from_village": "离村庄这么远而没有适当保护是危险的",
       "safer_here": "这里更安全",
       "world_fades": "世界渐渐消失了",
-      "returned_to_dark_room": "返回小黑屋"
+      "returned_to_dark_room": "返回小黑屋",
+      "out_of_meat": "肉已经用完了",
+      "starvation_begins": "饥饿开始了",
+      "no_more_water": "没有更多的水了",
+      "thirst_unbearable": "口渴变得难以忍受",
+      "builder_takes_device": "建造者知道这个奇怪的装置。很快就把它拿走了。没有问它从哪里来的。",
+      "safely_returned": "安全回到了村庄"
     },
     "weapons": {
       "punch": "拳击",

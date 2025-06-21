@@ -1094,15 +1094,17 @@ class World extends ChangeNotifier {
         num--;
 
         if (num == 0) {
-          NotificationManager().notify(name, '肉已经用完了');
-          Logger.info('⚠️ 肉已经用完了');
+          final localization = Localization();
+          NotificationManager().notify(name, localization.translate('world.notifications.out_of_meat'));
+          Logger.info('⚠️ Out of meat');
         } else if (num < 0) {
           // 饥饿！
           num = 0;
           if (!starvation) {
-            NotificationManager().notify(name, '饥饿开始了');
+            final localization = Localization();
+            NotificationManager().notify(name, localization.translate('world.notifications.starvation_begins'));
             starvation = true;
-            Logger.info('⚠️ 开始饥饿状态');
+            Logger.info('⚠️ Starvation begins');
           } else {
             sm.set('character.starved',
                 (sm.get('character.starved', true) ?? 0) + 1);
@@ -1144,14 +1146,16 @@ class World extends ChangeNotifier {
       waterAmount--;
 
       if (waterAmount == 0) {
-        NotificationManager().notify(name, '没有更多的水了');
-        Logger.info('⚠️ 没有更多的水了');
+        final localization = Localization();
+        NotificationManager().notify(name, localization.translate('world.notifications.no_more_water'));
+        Logger.info('⚠️ No more water');
       } else if (waterAmount < 0) {
         waterAmount = 0;
         if (!thirst) {
-          NotificationManager().notify(name, '口渴变得难以忍受');
+          final localization = Localization();
+          NotificationManager().notify(name, localization.translate('world.notifications.thirst_unbearable'));
           thirst = true;
-          Logger.info('⚠️ 开始口渴状态');
+          Logger.info('⚠️ Thirst begins');
         } else {
           sm.set('character.dehydrated',
               (sm.get('character.dehydrated', true) ?? 0) + 1);
@@ -1314,7 +1318,8 @@ class World extends ChangeNotifier {
           !sm.get('features.location.fabricator', true)) {
         // Fabricator.init(); // 暂时注释掉，需要实现Fabricator模块
         sm.set('features.location.fabricator', true);
-        NotificationManager().notify(name, '建造者知道这个奇怪的装置。很快就把它拿走了。没有问它从哪里来的。');
+        final localization = Localization();
+        NotificationManager().notify(name, localization.translate('world.notifications.builder_takes_device'));
         Logger.info('🏠 解锁制造器');
       }
 
@@ -1330,7 +1335,8 @@ class World extends ChangeNotifier {
     final room = Room();
     engine.travelTo(room);
 
-    NotificationManager().notify(name, '安全回到了村庄');
+    final localization = Localization();
+    NotificationManager().notify(name, localization.translate('world.notifications.safely_returned'));
     Logger.info('🏠 World.goHome() 完成');
     notifyListeners();
   }

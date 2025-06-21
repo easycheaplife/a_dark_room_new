@@ -801,7 +801,13 @@
       "dangerous_far_from_village": "it is dangerous to be this far from the village without proper protection",
       "safer_here": "it is safer here",
       "world_fades": "the world fades",
-      "returned_to_dark_room": "returned to the dark room"
+      "returned_to_dark_room": "returned to the dark room",
+      "out_of_meat": "the meat has run out",
+      "starvation_begins": "starvation begins",
+      "no_more_water": "there is no more water",
+      "thirst_unbearable": "thirst becomes unbearable",
+      "builder_takes_device": "the builder recognizes this strange device. takes it away quickly. doesn't ask where it came from.",
+      "safely_returned": "safely returned to the village"
     },
     "weapons": {
       "punch": "punch",

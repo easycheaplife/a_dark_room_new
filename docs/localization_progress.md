@@ -5,8 +5,8 @@
 **注意：重新开始彻底检查，之前的检查不够仔细。**
 
 ## 当前进度总结
-- ✅ **已完成**: 44个文件
-- 🔄 **需要大量工作**: 4个文件（已开始部分修复）
+- ✅ **已完成**: 45个文件
+- 🔄 **需要大量工作**: 3个文件（已开始部分修复）
 - ❌ **尚未检查**: 约6个文件
 
 ## 重点发现
@@ -69,7 +69,7 @@
 - ✅ `lib/modules/path.dart` - 路径模块
 - ✅ `lib/modules/fabricator.dart` - 制造器模块（仅注释）
 - ✅ `lib/modules/ship.dart` - 飞船模块
-- 🔄 `lib/modules/world.dart` - 世界模块（大量硬编码，需重构）
+- ✅ `lib/modules/world.dart` - 世界模块（已修复硬编码通知信息）
 - 🔄 `lib/modules/setpieces.dart` - 场景事件模块（大量硬编码，需重构）
 - ✅ `lib/modules/room.dart` - 房间模块
 - ✅ `lib/modules/outside.dart` - 外部模块
