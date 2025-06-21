@@ -345,7 +345,7 @@ class _StoresDisplayState extends State<StoresDisplay> {
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                 child: Text(
-                  '武器',
+                  localization.translate('ui.menus.weapons'),
                   style: TextStyle(
                     color: textColor,
                     fontWeight: FontWeight.bold,
@@ -427,7 +427,7 @@ class _StoresDisplayState extends State<StoresDisplay> {
       case StoresDisplayType.resourcesOnly:
         return localization.translate('resources.title');
       case StoresDisplayType.weaponsOnly:
-        return '武器';
+        return localization.translate('ui.menus.weapons');
     }
   }
 

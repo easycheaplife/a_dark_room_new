@@ -1,6 +1,7 @@
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/logger.dart';
+import '../core/localization.dart';
 import 'room_events_extended.dart';
 
 /// 房间事件定义
@@ -29,56 +30,69 @@ class RoomEvents {
       ];
 
   /// 守火人事件
-  static Map<String, dynamic> get firekeeper => {
-        'title': '守火人',
-        'isAvailable': () {
-          final fire = _sm.get('game.fire.value', true) ?? 0;
-          final builderLevel = _sm.get('game.builder.level', true) ?? -1;
-          return fire > 0 && builderLevel < 0; // 有火但还没有建造者
-        },
-        'scenes': {
-          'start': {
-            'text': ['火光在黑暗中摇曳。', '一个身影从阴影中走出。', '建造者已经到来。'],
-            'notification': '建造者已经到来',
-            'onLoad': () {
-              // 解锁建造者
-              _sm.set('game.builder.level', 0);
-              Logger.info('🔨 建造者已解锁');
-            },
-            'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
-            }
+  static Map<String, dynamic> get firekeeper {
+    final localization = Localization();
+    return {
+      'title': localization.translate('events.room_events.firekeeper.title'),
+      'isAvailable': () {
+        final fire = _sm.get('game.fire.value', true) ?? 0;
+        final builderLevel = _sm.get('game.builder.level', true) ?? -1;
+        return fire > 0 && builderLevel < 0; // 有火但还没有建造者
+      },
+      'scenes': {
+        'start': {
+          'text': [
+            localization.translate('events.room_events.firekeeper.text1'),
+            localization.translate('events.room_events.firekeeper.text2'),
+            localization.translate('events.room_events.firekeeper.text3')
+          ],
+          'notification': localization.translate('events.room_events.firekeeper.notification'),
+          'onLoad': () {
+            // 解锁建造者
+            _sm.set('game.builder.level', 0);
+            Logger.info('🔨 建造者已解锁');
+          },
+          'buttons': {
+            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
           }
         }
-      };
+      }
+    };
+  }
 
   /// 建造者升级事件
-  static Map<String, dynamic> get builder => {
-        'title': '建造者',
-        'isAvailable': () {
-          final builderLevel = _sm.get('game.builder.level', true) ?? -1;
-          final temperature = _sm.get('game.temperature.value', true) ?? 0;
-          return builderLevel >= 0 &&
-              builderLevel < 4 &&
-              temperature >= 2; // 建造者存在且温度适宜
-        },
-        'scenes': {
-          'start': {
-            'text': ['建造者看起来更加熟练了。', '他开始制作更复杂的工具。'],
-            'notification': '建造者技能提升',
-            'onLoad': () {
-              final currentLevel = _sm.get('game.builder.level', true) ?? 0;
-              if (currentLevel < 4) {
-                _sm.set('game.builder.level', currentLevel + 1);
-                Logger.info('🔨 建造者等级提升到: ${currentLevel + 1}');
-              }
-            },
-            'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+  static Map<String, dynamic> get builder {
+    final localization = Localization();
+    return {
+      'title': localization.translate('events.room_events.builder.title'),
+      'isAvailable': () {
+        final builderLevel = _sm.get('game.builder.level', true) ?? -1;
+        final temperature = _sm.get('game.temperature.value', true) ?? 0;
+        return builderLevel >= 0 &&
+            builderLevel < 4 &&
+            temperature >= 2; // 建造者存在且温度适宜
+      },
+      'scenes': {
+        'start': {
+          'text': [
+            localization.translate('events.room_events.builder.text1'),
+            localization.translate('events.room_events.builder.text2')
+          ],
+          'notification': localization.translate('events.room_events.builder.notification'),
+          'onLoad': () {
+            final currentLevel = _sm.get('game.builder.level', true) ?? 0;
+            if (currentLevel < 4) {
+              _sm.set('game.builder.level', currentLevel + 1);
+              Logger.info('🔨 建造者等级提升到: ${currentLevel + 1}');
             }
+          },
+          'buttons': {
+            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
           }
         }
-      };
+      }
+    };
+  }
 
   /// 流浪猫事件
   static Map<String, dynamic> get straycat => {
@@ -153,44 +167,53 @@ class RoomEvents {
       };
 
   /// 陌生人事件
-  static Map<String, dynamic> get stranger => {
-        'title': '陌生人',
-        'isAvailable': () {
-          final fire = _sm.get('game.fire.value', true) ?? 0;
-          final wood = _sm.get('stores.wood', true) ?? 0;
-          return fire > 0 && wood >= 200; // 需要火和大量木材
+  static Map<String, dynamic> get stranger {
+    final localization = Localization();
+    return {
+      'title': localization.translate('events.room_events.stranger.title'),
+      'isAvailable': () {
+        final fire = _sm.get('game.fire.value', true) ?? 0;
+        final wood = _sm.get('stores.wood', true) ?? 0;
+        return fire > 0 && wood >= 200; // 需要火和大量木材
+      },
+      'scenes': {
+        'start': {
+          'text': [
+            localization.translate('events.room_events.stranger.text1'),
+            localization.translate('events.room_events.stranger.text2'),
+            localization.translate('events.room_events.stranger.text3')
+          ],
+          'buttons': {
+            'trade': {
+              'text': localization.translate('ui.buttons.trade'),
+              'cost': {'wood': 200},
+              'nextScene': 'trade'
+            },
+            'decline': {'text': localization.translate('ui.buttons.decline'), 'nextScene': 'decline'}
+          }
         },
-        'scenes': {
-          'start': {
-            'text': [
-              '一个陌生人出现在火堆旁。',
-              '他穿着厚重的斗篷，看不清面容。',
-              '"我需要一些木材来修理我的工具，"他说，"我可以给你一些回报。"'
-            ],
-            'buttons': {
-              'trade': {
-                'text': '交易',
-                'cost': {'wood': 200},
-                'nextScene': 'trade'
-              },
-              'decline': {'text': '拒绝', 'nextScene': 'decline'}
-            }
-          },
-          'trade': {
-            'text': ['陌生人接过木材，从斗篷下取出一些物品。', '"这些应该对你有用，"他说着消失在黑暗中。'],
-            'reward': {'iron': 10, 'leather': 5, 'fur': 15},
-            'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
-            }
-          },
-          'decline': {
-            'text': ['陌生人点点头，没有说什么。', '他转身离开，消失在夜色中。'],
-            'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
-            }
+        'trade': {
+          'text': [
+            localization.translate('events.room_events.stranger.trade_text1'),
+            localization.translate('events.room_events.stranger.trade_text2')
+          ],
+          'reward': {'iron': 10, 'leather': 5, 'fur': 15},
+          'buttons': {
+            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
+          }
+        },
+        'decline': {
+          'text': [
+            localization.translate('events.room_events.stranger.decline_text1'),
+            localization.translate('events.room_events.stranger.decline_text2')
+          ],
+          'buttons': {
+            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
           }
         }
-      };
+      }
+    };
+  }
 
   /// 游牧商人事件
   static Map<String, dynamic> get nomad => {
