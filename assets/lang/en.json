@@ -39,8 +39,12 @@
       "explore": "explore",
       "scavenge": "scavenge",
       "use_medicine": "use medicine",
+      "give_50": "give 50",
       "give_100": "give 100",
       "give_500": "give 500",
+      "wood_300": "300 wood",
+      "go_home": "go home",
+      "agree": "agree",
       "buy_map": "buy map",
       "learn": "learn",
       "learn_scouting": "learn scouting",
@@ -556,6 +560,71 @@
         "steal_notification": "the shady builder runs off with your wood",
         "build_text": "the shady builder builds a hut",
         "build_notification": "the shady builder builds a hut"
+      },
+      "scout": {
+        "title": "scout",
+        "text1": "the scout says she's been all over.",
+        "text2": "willing to talk about it, for a price.",
+        "notification": "a scout stops for the night",
+        "buy_map": "buy map",
+        "map_notification": "the map reveals a bit of the world",
+        "learn_scouting": "learn scouting"
+      },
+      "master": {
+        "title": "master",
+        "text1": "an old wanderer arrives.",
+        "text2": "he smiles warmly and asks for lodging for the night.",
+        "notification": "an old wanderer arrives",
+        "agree_text": "in exchange, the wanderer offers his wisdom.",
+        "evasion": "evasion",
+        "precision": "precision",
+        "force": "force",
+        "boxing": "boxing",
+        "nothing": "nothing"
+      },
+      "sick_man": {
+        "title": "sick man",
+        "text1": "a man hobbles up, coughing.",
+        "text2": "he begs for medicine.",
+        "notification": "a sick man hobbles up",
+        "help": "give 1 medicine",
+        "help_notification": "the man swallows the medicine eagerly",
+        "ignore": "tell him to leave",
+        "alloy_text1": "the man is grateful.",
+        "alloy_text2": "he leaves a reward.",
+        "alloy_text3": "some strange metal he picked up in his travels.",
+        "cells_text1": "the man is grateful.",
+        "cells_text2": "he leaves a reward.",
+        "cells_text3": "some strange glowing boxes he picked up in his travels.",
+        "scales_text1": "the man is grateful.",
+        "scales_text2": "he leaves a reward.",
+        "scales_text3": "he only has some scales.",
+        "nothing_text": "the man expresses his thanks, then hobbles off."
+      },
+      "martial_master": {
+        "title": "martial master",
+        "text1": "a mysterious martial master arrives at the village.",
+        "text2": "he sees you have mastered basic boxing techniques.",
+        "text3": "\"i can teach you more advanced martial arts,\" he says.",
+        "notification": "a martial master arrives",
+        "learn": "learn martial arts",
+        "learn_text": "the master teaches his martial arts.",
+        "martial_artist": "martial artist",
+        "unarmed_master": "unarmed master",
+        "nothing": "learn nothing"
+      },
+      "desert_guide": {
+        "title": "desert guide",
+        "text1": "an experienced desert guide arrives at the village.",
+        "text2": "his skin is tanned dark by the sun, his eyes deep.",
+        "text3": "\"i can teach you survival skills in the wilderness,\" he says.",
+        "notification": "a desert guide arrives",
+        "learn": "learn survival skills",
+        "learn_text": "the guide teaches his survival wisdom.",
+        "slow_metabolism": "slow metabolism",
+        "desert_rat": "desert rat",
+        "stealthy": "stealthy",
+        "nothing": "learn nothing"
       }
     },
     "global_events": {
@@ -857,6 +926,13 @@
       "text1": "flames consume the huts.",
       "text2": "villagers panic in terror.",
       "notification": "flames consume the huts"
+    },
+    "convoy": {
+      "title": "convoy",
+      "text1": "a convoy appears on the horizon.",
+      "text2": "their carts are loaded with goods.",
+      "text3": "the convoy leader approaches, wanting to trade.",
+      "attack": "attack convoy"
     }
   }
 }

@@ -26,18 +26,46 @@ class OutsideEvents {
 
   /// 商队事件
   static Map<String, dynamic> get convoy => {
-        'title': '商队',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('outside_events.convoy.title');
+        }(),
         'isAvailable': () {
           final tradingPost = _sm.get('game.buildings.trading post', true) ?? 0;
           return tradingPost > 0; // 需要贸易站
         },
         'scenes': {
           'start': {
-            'text': ['一支商队出现在地平线上。', '他们的马车装满了货物。', '商队首领走向你，想要进行贸易。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.convoy.text1'),
+                localization.translate('outside_events.convoy.text2'),
+                localization.translate('outside_events.convoy.text3')
+              ];
+            }(),
             'buttons': {
-              'trade': {'text': '交易', 'nextScene': 'trade'},
-              'attack': {'text': '袭击商队', 'nextScene': 'attack'},
-              'ignore': {'text': '忽视', 'nextScene': 'ignore'}
+              'trade': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.trade');
+                }(),
+                'nextScene': 'trade'
+              },
+              'attack': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('outside_events.convoy.attack');
+                }(),
+                'nextScene': 'attack'
+              },
+              'ignore': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.ignore');
+                }(),
+                'nextScene': 'ignore'
+              }
             }
           },
           'trade': {

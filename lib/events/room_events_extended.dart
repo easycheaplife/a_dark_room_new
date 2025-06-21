@@ -131,7 +131,10 @@ class RoomEventsExtended {
 
   /// 乞丐事件
   static Map<String, dynamic> get beggar => {
-        'title': '乞丐',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('events.room_events.beggar.title');
+        }(),
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final fur = _sm.get('stores.fur', true) ?? 0;
@@ -139,41 +142,98 @@ class RoomEventsExtended {
         },
         'scenes': {
           'start': {
-            'text': ['一个乞丐到达。', '请求一些多余的毛皮来在夜晚保暖。'],
-            'notification': '一个乞丐到达',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.room_events.beggar.text1'),
+                localization.translate('events.room_events.beggar.text2')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('events.room_events.beggar.notification');
+            }(),
             'buttons': {
               '50furs': {
-                'text': '给50',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.give_50');
+                }(),
                 'cost': {'fur': 50},
                 'nextScene': {'0.5': 'scales', '0.8': 'teeth', '1.0': 'cloth'}
               },
               '100furs': {
-                'text': '给100',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.give_100');
+                }(),
                 'cost': {'fur': 100},
                 'nextScene': {'0.5': 'teeth', '0.8': 'scales', '1.0': 'cloth'}
               },
-              'deny': {'text': '拒绝他', 'nextScene': 'end'}
+              'deny': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.deny');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'scales': {
             'reward': {'scales': 20},
-            'text': ['乞丐表达了他的感谢。', '留下了一堆小鳞片。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.room_events.beggar.scales_text1'),
+                localization.translate('events.room_events.beggar.scales_text2')
+              ];
+            }(),
             'buttons': {
-              'leave': {'text': '告别', 'nextScene': 'end'}
+              'leave': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.farewell');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'teeth': {
             'reward': {'teeth': 20},
-            'text': ['乞丐表达了他的感谢。', '留下了一堆小牙齿。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.room_events.beggar.teeth_text1'),
+                localization.translate('events.room_events.beggar.teeth_text2')
+              ];
+            }(),
             'buttons': {
-              'leave': {'text': '告别', 'nextScene': 'end'}
+              'leave': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.farewell');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'cloth': {
             'reward': {'cloth': 20},
-            'text': ['乞丐表达了他的感谢。', '留下了一些布料碎片。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.room_events.beggar.cloth_text1'),
+                localization.translate('events.room_events.beggar.cloth_text2')
+              ];
+            }(),
             'buttons': {
-              'leave': {'text': '告别', 'nextScene': 'end'}
+              'leave': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.farewell');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
@@ -181,7 +241,10 @@ class RoomEventsExtended {
 
   /// 可疑建造者事件
   static Map<String, dynamic> get shadyBuilder => {
-        'title': '可疑建造者',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('events.room_events.shady_builder.title');
+        }(),
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final huts = _sm.get('game.buildings.hut', true) ?? 0;
@@ -189,27 +252,63 @@ class RoomEventsExtended {
         },
         'scenes': {
           'start': {
-            'text': ['一个可疑的建造者路过', '说他可以用更少的木材为你建造一间小屋'],
-            'notification': '一个可疑的建造者路过',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.room_events.shady_builder.text1'),
+                localization.translate('events.room_events.shady_builder.text2')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('events.room_events.shady_builder.notification');
+            }(),
             'buttons': {
               'build': {
-                'text': '300木材',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.wood_300');
+                }(),
                 'cost': {'wood': 300},
                 'nextScene': {'0.6': 'steal', '1.0': 'build'}
               },
-              'deny': {'text': '告别', 'nextScene': 'end'}
+              'deny': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.farewell');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'steal': {
-            'text': ['可疑的建造者带着你的木材跑了'],
-            'notification': '可疑的建造者带着你的木材跑了',
+            'text': () {
+              final localization = Localization();
+              return [localization.translate('events.room_events.shady_builder.steal_text')];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('events.room_events.shady_builder.steal_notification');
+            }(),
             'buttons': {
-              'end': {'text': '回家', 'nextScene': 'end'}
+              'end': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.go_home');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'build': {
-            'text': ['可疑的建造者建造了一间小屋'],
-            'notification': '可疑的建造者建造了一间小屋',
+            'text': () {
+              final localization = Localization();
+              return [localization.translate('events.room_events.shady_builder.build_text')];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('events.room_events.shady_builder.build_notification');
+            }(),
             'onLoad': () {
               final huts = _sm.get('game.buildings.hut', true) ?? 0;
               if (huts < 20) {
@@ -217,7 +316,13 @@ class RoomEventsExtended {
               }
             },
             'buttons': {
-              'end': {'text': '回家', 'nextScene': 'end'}
+              'end': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.go_home');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
@@ -420,7 +525,10 @@ class RoomEventsExtended {
 
   /// 侦察兵事件
   static Map<String, dynamic> get scout => {
-        'title': '侦察兵',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('events.room_events.scout.title');
+        }(),
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final worldUnlocked =
@@ -429,27 +537,45 @@ class RoomEventsExtended {
         },
         'scenes': {
           'start': {
-            'text': ['侦察兵说她到过各个地方。', '愿意谈论这些，但要付出代价。'],
-            'notification': '一个侦察兵过夜',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.room_events.scout.text1'),
+                localization.translate('events.room_events.scout.text2')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('events.room_events.scout.notification');
+            }(),
             'buttons': {
               'buyMap': {
-                'text': '购买地图',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.scout.buy_map');
+                }(),
                 'cost': {'fur': 200, 'scales': 10},
                 'available': () {
                   // 检查是否已经看过所有地图
                   final world = World.instance;
                   return !world.seenAll;
                 },
-                'notification': '地图揭示了世界的一部分',
+                'notification': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.scout.map_notification');
+                }(),
                 'onChoose': () {
                   // 应用地图效果
                   final world = World.instance;
                   world.applyMap();
-                  Logger.info('🗺️ 地图已购买并应用');
+                  Logger.info('🗺️ Map purchased and applied');
                 }
               },
               'learn': {
-                'text': '学习侦察',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.scout.learn_scouting');
+                }(),
                 'cost': {'fur': 1000, 'scales': 50, 'teeth': 20},
                 'available': () {
                   final hasScoutPerk =
@@ -458,10 +584,16 @@ class RoomEventsExtended {
                 },
                 'onChoose': () {
                   _sm.set('character.perks.scout', true);
-                  Logger.info('🎯 学会了侦察技能');
+                  Logger.info('🎯 Learned scouting skill');
                 }
               },
-              'leave': {'text': '告别', 'nextScene': 'end'}
+              'leave': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.farewell');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
@@ -469,7 +601,10 @@ class RoomEventsExtended {
 
   /// 大师事件
   static Map<String, dynamic> get master => {
-        'title': '大师',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('events.room_events.master.title');
+        }(),
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final worldUnlocked =
@@ -478,22 +613,46 @@ class RoomEventsExtended {
         },
         'scenes': {
           'start': {
-            'text': ['一个老流浪者到达。', '他温暖地微笑着，请求在夜里住宿。'],
-            'notification': '一个老流浪者到达',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.room_events.master.text1'),
+                localization.translate('events.room_events.master.text2')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('events.room_events.master.notification');
+            }(),
             'buttons': {
               'agree': {
-                'text': '同意',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.agree');
+                }(),
                 'cost': {'cured meat': 100, 'fur': 100, 'torch': 1},
                 'nextScene': 'agree'
               },
-              'deny': {'text': '拒绝他', 'nextScene': 'end'}
+              'deny': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.deny');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'agree': {
-            'text': ['作为交换，流浪者提供他的智慧。'],
+            'text': () {
+              final localization = Localization();
+              return [localization.translate('events.room_events.master.agree_text')];
+            }(),
             'buttons': {
               'evasion': {
-                'text': '闪避',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.master.evasion');
+                }(),
                 'available': () {
                   final hasEvasivePerk =
                       _sm.get('character.perks.evasive', true) ?? false;
@@ -501,12 +660,15 @@ class RoomEventsExtended {
                 },
                 'onChoose': () {
                   _sm.set('character.perks.evasive', true);
-                  Logger.info('🏃 学会了闪避技能');
+                  Logger.info('🏃 Learned evasion skill');
                 },
                 'nextScene': 'end'
               },
               'precision': {
-                'text': '精准',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.master.precision');
+                }(),
                 'available': () {
                   final hasPrecisePerk =
                       _sm.get('character.perks.precise', true) ?? false;
@@ -514,12 +676,15 @@ class RoomEventsExtended {
                 },
                 'onChoose': () {
                   _sm.set('character.perks.precise', true);
-                  Logger.info('🎯 学会了精准技能');
+                  Logger.info('🎯 Learned precision skill');
                 },
                 'nextScene': 'end'
               },
               'force': {
-                'text': '力量',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.master.force');
+                }(),
                 'available': () {
                   final hasBarbarianPerk =
                       _sm.get('character.perks.barbarian', true) ?? false;
@@ -527,12 +692,15 @@ class RoomEventsExtended {
                 },
                 'onChoose': () {
                   _sm.set('character.perks.barbarian', true);
-                  Logger.info('💪 学会了野蛮人技能');
+                  Logger.info('💪 Learned barbarian skill');
                 },
                 'nextScene': 'end'
               },
               'boxing': {
-                'text': '拳击',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.master.boxing');
+                }(),
                 'available': () {
                   final hasBoxerPerk =
                       _sm.get('character.perks.boxer', true) ?? false;
@@ -540,11 +708,17 @@ class RoomEventsExtended {
                 },
                 'onChoose': () {
                   _sm.set('character.perks.boxer', true);
-                  Logger.info('👊 学会了拳击手技能');
+                  Logger.info('👊 Learned boxing skill');
                 },
                 'nextScene': 'end'
               },
-              'nothing': {'text': '什么都不要', 'nextScene': 'end'}
+              'nothing': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.master.nothing');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
@@ -552,7 +726,10 @@ class RoomEventsExtended {
 
   /// 病人事件
   static Map<String, dynamic> get sickMan => {
-        'title': '病人',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('events.room_events.sick_man.title');
+        }(),
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final medicine = _sm.get('stores.medicine', true) ?? 0;
@@ -560,13 +737,28 @@ class RoomEventsExtended {
         },
         'scenes': {
           'start': {
-            'text': ['一个男人蹒跚着走来，咳嗽不止。', '他恳求要药品。'],
-            'notification': '一个病人蹒跚着走来',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.room_events.sick_man.text1'),
+                localization.translate('events.room_events.sick_man.text2')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('events.room_events.sick_man.notification');
+            }(),
             'buttons': {
               'help': {
-                'text': '给1个药品',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.sick_man.help');
+                }(),
                 'cost': {'medicine': 1},
-                'notification': '那人急切地吞下了药品',
+                'notification': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.sick_man.help_notification');
+                }(),
                 'nextScene': {
                   '0.1': 'alloy',
                   '0.3': 'cells',
@@ -574,34 +766,88 @@ class RoomEventsExtended {
                   '1.0': 'nothing'
                 }
               },
-              'ignore': {'text': '叫他离开', 'nextScene': 'end'}
+              'ignore': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.sick_man.ignore');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'alloy': {
-            'text': ['那人很感激。', '他留下了一个奖励。', '一些他在旅行中捡到的奇怪金属。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.room_events.sick_man.alloy_text1'),
+                localization.translate('events.room_events.sick_man.alloy_text2'),
+                localization.translate('events.room_events.sick_man.alloy_text3')
+              ];
+            }(),
             'reward': {'alien alloy': 1},
             'buttons': {
-              'bye': {'text': '告别', 'nextScene': 'end'}
+              'bye': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.farewell');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'cells': {
-            'text': ['那人很感激。', '他留下了一个奖励。', '一些他在旅行中捡到的奇怪发光盒子。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.room_events.sick_man.cells_text1'),
+                localization.translate('events.room_events.sick_man.cells_text2'),
+                localization.translate('events.room_events.sick_man.cells_text3')
+              ];
+            }(),
             'reward': {'energy cell': 3},
             'buttons': {
-              'bye': {'text': '告别', 'nextScene': 'end'}
+              'bye': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.farewell');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'scales': {
-            'text': ['那人很感激。', '他留下了一个奖励。', '他只有一些鳞片。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.room_events.sick_man.scales_text1'),
+                localization.translate('events.room_events.sick_man.scales_text2'),
+                localization.translate('events.room_events.sick_man.scales_text3')
+              ];
+            }(),
             'reward': {'scales': 5},
             'buttons': {
-              'bye': {'text': '告别', 'nextScene': 'end'}
+              'bye': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.farewell');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'nothing': {
-            'text': ['那人表达了感谢，然后蹒跚着离开了。'],
+            'text': () {
+              final localization = Localization();
+              return [localization.translate('events.room_events.sick_man.nothing_text')];
+            }(),
             'buttons': {
-              'bye': {'text': '告别', 'nextScene': 'end'}
+              'bye': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.farewell');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
@@ -609,7 +855,10 @@ class RoomEventsExtended {
 
   /// 武术大师事件
   static Map<String, dynamic> get martialMaster => {
-        'title': '武术大师',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('events.room_events.martial_master.title');
+        }(),
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final hasBoxer = _sm.get('character.perks.boxer', true) ?? false;
@@ -618,22 +867,47 @@ class RoomEventsExtended {
         },
         'scenes': {
           'start': {
-            'text': ['一个神秘的武术大师来到村庄。', '他看到你已经掌握了基础拳击技巧。', '"我可以教你更高深的武艺，"他说。'],
-            'notification': '一个武术大师到达',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.room_events.martial_master.text1'),
+                localization.translate('events.room_events.martial_master.text2'),
+                localization.translate('events.room_events.martial_master.text3')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('events.room_events.martial_master.notification');
+            }(),
             'buttons': {
               'learn': {
-                'text': '学习武艺',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.martial_master.learn');
+                }(),
                 'cost': {'cured meat': 200, 'fur': 200},
                 'nextScene': 'learn'
               },
-              'decline': {'text': '谢绝', 'nextScene': 'end'}
+              'decline': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.decline');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'learn': {
-            'text': ['大师传授了他的武艺。'],
+            'text': () {
+              final localization = Localization();
+              return [localization.translate('events.room_events.martial_master.learn_text')];
+            }(),
             'buttons': {
               'martial_artist': {
-                'text': '武术家',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.martial_master.martial_artist');
+                }(),
                 'available': () {
                   final hasMartialArtist =
                       _sm.get('character.perks.martial artist', true) ?? false;
@@ -641,12 +915,15 @@ class RoomEventsExtended {
                 },
                 'onChoose': () {
                   _sm.set('character.perks.martial artist', true);
-                  Logger.info('🥋 学会了武术家技能');
+                  Logger.info('🥋 Learned martial artist skill');
                 },
                 'nextScene': 'end'
               },
               'unarmed_master': {
-                'text': '徒手大师',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.martial_master.unarmed_master');
+                }(),
                 'available': () {
                   final hasMartialArtist =
                       _sm.get('character.perks.martial artist', true) ?? false;
@@ -656,11 +933,17 @@ class RoomEventsExtended {
                 },
                 'onChoose': () {
                   _sm.set('character.perks.unarmed master', true);
-                  Logger.info('🥊 学会了徒手大师技能');
+                  Logger.info('🥊 Learned unarmed master skill');
                 },
                 'nextScene': 'end'
               },
-              'nothing': {'text': '什么都不学', 'nextScene': 'end'}
+              'nothing': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.martial_master.nothing');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
@@ -668,7 +951,10 @@ class RoomEventsExtended {
 
   /// 沙漠向导事件
   static Map<String, dynamic> get desertGuide => {
-        'title': '沙漠向导',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('events.room_events.desert_guide.title');
+        }(),
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final worldUnlocked =
@@ -678,26 +964,47 @@ class RoomEventsExtended {
         },
         'scenes': {
           'start': {
-            'text': [
-              '一个经验丰富的沙漠向导来到村庄。',
-              '他的皮肤被太阳晒得黝黑，眼神深邃。',
-              '"我可以教你在荒野中生存的技巧，"他说。'
-            ],
-            'notification': '一个沙漠向导到达',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.room_events.desert_guide.text1'),
+                localization.translate('events.room_events.desert_guide.text2'),
+                localization.translate('events.room_events.desert_guide.text3')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('events.room_events.desert_guide.notification');
+            }(),
             'buttons': {
               'learn': {
-                'text': '学习生存技巧',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.desert_guide.learn');
+                }(),
                 'cost': {'water': 100, 'cured meat': 50},
                 'nextScene': 'learn'
               },
-              'decline': {'text': '谢绝', 'nextScene': 'end'}
+              'decline': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.decline');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'learn': {
-            'text': ['向导传授了他的生存智慧。'],
+            'text': () {
+              final localization = Localization();
+              return [localization.translate('events.room_events.desert_guide.learn_text')];
+            }(),
             'buttons': {
               'slow_metabolism': {
-                'text': '缓慢新陈代谢',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.desert_guide.slow_metabolism');
+                }(),
                 'available': () {
                   final hasSlowMetabolism =
                       _sm.get('character.perks.slow metabolism', true) ?? false;
@@ -705,12 +1012,15 @@ class RoomEventsExtended {
                 },
                 'onChoose': () {
                   _sm.set('character.perks.slow metabolism', true);
-                  Logger.info('🐌 学会了缓慢新陈代谢技能');
+                  Logger.info('🐌 Learned slow metabolism skill');
                 },
                 'nextScene': 'end'
               },
               'desert_rat': {
-                'text': '沙漠鼠',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.desert_guide.desert_rat');
+                }(),
                 'available': () {
                   final hasDesertRat =
                       _sm.get('character.perks.desert rat', true) ?? false;
@@ -718,12 +1028,15 @@ class RoomEventsExtended {
                 },
                 'onChoose': () {
                   _sm.set('character.perks.desert rat', true);
-                  Logger.info('🐭 学会了沙漠鼠技能');
+                  Logger.info('🐭 Learned desert rat skill');
                 },
                 'nextScene': 'end'
               },
               'stealthy': {
-                'text': '潜行',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.desert_guide.stealthy');
+                }(),
                 'available': () {
                   final hasStealthy =
                       _sm.get('character.perks.stealthy', true) ?? false;
@@ -731,11 +1044,17 @@ class RoomEventsExtended {
                 },
                 'onChoose': () {
                   _sm.set('character.perks.stealthy', true);
-                  Logger.info('👤 学会了潜行技能');
+                  Logger.info('👤 Learned stealthy skill');
                 },
                 'nextScene': 'end'
               },
-              'nothing': {'text': '什么都不学', 'nextScene': 'end'}
+              'nothing': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('events.room_events.desert_guide.nothing');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }

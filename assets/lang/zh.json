@@ -39,8 +39,12 @@
       "explore": "探索",
       "scavenge": "搜寻",
       "use_medicine": "使用药品",
+      "give_50": "给50",
       "give_100": "给100",
       "give_500": "给500",
+      "wood_300": "300木材",
+      "go_home": "回家",
+      "agree": "同意",
       "buy_map": "购买地图",
       "learn": "学习",
       "learn_scouting": "学习侦察",
@@ -548,6 +552,71 @@
         "steal_notification": "可疑的建造者带着你的木材跑了",
         "build_text": "可疑的建造者建造了一间小屋",
         "build_notification": "可疑的建造者建造了一间小屋"
+      },
+      "scout": {
+        "title": "侦察兵",
+        "text1": "侦察兵说她到过各个地方。",
+        "text2": "愿意谈论这些，但要付出代价。",
+        "notification": "一个侦察兵过夜",
+        "buy_map": "购买地图",
+        "map_notification": "地图揭示了世界的一部分",
+        "learn_scouting": "学习侦察"
+      },
+      "master": {
+        "title": "大师",
+        "text1": "一个老流浪者到达。",
+        "text2": "他温暖地微笑着，请求在夜里住宿。",
+        "notification": "一个老流浪者到达",
+        "agree_text": "作为交换，流浪者提供他的智慧。",
+        "evasion": "闪避",
+        "precision": "精准",
+        "force": "力量",
+        "boxing": "拳击",
+        "nothing": "什么都不要"
+      },
+      "sick_man": {
+        "title": "病人",
+        "text1": "一个男人蹒跚着走来，咳嗽不止。",
+        "text2": "他恳求要药品。",
+        "notification": "一个病人蹒跚着走来",
+        "help": "给1个药品",
+        "help_notification": "那人急切地吞下了药品",
+        "ignore": "叫他离开",
+        "alloy_text1": "那人很感激。",
+        "alloy_text2": "他留下了一个奖励。",
+        "alloy_text3": "一些他在旅行中捡到的奇怪金属。",
+        "cells_text1": "那人很感激。",
+        "cells_text2": "他留下了一个奖励。",
+        "cells_text3": "一些他在旅行中捡到的奇怪发光盒子。",
+        "scales_text1": "那人很感激。",
+        "scales_text2": "他留下了一个奖励。",
+        "scales_text3": "他只有一些鳞片。",
+        "nothing_text": "那人表达了感谢，然后蹒跚着离开了。"
+      },
+      "martial_master": {
+        "title": "武术大师",
+        "text1": "一个神秘的武术大师来到村庄。",
+        "text2": "他看到你已经掌握了基础拳击技巧。",
+        "text3": "\"我可以教你更高深的武艺，\"他说。",
+        "notification": "一个武术大师到达",
+        "learn": "学习武艺",
+        "learn_text": "大师传授了他的武艺。",
+        "martial_artist": "武术家",
+        "unarmed_master": "徒手大师",
+        "nothing": "什么都不学"
+      },
+      "desert_guide": {
+        "title": "沙漠向导",
+        "text1": "一个经验丰富的沙漠向导来到村庄。",
+        "text2": "他的皮肤被太阳晒得黝黑，眼神深邃。",
+        "text3": "\"我可以教你在荒野中生存的技巧，\"他说。",
+        "notification": "一个沙漠向导到达",
+        "learn": "学习生存技巧",
+        "learn_text": "向导传授了他的生存智慧。",
+        "slow_metabolism": "缓慢新陈代谢",
+        "desert_rat": "沙漠鼠",
+        "stealthy": "潜行",
+        "nothing": "什么都不学"
       }
     },
     "global_events": {
@@ -849,6 +918,13 @@
       "text1": "火焰吞噬了小屋。",
       "text2": "村民们惊慌失措。",
       "notification": "火焰吞噬了小屋"
+    },
+    "convoy": {
+      "title": "商队",
+      "text1": "一支商队出现在地平线上。",
+      "text2": "他们的马车装满了货物。",
+      "text3": "商队首领走向你，想要进行贸易。",
+      "attack": "袭击商队"
     }
   }
 }
