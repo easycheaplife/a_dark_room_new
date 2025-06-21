@@ -1,6 +1,7 @@
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/logger.dart';
+import '../core/localization.dart';
 import 'dart:math';
 
 /// 扩展外部事件定义
@@ -9,41 +10,86 @@ class OutsideEventsExtended {
 
   /// 疾病事件
   static Map<String, dynamic> get sickness => {
-        'title': '疾病',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('outside_events_extended.sickness.title');
+        }(),
         'isAvailable': () {
           final population = _sm.get('game.population', true) ?? 0;
           return population > 10;
         },
         'scenes': {
           'start': {
-            'text': ['疾病在村民中传播。', '他们需要药品。'],
-            'notification': '疾病在村民中传播',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.sickness.text1'),
+                localization.translate('outside_events_extended.sickness.text2')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('outside_events_extended.sickness.notification');
+            }(),
             'buttons': {
               'medicine': {
-                'text': '使用药品',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('outside_events_extended.sickness.use_medicine');
+                }(),
                 'cost': {'medicine': 5},
                 'nextScene': 'cured'
               },
-              'wait': {'text': '等待', 'nextScene': 'wait'}
+              'wait': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.wait');
+                }(),
+                'nextScene': 'wait'
+              }
             }
           },
           'cured': {
-            'text': ['药品治愈了疾病。', '村民们康复了。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.sickness.cured_text1'),
+                localization.translate('outside_events_extended.sickness.cured_text2')
+              ];
+            }(),
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'wait': {
-            'text': ['疾病夺走了一些生命。', '村民们哀悼死者。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.sickness.wait_text1'),
+                localization.translate('outside_events_extended.sickness.wait_text2')
+              ];
+            }(),
             'onLoad': () {
               final population = _sm.get('game.population', true) ?? 0;
               final lostPop = (population * 0.1).floor().clamp(1, 10);
               final newPop = (population - lostPop).clamp(0, population);
               _sm.set('game.population', newPop);
-              Logger.info('🦠 疾病损失: $lostPop个村民');
+              Logger.info('🦠 Sickness loss: $lostPop villagers');
             },
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
@@ -51,65 +97,128 @@ class OutsideEventsExtended {
 
   /// 瘟疫事件
   static Map<String, dynamic> get plague => {
-        'title': '瘟疫',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('outside_events_extended.plague.title');
+        }(),
         'isAvailable': () {
           final population = _sm.get('game.population', true) ?? 0;
           return population > 50;
         },
         'scenes': {
           'start': {
-            'text': ['一场可怕的瘟疫席卷村庄。', '死亡人数不断上升。'],
-            'notification': '瘟疫席卷村庄',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.plague.text1'),
+                localization.translate('outside_events_extended.plague.text2')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('outside_events_extended.plague.notification');
+            }(),
             'buttons': {
               'buyMedicine': {
-                'text': '购买药品',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('outside_events_extended.plague.buy_medicine');
+                }(),
                 'cost': {'scales': 50},
                 'reward': {'medicine': 10},
                 'nextScene': 'buyMedicine'
               },
               'useMedicine': {
-                'text': '使用药品',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('outside_events_extended.plague.use_medicine');
+                }(),
                 'cost': {'medicine': 15},
                 'nextScene': 'useMedicine'
               },
-              'wait': {'text': '等待', 'nextScene': 'wait'}
+              'wait': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.wait');
+                }(),
+                'nextScene': 'wait'
+              }
             }
           },
           'buyMedicine': {
-            'text': ['商人们带来了药品。', '但瘟疫仍在蔓延。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.plague.buy_text1'),
+                localization.translate('outside_events_extended.plague.buy_text2')
+              ];
+            }(),
             'buttons': {
               'useMedicine': {
-                'text': '使用药品',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('outside_events_extended.plague.use_medicine');
+                }(),
                 'cost': {'medicine': 15},
                 'nextScene': 'useMedicine'
               },
-              'wait': {'text': '等待', 'nextScene': 'wait'}
+              'wait': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.wait');
+                }(),
+                'nextScene': 'wait'
+              }
             }
           },
           'useMedicine': {
-            'text': ['药品减缓了瘟疫的传播。', '许多生命得到了拯救。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.plague.use_text1'),
+                localization.translate('outside_events_extended.plague.use_text2')
+              ];
+            }(),
             'onLoad': () {
               final population = _sm.get('game.population', true) ?? 0;
               final lostPop = (population * 0.05).floor().clamp(1, 5);
               final newPop = (population - lostPop).clamp(0, population);
               _sm.set('game.population', newPop);
-              Logger.info('💊 瘟疫损失(已治疗): $lostPop个村民');
+              Logger.info('💊 Plague loss (treated): $lostPop villagers');
             },
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'wait': {
-            'text': ['瘟疫肆虐村庄。', '许多村民死去。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.plague.wait_text1'),
+                localization.translate('outside_events_extended.plague.wait_text2')
+              ];
+            }(),
             'onLoad': () {
               final population = _sm.get('game.population', true) ?? 0;
               final lostPop = (population * 0.3).floor().clamp(5, 20);
               final newPop = (population - lostPop).clamp(0, population);
               _sm.set('game.population', newPop);
-              Logger.info('☠️ 瘟疫损失(未治疗): $lostPop个村民');
+              Logger.info('☠️ Plague loss (untreated): $lostPop villagers');
             },
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
@@ -117,56 +226,113 @@ class OutsideEventsExtended {
 
   /// 野兽袭击事件
   static Map<String, dynamic> get beastAttack => {
-        'title': '野兽袭击',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('outside_events_extended.beast_attack.title');
+        }(),
         'isAvailable': () {
           final population = _sm.get('game.population', true) ?? 0;
           return population > 0;
         },
         'scenes': {
           'start': {
-            'text': ['一群野兽袭击了村庄。', '村民们在战斗。'],
-            'notification': '野兽袭击村庄',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.beast_attack.text1'),
+                localization.translate('outside_events_extended.beast_attack.text2')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('outside_events_extended.beast_attack.notification');
+            }(),
             'buttons': {
               'fight': {
-                'text': '战斗',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.fight');
+                }(),
                 'nextScene': {'0.6': 'win', '1.0': 'lose'}
               },
-              'hide': {'text': '躲藏', 'nextScene': 'hide'}
+              'hide': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.hide');
+                }(),
+                'nextScene': 'hide'
+              }
             }
           },
           'win': {
-            'text': ['村民们击退了野兽。', '战利品散落在地上。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.beast_attack.win_text1'),
+                localization.translate('outside_events_extended.beast_attack.win_text2')
+              ];
+            }(),
             'reward': {'fur': 100, 'meat': 100, 'teeth': 10},
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'lose': {
-            'text': ['野兽们造成了重大伤亡。', '村民们哀悼死者。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.beast_attack.lose_text1'),
+                localization.translate('outside_events_extended.beast_attack.lose_text2')
+              ];
+            }(),
             'onLoad': () {
               final population = _sm.get('game.population', true) ?? 0;
               final lostPop = Random().nextInt(5) + 3; // 3-7个村民
               final newPop = (population - lostPop).clamp(0, population);
               _sm.set('game.population', newPop);
-              Logger.info('🐺 野兽袭击损失: $lostPop个村民');
+              Logger.info('🐺 Beast attack loss: $lostPop villagers');
             },
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'hide': {
-            'text': ['村民们躲在小屋里。', '野兽们破坏了一些建筑后离开了。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.beast_attack.hide_text1'),
+                localization.translate('outside_events_extended.beast_attack.hide_text2')
+              ];
+            }(),
             'onLoad': () {
               final huts = _sm.get('game.buildings.hut', true) ?? 0;
               if (huts > 0) {
                 final lostHuts = Random().nextInt(2) + 1; // 1-2个小屋
                 final newHuts = (huts - lostHuts).clamp(0, huts);
                 _sm.set('game.buildings.hut', newHuts);
-                Logger.info('🏠 野兽破坏: $lostHuts个小屋');
+                Logger.info('🏠 Beast destruction: $lostHuts huts');
               }
             },
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
@@ -174,7 +340,10 @@ class OutsideEventsExtended {
 
   /// 军事突袭事件
   static Map<String, dynamic> get militaryRaid => {
-        'title': '军事突袭',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('outside_events_extended.military_raid.title');
+        }(),
         'isAvailable': () {
           final population = _sm.get('game.population', true) ?? 0;
           final cityCleared = _sm.get('game.cityCleared', true) ?? false;
@@ -182,38 +351,86 @@ class OutsideEventsExtended {
         },
         'scenes': {
           'start': {
-            'text': ['士兵们包围了村庄。', '他们要求投降。'],
-            'notification': '士兵们包围了村庄',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.military_raid.text1'),
+                localization.translate('outside_events_extended.military_raid.text2')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('outside_events_extended.military_raid.notification');
+            }(),
             'buttons': {
               'fight': {
-                'text': '战斗',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.fight');
+                }(),
                 'nextScene': {'0.3': 'win', '1.0': 'lose'}
               },
-              'surrender': {'text': '投降', 'nextScene': 'surrender'}
+              'surrender': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('outside_events_extended.military_raid.surrender');
+                }(),
+                'nextScene': 'surrender'
+              }
             }
           },
           'win': {
-            'text': ['村民们击退了士兵。', '缴获了他们的装备。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.military_raid.win_text1'),
+                localization.translate('outside_events_extended.military_raid.win_text2')
+              ];
+            }(),
             'reward': {'rifle': 5, 'bullets': 100, 'steel': 50},
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'lose': {
-            'text': ['士兵们占领了村庄。', '许多村民被杀或被俘。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.military_raid.lose_text1'),
+                localization.translate('outside_events_extended.military_raid.lose_text2')
+              ];
+            }(),
             'onLoad': () {
               final population = _sm.get('game.population', true) ?? 0;
               final lostPop = (population * 0.5).floor().clamp(10, 50);
               final newPop = (population - lostPop).clamp(0, population);
               _sm.set('game.population', newPop);
-              Logger.info('⚔️ 军事突袭损失: $lostPop个村民');
+              Logger.info('⚔️ Military raid loss: $lostPop villagers');
             },
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'surrender': {
-            'text': ['士兵们占领了村庄。', '他们拿走了大部分资源。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events_extended.military_raid.surrender_text1'),
+                localization.translate('outside_events_extended.military_raid.surrender_text2')
+              ];
+            }(),
             'onLoad': () {
               // 失去大部分资源
               final resources = ['wood', 'fur', 'meat', 'iron', 'steel'];
@@ -222,10 +439,16 @@ class OutsideEventsExtended {
                 final lost = (amount * 0.7).floor();
                 _sm.add('stores.$resource', -lost);
               }
-              Logger.info('💰 军事突袭损失: 70%的资源');
+              Logger.info('💰 Military raid loss: 70% of resources');
             },
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }

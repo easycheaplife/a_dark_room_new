@@ -983,5 +983,127 @@
       "notification": "火焰吞噬了小屋",
       "mourn": "哀悼死者"
     }
+  },
+  "outside_events_extended": {
+    "sickness": {
+      "title": "疾病",
+      "text1": "疾病在村民中传播。",
+      "text2": "他们需要药品。",
+      "notification": "疾病在村民中传播",
+      "use_medicine": "使用药品",
+      "cured_text1": "药品治愈了疾病。",
+      "cured_text2": "村民们康复了。",
+      "wait_text1": "疾病夺走了一些生命。",
+      "wait_text2": "村民们哀悼死者。"
+    },
+    "plague": {
+      "title": "瘟疫",
+      "text1": "一场可怕的瘟疫席卷村庄。",
+      "text2": "死亡人数不断上升。",
+      "notification": "瘟疫席卷村庄",
+      "buy_medicine": "购买药品",
+      "use_medicine": "使用药品",
+      "buy_text1": "商人们带来了药品。",
+      "buy_text2": "但瘟疫仍在蔓延。",
+      "use_text1": "药品减缓了瘟疫的传播。",
+      "use_text2": "许多生命得到了拯救。",
+      "wait_text1": "瘟疫肆虐村庄。",
+      "wait_text2": "许多村民死去。"
+    },
+    "beast_attack": {
+      "title": "野兽袭击",
+      "text1": "一群野兽袭击了村庄。",
+      "text2": "村民们在战斗。",
+      "notification": "野兽袭击村庄",
+      "win_text1": "村民们击退了野兽。",
+      "win_text2": "战利品散落在地上。",
+      "lose_text1": "野兽们造成了重大伤亡。",
+      "lose_text2": "村民们哀悼死者。",
+      "hide_text1": "村民们躲在小屋里。",
+      "hide_text2": "野兽们破坏了一些建筑后离开了。"
+    },
+    "military_raid": {
+      "title": "军事突袭",
+      "text1": "士兵们包围了村庄。",
+      "text2": "他们要求投降。",
+      "notification": "士兵们包围了村庄",
+      "surrender": "投降",
+      "win_text1": "村民们击退了士兵。",
+      "win_text2": "缴获了他们的装备。",
+      "lose_text1": "士兵们占领了村庄。",
+      "lose_text2": "许多村民被杀或被俘。",
+      "surrender_text1": "士兵们占领了村庄。",
+      "surrender_text2": "他们拿走了大部分资源。"
+    }
+  },
+  "world_events": {
+    "squirrel": {
+      "title": "松鼠",
+      "enemy": "松鼠"
+    },
+    "rabbit": {
+      "title": "兔子",
+      "enemy": "兔子"
+    },
+    "fox": {
+      "title": "狐狸",
+      "enemy": "狐狸"
+    },
+    "wolf": {
+      "title": "狼",
+      "enemy": "狼"
+    },
+    "bandit": {
+      "title": "土匪",
+      "enemy": "土匪"
+    },
+    "bear": {
+      "title": "熊",
+      "enemy": "熊"
+    },
+    "wildcat": {
+      "title": "野猫",
+      "enemy": "野猫"
+    },
+    "bandit_group": {
+      "title": "土匪团伙",
+      "enemy": "土匪团伙"
+    },
+    "scavenger": {
+      "title": "拾荒者",
+      "enemy": "拾荒者"
+    },
+    "madman": {
+      "title": "疯子",
+      "enemy": "疯子"
+    },
+    "beast": {
+      "title": "野兽",
+      "enemy": "野兽"
+    },
+    "soldiers": {
+      "title": "士兵",
+      "enemy": "士兵"
+    },
+    "alien": {
+      "title": "外星人",
+      "enemy": "外星人"
+    },
+    "mutant": {
+      "title": "变异体",
+      "enemy": "变异体"
+    },
+    "warband": {
+      "title": "战团",
+      "enemy": "战团"
+    },
+    "swamp": {
+      "title": "沼泽",
+      "text1": "你发现了一片神秘的沼泽。",
+      "text2": "空气中弥漫着奇异的香味。",
+      "text3": "这里似乎有什么特别的东西。",
+      "investigate_text1": "你在沼泽中发现了一些奇异的植物。",
+      "investigate_text2": "品尝后，你感觉自己对食物有了更深的理解。"
+    }
   }
 }

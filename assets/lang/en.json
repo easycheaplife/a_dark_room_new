@@ -991,5 +991,127 @@
       "notification": "flames consume the huts",
       "mourn": "mourn the dead"
     }
+  },
+  "outside_events_extended": {
+    "sickness": {
+      "title": "sickness",
+      "text1": "sickness spreads among the villagers.",
+      "text2": "they need medicine.",
+      "notification": "sickness spreads among the villagers",
+      "use_medicine": "use medicine",
+      "cured_text1": "the medicine cures the sickness.",
+      "cured_text2": "the villagers recover.",
+      "wait_text1": "the sickness takes some lives.",
+      "wait_text2": "the villagers mourn the dead."
+    },
+    "plague": {
+      "title": "plague",
+      "text1": "a terrible plague sweeps through the village.",
+      "text2": "the death toll keeps rising.",
+      "notification": "plague sweeps through the village",
+      "buy_medicine": "buy medicine",
+      "use_medicine": "use medicine",
+      "buy_text1": "traders bring medicine.",
+      "buy_text2": "but the plague still spreads.",
+      "use_text1": "the medicine slows the plague's spread.",
+      "use_text2": "many lives are saved.",
+      "wait_text1": "the plague ravages the village.",
+      "wait_text2": "many villagers die."
+    },
+    "beast_attack": {
+      "title": "beast attack",
+      "text1": "a pack of beasts attacks the village.",
+      "text2": "the villagers are fighting.",
+      "notification": "beasts attack the village",
+      "win_text1": "the villagers repel the beasts.",
+      "win_text2": "spoils are scattered on the ground.",
+      "lose_text1": "the beasts cause heavy casualties.",
+      "lose_text2": "the villagers mourn the dead.",
+      "hide_text1": "the villagers hide in the huts.",
+      "hide_text2": "the beasts destroy some buildings before leaving."
+    },
+    "military_raid": {
+      "title": "military raid",
+      "text1": "soldiers surround the village.",
+      "text2": "they demand surrender.",
+      "notification": "soldiers surround the village",
+      "surrender": "surrender",
+      "win_text1": "the villagers repel the soldiers.",
+      "win_text2": "they capture their equipment.",
+      "lose_text1": "the soldiers occupy the village.",
+      "lose_text2": "many villagers are killed or captured.",
+      "surrender_text1": "the soldiers occupy the village.",
+      "surrender_text2": "they take most of the resources."
+    }
+  },
+  "world_events": {
+    "squirrel": {
+      "title": "squirrel",
+      "enemy": "squirrel"
+    },
+    "rabbit": {
+      "title": "rabbit",
+      "enemy": "rabbit"
+    },
+    "fox": {
+      "title": "fox",
+      "enemy": "fox"
+    },
+    "wolf": {
+      "title": "wolf",
+      "enemy": "wolf"
+    },
+    "bandit": {
+      "title": "bandit",
+      "enemy": "bandit"
+    },
+    "bear": {
+      "title": "bear",
+      "enemy": "bear"
+    },
+    "wildcat": {
+      "title": "wildcat",
+      "enemy": "wildcat"
+    },
+    "bandit_group": {
+      "title": "bandit group",
+      "enemy": "bandit group"
+    },
+    "scavenger": {
+      "title": "scavenger",
+      "enemy": "scavenger"
+    },
+    "madman": {
+      "title": "madman",
+      "enemy": "madman"
+    },
+    "beast": {
+      "title": "beast",
+      "enemy": "beast"
+    },
+    "soldiers": {
+      "title": "soldiers",
+      "enemy": "soldiers"
+    },
+    "alien": {
+      "title": "alien",
+      "enemy": "alien"
+    },
+    "mutant": {
+      "title": "mutant",
+      "enemy": "mutant"
+    },
+    "warband": {
+      "title": "warband",
+      "enemy": "warband"
+    },
+    "swamp": {
+      "title": "swamp",
+      "text1": "you discover a mysterious swamp.",
+      "text2": "strange scents fill the air.",
+      "text3": "there seems to be something special here.",
+      "investigate_text1": "you find some strange plants in the swamp.",
+      "investigate_text2": "after tasting them, you feel a deeper understanding of food."
+    }
   }
 }

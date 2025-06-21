@@ -1,6 +1,7 @@
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/logger.dart';
+import '../core/localization.dart';
 import '../modules/world.dart';
 
 /// 世界地图事件定义
@@ -50,12 +51,18 @@ class WorldEvents {
 
   /// 松鼠事件
   static Map<String, dynamic> get squirrel => {
-        'title': '松鼠',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.squirrel.title');
+        }(),
         'isAvailable': () => _world.getDistance() <= 10,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '松鼠',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.squirrel.enemy');
+            }(),
             'health': 3,
             'damage': 1,
             'hit': 0.5,
@@ -70,12 +77,18 @@ class WorldEvents {
 
   /// 兔子事件
   static Map<String, dynamic> get rabbit => {
-        'title': '兔子',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.rabbit.title');
+        }(),
         'isAvailable': () => _world.getDistance() <= 10,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '兔子',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.rabbit.enemy');
+            }(),
             'health': 5,
             'damage': 1,
             'hit': 0.4,
@@ -90,12 +103,18 @@ class WorldEvents {
 
   /// 狐狸事件
   static Map<String, dynamic> get fox => {
-        'title': '狐狸',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.fox.title');
+        }(),
         'isAvailable': () => _world.getDistance() <= 10,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '狐狸',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.fox.enemy');
+            }(),
             'health': 8,
             'damage': 2,
             'hit': 0.6,
@@ -111,12 +130,18 @@ class WorldEvents {
 
   /// 狼事件
   static Map<String, dynamic> get wolf => {
-        'title': '狼',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.wolf.title');
+        }(),
         'isAvailable': () => _world.getDistance() <= 10,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '狼',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.wolf.enemy');
+            }(),
             'health': 12,
             'damage': 3,
             'hit': 0.7,
@@ -132,12 +157,18 @@ class WorldEvents {
 
   /// 土匪事件
   static Map<String, dynamic> get bandit => {
-        'title': '土匪',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.bandit.title');
+        }(),
         'isAvailable': () => _world.getDistance() <= 10,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '土匪',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.bandit.enemy');
+            }(),
             'health': 15,
             'damage': 4,
             'hit': 0.6,
@@ -154,13 +185,19 @@ class WorldEvents {
 
   /// 熊事件
   static Map<String, dynamic> get bear => {
-        'title': '熊',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.bear.title');
+        }(),
         'isAvailable': () =>
             _world.getDistance() > 10 && _world.getDistance() <= 20,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '熊',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.bear.enemy');
+            }(),
             'health': 25,
             'damage': 6,
             'hit': 0.7,
@@ -177,13 +214,19 @@ class WorldEvents {
 
   /// 野猫事件
   static Map<String, dynamic> get wildcat => {
-        'title': '野猫',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.wildcat.title');
+        }(),
         'isAvailable': () =>
             _world.getDistance() > 10 && _world.getDistance() <= 20,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '野猫',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.wildcat.enemy');
+            }(),
             'health': 18,
             'damage': 5,
             'hit': 0.8,
@@ -200,13 +243,19 @@ class WorldEvents {
 
   /// 土匪团伙事件
   static Map<String, dynamic> get banditGroup => {
-        'title': '土匪团伙',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.bandit_group.title');
+        }(),
         'isAvailable': () =>
             _world.getDistance() > 10 && _world.getDistance() <= 20,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '土匪团伙',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.bandit_group.enemy');
+            }(),
             'health': 30,
             'damage': 5,
             'hit': 0.7,
@@ -224,13 +273,19 @@ class WorldEvents {
 
   /// 拾荒者事件
   static Map<String, dynamic> get scavenger => {
-        'title': '拾荒者',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.scavenger.title');
+        }(),
         'isAvailable': () =>
             _world.getDistance() > 10 && _world.getDistance() <= 20,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '拾荒者',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.scavenger.enemy');
+            }(),
             'health': 20,
             'damage': 4,
             'hit': 0.6,
@@ -247,13 +302,19 @@ class WorldEvents {
 
   /// 疯子事件
   static Map<String, dynamic> get madman => {
-        'title': '疯子',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.madman.title');
+        }(),
         'isAvailable': () =>
             _world.getDistance() > 10 && _world.getDistance() <= 20,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '疯子',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.madman.enemy');
+            }(),
             'health': 22,
             'damage': 7,
             'hit': 0.5,
@@ -269,12 +330,18 @@ class WorldEvents {
 
   /// 野兽事件
   static Map<String, dynamic> get beast => {
-        'title': '野兽',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.beast.title');
+        }(),
         'isAvailable': () => _world.getDistance() > 20,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '野兽',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.beast.enemy');
+            }(),
             'health': 40,
             'damage': 8,
             'hit': 0.8,
@@ -291,12 +358,18 @@ class WorldEvents {
 
   /// 士兵事件
   static Map<String, dynamic> get soldiers => {
-        'title': '士兵',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.soldiers.title');
+        }(),
         'isAvailable': () => _world.getDistance() > 20,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '士兵',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.soldiers.enemy');
+            }(),
             'health': 35,
             'damage': 6,
             'hit': 0.8,
@@ -314,12 +387,18 @@ class WorldEvents {
 
   /// 外星人事件
   static Map<String, dynamic> get alien => {
-        'title': '外星人',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.alien.title');
+        }(),
         'isAvailable': () => _world.getDistance() > 20,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '外星人',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.alien.enemy');
+            }(),
             'health': 45,
             'damage': 10,
             'hit': 0.7,
@@ -336,12 +415,18 @@ class WorldEvents {
 
   /// 变异体事件
   static Map<String, dynamic> get mutant => {
-        'title': '变异体',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.mutant.title');
+        }(),
         'isAvailable': () => _world.getDistance() > 20,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '变异体',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.mutant.enemy');
+            }(),
             'health': 50,
             'damage': 9,
             'hit': 0.6,
@@ -358,12 +443,18 @@ class WorldEvents {
 
   /// 战团事件
   static Map<String, dynamic> get warband => {
-        'title': '战团',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.warband.title');
+        }(),
         'isAvailable': () => _world.getDistance() > 20,
         'scenes': {
           'start': {
             'combat': true,
-            'enemy': '战团',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('world_events.warband.enemy');
+            }(),
             'health': 60,
             'damage': 7,
             'hit': 0.8,
@@ -381,27 +472,61 @@ class WorldEvents {
 
   /// 沼泽地标事件
   static Map<String, dynamic> get swamp => {
-        'title': '沼泽',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('world_events.swamp.title');
+        }(),
         'isAvailable': () => true, // 地标事件总是可用
         'scenes': {
           'start': {
-            'text': ['你发现了一片神秘的沼泽。', '空气中弥漫着奇异的香味。', '这里似乎有什么特别的东西。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('world_events.swamp.text1'),
+                localization.translate('world_events.swamp.text2'),
+                localization.translate('world_events.swamp.text3')
+              ];
+            }(),
             'buttons': {
-              'investigate': {'text': '调查', 'nextScene': 'investigate'},
-              'leave': {'text': '离开', 'nextScene': 'end'}
+              'investigate': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.investigate');
+                }(),
+                'nextScene': 'investigate'
+              },
+              'leave': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.leave');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'investigate': {
-            'text': ['你在沼泽中发现了一些奇异的植物。', '品尝后，你感觉自己对食物有了更深的理解。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('world_events.swamp.investigate_text1'),
+                localization.translate('world_events.swamp.investigate_text2')
+              ];
+            }(),
             'onLoad': () {
               // 获得美食家技能
               if (!_sm.hasPerk('gastronome')) {
                 _sm.addPerk('gastronome');
-                Logger.info('🍽️ 学会了美食家技能');
+                Logger.info('🍽️ Learned gastronome skill');
               }
             },
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
