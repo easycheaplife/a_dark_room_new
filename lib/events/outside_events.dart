@@ -69,26 +69,59 @@ class OutsideEvents {
             }
           },
           'trade': {
-            'text': ['商队首领很高兴与你交易。', '你们进行了一次公平的交换。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.convoy.trade_text1'),
+                localization.translate('outside_events.convoy.trade_text2')
+              ];
+            }(),
             'cost': {'fur': 100, 'meat': 50},
             'reward': {'bullets': 20, 'medicine': 3, 'steel': 10},
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'attack': {
-            'text': ['你决定袭击商队。', '这是一个危险的决定...'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.convoy.attack_text1'),
+                localization.translate('outside_events.convoy.attack_text2')
+              ];
+            }(),
             'nextScene': 'combat'
           },
           'ignore': {
-            'text': ['商队继续他们的旅程。', '也许你错过了一个好机会。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.convoy.ignore_text1'),
+                localization.translate('outside_events.convoy.ignore_text2')
+              ];
+            }(),
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'combat': {
             'combat': true,
-            'enemy': '商队护卫',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('outside_events.convoy.enemy');
+            }(),
             'health': 30,
             'damage': 4,
             'hit': 0.7,
@@ -105,21 +138,40 @@ class OutsideEvents {
 
   /// 袭击者事件
   static Map<String, dynamic> get raiders => {
-        'title': '袭击者',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('outside_events.raiders.title');
+        }(),
         'isAvailable': () {
           final population = _sm.get('game.population', true) ?? 0;
           return population >= 10; // 需要一定人口才会吸引袭击者
         },
         'scenes': {
           'start': {
-            'text': ['一群袭击者出现在村庄边缘。', '他们看起来很危险，想要抢夺你的资源。', '战斗不可避免！'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.raiders.text1'),
+                localization.translate('outside_events.raiders.text2'),
+                localization.translate('outside_events.raiders.text3')
+              ];
+            }(),
             'buttons': {
-              'fight': {'text': '战斗', 'nextScene': 'combat'}
+              'fight': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.fight');
+                }(),
+                'nextScene': 'combat'
+              }
             }
           },
           'combat': {
             'combat': true,
-            'enemy': '袭击者',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('outside_events.raiders.enemy');
+            }(),
             'health': 25,
             'damage': 5,
             'hit': 0.8,
@@ -136,22 +188,47 @@ class OutsideEvents {
 
   /// 野兽事件
   static Map<String, dynamic> get beast => {
-        'title': '野兽',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('outside_events.beast.title');
+        }(),
         'isAvailable': () {
           final lodge = _sm.get('game.buildings.lodge', true) ?? 0;
           return lodge > 0; // 需要狩猎小屋
         },
         'scenes': {
           'start': {
-            'text': ['一只巨大的野兽在村庄附近游荡。', '它威胁着村民的安全。', '你必须做出选择。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.beast.text1'),
+                localization.translate('outside_events.beast.text2'),
+                localization.translate('outside_events.beast.text3')
+              ];
+            }(),
             'buttons': {
-              'fight': {'text': '战斗', 'nextScene': 'combat'},
-              'hide': {'text': '躲藏', 'nextScene': 'hide'}
+              'fight': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.fight');
+                }(),
+                'nextScene': 'combat'
+              },
+              'hide': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.hide');
+                }(),
+                'nextScene': 'hide'
+              }
             }
           },
           'combat': {
             'combat': true,
-            'enemy': '野兽',
+            'enemy': () {
+              final localization = Localization();
+              return localization.translate('outside_events.beast.enemy');
+            }(),
             'health': 35,
             'damage': 6,
             'hit': 0.75,
@@ -164,10 +241,23 @@ class OutsideEvents {
             }
           },
           'hide': {
-            'text': ['你选择躲藏起来。', '野兽在村庄周围徘徊了一会儿。', '它破坏了一些建筑后离开了。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.beast.hide_text1'),
+                localization.translate('outside_events.beast.hide_text2'),
+                localization.translate('outside_events.beast.hide_text3')
+              ];
+            }(),
             'cost': {'wood': 100, 'fur': 20},
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
@@ -175,50 +265,104 @@ class OutsideEvents {
 
   /// 商人事件
   static Map<String, dynamic> get trader => {
-        'title': '商人',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('outside_events.trader.title');
+        }(),
         'isAvailable': () {
           final tradingPost = _sm.get('game.buildings.trading post', true) ?? 0;
           return tradingPost > 0; // 需要贸易站
         },
         'scenes': {
           'start': {
-            'text': [
-              '一个独行商人来到你的村庄。',
-              '他背着一个大包，里面装满了稀有物品。',
-              '"我有一些特殊的商品，"他说，"但价格不菲。"'
-            ],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.trader.text1'),
+                localization.translate('outside_events.trader.text2'),
+                localization.translate('outside_events.trader.text3')
+              ];
+            }(),
             'buttons': {
               'buyMedicine': {
-                'text': '购买药品',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('outside_events.trader.buy_medicine');
+                }(),
                 'cost': {'scales': 10},
                 'nextScene': 'buyMedicine'
               },
               'buyWeapon': {
-                'text': '购买武器',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('outside_events.trader.buy_weapon');
+                }(),
                 'cost': {'scales': 15, 'teeth': 5},
                 'nextScene': 'buyWeapon'
               },
-              'decline': {'text': '拒绝购买', 'nextScene': 'decline'}
+              'decline': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('outside_events.trader.decline_buy');
+                }(),
+                'nextScene': 'decline'
+              }
             }
           },
           'buyMedicine': {
-            'text': ['商人给了你一些珍贵的药品。', '"这些在危急时刻会救你的命。"'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.trader.buy_medicine_text1'),
+                localization.translate('outside_events.trader.buy_medicine_text2')
+              ];
+            }(),
             'reward': {'medicine': 5},
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'buyWeapon': {
-            'text': ['商人从包里取出一把精制的武器。', '"这是我最好的作品之一。"'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.trader.buy_weapon_text1'),
+                localization.translate('outside_events.trader.buy_weapon_text2')
+              ];
+            }(),
             'reward': {'steel sword': 1},
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'decline': {
-            'text': ['商人点点头，收拾好他的物品。', '"也许下次你会需要的。"'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.trader.decline_text1'),
+                localization.translate('outside_events.trader.decline_text2')
+              ];
+            }(),
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
@@ -226,7 +370,10 @@ class OutsideEvents {
 
   /// 难民事件
   static Map<String, dynamic> get refugees => {
-        'title': '难民',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('outside_events.refugees.title');
+        }(),
         'isAvailable': () {
           final huts = _sm.get('game.buildings.hut', true) ?? 0;
           final population = _sm.get('game.population', true) ?? 0;
@@ -235,35 +382,71 @@ class OutsideEvents {
         },
         'scenes': {
           'start': {
-            'text': [
-              '一群难民来到你的村庄。',
-              '他们看起来疲惫不堪，急需庇护。',
-              '"请让我们留下来，"他们恳求道，"我们会努力工作的。"'
-            ],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.refugees.text1'),
+                localization.translate('outside_events.refugees.text2'),
+                localization.translate('outside_events.refugees.text3')
+              ];
+            }(),
             'buttons': {
               'accept': {
-                'text': '接受他们',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('outside_events.refugees.accept');
+                }(),
                 'cost': {'meat': 50, 'fur': 20},
                 'nextScene': 'accept'
               },
-              'refuse': {'text': '拒绝', 'nextScene': 'refuse'}
+              'refuse': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('outside_events.refugees.refuse');
+                }(),
+                'nextScene': 'refuse'
+              }
             }
           },
           'accept': {
-            'text': ['难民们感激地定居在你的村庄。', '他们很快就开始为社区做贡献。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.refugees.accept_text1'),
+                localization.translate('outside_events.refugees.accept_text2')
+              ];
+            }(),
             'onLoad': () {
               final currentPop = _sm.get('game.population', true) ?? 0;
               _sm.set('game.population', currentPop + 3);
-              Logger.info('👥 人口增加3人');
+              Logger.info('👥 Population increased by 3');
             },
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'refuse': {
-            'text': ['难民们失望地离开了。', '你看着他们消失在远方。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.refugees.refuse_text1'),
+                localization.translate('outside_events.refugees.refuse_text2')
+              ];
+            }(),
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
@@ -271,34 +454,76 @@ class OutsideEvents {
 
   /// 侦察兵事件
   static Map<String, dynamic> get scout => {
-        'title': '侦察兵',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('outside_events.scout_report.title');
+        }(),
         'isAvailable': () {
           final armoury = _sm.get('game.buildings.armoury', true) ?? 0;
           return armoury > 0; // 需要军械库
         },
         'scenes': {
           'start': {
-            'text': [
-              '一个侦察兵匆忙赶到村庄。',
-              '"我发现了一个废弃的前哨站，"他报告道。',
-              '"那里可能有有用的物资，但也可能有危险。"'
-            ],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.scout_report.text1'),
+                localization.translate('outside_events.scout_report.text2'),
+                localization.translate('outside_events.scout_report.text3')
+              ];
+            }(),
             'buttons': {
-              'investigate': {'text': '调查', 'nextScene': 'investigate'},
-              'ignore': {'text': '忽视', 'nextScene': 'ignore'}
+              'investigate': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.investigate');
+                }(),
+                'nextScene': 'investigate'
+              },
+              'ignore': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.ignore');
+                }(),
+                'nextScene': 'ignore'
+              }
             }
           },
           'investigate': {
-            'text': ['你派遣一支小队前往调查。', '他们发现了一些有价值的物资。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.scout_report.investigate_text1'),
+                localization.translate('outside_events.scout_report.investigate_text2')
+              ];
+            }(),
             'reward': {'bullets': 30, 'medicine': 2, 'energy cell': 1},
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'ignore': {
-            'text': ['你决定不冒险调查。', '侦察兵点点头，理解你的谨慎。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.scout_report.ignore_text1'),
+                localization.translate('outside_events.scout_report.ignore_text2')
+              ];
+            }(),
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
@@ -306,15 +531,27 @@ class OutsideEvents {
 
   /// 被毁的陷阱事件
   static Map<String, dynamic> get ruinedTrap => {
-        'title': '被毁的陷阱',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('outside_events.ruined_trap.title');
+        }(),
         'isAvailable': () {
           final traps = _sm.get('game.buildings.trap', true) ?? 0;
           return traps > 0;
         },
         'scenes': {
           'start': {
-            'text': ['一个陷阱被毁了。', '地上有巨大的爪印。'],
-            'notification': '一个陷阱被毁了',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.ruined_trap.text1'),
+                localization.translate('outside_events.ruined_trap.text2')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('outside_events.ruined_trap.notification');
+            }(),
             'onLoad': () {
               // 减少一个陷阱
               final traps = _sm.get('game.buildings.trap', true) ?? 0;
@@ -324,7 +561,10 @@ class OutsideEvents {
             },
             'buttons': {
               'track': {
-                'text': '追踪野兽',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('outside_events.ruined_trap.track');
+                }(),
                 'available': () {
                   final hasScoutPerk =
                       _sm.get('character.perks.scout', true) ?? false;
@@ -332,20 +572,50 @@ class OutsideEvents {
                 },
                 'nextScene': {'0.7': 'catch', '1.0': 'lose'} // 侦察技能提高成功率到70%
               },
-              'ignore': {'text': '忽视它', 'nextScene': 'end'}
+              'ignore': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.ignore');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'catch': {
-            'text': ['野兽的踪迹很容易跟踪。', '它被困在了一个峡谷里。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.ruined_trap.catch_text1'),
+                localization.translate('outside_events.ruined_trap.catch_text2')
+              ];
+            }(),
             'reward': {'fur': 200, 'meat': 200, 'teeth': 5},
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'lose': {
-            'text': ['踪迹消失在岩石中。', '野兽逃脱了。'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.ruined_trap.lose_text1'),
+                localization.translate('outside_events.ruined_trap.lose_text2')
+              ];
+            }(),
             'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
+              'continue': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.continue');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }
@@ -353,15 +623,27 @@ class OutsideEvents {
 
   /// 火灾事件
   static Map<String, dynamic> get fire => {
-        'title': '火灾',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('outside_events.fire.title');
+        }(),
         'isAvailable': () {
           final huts = _sm.get('game.buildings.hut', true) ?? 0;
           return huts > 0;
         },
         'scenes': {
           'start': {
-            'text': ['火焰吞噬了小屋。', '村民们惊慌失措。'],
-            'notification': '火焰吞噬了小屋',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('outside_events.fire.text1'),
+                localization.translate('outside_events.fire.text2')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('outside_events.fire.notification');
+            }(),
             'onLoad': () {
               // 减少小屋和村民
               final huts = _sm.get('game.buildings.hut', true) ?? 0;
@@ -382,7 +664,13 @@ class OutsideEvents {
               }
             },
             'buttons': {
-              'mourn': {'text': '哀悼死者', 'nextScene': 'end'}
+              'mourn': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('outside_events.fire.mourn');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }

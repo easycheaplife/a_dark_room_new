@@ -903,17 +903,15 @@
     "coming_soon": "coming soon..."
   },
   "outside_events": {
-    "beast": {
-      "title": "beast",
-      "text1": "a massive beast stalks around the village.",
-      "text2": "it threatens the safety of the villagers.",
-      "text3": "you must make a choice."
-    },
+
     "trader": {
       "title": "trader",
       "text1": "a lone trader arrives at your village.",
       "text2": "he carries a large pack filled with rare items.",
       "text3": "\"i have some special goods,\" he says, \"but they don't come cheap.\"",
+      "buy_medicine": "buy medicine",
+      "buy_weapon": "buy weapon",
+      "decline_buy": "decline purchase",
       "buy_medicine_text1": "the trader gives you some precious medicine.",
       "buy_medicine_text2": "\"these will save your life in critical moments.\"",
       "buy_weapon_text1": "the trader pulls out a finely crafted weapon from his pack.",
@@ -921,18 +919,77 @@
       "decline_text1": "the trader nods and packs up his goods.",
       "decline_text2": "\"perhaps you'll need them next time.\""
     },
-    "fire": {
-      "title": "fire",
-      "text1": "flames consume the huts.",
-      "text2": "villagers panic in terror.",
-      "notification": "flames consume the huts"
-    },
+
     "convoy": {
       "title": "convoy",
       "text1": "a convoy appears on the horizon.",
       "text2": "their carts are loaded with goods.",
       "text3": "the convoy leader approaches, wanting to trade.",
-      "attack": "attack convoy"
+      "attack": "attack convoy",
+      "trade_text1": "the convoy leader is happy to trade with you.",
+      "trade_text2": "you make a fair exchange.",
+      "attack_text1": "you decide to attack the convoy.",
+      "attack_text2": "this is a dangerous decision...",
+      "ignore_text1": "the convoy continues on their journey.",
+      "ignore_text2": "perhaps you missed a good opportunity.",
+      "enemy": "convoy guard"
+    },
+    "raiders": {
+      "title": "raiders",
+      "text1": "a group of raiders appears at the village edge.",
+      "text2": "they look dangerous and want to plunder your resources.",
+      "text3": "combat is inevitable!",
+      "enemy": "raider"
+    },
+    "beast": {
+      "title": "beast",
+      "text1": "a huge beast wanders near the village.",
+      "text2": "it threatens the safety of the villagers.",
+      "text3": "you must make a choice.",
+      "enemy": "beast",
+      "hide_text1": "you choose to hide.",
+      "hide_text2": "the beast wanders around the village for a while.",
+      "hide_text3": "it destroys some buildings before leaving."
+    },
+    "refugees": {
+      "title": "refugees",
+      "text1": "a group of refugees arrives at your village.",
+      "text2": "they look exhausted and desperately need shelter.",
+      "text3": "\"please let us stay,\" they plead, \"we will work hard.\"",
+      "accept": "accept them",
+      "refuse": "refuse",
+      "accept_text1": "the refugees gratefully settle in your village.",
+      "accept_text2": "they quickly begin contributing to the community.",
+      "refuse_text1": "the refugees leave disappointed.",
+      "refuse_text2": "you watch them disappear into the distance."
+    },
+    "scout_report": {
+      "title": "scout",
+      "text1": "a scout hurries to the village.",
+      "text2": "\"i found an abandoned outpost,\" he reports.",
+      "text3": "\"there might be useful supplies there, but it could be dangerous.\"",
+      "investigate_text1": "you send a team to investigate.",
+      "investigate_text2": "they find some valuable supplies.",
+      "ignore_text1": "you decide not to risk the investigation.",
+      "ignore_text2": "the scout nods, understanding your caution."
+    },
+    "ruined_trap": {
+      "title": "ruined trap",
+      "text1": "a trap has been destroyed.",
+      "text2": "there are huge claw marks on the ground.",
+      "notification": "a trap has been destroyed",
+      "track": "track the beast",
+      "catch_text1": "the beast's trail is easy to follow.",
+      "catch_text2": "it's trapped in a canyon.",
+      "lose_text1": "the trail disappears into the rocks.",
+      "lose_text2": "the beast has escaped."
+    },
+    "fire": {
+      "title": "fire",
+      "text1": "flames consume the huts.",
+      "text2": "villagers panic in terror.",
+      "notification": "flames consume the huts",
+      "mourn": "mourn the dead"
     }
   }
 }
