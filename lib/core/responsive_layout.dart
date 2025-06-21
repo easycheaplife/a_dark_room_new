@@ -221,13 +221,19 @@ class GameLayoutParams {
 
   /// 桌面设备布局参数
   static GameLayoutParams _getDesktopLayoutParams(BuildContext context) {
-    return const GameLayoutParams(
-      gameAreaWidth: 700,
+    final screenWidth = ResponsiveLayout.getAvailableWidth(context);
+
+    // 如果屏幕太小，使用较小的游戏区域
+    final gameAreaWidth = screenWidth < 920 ? screenWidth * 0.75 : 700.0;
+    final notificationWidth = screenWidth < 920 ? screenWidth * 0.2 : 200.0;
+
+    return GameLayoutParams(
+      gameAreaWidth: gameAreaWidth,
       gameAreaHeight: 700,
-      notificationWidth: 200,
+      notificationWidth: notificationWidth,
       notificationHeight: 700,
-      contentPadding: EdgeInsets.all(0),
-      buttonWidth: 130,
+      contentPadding: const EdgeInsets.all(0),
+      buttonWidth: gameAreaWidth < 700 ? 100 : 130,
       buttonHeight: 32,
       buttonSpacing: 5.0,
       fontSize: 14,
@@ -237,15 +243,21 @@ class GameLayoutParams {
     );
   }
 
-  /// Web平台布局参数（保持原有设计）
+  /// Web平台布局参数（保持原有设计，但确保居中）
   static GameLayoutParams _getWebLayoutParams(BuildContext context) {
-    return const GameLayoutParams(
-      gameAreaWidth: 700,
+    final screenWidth = ResponsiveLayout.getAvailableWidth(context);
+
+    // 如果屏幕太小，使用较小的游戏区域
+    final gameAreaWidth = screenWidth < 920 ? screenWidth * 0.75 : 700.0;
+    final notificationWidth = screenWidth < 920 ? screenWidth * 0.2 : 200.0;
+
+    return GameLayoutParams(
+      gameAreaWidth: gameAreaWidth,
       gameAreaHeight: 700,
-      notificationWidth: 200,
+      notificationWidth: notificationWidth,
       notificationHeight: 700,
-      contentPadding: EdgeInsets.all(0),
-      buttonWidth: 130,
+      contentPadding: const EdgeInsets.all(0),
+      buttonWidth: gameAreaWidth < 700 ? 100 : 130,
       buttonHeight: 32,
       buttonSpacing: 5.0,
       fontSize: 14,

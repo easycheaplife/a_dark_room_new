@@ -243,55 +243,59 @@ class _GameScreenState extends State<GameScreen> {
 
   /// 桌面/Web布局（保持原有设计）
   Widget _buildDesktopLayout(BuildContext context, GameLayoutParams layoutParams) {
+    final screenSize = MediaQuery.of(context).size;
+
+    // 计算居中位置 - 参考原游戏的布局
+    // 原游戏总宽度是 700px + 220px padding = 920px
+    final totalGameWidth = layoutParams.gameAreaWidth + (layoutParams.showNotificationOnSide ? layoutParams.notificationWidth + 20 : 0);
+    final leftOffset = (screenSize.width - totalGameWidth) / 2;
+
     return Stack(
       children: [
-        // 主内容区域
-        Positioned(
-          left: layoutParams.showNotificationOnSide ? layoutParams.notificationWidth + 20 : 0,
-          top: 0,
-          right: 0,
-          bottom: 0,
-          child: Consumer<Engine>(
-            builder: (context, engine, child) {
-              final isWorldMode = engine.activeModule?.name == 'World' ||
-                  engine.activeModule?.name == '世界';
-
-              return SizedBox(
-                width: layoutParams.gameAreaWidth,
-                child: Column(
-                  children: [
-                    // Header导航 - 只在非世界地图模式显示
-                    if (!isWorldMode) const Header(),
-
-                    // 主面板区域
-                    Expanded(
-                      child: Consumer<Engine>(
-                        builder: (context, engine, child) {
-                          if (engine.activeModule == null) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return _buildActiveModulePanel(engine);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-
         // 通知区域 - 左侧固定位置（仅在桌面/Web显示）
         if (layoutParams.showNotificationOnSide)
           Positioned(
-            left: 0,
+            left: leftOffset,
             top: 20,
             width: layoutParams.notificationWidth,
             height: layoutParams.notificationHeight,
             child: const NotificationDisplay(),
           ),
+
+        // 主内容区域 - 居中显示
+        Positioned(
+          left: leftOffset + (layoutParams.showNotificationOnSide ? layoutParams.notificationWidth + 20 : 0),
+          top: 0,
+          width: layoutParams.gameAreaWidth,
+          height: layoutParams.gameAreaHeight,
+          child: Consumer<Engine>(
+            builder: (context, engine, child) {
+              final isWorldMode = engine.activeModule?.name == 'World' ||
+                  engine.activeModule?.name == '世界';
+
+              return Column(
+                children: [
+                  // Header导航 - 只在非世界地图模式显示
+                  if (!isWorldMode) const Header(),
+
+                  // 主面板区域
+                  Expanded(
+                    child: Consumer<Engine>(
+                      builder: (context, engine, child) {
+                        if (engine.activeModule == null) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        return _buildActiveModulePanel(engine);
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
 
         // 事件界面 - 全屏覆盖
         const Positioned.fill(
