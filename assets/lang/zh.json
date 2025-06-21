@@ -31,6 +31,7 @@
       "ignore": "忽视",
       "fight": "战斗",
       "run": "逃跑",
+      "leave_city": "离开城市",
       "hide": "躲藏",
       "pay": "支付",
       "rob": "抢劫",
@@ -1278,6 +1279,18 @@
       "cave_end1_text": "一个大型动物的巢穴位于洞穴的后面。",
       "cave_end2_text": "一个小的补给缓存隐藏在洞穴的后面。",
       "cave_end3_text": "一个旧箱子被楔在岩石后面，覆盖着厚厚的灰尘层。"
+    },
+    "city_scenes": {
+      "settlement_text1": "一个小定居点在街道的尽头。",
+      "settlement_text2": "人们在废墟中搭建了临时住所。",
+      "hospital_text1": "一座医院的废墟矗立在前方。",
+      "hospital_text2": "绿色十字架在肮脏的窗户后面勉强可见。",
+      "subway_text1": "地铁入口通向地下。",
+      "subway_text2": "台阶消失在黑暗中。",
+      "store_ruins_text1": "一个小商店的废墟。",
+      "store_ruins_text2": "货架上散落着一些有用的物品。",
+      "bird_nest_text1": "鸟儿一定喜欢闪亮的东西。",
+      "bird_nest_text2": "一些好东西编织在它的巢穴里。"
     },
     "house_scenes": {
       "abandoned_text1": "房子已被遗弃，但尚未被搜刮。",

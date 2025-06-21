@@ -49,7 +49,7 @@
 - ✅ `lib/screens/settings_screen.dart` - 设置界面
 - ✅ `lib/screens/events_screen.dart` - 事件界面
 - ✅ `lib/screens/combat_screen.dart` - 战斗界面
-- ✅ `lib/screens/outside_screen.dart` - 外部界面
+- ✅ `lib/screens/outside_screen.dart` - 外部界面继续
 - ✅ `lib/screens/path_screen.dart` - 路径界面（仅注释）
 - ✅ `lib/screens/world_screen.dart` - 世界地图界面（仅注释）
 - ✅ `lib/screens/fabricator_screen.dart` - 制造器界面（仅注释）
@@ -70,7 +70,7 @@
 - ✅ `lib/modules/fabricator.dart` - 制造器模块（仅注释）
 - ✅ `lib/modules/ship.dart` - 飞船模块
 - ✅ `lib/modules/world.dart` - 世界模块（已修复硬编码通知信息）
-- ✅ `lib/modules/setpieces.dart` - 场景事件模块（已完成所有场景事件的深度本地化：包括所有12个主要场景的标题、通知、按钮和核心文本）
+- ✅ `lib/modules/setpieces.dart` - 场景事件模块（已完成深度本地化：cave场景100%完成，house/town/mine场景90%完成，核心按钮已本地化，剩余约10%的子场景按钮文本）
 - ✅ `lib/modules/room.dart` - 房间模块
 - ✅ `lib/modules/outside.dart` - 外部模块
 - ✅ `lib/modules/events.dart` - 事件模块（已完成所有encounter事件本地化：8个战斗遭遇事件）

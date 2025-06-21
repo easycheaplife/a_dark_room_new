@@ -31,6 +31,7 @@
       "ignore": "ignore",
       "fight": "fight",
       "run": "run",
+      "leave_city": "leave city",
       "hide": "hide",
       "pay": "pay",
       "rob": "rob",
@@ -1286,6 +1287,18 @@
       "cave_end1_text": "a large animal's nest sits at the back of the cave.",
       "cave_end2_text": "a small supply cache is hidden at the back of the cave.",
       "cave_end3_text": "an old chest is wedged behind the rocks, covered in a thick layer of dust."
+    },
+    "city_scenes": {
+      "settlement_text1": "a small settlement at the end of the street.",
+      "settlement_text2": "people have made shelters in the ruins.",
+      "hospital_text1": "the ruins of a hospital stand ahead.",
+      "hospital_text2": "the green cross is barely visible behind grimy windows.",
+      "subway_text1": "a subway entrance leads underground.",
+      "subway_text2": "the stairs disappear into darkness.",
+      "store_ruins_text1": "the ruins of a small shop.",
+      "store_ruins_text2": "some useful items are scattered on the shelves.",
+      "bird_nest_text1": "birds must like shiny things.",
+      "bird_nest_text2": "some good stuff woven into its nest."
     },
     "house_scenes": {
       "abandoned_text1": "the house has been abandoned, but not yet picked over.",
