@@ -215,7 +215,32 @@
     "sickness": "疾病",
     "plague": "瘟疫",
     "beast_attack": "野兽袭击",
-    "military_raid": "军事突袭"
+    "military_raid": "军事突袭",
+    "titles": {
+      "stranger": "陌生人",
+      "mysterious_wanderer": "神秘陌生人"
+    },
+    "stranger_event": {
+      "title": "陌生人",
+      "text1": "一个陌生人出现在火堆旁。",
+      "text2": "他穿着厚重的斗篷，看不清面容。",
+      "text3": "\"我需要一些木材来修理我的工具，\"他说，\"我可以给你一些回报。\"",
+      "trade_text1": "陌生人接过木材，从斗篷下取出一些物品。",
+      "trade_text2": "\"这些应该对你有用，\"他说着消失在黑暗中。",
+      "decline_text1": "陌生人点点头，没有说什么。",
+      "decline_text2": "他转身离开，消失在夜色中。",
+      "trade_button": "交易",
+      "decline_button": "拒绝",
+      "continue_button": "继续"
+    },
+    "mysterious_wanderer_event": {
+      "title": "神秘陌生人",
+      "text1": "一个神秘的陌生人从黑暗中走来。",
+      "text2": "他的眼中闪着奇异的光芒。",
+      "text3": "\"我有些东西可能对你有用。\"他说道。",
+      "talk_button": "与他交谈",
+      "ignore_button": "忽视他"
+    }
   },
   "messages": {
     "not_enough_resources": "资源不足",

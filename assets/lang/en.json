@@ -50,7 +50,9 @@
       "home": "home",
       "return": "return",
       "stay": "stay",
-      "move_on": "move on"
+      "move_on": "move on",
+      "take_all": "take all",
+      "decline": "decline"
     },
     "menus": {
       "stores": "stores",
@@ -222,7 +224,32 @@
     "sickness": "sickness",
     "plague": "plague",
     "beast_attack": "beast attack",
-    "military_raid": "military raid"
+    "military_raid": "military raid",
+    "titles": {
+      "stranger": "stranger",
+      "mysterious_wanderer": "mysterious wanderer"
+    },
+    "stranger_event": {
+      "title": "stranger",
+      "text1": "a stranger appears by the fire.",
+      "text2": "he wears a heavy cloak, his face hidden.",
+      "text3": "\"i need some wood to repair my tools,\" he says, \"i can give you something in return.\"",
+      "trade_text1": "the stranger takes the wood and produces some items from under his cloak.",
+      "trade_text2": "\"these should be useful to you,\" he says as he disappears into the darkness.",
+      "decline_text1": "the stranger nods, saying nothing.",
+      "decline_text2": "he turns and leaves, disappearing into the night.",
+      "trade_button": "trade",
+      "decline_button": "decline",
+      "continue_button": "continue"
+    },
+    "mysterious_wanderer_event": {
+      "title": "mysterious wanderer",
+      "text1": "a mysterious stranger emerges from the darkness.",
+      "text2": "his eyes flash with strange light.",
+      "text3": "\"i have something that might be useful to you,\" he says.",
+      "talk_button": "talk to him",
+      "ignore_button": "ignore him"
+    }
   },
   "messages": {
     "not_enough_resources": "not enough resources",
@@ -242,7 +269,8 @@
     "restores_2_health": "restores 2 health",
     "for_use_with_rifle": "for use with rifle",
     "glows_softly_red": "glows softly red",
-    "restores_20_health": "restores 20 health"
+    "restores_20_health": "restores 20 health",
+    "found": "found:"
   },
   "game_states": {
     "fire_dead": "dead",

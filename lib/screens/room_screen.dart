@@ -127,7 +127,6 @@ class RoomScreen extends StatelessWidget {
             cost: isFree ? null : {'wood': 5},
             width: layoutParams.buttonWidth,
             free: isFree,
-            showCost: true, // 显示成本信息，与原游戏一致
             progressDuration: 10000, // 10秒点火时间，与原游戏一致
           );
         } else {
@@ -138,7 +137,6 @@ class RoomScreen extends StatelessWidget {
             cost: isFree ? null : {'wood': 1},
             width: layoutParams.buttonWidth,
             free: isFree,
-            showCost: true, // 显示成本信息，与原游戏一致
             progressDuration: 10000, // 10秒添柴冷却时间，与原游戏一致
           );
         }

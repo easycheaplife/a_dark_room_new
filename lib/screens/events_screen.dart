@@ -67,7 +67,7 @@ class _EventsScreenState extends State<EventsScreen> {
             children: [
               // 事件标题
               Text(
-                event['title'] ?? '事件',
+                _getLocalizedEventTitle(event),
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -88,7 +88,7 @@ class _EventsScreenState extends State<EventsScreen> {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8),
                             child: Text(
-                              text.toString(),
+                              _getLocalizedEventText(text.toString()),
                               style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.black,
@@ -109,9 +109,9 @@ class _EventsScreenState extends State<EventsScreen> {
                           _buildDropInterface(context, events),
                         ] else ...[
                           // 显示正常的战利品界面
-                          const Text(
-                            '发现了：',
-                            style: TextStyle(
+                          Text(
+                            _getLocalizedText('发现了：', 'found:'),
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
@@ -176,9 +176,9 @@ class _EventsScreenState extends State<EventsScreen> {
                                               horizontal: 8, vertical: 4),
                                           minimumSize: const Size(0, 24),
                                         ),
-                                        child: const Text(
-                                          '带走 所有',
-                                          style: TextStyle(fontSize: 10),
+                                        child: Text(
+                                          _getLocalizedText('带走 所有', 'take all'),
+                                          style: const TextStyle(fontSize: 10),
                                         ),
                                       ),
                                     ),
@@ -218,7 +218,7 @@ class _EventsScreenState extends State<EventsScreen> {
         final text = buttonConfig['text'] ?? entry.key;
 
         return GameButton(
-          text: text,
+          text: _getLocalizedButtonText(text),
           onPressed: () => _handleButtonPress(events, entry.key, buttonConfig),
           width: 120,
         );
@@ -452,5 +452,109 @@ class _EventsScreenState extends State<EventsScreen> {
 
     // 否则返回原名称
     return itemName;
+  }
+
+  /// 获取本地化的事件标题
+  String _getLocalizedEventTitle(Map<String, dynamic> event) {
+    final localization = Localization();
+    final title = event['title'] ?? '事件';
+
+    // 尝试从事件翻译中获取标题
+    String translatedTitle = localization.translate('events.titles.$title');
+    if (translatedTitle != 'events.titles.$title') {
+      return translatedTitle;
+    }
+
+    // 尝试从通用事件翻译中获取
+    translatedTitle = localization.translate('events.$title');
+    if (translatedTitle != 'events.$title') {
+      return translatedTitle;
+    }
+
+    // 如果没有找到翻译，返回原标题
+    return title;
+  }
+
+  /// 获取本地化的事件文本
+  String _getLocalizedEventText(String text) {
+    final localization = Localization();
+
+    // 定义文本映射 - 将中文文本映射到翻译键
+    final textMappings = {
+      '一个陌生人出现在火堆旁。': 'events.stranger_event.text1',
+      '他穿着厚重的斗篷，看不清面容。': 'events.stranger_event.text2',
+      '"我需要一些木材来修理我的工具，"他说，"我可以给你一些回报。"': 'events.stranger_event.text3',
+      '陌生人接过木材，从斗篷下取出一些物品。': 'events.stranger_event.trade_text1',
+      '"这些应该对你有用，"他说着消失在黑暗中。': 'events.stranger_event.trade_text2',
+      '陌生人点点头，没有说什么。': 'events.stranger_event.decline_text1',
+      '他转身离开，消失在夜色中。': 'events.stranger_event.decline_text2',
+      '一个神秘的陌生人从黑暗中走来。': 'events.mysterious_wanderer_event.text1',
+      '他的眼中闪着奇异的光芒。': 'events.mysterious_wanderer_event.text2',
+      '"我有些东西可能对你有用。"他说道。': 'events.mysterious_wanderer_event.text3',
+    };
+
+    // 查找对应的翻译键
+    if (textMappings.containsKey(text)) {
+      final translatedText = localization.translate(textMappings[text]!);
+      if (translatedText != textMappings[text]) {
+        return translatedText;
+      }
+    }
+
+    // 如果没有找到映射，返回原文本
+    return text;
+  }
+
+  /// 获取本地化的按钮文本
+  String _getLocalizedButtonText(String text) {
+    final localization = Localization();
+
+    // 定义按钮文本映射
+    final buttonMappings = {
+      '交易': 'events.stranger_event.trade_button',
+      '拒绝': 'events.stranger_event.decline_button',
+      '继续': 'events.stranger_event.continue_button',
+      '与他交谈': 'events.mysterious_wanderer_event.talk_button',
+      '忽视他': 'events.mysterious_wanderer_event.ignore_button',
+    };
+
+    // 查找对应的翻译键
+    if (buttonMappings.containsKey(text)) {
+      final translatedText = localization.translate(buttonMappings[text]!);
+      if (translatedText != buttonMappings[text]) {
+        return translatedText;
+      }
+    }
+
+    // 尝试从通用按钮翻译中获取
+    final translatedButton = localization.translate('ui.buttons.$text');
+    if (translatedButton != 'ui.buttons.$text') {
+      return translatedButton;
+    }
+
+    // 如果没有找到翻译，返回原文本
+    return text;
+  }
+
+  /// 获取本地化文本 - 根据当前语言返回中文或英文
+  String _getLocalizedText(String chineseText, String englishText) {
+    final localization = Localization();
+
+    // 定义文本映射
+    final textMappings = {
+      '发现了：': 'messages.found',
+      '带走 所有': 'ui.buttons.take_all',
+    };
+
+    // 如果是中文文本，尝试查找翻译
+    if (textMappings.containsKey(chineseText)) {
+      final translatedText = localization.translate(textMappings[chineseText]!);
+      if (translatedText != textMappings[chineseText]) {
+        return translatedText;
+      }
+    }
+
+    // 否则根据当前语言返回对应文本
+    return localization.currentLanguage == 'zh' ? chineseText : englishText;
   }
 }
