@@ -8,6 +8,8 @@ import 'core/engine.dart';
 import 'core/audio_engine.dart';
 import 'core/notifications.dart';
 import 'core/localization.dart';
+import 'core/responsive_layout.dart';
+import 'core/logger.dart';
 import 'widgets/header.dart';
 import 'widgets/notification_display.dart';
 
@@ -114,8 +116,22 @@ class _GameScreenState extends State<GameScreen> {
 
     // Initialize the localization and game engine
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Localization().init();
-      Engine().init();
+      Logger.info('🚀 应用启动中...');
+      Logger.info('🎨 应用图标已更新为 assets/icon/icon.png');
+
+      try {
+        Logger.info('🌐 初始化本地化...');
+        await Localization().init();
+        Logger.info('✅ 本地化初始化完成');
+
+        Logger.info('🎮 初始化游戏引擎...');
+        Engine().init();
+        Logger.info('✅ 游戏引擎初始化完成');
+
+        Logger.info('🎉 应用启动完成！');
+      } catch (e) {
+        Logger.error('❌ 应用启动失败: $e');
+      }
     });
   }
 
@@ -129,6 +145,14 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 获取布局参数
+    final layoutParams = GameLayoutParams.getLayoutParams(context);
+
+    // 添加调试日志
+    final screenSize = MediaQuery.of(context).size;
+    final deviceType = ResponsiveLayout.getDeviceType(context);
+    Logger.info('📱 设备信息 - 屏幕尺寸: ${screenSize.width}x${screenSize.height}, 设备类型: $deviceType, 垂直布局: ${layoutParams.useVerticalLayout}');
+
     return Scaffold(
       backgroundColor: Colors.white, // 原游戏使用白色背景
       body: KeyboardListener(
@@ -142,74 +166,143 @@ class _GameScreenState extends State<GameScreen> {
         },
         child: SafeArea(
           child: SizedBox(
-            // 模拟原游戏的wrapper布局
             width: double.infinity,
             height: double.infinity,
-            child: Stack(
-              children: [
-                // 主内容区域
-                Positioned(
-                  left: 220, // 为通知区域留出空间
-                  top: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: Consumer<Engine>(
-                    builder: (context, engine, child) {
-                      // 检查是否在世界地图模式
-                      final isWorldMode =
-                          engine.activeModule?.name == 'World' ||
-                              engine.activeModule?.name == '世界';
-
-                      return SizedBox(
-                        width: 700, // 原游戏的固定宽度
-                        child: Column(
-                          children: [
-                            // Header导航 - 只在非世界地图模式显示
-                            if (!isWorldMode) const Header(),
-
-                            // 主面板区域
-                            Expanded(
-                              child: Consumer<Engine>(
-                                builder: (context, engine, child) {
-                                  if (engine.activeModule == null) {
-                                    return const Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  }
-                                  return _buildActiveModulePanel(engine);
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-
-                // 通知区域 - 左侧固定位置
-                const Positioned(
-                  left: 0,
-                  top: 20,
-                  width: 200,
-                  height: 700,
-                  child: NotificationDisplay(),
-                ),
-
-                // 事件界面 - 全屏覆盖
-                const Positioned.fill(
-                  child: EventsScreen(),
-                ),
-
-                // 战斗界面 - 全屏覆盖
-                const Positioned.fill(
-                  child: CombatScreen(),
-                ),
-              ],
-            ),
+            child: layoutParams.useVerticalLayout
+                ? _buildMobileLayout(context, layoutParams)
+                : _buildDesktopLayout(context, layoutParams),
           ),
         ),
       ),
+    );
+  }
+
+  /// 移动设备垂直布局
+  Widget _buildMobileLayout(BuildContext context, GameLayoutParams layoutParams) {
+    return Consumer<Engine>(
+      builder: (context, engine, child) {
+        final isWorldMode = engine.activeModule?.name == 'World' ||
+            engine.activeModule?.name == '世界';
+
+        return Stack(
+          children: [
+            // 主布局
+            Column(
+              children: [
+                // 通知区域 - 顶部
+                if (!layoutParams.showNotificationOnSide)
+                  SizedBox(
+                    width: layoutParams.notificationWidth,
+                    height: layoutParams.notificationHeight,
+                    child: const NotificationDisplay(),
+                  ),
+
+                // 主游戏区域
+                Expanded(
+                  child: SizedBox(
+                    width: layoutParams.gameAreaWidth,
+                    child: Column(
+                      children: [
+                        // Header导航 - 只在非世界地图模式显示
+                        if (!isWorldMode) const Header(),
+
+                        // 主面板区域
+                        Expanded(
+                          child: Consumer<Engine>(
+                            builder: (context, engine, child) {
+                              if (engine.activeModule == null) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              return _buildActiveModulePanel(engine);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // 事件界面 - 全屏覆盖
+            const Positioned.fill(
+              child: EventsScreen(),
+            ),
+
+            // 战斗界面 - 全屏覆盖
+            const Positioned.fill(
+              child: CombatScreen(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// 桌面/Web布局（保持原有设计）
+  Widget _buildDesktopLayout(BuildContext context, GameLayoutParams layoutParams) {
+    return Stack(
+      children: [
+        // 主内容区域
+        Positioned(
+          left: layoutParams.showNotificationOnSide ? layoutParams.notificationWidth + 20 : 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          child: Consumer<Engine>(
+            builder: (context, engine, child) {
+              final isWorldMode = engine.activeModule?.name == 'World' ||
+                  engine.activeModule?.name == '世界';
+
+              return SizedBox(
+                width: layoutParams.gameAreaWidth,
+                child: Column(
+                  children: [
+                    // Header导航 - 只在非世界地图模式显示
+                    if (!isWorldMode) const Header(),
+
+                    // 主面板区域
+                    Expanded(
+                      child: Consumer<Engine>(
+                        builder: (context, engine, child) {
+                          if (engine.activeModule == null) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          return _buildActiveModulePanel(engine);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+
+        // 通知区域 - 左侧固定位置（仅在桌面/Web显示）
+        if (layoutParams.showNotificationOnSide)
+          Positioned(
+            left: 0,
+            top: 20,
+            width: layoutParams.notificationWidth,
+            height: layoutParams.notificationHeight,
+            child: const NotificationDisplay(),
+          ),
+
+        // 事件界面 - 全屏覆盖
+        const Positioned.fill(
+          child: EventsScreen(),
+        ),
+
+        // 战斗界面 - 全屏覆盖
+        const Positioned.fill(
+          child: CombatScreen(),
+        ),
+      ],
     );
   }
 

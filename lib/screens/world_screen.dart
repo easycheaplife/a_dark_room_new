@@ -5,6 +5,7 @@ import '../modules/world.dart';
 import '../modules/path.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
+import '../core/responsive_layout.dart';
 import '../screens/events_screen.dart';
 import '../screens/combat_screen.dart';
 
@@ -41,6 +42,8 @@ class _WorldScreenState extends State<WorldScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final layoutParams = GameLayoutParams.getLayoutParams(context);
+
     return Scaffold(
       backgroundColor: Colors.white, // 白色背景
       body: Stack(
@@ -52,7 +55,7 @@ class _WorldScreenState extends State<WorldScreen> {
                 children: [
                   // 标题栏
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(layoutParams.useVerticalLayout ? 12 : 16),
                     decoration: const BoxDecoration(
                       color: Colors.white, // 白色背景
                       border: Border(
@@ -64,9 +67,9 @@ class _WorldScreenState extends State<WorldScreen> {
                       builder: (context, localization, child) {
                         return Text(
                           localization.translate('world.title'),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.black, // 黑色文字
-                            fontSize: 24,
+                            fontSize: layoutParams.titleFontSize + 8, // 标题稍大
                             fontWeight: FontWeight.bold,
                           ),
                         );
@@ -76,8 +79,10 @@ class _WorldScreenState extends State<WorldScreen> {
 
                   // 状态信息 - 参考原游戏的状态栏布局
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: layoutParams.useVerticalLayout ? 12 : 16,
+                      vertical: layoutParams.useVerticalLayout ? 6 : 8
+                    ),
                     decoration: const BoxDecoration(
                       color: Colors.white, // 白色背景
                       border: Border(
@@ -87,20 +92,45 @@ class _WorldScreenState extends State<WorldScreen> {
                     ),
                     child: Consumer<Localization>(
                       builder: (context, localization, child) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Text(
-                              '${localization.translate('world.status.health')}: ${world.health}',
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                            Text(
-                              '${localization.translate('world.status.distance')}: ${world.getDistance()}',
-                              style:
-                                  const TextStyle(color: Colors.black), // 黑色文字
-                            ),
-                          ],
-                        );
+                        return layoutParams.useVerticalLayout
+                            ? Column(
+                                children: [
+                                  Text(
+                                    '${localization.translate('world.status.health')}: ${world.health}',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: layoutParams.fontSize,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${localization.translate('world.status.distance')}: ${world.getDistance()}',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: layoutParams.fontSize,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text(
+                                    '${localization.translate('world.status.health')}: ${world.health}',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: layoutParams.fontSize,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${localization.translate('world.status.distance')}: ${world.getDistance()}',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: layoutParams.fontSize,
+                                    ),
+                                  ),
+                                ],
+                              );
                       },
                     ),
                   ),
@@ -108,17 +138,17 @@ class _WorldScreenState extends State<WorldScreen> {
                   // 主内容区域 - 使用SingleChildScrollView让页面可滚动
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(layoutParams.useVerticalLayout ? 12 : 16),
                       physics: const ClampingScrollPhysics(), // 使用更平滑的滚动物理
                       child: Column(
                         children: [
                           // 背包区域 - 参考原游戏的bagspace-world
-                          _buildBagspace(world),
+                          _buildBagspace(world, layoutParams),
 
-                          const SizedBox(height: 16),
+                          SizedBox(height: layoutParams.useVerticalLayout ? 12 : 16),
 
                           // 地图区域 - 固定大小，不滚动
-                          _buildMap(world),
+                          _buildMap(world, layoutParams),
                         ],
                       ),
                     ),
@@ -139,7 +169,7 @@ class _WorldScreenState extends State<WorldScreen> {
   }
 
   /// 构建地图 - 参考原游戏的drawMap函数，固定大小显示地图，不使用内部滚动
-  Widget _buildMap(World world) {
+  Widget _buildMap(World world, GameLayoutParams layoutParams) {
     try {
       final mapData = world.state?['map'];
       final maskData = world.state?['mask'];
@@ -217,6 +247,7 @@ class _WorldScreenState extends State<WorldScreen> {
                           i, // X坐标
                           j, // Y坐标
                           world,
+                          layoutParams,
                         );
                       }),
                     );
@@ -243,17 +274,20 @@ class _WorldScreenState extends State<WorldScreen> {
 
   /// 构建地图瓦片 - 参考原游戏的drawMap函数逻辑
   Widget _buildMapTile(
-      String tile, bool visible, bool isPlayer, int x, int y, World world) {
+      String tile, bool visible, bool isPlayer, int x, int y, World world, GameLayoutParams layoutParams) {
     // 如果不可见且不是玩家位置，显示空白（对应原游戏的'&nbsp;'）
     if (!visible && !isPlayer) {
+      final tileSize = layoutParams.useVerticalLayout ? 8.0 : 12.0;
+      final fontSize = layoutParams.useVerticalLayout ? 8.0 : 10.0;
+
       return Container(
-        width: 12, // 与其他瓦片保持一致的大小
-        height: 12,
+        width: tileSize, // 移动端使用更小的瓦片
+        height: tileSize,
         alignment: Alignment.center,
-        child: const Text(
+        child: Text(
           ' ', // 空白字符
           style: TextStyle(
-            fontSize: 10,
+            fontSize: fontSize,
             fontFamily: 'Courier',
           ),
         ),
@@ -305,15 +339,18 @@ class _WorldScreenState extends State<WorldScreen> {
       }
     }
 
+    final tileSize = layoutParams.useVerticalLayout ? 8.0 : 12.0;
+    final fontSize = layoutParams.useVerticalLayout ? 8.0 : 10.0;
+
     Widget tileWidget = Container(
-      width: 12, // 缩小瓦片大小以适应61x61地图
-      height: 12,
+      width: tileSize, // 移动端使用更小的瓦片
+      height: tileSize,
       alignment: Alignment.center,
       child: Text(
         displayChar,
         style: TextStyle(
           color: color,
-          fontSize: 10, // 缩小字体以适应更小的瓦片
+          fontSize: fontSize, // 移动端使用更小的字体
           fontFamily: 'Courier',
           fontWeight: isLandmarkStyle ? FontWeight.bold : FontWeight.normal,
         ),
@@ -442,7 +479,7 @@ class _WorldScreenState extends State<WorldScreen> {
   }
 
   /// 构建背包区域 - 参考原游戏的bagspace-world和updateSupplies函数
-  Widget _buildBagspace(World world) {
+  Widget _buildBagspace(World world, GameLayoutParams layoutParams) {
     return Consumer<Path>(
       builder: (context, path, child) {
         final supplies = <Widget>[];
@@ -492,7 +529,7 @@ class _WorldScreenState extends State<WorldScreen> {
             border: Border.all(color: Colors.black, width: 1),
             color: Colors.white,
           ),
-          height: 80,
+          height: layoutParams.useVerticalLayout ? 60 : 80, // 移动端使用更小的高度
           child: Stack(
             children: [
               // 背包标题

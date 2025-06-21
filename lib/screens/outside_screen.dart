@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../modules/outside.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
+import '../core/responsive_layout.dart';
 import '../widgets/progress_button.dart';
 import '../widgets/stores_display.dart';
 
@@ -13,54 +14,90 @@ class OutsideScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final layoutParams = GameLayoutParams.getLayoutParams(context);
+
     return Consumer3<Outside, StateManager, Localization>(
       builder: (context, outside, stateManager, localization, child) {
         return Container(
-          width: 700,
-          height: 700,
+          width: layoutParams.gameAreaWidth,
+          height: layoutParams.gameAreaHeight,
           color: Colors.white,
+          padding: layoutParams.contentPadding,
           child: SingleChildScrollView(
-            child: SizedBox(
-              width: 700,
-              height: 1000, // 确保有足够的高度支持滚动
-              child: Stack(
-                children: [
-                  // 收集木材按钮区域 - 左上角
-                  Positioned(
-                    left: 10,
-                    top: 10,
-                    child: _buildGatheringButtons(outside, stateManager),
-                  ),
-
-                  // 工人管理区域 - 中间位置
-                  Positioned(
-                    left: 140,
-                    top: 10,
-                    child: Consumer<Localization>(
-                      builder: (context, localization, child) {
-                        return _buildWorkersButtons(
-                            outside, stateManager, localization);
-                      },
-                    ),
-                  ),
-
-                  // 右侧信息栏 - 参考房间界面的库存和武器布局
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    child: _buildRightInfoPanel(outside, stateManager),
-                  ),
-                ],
-              ),
-            ),
+            child: layoutParams.useVerticalLayout
+                ? _buildMobileLayout(context, outside, stateManager, localization, layoutParams)
+                : _buildDesktopLayout(context, outside, stateManager, localization, layoutParams),
           ),
         );
       },
     );
   }
 
+  /// 移动设备垂直布局
+  Widget _buildMobileLayout(BuildContext context, Outside outside, StateManager stateManager,
+      Localization localization, GameLayoutParams layoutParams) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 收集木材按钮区域
+        _buildGatheringButtons(outside, stateManager, layoutParams),
+
+        SizedBox(height: layoutParams.buttonSpacing),
+
+        // 右侧信息栏 - 移动端放在上方
+        _buildRightInfoPanel(outside, stateManager, layoutParams),
+
+        SizedBox(height: layoutParams.buttonSpacing * 2),
+
+        // 工人管理区域
+        Consumer<Localization>(
+          builder: (context, localization, child) {
+            return _buildWorkersButtons(outside, stateManager, localization, layoutParams);
+          },
+        ),
+      ],
+    );
+  }
+
+  /// 桌面/Web水平布局（保持原有设计）
+  Widget _buildDesktopLayout(BuildContext context, Outside outside, StateManager stateManager,
+      Localization localization, GameLayoutParams layoutParams) {
+    return SizedBox(
+      width: 700,
+      height: 1000, // 确保有足够的高度支持滚动
+      child: Stack(
+        children: [
+          // 收集木材按钮区域 - 左上角
+          Positioned(
+            left: 10,
+            top: 10,
+            child: _buildGatheringButtons(outside, stateManager, layoutParams),
+          ),
+
+          // 工人管理区域 - 中间位置
+          Positioned(
+            left: 140,
+            top: 10,
+            child: Consumer<Localization>(
+              builder: (context, localization, child) {
+                return _buildWorkersButtons(outside, stateManager, localization, layoutParams);
+              },
+            ),
+          ),
+
+          // 右侧信息栏 - 参考房间界面的库存和武器布局
+          Positioned(
+            right: 0,
+            top: 0,
+            child: _buildRightInfoPanel(outside, stateManager, layoutParams),
+          ),
+        ],
+      ),
+    );
+  }
+
   // 收集木材按钮区域
-  Widget _buildGatheringButtons(Outside outside, StateManager stateManager) {
+  Widget _buildGatheringButtons(Outside outside, StateManager stateManager, GameLayoutParams layoutParams) {
     final numTraps = stateManager.get('game.buildings.trap', true) ?? 0;
 
     return Column(
@@ -72,7 +109,7 @@ class OutsideScreen extends StatelessWidget {
             return ProgressButton(
               text: localization.translate('ui.buttons.gather_wood'),
               onPressed: () => outside.gatherWood(),
-              width: 100,
+              width: layoutParams.buttonWidth,
               progressDuration: 1000, // 1秒收集时间
             );
           },
@@ -86,7 +123,7 @@ class OutsideScreen extends StatelessWidget {
               return ProgressButton(
                 text: localization.translate('ui.buttons.check_traps'),
                 onPressed: () => outside.checkTraps(),
-                width: 100,
+                width: layoutParams.buttonWidth,
                 progressDuration: 1500, // 1.5秒检查时间
               );
             },
@@ -97,7 +134,7 @@ class OutsideScreen extends StatelessWidget {
   }
 
   // 右侧信息栏 - 参考房间界面的库存和武器布局方式
-  Widget _buildRightInfoPanel(Outside outside, StateManager stateManager) {
+  Widget _buildRightInfoPanel(Outside outside, StateManager stateManager, GameLayoutParams layoutParams) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -112,13 +149,13 @@ class OutsideScreen extends StatelessWidget {
         const SizedBox(height: 15), // 与房间界面相同的间距
 
         // 村庄状态区域 - 排在库存下面
-        _buildVillageStatus(outside, stateManager),
+        _buildVillageStatus(outside, stateManager, layoutParams),
       ],
     );
   }
 
   // 村庄状态区域 - 模拟原游戏的 village 容器
-  Widget _buildVillageStatus(Outside outside, StateManager stateManager) {
+  Widget _buildVillageStatus(Outside outside, StateManager stateManager, GameLayoutParams layoutParams) {
     final numHuts = stateManager.get('game.buildings.hut', true) ?? 0;
 
     // 如果没有小屋，不显示村庄状态
@@ -139,7 +176,7 @@ class OutsideScreen extends StatelessWidget {
 
   // 工人管理区域 - 模拟原游戏的 workers 容器
   Widget _buildWorkersButtons(
-      Outside outside, StateManager stateManager, Localization localization) {
+      Outside outside, StateManager stateManager, Localization localization, GameLayoutParams layoutParams) {
     final population = stateManager.get('game.population', true) ?? 0;
 
     // 如果没有人口，不显示工人管理
@@ -148,23 +185,23 @@ class OutsideScreen extends StatelessWidget {
     }
 
     return SizedBox(
-      width: 150,
+      width: layoutParams.useVerticalLayout ? layoutParams.gameAreaWidth : 150,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 工人管理按钮
           _buildWorkerButton(localization.translate('workers.gatherer'),
-              'gatherer', outside, stateManager, localization),
+              'gatherer', outside, stateManager, localization, layoutParams),
           _buildWorkerButton(localization.translate('workers.hunter'), 'hunter',
-              outside, stateManager, localization),
+              outside, stateManager, localization, layoutParams),
           _buildWorkerButton(localization.translate('workers.trapper'),
-              'trapper', outside, stateManager, localization),
+              'trapper', outside, stateManager, localization, layoutParams),
           _buildWorkerButton(localization.translate('workers.tanner'), 'tanner',
-              outside, stateManager, localization),
+              outside, stateManager, localization, layoutParams),
           _buildWorkerButton(localization.translate('workers.charcutier'),
-              'charcutier', outside, stateManager, localization),
+              'charcutier', outside, stateManager, localization, layoutParams),
           _buildWorkerButton(localization.translate('workers.steelworker'),
-              'steelworker', outside, stateManager, localization),
+              'steelworker', outside, stateManager, localization, layoutParams),
         ],
       ),
     );
@@ -172,7 +209,7 @@ class OutsideScreen extends StatelessWidget {
 
   // 构建工人按钮 - 模拟原游戏的 workerRow 样式
   Widget _buildWorkerButton(String name, String type, Outside outside,
-      StateManager stateManager, Localization localization) {
+      StateManager stateManager, Localization localization, GameLayoutParams layoutParams) {
     final currentWorkers = stateManager.get('game.workers["$type"]', true) ?? 0;
     final population = stateManager.get('game.population', true) ?? 0;
     final totalWorkers = stateManager
@@ -204,9 +241,9 @@ class OutsideScreen extends StatelessWidget {
               Expanded(
                 child: Text(
                   name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.black,
-                    fontSize: 16,
+                    fontSize: layoutParams.fontSize,
                     fontFamily: 'Times New Roman',
                   ),
                 ),
@@ -214,9 +251,9 @@ class OutsideScreen extends StatelessWidget {
               // 显示剩余人口数量（伐木者数量）
               Text(
                 '$availableWorkers',
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.black,
-                  fontSize: 16,
+                  fontSize: layoutParams.fontSize,
                   fontFamily: 'Times New Roman',
                 ),
               ),
@@ -236,9 +273,9 @@ class OutsideScreen extends StatelessWidget {
             Expanded(
               child: Text(
                 name,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.black,
-                  fontSize: 16,
+                  fontSize: layoutParams.fontSize,
                   fontFamily: 'Times New Roman',
                 ),
               ),
@@ -249,9 +286,9 @@ class OutsideScreen extends StatelessWidget {
               children: [
                 Text(
                   '$currentWorkers',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.black,
-                    fontSize: 16,
+                    fontSize: layoutParams.fontSize,
                     fontFamily: 'Times New Roman',
                   ),
                 ),

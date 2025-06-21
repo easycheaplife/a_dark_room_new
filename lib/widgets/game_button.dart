@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/localization.dart';
+import '../core/responsive_layout.dart';
 
 /// 游戏按钮组件 - 模拟原游戏的按钮样式
 class GameButton extends StatefulWidget {
@@ -208,11 +209,14 @@ class _GameButtonState extends State<GameButton> {
 
   @override
   Widget build(BuildContext context) {
+    final layoutParams = GameLayoutParams.getLayoutParams(context);
+
     return Consumer<Localization>(
       builder: (context, localization, child) {
         return Container(
-          width: widget.width ?? 100,
-          margin: const EdgeInsets.only(bottom: 2),
+          width: widget.width ?? layoutParams.buttonWidth,
+          height: layoutParams.buttonHeight, // 确保有足够的触摸区域
+          margin: EdgeInsets.only(bottom: layoutParams.buttonSpacing / 2),
           child: CompositedTransformTarget(
             link: _layerLink,
             child: MouseRegion(
@@ -238,8 +242,10 @@ class _GameButtonState extends State<GameButton> {
                 onTap:
                     widget.disabled ? widget.onDisabledTap : widget.onPressed,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: layoutParams.useVerticalLayout ? 12 : 8,
+                    vertical: layoutParams.useVerticalLayout ? 8 : 3,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(
@@ -249,17 +255,21 @@ class _GameButtonState extends State<GameButton> {
                       width: 1,
                     ),
                   ),
-                  child: Text(
-                    widget.text,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: widget.disabled
-                          ? const Color(0xFFB2B2B2)
-                          : Colors.black,
-                      fontSize: 16,
-                      fontFamily: 'Times New Roman',
-                      decoration:
-                          widget.disabled ? null : TextDecoration.underline,
+                  child: Center(
+                    child: Text(
+                      widget.text,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: widget.disabled
+                            ? const Color(0xFFB2B2B2)
+                            : Colors.black,
+                        fontSize: layoutParams.fontSize,
+                        fontFamily: 'Times New Roman',
+                        decoration:
+                            widget.disabled ? null : TextDecoration.underline,
+                      ),
+                      maxLines: layoutParams.useVerticalLayout ? 2 : 1, // 移动端允许换行
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),

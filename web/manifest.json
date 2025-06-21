@@ -1,11 +1,11 @@
 {
-    "name": "a_dark_room_new",
-    "short_name": "a_dark_room_new",
+    "name": "A Dark Room",
+    "short_name": "A Dark Room",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFFFFF",
+    "theme_color": "#000000",
+    "description": "A Dark Room - 一个黑暗房间游戏",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

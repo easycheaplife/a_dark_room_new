@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/notifications.dart';
+import '../core/responsive_layout.dart';
 
 /// NotificationDisplay 显示游戏通知给玩家
 class NotificationDisplay extends StatelessWidget {
@@ -8,13 +9,15 @@ class NotificationDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final layoutParams = GameLayoutParams.getLayoutParams(context);
+
     return Consumer<NotificationManager>(
       builder: (context, notificationManager, child) {
         final notifications = notificationManager.getAllNotifications();
 
         return Container(
-          width: 200,
-          height: 700,
+          width: layoutParams.notificationWidth,
+          height: layoutParams.notificationHeight,
           padding: const EdgeInsets.all(0), // 原游戏没有内边距
           child: Stack(
             children: [
@@ -32,15 +35,18 @@ class NotificationDisplay extends StatelessWidget {
                         final notification = notifications[index];
 
                         return Padding(
-                          padding:
-                              const EdgeInsets.only(bottom: 10), // 原游戏使用10px间距
+                          padding: EdgeInsets.only(
+                            bottom: layoutParams.useVerticalLayout ? 6 : 10, // 移动端使用更小的间距
+                          ),
                           child: Text(
                             notification.message,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Colors.black,
-                              fontSize: 16, // 原游戏使用16px字体
+                              fontSize: layoutParams.fontSize, // 使用响应式字体大小
                               fontFamily: 'Times New Roman',
                             ),
+                            maxLines: layoutParams.useVerticalLayout ? 2 : null, // 移动端限制行数
+                            overflow: layoutParams.useVerticalLayout ? TextOverflow.ellipsis : null,
                           ),
                         );
                       },
@@ -50,24 +56,25 @@ class NotificationDisplay extends StatelessWidget {
               ),
 
               // 渐变遮罩 - 模拟原游戏的notifyGradient效果
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: 100,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color.fromRGBO(255, 255, 255, 0), // 透明
-                        Color.fromRGBO(255, 255, 255, 1), // 白色
-                      ],
+              if (!layoutParams.useVerticalLayout) // 只在桌面端显示渐变遮罩
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: 100,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color.fromRGBO(255, 255, 255, 0), // 透明
+                          Color.fromRGBO(255, 255, 255, 1), // 白色
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         );

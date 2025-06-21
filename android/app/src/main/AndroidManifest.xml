@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="a_dark_room_new"
+        android:label="A Dark Room"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
