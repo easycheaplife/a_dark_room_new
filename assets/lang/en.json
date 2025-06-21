@@ -215,6 +215,7 @@
     "precise": "accuracy +10%",
     "scout": "enemy encounter chance -10%"
   },
+  "events": {
     "room_events": {
       "builder": {
         "title": "builder",
@@ -425,7 +426,8 @@
     "lightFromFire": "the light from the fire spills from the windows, out into the dark",
     "builderStokes": "the builder stokes the fire",
     "builderShivers": "the builder just shivers",
-    "notEnoughWood": "not enough wood to get the fire going"
+    "notEnoughWood": "not enough wood to get the fire going",
+    "builderHelps": "the stranger stands by the fire. she says she can help. says she'll build things."
   },
   "formats": {
     "and": "and"
@@ -478,6 +480,8 @@
     "total": "total"
   },
   "events": {
+    "name": "events",
+    "default_title": "event",
     "mysterious_wanderer_event": {
       "title": "mysterious wanderer",
       "start_text1": "a mysterious stranger emerges from the dark.",
@@ -684,6 +688,60 @@
       "familiar_wanderer_tech": "familiar wanderer tech hums to life. finally, real tools.",
       "insufficient_resources": "not enough {0}"
     }
+  },
+  "combat": {
+    "title": "combat",
+    "enemy": "enemy",
+    "choose_weapon": "choose weapon:",
+    "flee": "flee",
+    "enemy_dead": "enemy is dead",
+    "weapons": {
+      "fists": "fists",
+      "bone spear": "bone spear",
+      "iron sword": "iron sword",
+      "steel sword": "steel sword",
+      "bayonet": "bayonet",
+      "rifle": "rifle",
+      "laser rifle": "laser rifle",
+      "grenade": "grenade",
+      "bolas": "bolas",
+      "plasma rifle": "plasma rifle",
+      "energy blade": "energy blade",
+      "disruptor": "disruptor"
+    }
+  },
+  "fabricator_screen": {
+    "title": "🔧 fabricator",
+    "coming_soon": "coming soon..."
+  },
+  "ship_screen": {
+    "title": "🚀 ship",
+    "coming_soon": "coming soon..."
+  },
+  "outside_events": {
+    "beast": {
+      "title": "beast",
+      "text1": "a massive beast stalks around the village.",
+      "text2": "it threatens the safety of the villagers.",
+      "text3": "you must make a choice."
+    },
+    "trader": {
+      "title": "trader",
+      "text1": "a lone trader arrives at your village.",
+      "text2": "he carries a large pack filled with rare items.",
+      "text3": "\"i have some special goods,\" he says, \"but they don't come cheap.\"",
+      "buy_medicine_text1": "the trader gives you some precious medicine.",
+      "buy_medicine_text2": "\"these will save your life in critical moments.\"",
+      "buy_weapon_text1": "the trader pulls out a finely crafted weapon from his pack.",
+      "buy_weapon_text2": "\"this is one of my finest works.\"",
+      "decline_text1": "the trader nods and packs up his goods.",
+      "decline_text2": "\"perhaps you'll need them next time.\""
+    },
+    "fire": {
+      "title": "fire",
+      "text1": "flames consume the huts.",
+      "text2": "villagers panic in terror.",
+      "notification": "flames consume the huts"
+    }
   }
-}
 }

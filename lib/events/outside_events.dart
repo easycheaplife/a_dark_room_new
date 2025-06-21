@@ -1,6 +1,7 @@
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/logger.dart';
+import '../core/localization.dart';
 import 'outside_events_extended.dart';
 
 /// 外部事件定义
@@ -349,7 +350,7 @@ class OutsideEvents {
                 final newPop = (population - lostPop).clamp(0, population);
                 _sm.set('game.population', newPop);
 
-                Logger.info('🔥 火灾损失: ${lostHuts}个小屋, ${lostPop}个村民');
+                Logger.info('🔥 Fire damage: $lostHuts huts, $lostPop villagers');
               }
             },
             'buttons': {

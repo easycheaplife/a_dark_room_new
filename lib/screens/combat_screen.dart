@@ -65,7 +65,7 @@ class _CombatScreenState extends State<CombatScreen> {
                         ),
                       ),
                       child: Text(
-                        activeEvent['title'] ?? '战斗',
+                        activeEvent['title'] ?? Localization().translate('combat.title'),
                         style: const TextStyle(
                           color: Colors.black, // 黑色文字
                           fontSize: 18,
@@ -127,7 +127,7 @@ class _CombatScreenState extends State<CombatScreen> {
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 400),
                               child: _buildFighterDiv(
-                                scene['enemyName'] ?? '敌人',
+                                scene['enemyName'] ?? Localization().translate('combat.enemy'),
                                 scene['chara'] ?? 'E',
                                 events.getCurrentEnemyHealth(),
                                 scene['health'] ?? 10,
@@ -282,9 +282,9 @@ class _CombatScreenState extends State<CombatScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Text(
-          '选择武器:',
-          style: TextStyle(color: Colors.black, fontSize: 13), // 黑色文字
+        Text(
+          Localization().translate('combat.choose_weapon'),
+          style: const TextStyle(color: Colors.black, fontSize: 13), // 黑色文字
         ),
         const SizedBox(height: 6),
         Wrap(
@@ -382,9 +382,9 @@ class _CombatScreenState extends State<CombatScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             minimumSize: const Size(0, 32), // 减少最小高度
           ),
-          child: const Text(
-            '逃跑',
-            style: TextStyle(fontSize: 11),
+          child: Text(
+            Localization().translate('combat.flee'),
+            style: const TextStyle(fontSize: 11),
           ),
         ),
       ],
@@ -400,7 +400,7 @@ class _CombatScreenState extends State<CombatScreen> {
         children: [
           // 死亡消息
           Text(
-            scene['deathMessage'] ?? '敌人死了',
+            scene['deathMessage'] ?? Localization().translate('combat.enemy_dead'),
             style: const TextStyle(
               color: Colors.black,
               fontSize: 15,
@@ -837,33 +837,15 @@ class _CombatScreenState extends State<CombatScreen> {
 
   /// 获取武器显示名称
   String _getWeaponDisplayName(String weaponName) {
-    switch (weaponName) {
-      case 'fists':
-        return '拳头';
-      case 'bone spear':
-        return '骨枪';
-      case 'iron sword':
-        return '铁剑';
-      case 'steel sword':
-        return '钢剑';
-      case 'bayonet':
-        return '刺刀';
-      case 'rifle':
-        return '步枪';
-      case 'laser rifle':
-        return '激光步枪';
-      case 'grenade':
-        return '手榴弹';
-      case 'bolas':
-        return '流星锤';
-      case 'plasma rifle':
-        return '等离子步枪';
-      case 'energy blade':
-        return '能量剑';
-      case 'disruptor':
-        return '干扰器';
-      default:
-        return weaponName;
+    final localization = Localization();
+
+    // 尝试从本地化获取武器名称
+    final translatedName = localization.translate('combat.weapons.$weaponName');
+    if (translatedName != 'combat.weapons.$weaponName') {
+      return translatedName;
     }
+
+    // 如果没有找到翻译，返回原名称
+    return weaponName;
   }
 }

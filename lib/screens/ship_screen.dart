@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/localization.dart';
 
 /// 飞船界面 - 显示飞船状态和升级选项
 class ShipScreen extends StatelessWidget {
@@ -6,11 +7,12 @@ class ShipScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    final localization = Localization();
+    return Center(
       child: Text(
-        '🚀 飞船\n\n即将推出...',
+        '${localization.translate('ship_screen.title')}\n\n${localization.translate('ship_screen.coming_soon')}',
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 24,
           color: Colors.white,
         ),

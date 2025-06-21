@@ -842,7 +842,7 @@ class Room with ChangeNotifier {
         'stores': {'wood': 2}
       });
 
-      NotificationManager().notify(name, '陌生人站在火边。她说她可以帮忙。说她会建造东西。');
+      NotificationManager().notify(name, _localization.translate('room.builderHelps'));
 
       // 更新收入视图
       updateIncomeView();

@@ -28,7 +28,10 @@ class Events extends ChangeNotifier {
   Events._internal();
 
   // 模块名称
-  final String name = "事件";
+  String get name {
+    final localization = Localization();
+    return localization.translate('events.name');
+  }
 
   // 常量
   static const List<int> eventTimeRange = [3, 6]; // 分钟范围

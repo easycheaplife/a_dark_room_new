@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/localization.dart';
 
 /// 制造器界面 - 显示高级物品制造
 class FabricatorScreen extends StatelessWidget {
@@ -6,11 +7,12 @@ class FabricatorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    final localization = Localization();
+    return Center(
       child: Text(
-        '🔧 制造器\n\n即将推出...',
+        '${localization.translate('fabricator_screen.title')}\n\n${localization.translate('fabricator_screen.coming_soon')}',
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 24,
           color: Colors.white,
         ),

@@ -66,7 +66,7 @@ class Events extends ChangeNotifier {
     scheduleNextEvent();
     initDelay();
 
-    Logger.info('🎭 事件系统已初始化，共${eventPool.length}个事件');
+    Logger.info('🎭 Events system initialized with ${eventPool.length} events');
   }
 
   /// 安排下一个事件

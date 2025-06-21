@@ -457,7 +457,7 @@ class _EventsScreenState extends State<EventsScreen> {
   /// 获取本地化的事件标题
   String _getLocalizedEventTitle(Map<String, dynamic> event) {
     final localization = Localization();
-    final title = event['title'] ?? '事件';
+    final title = event['title'] ?? localization.translate('events.default_title');
 
     // 特殊处理神秘流浪者事件
     if (title == '神秘流浪者' || title == '神秘陌生人') {
