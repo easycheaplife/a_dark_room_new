@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math';
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
+import '../core/localization.dart';
 import 'ship.dart';
 
 /// 太空模块 - 注册太空探索功能
@@ -20,7 +21,10 @@ class Space extends ChangeNotifier {
   Space._internal();
 
   // 模块名称
-  final String name = "太空";
+  String get name {
+    final localization = Localization();
+    return localization.translate('space.module_name');
+  }
 
   // 常量
   static const double shipSpeed = 3.0;
@@ -318,7 +322,8 @@ class Space extends ChangeNotifier {
     done = true;
     _clearTimers();
 
-    NotificationManager().notify(name, "飞船坠毁了！");
+    final localization = Localization();
+    NotificationManager().notify(name, localization.translate('space.notifications.ship_crashed'));
 
     // 播放坠毁音效（暂时注释掉）
     // AudioEngine().playSound(AudioLibrary.crash);
@@ -339,7 +344,8 @@ class Space extends ChangeNotifier {
     done = true;
     _clearTimers();
 
-    NotificationManager().notify(name, "成功逃离了星球！");
+    final localization = Localization();
+    NotificationManager().notify(name, localization.translate('space.notifications.escaped_planet'));
 
     // 播放结束音乐（暂时注释掉）
     // AudioEngine().playBackgroundMusic(AudioLibrary.musicEnding);
@@ -360,7 +366,8 @@ class Space extends ChangeNotifier {
   /// 显示结束选项
   void showEndingOptions() {
     // 在Flutter中，结束选项将通过对话框显示
-    NotificationManager().notify(name, "游戏完成！恭喜你成功逃离了这个星球！");
+    final localization = Localization();
+    NotificationManager().notify(name, localization.translate('space.notifications.game_completed'));
     notifyListeners();
   }
 
@@ -450,31 +457,33 @@ class Space extends ChangeNotifier {
 
   /// 获取当前大气层名称
   String getAtmosphereLayer() {
+    final localization = Localization();
     if (altitude < 10) {
-      return "对流层";
+      return localization.translate('space.atmosphere_layers.troposphere');
     } else if (altitude < 20) {
-      return "平流层";
+      return localization.translate('space.atmosphere_layers.stratosphere');
     } else if (altitude < 30) {
-      return "中间层";
+      return localization.translate('space.atmosphere_layers.mesosphere');
     } else if (altitude < 45) {
-      return "热层";
+      return localization.translate('space.atmosphere_layers.thermosphere');
     } else if (altitude < 60) {
-      return "外逸层";
+      return localization.translate('space.atmosphere_layers.exosphere');
     } else {
-      return "太空";
+      return localization.translate('space.atmosphere_layers.space');
     }
   }
 
   /// 获取难度描述
   String getDifficultyDescription() {
+    final localization = Localization();
     if (altitude < 10) {
-      return "轻松";
+      return localization.translate('space.difficulty.easy');
     } else if (altitude < 20) {
-      return "普通";
+      return localization.translate('space.difficulty.normal');
     } else if (altitude < 40) {
-      return "困难";
+      return localization.translate('space.difficulty.hard');
     } else {
-      return "极难";
+      return localization.translate('space.difficulty.extreme');
     }
   }
 

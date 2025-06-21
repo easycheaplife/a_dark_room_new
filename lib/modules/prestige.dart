@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import '../core/state_manager.dart';
+import '../core/localization.dart';
 import 'score.dart';
 
 /// 声望模块 - 处理游戏的声望系统
@@ -17,7 +18,10 @@ class Prestige extends ChangeNotifier {
   Prestige._internal();
 
   // 模块名称
-  final String name = "声望";
+  String get name {
+    final localization = Localization();
+    return localization.translate('prestige.module_name');
+  }
 
   // 状态变量
   Map<String, dynamic> options = {};
@@ -205,15 +209,16 @@ class Prestige extends ChangeNotifier {
 
   /// 获取物品类型描述
   String getStoreTypeDescription(String type) {
+    final localization = Localization();
     switch (type) {
       case 'g':
-        return '基础资源';
+        return localization.translate('prestige.store_types.goods');
       case 'w':
-        return '武器';
+        return localization.translate('prestige.store_types.weapons');
       case 'a':
-        return '弹药';
+        return localization.translate('prestige.store_types.ammunition');
       default:
-        return '未知';
+        return localization.translate('prestige.store_types.unknown');
     }
   }
 
@@ -238,10 +243,8 @@ class Prestige extends ChangeNotifier {
 
   /// 获取物品继承率描述
   String getInheritanceDescription() {
-    return '前一局的物品将以随机比例继承到新游戏中：\n'
-           '• 基础资源：保留 10-100%\n'
-           '• 武器装备：保留 20-100%\n'
-           '• 弹药物品：保留 10-100%';
+    final localization = Localization();
+    return localization.translate('prestige.inheritance_description');
   }
 
   /// 计算总继承价值

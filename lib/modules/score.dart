@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/state_manager.dart';
+import '../core/localization.dart';
 
 /// 分数模块 - 处理游戏的分数计算系统
 /// 包括各种成就和里程碑的分数统计
@@ -15,7 +16,10 @@ class Score extends ChangeNotifier {
   Score._internal();
 
   // 模块名称
-  final String name = "分数";
+  String get name {
+    final localization = Localization();
+    return localization.translate('score.module_name');
+  }
 
   /// 分数权重配置
   static const Map<String, int> scoreWeights = {
@@ -196,22 +200,23 @@ class Score extends ChangeNotifier {
 
   /// 获取分数等级
   String getScoreRank(int score) {
+    final localization = Localization();
     if (score >= 50000) {
-      return '传奇流浪者';
+      return localization.translate('score.ranks.legendary_wanderer');
     } else if (score >= 25000) {
-      return '大师探险家';
+      return localization.translate('score.ranks.master_explorer');
     } else if (score >= 15000) {
-      return '资深冒险者';
+      return localization.translate('score.ranks.veteran_adventurer');
     } else if (score >= 10000) {
-      return '经验丰富的旅行者';
+      return localization.translate('score.ranks.experienced_traveler');
     } else if (score >= 5000) {
-      return '熟练的生存者';
+      return localization.translate('score.ranks.skilled_survivor');
     } else if (score >= 2500) {
-      return '新手探险家';
+      return localization.translate('score.ranks.novice_explorer');
     } else if (score >= 1000) {
-      return '初级冒险者';
+      return localization.translate('score.ranks.junior_adventurer');
     } else {
-      return '新手';
+      return localization.translate('score.ranks.beginner');
     }
   }
 
@@ -241,28 +246,10 @@ class Score extends ChangeNotifier {
 
   /// 获取里程碑描述
   String getMilestoneDescription(String milestone) {
-    switch (milestone) {
-      case 'first_fire':
-        return '第一次生火';
-      case 'first_building':
-        return '建造第一个建筑';
-      case 'first_worker':
-        return '雇佣第一个工人';
-      case 'first_exploration':
-        return '第一次外出探索';
-      case 'first_combat':
-        return '第一次战斗';
-      case 'reached_ship':
-        return '到达坠毁的飞船';
-      case 'built_ship':
-        return '建造完成飞船';
-      case 'escaped_planet':
-        return '成功逃离星球';
-      case 'completed_game':
-        return '完成游戏';
-      default:
-        return milestone;
-    }
+    final localization = Localization();
+    final key = 'score.milestones.$milestone';
+    final translated = localization.translate(key);
+    return translated != key ? translated : milestone;
   }
 
   /// 获取分数统计

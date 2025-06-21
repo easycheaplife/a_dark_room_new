@@ -1422,5 +1422,61 @@
       "underground_text2": "it's stocked with supplies from the old world.",
       "end_text": "left the destroyed village and returned to the wilderness."
     }
+  },
+  "prestige": {
+    "module_name": "prestige",
+    "store_types": {
+      "goods": "goods",
+      "weapons": "weapons",
+      "ammunition": "ammunition",
+      "unknown": "unknown"
+    },
+    "inheritance_description": "items from the previous game will be inherited at random rates:\n• goods: keep 10-100%\n• weapons: keep 20-100%\n• ammunition: keep 10-100%"
+  },
+  "score": {
+    "module_name": "score",
+    "ranks": {
+      "legendary_wanderer": "legendary wanderer",
+      "master_explorer": "master explorer",
+      "veteran_adventurer": "veteran adventurer",
+      "experienced_traveler": "experienced traveler",
+      "skilled_survivor": "skilled survivor",
+      "novice_explorer": "novice explorer",
+      "junior_adventurer": "junior adventurer",
+      "beginner": "beginner"
+    },
+    "milestones": {
+      "first_fire": "first fire",
+      "first_building": "first building",
+      "first_worker": "first worker",
+      "first_exploration": "first exploration",
+      "first_combat": "first combat",
+      "reached_ship": "reached ship",
+      "built_ship": "built ship",
+      "escaped_planet": "escaped planet",
+      "completed_game": "completed game"
+    }
+  },
+  "space": {
+    "module_name": "space",
+    "notifications": {
+      "ship_crashed": "the ship has crashed!",
+      "escaped_planet": "successfully escaped the planet!",
+      "game_completed": "game completed! congratulations on successfully escaping this planet!"
+    },
+    "atmosphere_layers": {
+      "troposphere": "troposphere",
+      "stratosphere": "stratosphere",
+      "mesosphere": "mesosphere",
+      "thermosphere": "thermosphere",
+      "exosphere": "exosphere",
+      "space": "space"
+    },
+    "difficulty": {
+      "easy": "easy",
+      "normal": "normal",
+      "hard": "hard",
+      "extreme": "extreme"
+    }
   }
 }
