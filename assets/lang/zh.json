@@ -575,6 +575,63 @@
         "ignore_text1": "你选择忽视小偷。",
         "ignore_text2": "第二天早上，你发现一些物资不见了。"
       }
+    },
+    "perks": {
+      "boxer": {
+        "name": "拳击手",
+        "desc": "拳头造成更多伤害",
+        "notify": "学会了有目的地出拳"
+      },
+      "martial_artist": {
+        "name": "武术家",
+        "desc": "拳头造成更多伤害",
+        "notify": "学会了在没有武器的情况下有效战斗"
+      },
+      "unarmed_master": {
+        "name": "徒手大师",
+        "desc": "出拳速度加倍，力量更大",
+        "notify": "学会了在没有武器的情况下更快地攻击"
+      },
+      "barbarian": {
+        "name": "野蛮人",
+        "desc": "近战武器造成更多伤害",
+        "notify": "学会了用力挥舞武器"
+      },
+      "slow_metabolism": {
+        "name": "缓慢新陈代谢",
+        "desc": "不吃东西可以走两倍远",
+        "notify": "学会了如何忽略饥饿"
+      },
+      "desert_rat": {
+        "name": "沙漠鼠",
+        "desc": "不喝水可以走两倍远",
+        "notify": "学会了喜欢干燥的空气"
+      },
+      "evasive": {
+        "name": "闪避",
+        "desc": "更有效地躲避攻击",
+        "notify": "学会了出现在敌人打不到的地方"
+      },
+      "precise": {
+        "name": "精确",
+        "desc": "更频繁地命中",
+        "notify": "学会了预测敌人的移动"
+      },
+      "scout": {
+        "name": "侦察兵",
+        "desc": "看得更远",
+        "notify": "学会了向前看"
+      },
+      "stealthy": {
+        "name": "隐秘",
+        "desc": "在野外更好地避免冲突",
+        "notify": "学会了如何不被看见"
+      },
+      "gastronome": {
+        "name": "美食家",
+        "desc": "吃东西时恢复更多健康",
+        "notify": "学会了充分利用食物"
+      }
     }
   },
   "setpieces": {

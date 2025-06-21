@@ -583,6 +583,63 @@
         "ignore_text1": "you choose to ignore the thief.",
         "ignore_text2": "the next morning, you find some supplies missing."
       }
+    },
+    "perks": {
+      "boxer": {
+        "name": "boxer",
+        "desc": "punches do more damage",
+        "notify": "learned to throw punches with purpose"
+      },
+      "martial_artist": {
+        "name": "martial artist",
+        "desc": "punches do more damage",
+        "notify": "learned to fight effectively without weapons"
+      },
+      "unarmed_master": {
+        "name": "unarmed master",
+        "desc": "punches twice as fast and do more damage",
+        "notify": "learned to strike faster without weapons"
+      },
+      "barbarian": {
+        "name": "barbarian",
+        "desc": "melee weapons do more damage",
+        "notify": "learned to swing weapons with force"
+      },
+      "slow_metabolism": {
+        "name": "slow metabolism",
+        "desc": "go twice as far without eating",
+        "notify": "learned to ignore the hunger"
+      },
+      "desert_rat": {
+        "name": "desert rat",
+        "desc": "go twice as far without drinking",
+        "notify": "learned to love the dry air"
+      },
+      "evasive": {
+        "name": "evasive",
+        "desc": "dodge attacks more effectively",
+        "notify": "learned to be where the enemy is not"
+      },
+      "precise": {
+        "name": "precise",
+        "desc": "land blows more often",
+        "notify": "learned to predict the movement of enemies"
+      },
+      "scout": {
+        "name": "scout",
+        "desc": "see farther",
+        "notify": "learned to look ahead"
+      },
+      "stealthy": {
+        "name": "stealthy",
+        "desc": "better avoid conflict in the wild",
+        "notify": "learned how to not be seen"
+      },
+      "gastronome": {
+        "name": "gastronome",
+        "desc": "restore more health when eating",
+        "notify": "learned to make the most of food"
+      }
     }
   },
   "setpieces": {

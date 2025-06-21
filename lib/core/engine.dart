@@ -39,32 +39,24 @@ class Engine with ChangeNotifier {
   bool tabNavigation = true;
   bool restoreNavigation = false;
 
-  // 技能
-  Map<String, Map<String, String>> perks = {
-    'boxer': {'name': '拳击手', 'desc': '拳头造成更多伤害', 'notify': '学会了有目的地出拳'},
-    'martial artist': {
-      'name': '武术家',
-      'desc': '拳头造成更多伤害',
-      'notify': '学会了在没有武器的情况下有效战斗'
-    },
-    'unarmed master': {
-      'name': '徒手大师',
-      'desc': '出拳速度加倍，力量更大',
-      'notify': '学会了在没有武器的情况下更快地攻击'
-    },
-    'barbarian': {'name': '野蛮人', 'desc': '近战武器造成更多伤害', 'notify': '学会了用力挥舞武器'},
-    'slow metabolism': {
-      'name': '缓慢新陈代谢',
-      'desc': '不吃东西可以走两倍远',
-      'notify': '学会了如何忽略饥饿'
-    },
-    'desert rat': {'name': '沙漠鼠', 'desc': '不喝水可以走两倍远', 'notify': '学会了喜欢干燥的空气'},
-    'evasive': {'name': '闪避', 'desc': '更有效地躲避攻击', 'notify': '学会了出现在敌人打不到的地方'},
-    'precise': {'name': '精确', 'desc': '更频繁地命中', 'notify': '学会了预测敌人的移动'},
-    'scout': {'name': '侦察兵', 'desc': '看得更远', 'notify': '学会了向前看'},
-    'stealthy': {'name': '隐秘', 'desc': '在野外更好地避免冲突', 'notify': '学会了如何不被看见'},
-    'gastronome': {'name': '美食家', 'desc': '吃东西时恢复更多健康', 'notify': '学会了充分利用食物'}
-  };
+  // 获取本地化的技能信息
+  Map<String, String> getPerk(String perkKey) {
+    final localization = Localization();
+    final keyMap = {
+      'martial artist': 'martial_artist',
+      'unarmed master': 'unarmed_master',
+      'slow metabolism': 'slow_metabolism',
+      'desert rat': 'desert_rat',
+    };
+
+    final localizedKey = keyMap[perkKey] ?? perkKey;
+
+    return {
+      'name': localization.translate('events.perks.$localizedKey.name'),
+      'desc': localization.translate('events.perks.$localizedKey.desc'),
+      'notify': localization.translate('events.perks.$localizedKey.notify'),
+    };
+  }
 
   // 选项
   Map<String, dynamic> options = {
@@ -165,11 +157,11 @@ class Engine with ChangeNotifier {
     try {
       await StateManager().loadGame();
       if (kDebugMode) {
-        Logger.info('游戏加载成功');
+        Logger.info('Game loaded successfully');
       }
     } catch (e) {
       if (kDebugMode) {
-        Logger.error('加载游戏时出错: $e');
+        Logger.error('Error loading game: $e');
       }
 
       // 初始化新游戏状态
@@ -186,7 +178,7 @@ class Engine with ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.clear();
-      Logger.info('🗑️ 游戏保存状态已清除');
+      Logger.info('🗑️ Game save state cleared');
 
       if (!noReload) {
         // 在Web上下文中，这会重新加载页面
@@ -195,7 +187,7 @@ class Engine with ChangeNotifier {
       }
     } catch (e) {
       if (kDebugMode) {
-        Logger.error('删除保存时出错: $e');
+        Logger.error('Error deleting save: $e');
       }
     }
   }
@@ -204,7 +196,7 @@ class Engine with ChangeNotifier {
   Future<void> clearSaveForDebug() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    Logger.info('🗑️ 调试：游戏保存状态已清除');
+    Logger.info('🗑️ Debug: Game save state cleared');
   }
 
   // 前往不同的模块
@@ -266,14 +258,14 @@ class Engine with ChangeNotifier {
     // 在原始游戏中，这会发送分析
     // 现在，我们只在调试模式下记录
     if (kDebugMode) {
-      Logger.info('事件: $category - $action');
+      Logger.info('Event: $category - $action');
     }
   }
 
   // 获取收入消息
   String getIncomeMsg(num value, int delay) {
     final prefix = value > 0 ? "+" : "";
-    return "$prefix$value 每 $delay秒";
+    return "$prefix$value per ${delay}s";
   }
 
   // 设置间隔，支持双倍时间
@@ -373,18 +365,18 @@ class Engine with ChangeNotifier {
         // 重新初始化游戏
         await init();
         if (kDebugMode) {
-          Logger.info('✅ 存档导入成功');
+          Logger.info('✅ Save import successful');
         }
         return true;
       } else {
         if (kDebugMode) {
-          Logger.error('❌ 存档导入失败');
+          Logger.error('❌ Save import failed');
         }
         return false;
       }
     } catch (e) {
       if (kDebugMode) {
-        Logger.error('❌ 导入存档时出错: $e');
+        Logger.error('❌ Error importing save: $e');
       }
       return false;
     }

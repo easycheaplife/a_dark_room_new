@@ -116,21 +116,21 @@ class _GameScreenState extends State<GameScreen> {
 
     // Initialize the localization and game engine
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      Logger.info('🚀 应用启动中...');
-      Logger.info('🎨 应用图标已更新为 assets/icon/icon.png');
+      Logger.info('🚀 Application starting...');
+      Logger.info('🎨 App icon updated to assets/icon/icon.png');
 
       try {
-        Logger.info('🌐 初始化本地化...');
+        Logger.info('🌐 Initializing localization...');
         await Localization().init();
-        Logger.info('✅ 本地化初始化完成');
+        Logger.info('✅ Localization initialization completed');
 
-        Logger.info('🎮 初始化游戏引擎...');
+        Logger.info('🎮 Initializing game engine...');
         Engine().init();
-        Logger.info('✅ 游戏引擎初始化完成');
+        Logger.info('✅ Game engine initialization completed');
 
-        Logger.info('🎉 应用启动完成！');
+        Logger.info('🎉 Application startup completed!');
       } catch (e) {
-        Logger.error('❌ 应用启动失败: $e');
+        Logger.error('❌ Application startup failed: $e');
       }
     });
   }
@@ -151,7 +151,7 @@ class _GameScreenState extends State<GameScreen> {
     // 添加调试日志
     final screenSize = MediaQuery.of(context).size;
     final deviceType = ResponsiveLayout.getDeviceType(context);
-    Logger.info('📱 设备信息 - 屏幕尺寸: ${screenSize.width}x${screenSize.height}, 设备类型: $deviceType, 垂直布局: ${layoutParams.useVerticalLayout}');
+    Logger.info('📱 Device info - Screen size: ${screenSize.width}x${screenSize.height}, Device type: $deviceType, Vertical layout: ${layoutParams.useVerticalLayout}');
 
     return Scaffold(
       backgroundColor: Colors.white, // 原游戏使用白色背景
@@ -181,8 +181,7 @@ class _GameScreenState extends State<GameScreen> {
   Widget _buildMobileLayout(BuildContext context, GameLayoutParams layoutParams) {
     return Consumer<Engine>(
       builder: (context, engine, child) {
-        final isWorldMode = engine.activeModule?.name == 'World' ||
-            engine.activeModule?.name == '世界';
+        final isWorldMode = engine.activeModule?.name == 'World';
 
         return Stack(
           children: [
@@ -270,8 +269,7 @@ class _GameScreenState extends State<GameScreen> {
           height: layoutParams.gameAreaHeight,
           child: Consumer<Engine>(
             builder: (context, engine, child) {
-              final isWorldMode = engine.activeModule?.name == 'World' ||
-                  engine.activeModule?.name == '世界';
+              final isWorldMode = engine.activeModule?.name == 'World';
 
               return Column(
                 children: [
@@ -318,14 +316,10 @@ class _GameScreenState extends State<GameScreen> {
       case 'Room':
         return const RoomScreen();
       case 'Outside':
-      case '外部': // 支持中文模块名
         return const OutsideScreen();
       case 'Path':
-      case '漫漫尘途': // 支持中文模块名
         return const PathScreen();
       case 'World':
-      case '世界': // 支持中文模块名
-      case '荒芜世界': // 支持完整的中文模块名
         return const WorldScreen();
       case 'Fabricator':
         return const FabricatorScreen();
