@@ -292,8 +292,33 @@
       "text1": "a mysterious stranger emerges from the darkness.",
       "text2": "his eyes flash with strange light.",
       "text3": "\"i have something that might be useful to you,\" he says.",
+      "talk_text1": "the stranger smiles and produces some items from his robe.",
+      "talk_text2": "\"these might come in handy on your journey.\"",
+      "ignore_text1": "you choose to ignore this stranger.",
+      "ignore_text2": "he shakes his head and disappears into the darkness.",
+      "ignore_text3": "perhaps you missed something important.",
       "talk_button": "talk to him",
-      "ignore_button": "ignore him"
+      "ignore_button": "ignore him",
+      "thank_button": "thank him"
+    },
+    "mysterious_wanderer_wood": {
+      "title": "mysterious wanderer",
+      "text1": "a wanderer arrives with an empty cart. says if he leaves with wood, he'll return with more.",
+      "text2": "the builder is not sure he can be trusted.",
+      "leave_text": "the wanderer leaves, cart loaded with wood",
+      "give100_button": "give 100",
+      "give500_button": "give 500",
+      "deny_button": "refuse him"
+    },
+    "mysterious_wanderer_fur": {
+      "title": "mysterious wanderer",
+      "text1": "a wanderer arrives with an empty cart. says if she leaves with fur, she'll return with more.",
+      "text2": "the builder is not sure she can be trusted.",
+      "leave_text": "the wanderer leaves, cart loaded with fur",
+      "deny_button": "refuse her"
+    },
+    "mysterious_wanderer": {
+      "leave_button": "farewell"
     }
   },
   "messages": {

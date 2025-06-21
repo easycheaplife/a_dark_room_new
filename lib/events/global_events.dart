@@ -17,7 +17,7 @@ class GlobalEvents {
 
   /// 神秘陌生人事件
   static Map<String, dynamic> get mysteriousStranger => {
-        'title': '神秘陌生人',
+        'title': '神秘流浪者',
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final wood = _sm.get('stores.wood', true) ?? 0;

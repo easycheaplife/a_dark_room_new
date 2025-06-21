@@ -279,12 +279,37 @@
       "continue_button": "继续"
     },
     "mysterious_wanderer_event": {
-      "title": "神秘陌生人",
+      "title": "神秘流浪者",
       "text1": "一个神秘的陌生人从黑暗中走来。",
-      "text2": "他的眼中闪着奇异的光芒。",
+      "text2": "他的眼中闪烁着奇异的光芒。",
       "text3": "\"我有些东西可能对你有用。\"他说道。",
+      "talk_text1": "陌生人微笑着从袍子里取出一些物品。",
+      "talk_text2": "\"这些可能在你的旅程中派上用场。\"",
+      "ignore_text1": "你选择忽视这个陌生人。",
+      "ignore_text2": "他摇摇头，消失在黑暗中。",
+      "ignore_text3": "也许你错过了什么重要的东西。",
       "talk_button": "与他交谈",
-      "ignore_button": "忽视他"
+      "ignore_button": "忽视他",
+      "thank_button": "感谢他"
+    },
+    "mysterious_wanderer_wood": {
+      "title": "神秘流浪者",
+      "text1": "一个流浪者带着空车到达。说如果他带着木材离开，他会带着更多回来。",
+      "text2": "建造者不确定他是否值得信任。",
+      "leave_text": "流浪者离开了，车上装满了木材",
+      "give100_button": "给100",
+      "give500_button": "给500",
+      "deny_button": "拒绝他"
+    },
+    "mysterious_wanderer_fur": {
+      "title": "神秘流浪者",
+      "text1": "一个流浪者带着空车到达。说如果她带着毛皮离开，她会带着更多回来。",
+      "text2": "建造者不确定她是否值得信任。",
+      "leave_text": "流浪者离开了，车上装满了毛皮",
+      "deny_button": "拒绝她"
+    },
+    "mysterious_wanderer": {
+      "leave_button": "告别"
     }
   },
   "messages": {

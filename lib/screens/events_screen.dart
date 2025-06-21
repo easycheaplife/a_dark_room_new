@@ -459,6 +459,14 @@ class _EventsScreenState extends State<EventsScreen> {
     final localization = Localization();
     final title = event['title'] ?? '事件';
 
+    // 特殊处理神秘流浪者事件
+    if (title == '神秘流浪者' || title == '神秘陌生人') {
+      String translatedTitle = localization.translate('events.mysterious_wanderer_event.title');
+      if (translatedTitle != 'events.mysterious_wanderer_event.title') {
+        return translatedTitle;
+      }
+    }
+
     // 尝试从房间事件翻译中获取标题
     String translatedTitle = localization.translate('events.room_events.$title.title');
     if (translatedTitle != 'events.room_events.$title.title') {
@@ -512,6 +520,23 @@ class _EventsScreenState extends State<EventsScreen> {
       '他需要医疗救助。': 'events.room_events.wounded.text2',
       '奇怪的声音从外面传来。': 'events.room_events.noisesOutside.text1',
       '黑暗中有什么东西在移动。': 'events.room_events.noisesOutside.text2',
+
+      // 全局事件 - 神秘流浪者（更新现有条目）
+      '陌生人微笑着从袍子里取出一些物品。': 'events.mysterious_wanderer_event.talk_text1',
+      '"这些可能在你的旅程中派上用场。"': 'events.mysterious_wanderer_event.talk_text2',
+      '你选择忽视这个陌生人。': 'events.mysterious_wanderer_event.ignore_text1',
+      '他摇摇头，消失在黑暗中。': 'events.mysterious_wanderer_event.ignore_text2',
+      '也许你错过了什么重要的东西。': 'events.mysterious_wanderer_event.ignore_text3',
+
+      // 房间扩展事件 - 神秘流浪者木材版
+      '一个流浪者带着空车到达。说如果他带着木材离开，他会带着更多回来。': 'events.mysterious_wanderer_wood.text1',
+      '建造者不确定他是否值得信任。': 'events.mysterious_wanderer_wood.text2',
+      '流浪者离开了，车上装满了木材': 'events.mysterious_wanderer_wood.leave_text',
+
+      // 房间扩展事件 - 神秘流浪者毛皮版
+      '一个流浪者带着空车到达。说如果她带着毛皮离开，她会带着更多回来。': 'events.mysterious_wanderer_fur.text1',
+      '建造者不确定她是否值得信任。': 'events.mysterious_wanderer_fur.text2',
+      '流浪者离开了，车上装满了毛皮': 'events.mysterious_wanderer_fur.leave_text',
     };
 
     // 查找对应的翻译键
@@ -537,6 +562,12 @@ class _EventsScreenState extends State<EventsScreen> {
       '继续': 'events.stranger_event.continue_button',
       '与他交谈': 'events.mysterious_wanderer_event.talk_button',
       '忽视他': 'events.mysterious_wanderer_event.ignore_button',
+      '感谢他': 'events.mysterious_wanderer_event.thank_button',
+      '给100': 'events.mysterious_wanderer_wood.give100_button',
+      '给500': 'events.mysterious_wanderer_wood.give500_button',
+      '拒绝他': 'events.mysterious_wanderer_wood.deny_button',
+      '拒绝她': 'events.mysterious_wanderer_fur.deny_button',
+      '告别': 'events.mysterious_wanderer.leave_button',
     };
 
     // 查找对应的翻译键
