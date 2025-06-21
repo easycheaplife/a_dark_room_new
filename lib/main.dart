@@ -125,7 +125,7 @@ class _GameScreenState extends State<GameScreen> {
         Logger.info('✅ Localization initialization completed');
 
         Logger.info('🎮 Initializing game engine...');
-        Engine().init();
+        await Engine().init();
         Logger.info('✅ Game engine initialization completed');
 
         Logger.info('🎉 Application startup completed!');
@@ -309,32 +309,38 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Widget _buildActiveModulePanel(Engine engine) {
-    // 根据当前活跃模块显示对应的UI
-    final activeModuleName = engine.activeModule?.name ?? 'Room';
+    // 根据当前活跃模块的类型显示对应的UI
+    final activeModule = engine.activeModule;
 
-    switch (activeModuleName) {
-      case 'Room':
-        return const RoomScreen();
-      case 'Outside':
-        return const OutsideScreen();
-      case 'Path':
-        return const PathScreen();
-      case 'World':
-        return const WorldScreen();
-      case 'Fabricator':
-        return const FabricatorScreen();
-      case 'Ship':
-        return const ShipScreen();
-      default:
-        return Center(
-          child: Text(
-            'Module: $activeModuleName',
-            style: const TextStyle(
-              color: Colors.black, // 黑色文字
-              fontSize: 24,
-            ),
+    if (activeModule == null) {
+      return const RoomScreen(); // 默认显示房间
+    }
+
+    // 使用模块类型而不是name属性来判断
+    if (activeModule is Room) {
+      return const RoomScreen();
+    } else if (activeModule is Outside) {
+      return const OutsideScreen();
+    } else if (activeModule is Path) {
+      return const PathScreen();
+    } else if (activeModule is World) {
+      return const WorldScreen();
+    } else if (activeModule is Fabricator) {
+      return const FabricatorScreen();
+    } else if (activeModule is Ship) {
+      return const ShipScreen();
+    } else {
+      // 未知模块类型，显示模块名称
+      final moduleName = activeModule.name ?? 'Unknown';
+      return Center(
+        child: Text(
+          'Module: $moduleName',
+          style: const TextStyle(
+            color: Colors.black, // 黑色文字
+            fontSize: 24,
           ),
-        );
+        ),
+      );
     }
   }
 }

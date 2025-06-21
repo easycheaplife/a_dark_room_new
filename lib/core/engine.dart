@@ -107,9 +107,24 @@ class Engine with ChangeNotifier {
     }
 
     // 检查是否应该初始化路径
-    if (sm.get('stores.compass', true) != null &&
-        sm.get('stores.compass', true) > 0) {
+    Logger.info('🧭 Starting Path module check...');
+    final compassCount = sm.get('stores.compass', true) ?? 0;
+    final fur = sm.get('stores.fur', true) ?? 0;
+    final scales = sm.get('stores.scales', true) ?? 0;
+    final teeth = sm.get('stores.teeth', true) ?? 0;
+    final hasTradingPost = (sm.get('game.buildings["trading post"]', true) ?? 0) > 0;
+
+    Logger.info('🧭 Compass count: $compassCount, fur: $fur, scales: $scales, teeth: $teeth, trading post: $hasTradingPost');
+
+    // 如果有指南针或者有足够资源制作指南针，就初始化Path模块
+    final shouldInitPath = compassCount > 0 || (hasTradingPost && fur >= 400 && scales >= 20 && teeth >= 10);
+
+    if (shouldInitPath) {
+      Logger.info('🧭 Initializing Path module...');
       Path().init();
+      Logger.info('🧭 Path module initialized');
+    } else {
+      Logger.info('🧭 Path module not initialized - no compass and insufficient resources');
     }
 
     // 检查是否应该初始化制造机

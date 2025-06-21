@@ -21,7 +21,7 @@ class Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer3<Engine, StateManager, Localization>(
       builder: (context, engine, stateManager, localization, child) {
-        final activeModuleName = engine.activeModule?.name ?? 'Room';
+        final activeModule = engine.activeModule;
 
         // 构建可用的页签列表
         List<Widget> tabs = [];
@@ -30,7 +30,7 @@ class Header extends StatelessWidget {
         tabs.add(_buildTab(
           context,
           _getRoomTitle(stateManager, localization),
-          activeModuleName == 'Room',
+          activeModule is Room,
           onTap: () => _navigateToModule(context, 'Room'),
           isFirst: true, // 第一个页签
         ));
@@ -40,7 +40,7 @@ class Header extends StatelessWidget {
           tabs.add(_buildTab(
             context,
             _getOutsideTitle(stateManager, localization),
-            activeModuleName == 'Outside',
+            activeModule is Outside,
             onTap: () => _navigateToModule(context, 'Outside'),
           ));
         }
@@ -50,7 +50,7 @@ class Header extends StatelessWidget {
           tabs.add(_buildTab(
             context,
             localization.translate('ui.menus.path'),
-            activeModuleName == 'Path',
+            activeModule is Path,
             onTap: () => _navigateToModule(context, 'Path'),
           ));
         }
@@ -63,7 +63,7 @@ class Header extends StatelessWidget {
           tabs.add(_buildTab(
             context,
             localization.translate('ui.menus.fabricator'),
-            activeModuleName == 'Fabricator',
+            activeModule is Fabricator,
             onTap: () => _navigateToModule(context, 'Fabricator'),
           ));
         }
@@ -73,7 +73,7 @@ class Header extends StatelessWidget {
           tabs.add(_buildTab(
             context,
             localization.translate('ui.menus.ship'),
-            activeModuleName == 'Ship',
+            activeModule is Ship,
             onTap: () => _navigateToModule(context, 'Ship'),
           ));
         }
@@ -228,7 +228,25 @@ class Header extends StatelessWidget {
 
   // 检查路径是否解锁
   bool _isPathUnlocked(StateManager stateManager) {
-    return (stateManager.get('stores.compass', true) ?? 0) > 0;
+    final compassCount = stateManager.get('stores.compass', true) ?? 0;
+
+    // 检查是否有足够资源制作指南针
+    final fur = stateManager.get('stores.fur', true) ?? 0;
+    final scales = stateManager.get('stores.scales', true) ?? 0;
+    final teeth = stateManager.get('stores.teeth', true) ?? 0;
+    final hasTradingPost = (stateManager.get('game.buildings["trading post"]', true) ?? 0) > 0;
+
+    // 如果有指南针，直接解锁
+    if (compassCount > 0) {
+      return true;
+    }
+
+    // 如果有交易站且有足够资源制作指南针，也显示页签
+    if (hasTradingPost && fur >= 400 && scales >= 20 && teeth >= 10) {
+      return true;
+    }
+
+    return false;
   }
 
   // 检查世界是否解锁 - 已移除，世界地图现在通过漫漫尘途访问

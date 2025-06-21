@@ -84,6 +84,8 @@ class _StoresDisplayState extends State<StoresDisplay> {
         for (final entry in stores.entries) {
           final value = entry.value as num? ?? 0;
 
+
+
           // 根据显示类型过滤
           if (widget.type == StoresDisplayType.weaponsOnly && !_isWeapon(entry.key)) {
             continue;
@@ -123,6 +125,8 @@ class _StoresDisplayState extends State<StoresDisplay> {
               weapons[entry.key] = value;
               break;
             case 'compass':
+              special[entry.key] = value;
+              break;
             case 'torch':
             case 'waterskin':
             case 'cask':
@@ -138,10 +142,15 @@ class _StoresDisplayState extends State<StoresDisplay> {
           }
         }
 
+
+
         // 根据显示类型决定显示哪些分类
         final showResources = widget.type != StoresDisplayType.weaponsOnly && resources.isNotEmpty;
         final showWeapons = widget.type != StoresDisplayType.resourcesOnly && weapons.isNotEmpty;
-        final showSpecial = widget.type != StoresDisplayType.resourcesOnly && special.isNotEmpty;
+        // Special物品在resourcesOnly模式下也应该显示（如指南针等）
+        final showSpecial = widget.type != StoresDisplayType.weaponsOnly && special.isNotEmpty;
+
+
 
         // 如果没有任何物品，不显示
         if (!showResources && !showWeapons && !showSpecial) {

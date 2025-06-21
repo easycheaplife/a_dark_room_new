@@ -318,7 +318,11 @@
   "path": {
     "embark_success": "你踏上了前往未知世界的旅程...",
     "embark_failed": "出发失败",
-    "compass_points_east": "指南针指向东方"
+    "compass_points_east": "指南针指向东方",
+    "need_compass": "你需要一个指南针才能踏上漫漫尘途",
+    "compass_requirements": "制作指南针需要",
+    "craft_compass_hint": "前往小黑屋制作指南针",
+    "need_trading_post": "你需要先建造交易站才能制作指南针"
   },
   "game_states": {
     "fire_dead": "熄灭",

@@ -326,7 +326,11 @@
   "path": {
     "embark_success": "you set out on a journey to the unknown world...",
     "embark_failed": "embark failed",
-    "compass_points_east": "the compass points east"
+    "compass_points_east": "the compass points east",
+    "need_compass": "you need a compass to embark on the dusty path",
+    "compass_requirements": "crafting a compass requires",
+    "craft_compass_hint": "go to the dark room to craft a compass",
+    "need_trading_post": "you need to build a trading post first to craft a compass"
   },
   "game_states": {
     "fire_dead": "dead",

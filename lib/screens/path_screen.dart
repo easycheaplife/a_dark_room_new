@@ -14,6 +14,13 @@ class PathScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer3<Path, StateManager, Localization>(
       builder: (context, path, stateManager, localization, child) {
+        final compassCount = stateManager.get('stores.compass', true) ?? 0;
+
+        // 如果没有指南针，显示提示信息
+        if (compassCount == 0) {
+          return _buildNoCompassView(stateManager, localization);
+        }
+
         return Container(
           width: double.infinity,
           height: double.infinity,
@@ -44,6 +51,114 @@ class PathScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  /// 构建没有指南针时的视图
+  Widget _buildNoCompassView(StateManager stateManager, Localization localization) {
+    final fur = stateManager.get('stores.fur', true) ?? 0;
+    final scales = stateManager.get('stores.scales', true) ?? 0;
+    final teeth = stateManager.get('stores.teeth', true) ?? 0;
+    final hasTradingPost = (stateManager.get('game.buildings["trading post"]', true) ?? 0) > 0;
+
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      color: Colors.white,
+      padding: const EdgeInsets.all(20),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              localization.translate('ui.modules.path'),
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                fontFamily: 'Times New Roman',
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            Text(
+              localization.translate('path.need_compass'),
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.black,
+                fontFamily: 'Times New Roman',
+              ),
+              textAlign: TextAlign.center,
+            ),
+
+            const SizedBox(height: 20),
+
+            if (hasTradingPost) ...[
+              Text(
+                '${localization.translate('path.compass_requirements')}:',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              Text(
+                '${localization.translate('resources.fur')}: $fur / 400',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: fur >= 400 ? Colors.green : Colors.red,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
+
+              Text(
+                '${localization.translate('resources.scales')}: $scales / 20',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: scales >= 20 ? Colors.green : Colors.red,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
+
+              Text(
+                '${localization.translate('resources.teeth')}: $teeth / 10',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: teeth >= 10 ? Colors.green : Colors.red,
+                  fontFamily: 'Times New Roman',
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              Text(
+                localization.translate('path.craft_compass_hint'),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                  fontFamily: 'Times New Roman',
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ] else ...[
+              Text(
+                localization.translate('path.need_trading_post'),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                  fontFamily: 'Times New Roman',
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 
@@ -385,7 +500,6 @@ class PathScreen extends StatelessWidget {
   Widget _buildEmbarkButton(
       Path path, StateManager stateManager, Localization localization) {
     final canEmbark = path.canEmbark();
-    Logger.info('🎯 PathScreen: canEmbark=$canEmbark');
 
     return Tooltip(
       message: canEmbark
