@@ -132,10 +132,11 @@ class NotificationManager with ChangeNotifier {
           'the builder stokes the fire': '建造者添了柴',
           'not enough wood to get the fire going': '木材不够点火',
           'the wood is running out': '木材快用完了',
+          'the wood has run out': '木材已经用完了',
           'the fire is out': '火焰熄灭了',
-          'light from the fire spills from the windows, out into the dark':
-              '火光从窗户洒出，照进黑暗',
-          'the wind howls outside': '外面风声呼啸',
+          'the light from the fire spills from the windows, out into the dark':
+              '火光从窗户溢出，照向黑暗',
+          'the wind howls outside': '外面狂风呼啸',
 
           // 资源不足
           'not enough': '不够',
@@ -182,10 +183,11 @@ class NotificationManager with ChangeNotifier {
           '建造者添了柴': 'the builder stokes the fire',
           '木材不够点火': 'not enough wood to get the fire going',
           '木材快用完了': 'the wood is running out',
+          '木材已经用完了': 'the wood has run out',
           '火焰熄灭了': 'the fire is out',
-          '火光从窗户洒出，照进黑暗':
-              'light from the fire spills from the windows, out into the dark',
-          '外面风声呼啸': 'the wind howls outside',
+          '火光从窗户溢出，照向黑暗':
+              'the light from the fire spills from the windows, out into the dark',
+          '外面狂风呼啸': 'the wind howls outside',
 
           '不够': 'not enough',
           '资源不足': 'insufficient resources',

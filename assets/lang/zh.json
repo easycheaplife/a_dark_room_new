@@ -262,7 +262,17 @@
     "the_room_is": "房间",
     "the_fire_is": "火焰",
     "nothing_in_traps": "陷阱里什么都没有",
-    "traps_yield": "陷阱里有{0}"
+    "traps_yield": "陷阱里有{0}",
+    "dry_brush": "干燥的灌木和枯枝散落在森林地面上"
+  },
+  "room": {
+    "strangerCalms": "角落里的陌生人停止了颤抖。她的呼吸平静下来。",
+    "strangerShivers": "陌生人颤抖着，轻声嘟囔。她的话听不清楚。",
+    "needWood": "木材快用完了",
+    "windHowls": "外面狂风呼啸",
+    "woodRunOut": "木材已经用完了",
+    "strangerArrives": "一个衣衫褴褛的陌生人跌跌撞撞地走进门，倒在角落里",
+    "lightFromFire": "火光从窗户溢出，照向黑暗"
   },
   "formats": {
     "and": "和"
