@@ -218,7 +218,52 @@
     "military_raid": "军事突袭",
     "titles": {
       "stranger": "陌生人",
-      "mysterious_wanderer": "神秘陌生人"
+      "mysterious_wanderer": "神秘陌生人",
+      "builder": "建造者",
+      "firekeeper": "守火人",
+      "nomad": "游牧商人",
+      "straycat": "流浪猫",
+      "wounded": "受伤的人",
+      "noisesOutside": "声音"
+    },
+    "room_events": {
+      "builder": {
+        "title": "建造者",
+        "text1": "建造者看起来更加熟练了。",
+        "text2": "他开始制作更复杂的工具。",
+        "notification": "建造者技能提升"
+      },
+      "firekeeper": {
+        "title": "守火人",
+        "text1": "火光在黑暗中摇曳。",
+        "text2": "一个身影从阴影中走出。",
+        "text3": "建造者已经到来。",
+        "notification": "建造者已经到来"
+      },
+      "nomad": {
+        "title": "游牧商人",
+        "text1": "一个游牧商人走近火堆。",
+        "text2": "他提议用毛皮换取有用的物品。",
+        "notification": "游牧商人到来"
+      },
+      "straycat": {
+        "title": "流浪猫",
+        "text1": "一只流浪猫走进房间。",
+        "text2": "它看起来又饿又冷。",
+        "notification": "流浪猫出现"
+      },
+      "wounded": {
+        "title": "受伤的人",
+        "text1": "一个受伤的人跌跌撞撞地走进房间。",
+        "text2": "他需要医疗救助。",
+        "notification": "受伤的人到来"
+      },
+      "noisesOutside": {
+        "title": "声音",
+        "text1": "奇怪的声音从外面传来。",
+        "text2": "黑暗中有什么东西在移动。",
+        "notification": "外面有声音"
+      }
     },
     "stranger_event": {
       "title": "陌生人",
@@ -260,7 +305,21 @@
     "restores_2_health": "恢复 2 生命值",
     "for_use_with_rifle": "配合步枪使用",
     "glows_softly_red": "发出柔和的红光",
-    "restores_20_health": "恢复 20 生命值"
+    "restores_20_health": "恢复 20 生命值",
+    "backpack_full": "背包空间不足"
+  },
+  "outside": {
+    "population": {
+      "stranger_arrives": "一个陌生人在夜里到达",
+      "family_arrives": "一个饱经风霜的家庭住进了其中一间小屋",
+      "small_group_arrives": "一小群人到达，满身尘土和疲惫",
+      "convoy_arrives": "一支车队蹒跚而来，忧虑与希望并存",
+      "town_thriving": "小镇正在蓬勃发展，消息确实传开了"
+    }
+  },
+  "path": {
+    "embark_success": "你踏上了前往未知世界的旅程...",
+    "embark_failed": "出发失败"
   },
   "game_states": {
     "fire_dead": "熄灭",
@@ -297,7 +356,10 @@
     "windHowls": "外面狂风呼啸",
     "woodRunOut": "木材已经用完了",
     "strangerArrives": "一个衣衫褴褛的陌生人跌跌撞撞地走进门，倒在角落里",
-    "lightFromFire": "火光从窗户溢出，照向黑暗"
+    "lightFromFire": "火光从窗户溢出，照向黑暗",
+    "builderStokes": "建造者添了柴",
+    "builderShivers": "建造者只是颤抖",
+    "notEnoughWood": "木材不够点火"
   },
   "formats": {
     "and": "和"

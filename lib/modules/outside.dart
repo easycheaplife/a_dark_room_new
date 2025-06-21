@@ -146,16 +146,17 @@ class Outside extends ChangeNotifier {
       if (num == 0) num = 1;
 
       String message;
+      final localization = Localization();
       if (num == 1) {
-        message = '一个陌生人在夜里到达';
+        message = localization.translate('outside.population.stranger_arrives');
       } else if (num < 5) {
-        message = '一个饱经风霜的家庭住进了其中一间小屋';
+        message = localization.translate('outside.population.family_arrives');
       } else if (num < 10) {
-        message = '一小群人到达，满身尘土和疲惫';
+        message = localization.translate('outside.population.small_group_arrives');
       } else if (num < 30) {
-        message = '一支车队蹒跚而来，忧虑与希望并存';
+        message = localization.translate('outside.population.convoy_arrives');
       } else {
-        message = '小镇正在蓬勃发展，消息确实传开了';
+        message = localization.translate('outside.population.town_thriving');
       }
 
       NotificationManager().notify(name, message);

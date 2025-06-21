@@ -998,11 +998,13 @@ class Events extends ChangeNotifier {
       path.updateOutfitting();
 
       // 显示获取通知
+      final localization = Localization();
       NotificationManager()
-          .notify(name, '获得了 ${_getItemDisplayName(itemName)} x$canTake');
+          .notify(name, '${localization.translate('messages.gained')} ${_getItemDisplayName(itemName)} x$canTake');
     } else {
       Logger.info('🎒 背包空间不足，无法拾取');
-      NotificationManager().notify(name, '背包空间不足');
+      final localization = Localization();
+      NotificationManager().notify(name, localization.translate('messages.backpack_full'));
 
       // 如果提供了背包满回调，则调用它
       if (onBagFull != null) {

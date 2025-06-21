@@ -227,7 +227,52 @@
     "military_raid": "military raid",
     "titles": {
       "stranger": "stranger",
-      "mysterious_wanderer": "mysterious wanderer"
+      "mysterious_wanderer": "mysterious wanderer",
+      "builder": "builder",
+      "firekeeper": "firekeeper",
+      "nomad": "nomad trader",
+      "straycat": "stray cat",
+      "wounded": "wounded man",
+      "noisesOutside": "noises"
+    },
+    "room_events": {
+      "builder": {
+        "title": "builder",
+        "text1": "the builder looks more skilled.",
+        "text2": "he begins crafting more complex tools.",
+        "notification": "builder skill improved"
+      },
+      "firekeeper": {
+        "title": "firekeeper",
+        "text1": "the firelight flickers in the darkness.",
+        "text2": "a figure emerges from the shadows.",
+        "text3": "the builder has arrived.",
+        "notification": "the builder has arrived"
+      },
+      "nomad": {
+        "title": "nomad trader",
+        "text1": "a nomad trader approaches the fire.",
+        "text2": "he offers to trade furs for useful items.",
+        "notification": "a nomad trader arrives"
+      },
+      "straycat": {
+        "title": "stray cat",
+        "text1": "a stray cat wanders into the room.",
+        "text2": "it looks hungry and cold.",
+        "notification": "a stray cat appears"
+      },
+      "wounded": {
+        "title": "wounded man",
+        "text1": "a wounded man stumbles into the room.",
+        "text2": "he needs medical attention.",
+        "notification": "a wounded man arrives"
+      },
+      "noisesOutside": {
+        "title": "noises",
+        "text1": "strange noises echo from outside.",
+        "text2": "something is moving in the darkness.",
+        "notification": "noises outside"
+      }
     },
     "stranger_event": {
       "title": "stranger",
@@ -270,7 +315,21 @@
     "for_use_with_rifle": "for use with rifle",
     "glows_softly_red": "glows softly red",
     "restores_20_health": "restores 20 health",
-    "found": "found:"
+    "found": "found:",
+    "backpack_full": "backpack is full"
+  },
+  "outside": {
+    "population": {
+      "stranger_arrives": "a stranger arrives in the night",
+      "family_arrives": "a weathered family takes up in one of the huts",
+      "small_group_arrives": "a small group arrives, dusty and tired",
+      "convoy_arrives": "a convoy lurches in, equal parts worry and hope",
+      "town_thriving": "the town is thriving. word has definitely gotten out"
+    }
+  },
+  "path": {
+    "embark_success": "you set out on a journey to the unknown world...",
+    "embark_failed": "embark failed"
   },
   "game_states": {
     "fire_dead": "dead",
@@ -297,7 +356,20 @@
     "the_room_is": "the room is",
     "the_fire_is": "the fire is",
     "nothing_in_traps": "the traps contain nothing",
-    "traps_yield": "the traps contain {0}"
+    "traps_yield": "the traps contain {0}",
+    "dry_brush": "dry brush and dead branches litter the forest floor"
+  },
+  "room": {
+    "strangerCalms": "the stranger in the corner stops shivering. her breathing calms.",
+    "strangerShivers": "the stranger shivers, and mumbles quietly. her words are unintelligible.",
+    "needWood": "the wood is running out",
+    "windHowls": "the wind howls outside",
+    "woodRunOut": "the wood has run out",
+    "strangerArrives": "a ragged stranger stumbles through the door and collapses in the corner",
+    "lightFromFire": "the light from the fire spills from the windows, out into the dark",
+    "builderStokes": "the builder stokes the fire",
+    "builderShivers": "the builder just shivers",
+    "notEnoughWood": "not enough wood to get the fire going"
   },
   "formats": {
     "and": "and"

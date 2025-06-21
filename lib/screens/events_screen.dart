@@ -459,8 +459,14 @@ class _EventsScreenState extends State<EventsScreen> {
     final localization = Localization();
     final title = event['title'] ?? '事件';
 
-    // 尝试从事件翻译中获取标题
-    String translatedTitle = localization.translate('events.titles.$title');
+    // 尝试从房间事件翻译中获取标题
+    String translatedTitle = localization.translate('events.room_events.$title.title');
+    if (translatedTitle != 'events.room_events.$title.title') {
+      return translatedTitle;
+    }
+
+    // 尝试从事件标题翻译中获取
+    translatedTitle = localization.translate('events.titles.$title');
     if (translatedTitle != 'events.titles.$title') {
       return translatedTitle;
     }
@@ -491,6 +497,21 @@ class _EventsScreenState extends State<EventsScreen> {
       '一个神秘的陌生人从黑暗中走来。': 'events.mysterious_wanderer_event.text1',
       '他的眼中闪着奇异的光芒。': 'events.mysterious_wanderer_event.text2',
       '"我有些东西可能对你有用。"他说道。': 'events.mysterious_wanderer_event.text3',
+
+      // 房间事件
+      '建造者看起来更加熟练了。': 'events.room_events.builder.text1',
+      '他开始制作更复杂的工具。': 'events.room_events.builder.text2',
+      '火光在黑暗中摇曳。': 'events.room_events.firekeeper.text1',
+      '一个身影从阴影中走出。': 'events.room_events.firekeeper.text2',
+      '建造者已经到来。': 'events.room_events.firekeeper.text3',
+      '一个游牧商人走近火堆。': 'events.room_events.nomad.text1',
+      '他提议用毛皮换取有用的物品。': 'events.room_events.nomad.text2',
+      '一只流浪猫走进房间。': 'events.room_events.straycat.text1',
+      '它看起来又饿又冷。': 'events.room_events.straycat.text2',
+      '一个受伤的人跌跌撞撞地走进房间。': 'events.room_events.wounded.text1',
+      '他需要医疗救助。': 'events.room_events.wounded.text2',
+      '奇怪的声音从外面传来。': 'events.room_events.noisesOutside.text1',
+      '黑暗中有什么东西在移动。': 'events.room_events.noisesOutside.text2',
     };
 
     // 查找对应的翻译键

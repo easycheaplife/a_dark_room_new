@@ -1223,7 +1223,7 @@ class Room with ChangeNotifier {
 
     // 检查温度是否足够
     if (sm.get('game.temperature.value') <= tempEnum['Cold']!['value']) {
-      NotificationManager().notify(name, '建造者只是在发抖');
+      NotificationManager().notify(name, _localization.translate('room.builderShivers'));
       return;
     }
 

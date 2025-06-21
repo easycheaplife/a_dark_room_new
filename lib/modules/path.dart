@@ -302,13 +302,13 @@ class Path extends ChangeNotifier {
       Engine().travelTo(World());
 
       // 显示成功消息
-      NotificationManager().notify('漫漫尘途', '你踏上了前往未知世界的旅程...');
+      NotificationManager().notify(name, localization.translate('path.embark_success'));
 
       Logger.info('✅ embark() 完成');
     } catch (e, stackTrace) {
       Logger.info('❌ embark() 错误: $e');
       Logger.info('❌ 错误堆栈: $stackTrace');
-      NotificationManager().notify('漫漫尘途', '出发失败: $e');
+      NotificationManager().notify(name, localization.translate('path.embark_failed'));
     }
 
     notifyListeners();
