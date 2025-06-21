@@ -52,7 +52,9 @@
       "stay": "stay",
       "move_on": "move on",
       "take_all": "take all",
-      "decline": "decline"
+      "decline": "decline",
+      "talk": "talk to him",
+      "thank": "thank him"
     },
     "menus": {
       "stores": "stores",
@@ -65,6 +67,11 @@
       "path": "a dusty path",
       "fabricator": "a humming fabricator",
       "ship": "ship"
+    },
+    "modules": {
+      "path": "a dusty path",
+      "fabricator": "a humming fabricator",
+      "world": "a barren world"
     },
     "titles": {
       "dark_room": "a dark room",
@@ -208,33 +215,6 @@
     "precise": "accuracy +10%",
     "scout": "enemy encounter chance -10%"
   },
-  "events": {
-    "stranger": "stranger",
-    "mysterious_wanderer": "mysterious wanderer",
-    "suspicious_builder": "suspicious builder",
-    "scout": "scout",
-    "sick_man": "sick man",
-    "convoy": "convoy",
-    "raiders": "raiders",
-    "beast": "beast",
-    "trader": "trader",
-    "refugees": "refugees",
-    "ruined_trap": "ruined trap",
-    "fire": "fire",
-    "sickness": "sickness",
-    "plague": "plague",
-    "beast_attack": "beast attack",
-    "military_raid": "military raid",
-    "titles": {
-      "stranger": "stranger",
-      "mysterious_wanderer": "mysterious wanderer",
-      "builder": "builder",
-      "firekeeper": "firekeeper",
-      "nomad": "nomad trader",
-      "straycat": "stray cat",
-      "wounded": "wounded man",
-      "noisesOutside": "noises"
-    },
     "room_events": {
       "builder": {
         "title": "builder",
@@ -343,6 +323,57 @@
     "found": "found:",
     "backpack_full": "backpack is full"
   },
+  "import_export": {
+    "title": "import/export save",
+    "description": "game save management",
+    "instructions": "• export: automatically copy save data to clipboard\n• import: read save data from clipboard\n• fully compatible with original game save format",
+    "export_button": "export save to clipboard",
+    "import_button": "import save from clipboard",
+    "importing": "importing...",
+    "export_success": "save exported and copied to clipboard!",
+    "import_success": "save imported successfully!",
+    "export_failed": "export failed",
+    "import_failed": "save import failed, please check data format",
+    "clipboard_empty": "no save data in clipboard",
+    "error": "error",
+    "success": "success",
+    "ok": "ok"
+  },
+  "settings": {
+    "title": "game settings",
+    "save_status": "💾 save status",
+    "last_save": "last save: ",
+    "no_save_record": "no save record",
+    "auto_save_info": "game auto-saves every 30 seconds",
+    "import_export_info": "📋 import/export",
+    "import_export_description": "• export: save current game progress as text, can be backed up or shared\n• import: restore game progress from exported text\n• fully compatible with original game save format",
+    "import_export_instruction": "to import or export game saves, click the import/export button in the top right corner 📥",
+    "danger_section": "⚠️ danger zone",
+    "clear_data_description": "clear all game data and start over (this action cannot be undone)",
+    "clear_data_button": "clear game data",
+    "confirm_clear_title": "⚠️ danger zone",
+    "confirm_clear_message": "are you sure you want to clear all game data? this action cannot be undone!",
+    "confirm_clear_button": "confirm clear",
+    "clear_success": "🗑️ game data cleared",
+    "clear_failed": "❌ clear failed: "
+  },
+  "ship": {
+    "name": "ship",
+    "title": "an old starship",
+    "hull_reinforced": "hull reinforced",
+    "engine_upgraded": "engine upgraded",
+    "lifting_off": "ship is lifting off...",
+    "descriptions": {
+      "hull_damaged": "ship needs hull reinforcement to take off",
+      "hull_poor": "ship can barely fly",
+      "hull_good": "ship is in good condition",
+      "hull_excellent": "ship armor is solid, ready to go",
+      "engine_basic": "basic thrusters",
+      "engine_improved": "improved propulsion system",
+      "engine_efficient": "efficient propulsion system",
+      "engine_advanced": "advanced propulsion system"
+    }
+  },
   "outside": {
     "population": {
       "stranger_arrives": "a stranger arrives in the night",
@@ -446,6 +477,55 @@
     "no_production": "no production/consumption",
     "total": "total"
   },
+  "events": {
+    "mysterious_wanderer_event": {
+      "title": "mysterious wanderer",
+      "start_text1": "a mysterious stranger emerges from the dark.",
+      "start_text2": "his eyes gleam with an otherworldly light.",
+      "start_text3": "\"i have something that might be of use to you,\" he says.",
+      "talk_text1": "the stranger smiles and produces some items from his robe.",
+      "talk_text2": "\"these might come in handy on your journey.\"",
+      "ignore_text1": "you choose to ignore the stranger.",
+      "ignore_text2": "he shakes his head and disappears into the darkness.",
+      "ignore_text3": "perhaps you missed something important."
+    },
+    "sick_man_event": {
+      "title": "sick man",
+      "start_text1": "a sick man staggers towards your fire.",
+      "start_text2": "he looks weak and in desperate need of medical attention.",
+      "start_text3": "\"please help me...\" he says weakly.",
+      "help_text1": "you give him some medicine.",
+      "help_text2": "his color quickly improves.",
+      "help_text3": "\"thank you!\" he says gratefully, \"let me give you something in return.\"",
+      "turn_away_text1": "you choose not to help the sick man.",
+      "turn_away_text2": "he leaves disappointed.",
+      "turn_away_text3": "you feel somewhat guilty."
+    },
+    "mysterious_wanderer_wood": {
+      "text1": "a wanderer arrives with an empty cart. says if he leaves with wood, he'll come back with more.",
+      "text2": "the builder is not sure he can be trusted.",
+      "leave_text": "the wanderer leaves, cart loaded with wood",
+      "notification": "a mysterious wanderer arrives"
+    },
+    "mysterious_wanderer_fur": {
+      "text1": "a wanderer arrives with an empty cart. says if she leaves with fur, she'll come back with more.",
+      "text2": "the builder is not sure she can be trusted.",
+      "leave_text": "the wanderer leaves, cart loaded with fur",
+      "notification": "a mysterious wanderer arrives"
+    },
+    "titles": {
+      "神秘流浪者": "mysterious wanderer",
+      "神秘陌生人": "mysterious wanderer"
+    }
+  },
+  "setpieces": {
+    "outpost": {
+      "title": "outpost",
+      "start_text": "a safe place in the wilderness.",
+      "end_text": "left the outpost, back to the wilderness.",
+      "notification": "a safe place in the wilderness."
+    }
+  },
   "world": {
     "title": "A Barren World",
     "wanderer": "wanderer",
@@ -545,6 +625,39 @@
       "rifle": "rifle",
       "leather armor": "leather armor",
       "iron armor": "iron armor"
+    },
+    "fabricator": {
+      "items": {
+        "energy blade": "energy blade",
+        "fluid recycler": "fluid recycler",
+        "cargo drone": "cargo drone",
+        "kinetic armour": "kinetic armour",
+        "disruptor": "disruptor",
+        "hypo": "hypo",
+        "stim": "stim",
+        "plasma rifle": "plasma rifle",
+        "glowstone": "glowstone"
+      },
+      "descriptions": {
+        "energy blade": "the blade hums, crackling with electric sparks.",
+        "fluid recycler": "water in, water out. nothing wasted.",
+        "cargo drone": "the workhorse of the wanderer fleet.",
+        "kinetic armour": "wanderer soldiers succeed by channeling their enemies' fury.",
+        "disruptor": "sometimes it's better not to fight.",
+        "hypo": "a hypodermic. life in a bottle.",
+        "stim": "sometimes it's better to fight without restraint.",
+        "plasma rifle": "the pinnacle of wanderer weapon tech, sleek and deadly.",
+        "glowstone": "a smooth, perfect sphere. its light never dims."
+      },
+      "types": {
+        "weapon": "weapon",
+        "upgrade": "upgrade",
+        "tool": "tool"
+      },
+      "notifications": {
+        "familiar_wanderer_tech": "familiar wanderer tech hums to life. finally, real tools.",
+        "insufficient_resources": "not enough {0}"
+      }
     }
   }
 }

@@ -22,7 +22,10 @@ class Path extends ChangeNotifier {
   Path._internal();
 
   // 模块名称
-  final String name = "漫漫尘途";
+  String get name {
+    final localization = Localization();
+    return localization.translate('ui.modules.path');
+  }
 
   // 常量
   static const int defaultBagSpace = 10;
@@ -255,7 +258,8 @@ class Path extends ChangeNotifier {
   /// 设置标题
   void setTitle() {
     // 在Flutter中，标题设置将通过状态管理处理
-    // document.title = '漫漫尘途';
+    // final localization = Localization();
+    // document.title = localization.translate('ui.modules.path');
   }
 
   /// 出发到世界地图

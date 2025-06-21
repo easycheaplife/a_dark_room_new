@@ -107,8 +107,8 @@ class Header extends StatelessWidget {
                   itemBuilder: (BuildContext context) {
                     // 只支持中文和英文
                     final supportedLanguages = {
-                      'zh': '中文',
-                      'en': 'English',
+                      'zh': localization.currentLanguage == 'zh' ? '中文' : 'Chinese',
+                      'en': localization.currentLanguage == 'zh' ? '英文' : 'English',
                     };
 
                     return supportedLanguages.entries.map((entry) {

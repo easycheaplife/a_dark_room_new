@@ -50,7 +50,10 @@
       "home": "回家",
       "return": "返回",
       "stay": "留下",
-      "move_on": "继续前进"
+      "move_on": "继续前进",
+      "take_all": "带走 所有",
+      "talk": "与他交谈",
+      "thank": "感谢他"
     },
     "menus": {
       "stores": "库存",
@@ -63,6 +66,11 @@
       "path": "漫漫尘途",
       "fabricator": "嗡嗡作响的制造器",
       "ship": "飞船"
+    },
+    "modules": {
+      "path": "漫漫尘途",
+      "fabricator": "嗡嗡作响的制造器",
+      "world": "荒芜世界"
     },
     "titles": {
       "dark_room": "小黑屋",
@@ -331,7 +339,59 @@
     "for_use_with_rifle": "配合步枪使用",
     "glows_softly_red": "发出柔和的红光",
     "restores_20_health": "恢复 20 生命值",
-    "backpack_full": "背包空间不足"
+    "backpack_full": "背包空间不足",
+    "found": "发现了："
+  },
+  "import_export": {
+    "title": "导入/导出存档",
+    "description": "游戏存档管理",
+    "instructions": "• 导出：将存档数据自动复制到剪贴板\n• 导入：从剪贴板读取存档数据\n• 完全兼容原游戏存档格式",
+    "export_button": "导出存档到剪贴板",
+    "import_button": "从剪贴板导入存档",
+    "importing": "导入中...",
+    "export_success": "存档已导出并复制到剪贴板！",
+    "import_success": "存档导入成功！",
+    "export_failed": "导出失败",
+    "import_failed": "存档导入失败，请检查数据格式",
+    "clipboard_empty": "剪贴板中没有存档数据",
+    "error": "错误",
+    "success": "成功",
+    "ok": "确定"
+  },
+  "settings": {
+    "title": "游戏设置",
+    "save_status": "💾 保存状态",
+    "last_save": "最后保存：",
+    "no_save_record": "暂无保存记录",
+    "auto_save_info": "游戏每30秒自动保存一次",
+    "import_export_info": "📋 导入/导出",
+    "import_export_description": "• 导出：将当前游戏进度保存为文本，可以备份或分享\n• 导入：从导出的文本恢复游戏进度\n• 完全兼容原游戏存档格式",
+    "import_export_instruction": "要导入或导出游戏存档，请点击右上角的导入/导出按钮 📥",
+    "danger_section": "⚠️ 危险操作",
+    "clear_data_description": "清除所有游戏数据，重新开始游戏（此操作不可撤销）",
+    "clear_data_button": "清除游戏数据",
+    "confirm_clear_title": "⚠️ 危险操作",
+    "confirm_clear_message": "确定要清除所有游戏数据吗？此操作不可撤销！",
+    "confirm_clear_button": "确定清除",
+    "clear_success": "🗑️ 游戏数据已清除",
+    "clear_failed": "❌ 清除失败："
+  },
+  "ship": {
+    "name": "飞船",
+    "title": "古老的星际飞船",
+    "hull_reinforced": "船体已强化",
+    "engine_upgraded": "引擎已升级",
+    "lifting_off": "飞船正在起飞...",
+    "descriptions": {
+      "hull_damaged": "飞船需要强化船体才能起飞",
+      "hull_poor": "飞船勉强能够飞行",
+      "hull_good": "飞船状况良好",
+      "hull_excellent": "飞船装甲坚固，准备就绪",
+      "engine_basic": "基础推进器",
+      "engine_improved": "改进的推进系统",
+      "engine_efficient": "高效推进系统",
+      "engine_advanced": "先进推进系统"
+    }
   },
   "outside": {
     "population": {
@@ -436,6 +496,55 @@
     "no_production": "当前无生产/消耗",
     "total": "总计"
   },
+  "events": {
+    "mysterious_wanderer_event": {
+      "title": "神秘流浪者",
+      "start_text1": "一个神秘的陌生人从黑暗中走来。",
+      "start_text2": "他的眼中闪烁着奇异的光芒。",
+      "start_text3": "\"我有些东西可能对你有用。\"他说道。",
+      "talk_text1": "陌生人微笑着从袍子里取出一些物品。",
+      "talk_text2": "\"这些可能在你的旅程中派上用场。\"",
+      "ignore_text1": "你选择忽视这个陌生人。",
+      "ignore_text2": "他摇摇头，消失在黑暗中。",
+      "ignore_text3": "也许你错过了什么重要的东西。"
+    },
+    "sick_man_event": {
+      "title": "病人",
+      "start_text1": "一个生病的男人蹒跚着走向你的火堆。",
+      "start_text2": "他看起来很虚弱，急需医疗帮助。",
+      "start_text3": "\"请帮帮我...\"他虚弱地说道。",
+      "help_text1": "你给了他一些药品。",
+      "help_text2": "他的脸色很快好转了。",
+      "help_text3": "\"谢谢你！\"他感激地说，\"让我给你一些回报。\"",
+      "turn_away_text1": "你选择不帮助这个病人。",
+      "turn_away_text2": "他失望地离开了。",
+      "turn_away_text3": "你感到有些内疚。"
+    },
+    "mysterious_wanderer_wood": {
+      "text1": "一个流浪者带着空车到达。说如果他带着木材离开，他会带着更多回来。",
+      "text2": "建造者不确定他是否值得信任。",
+      "leave_text": "流浪者离开了，车上装满了木材",
+      "notification": "一个神秘的流浪者到达"
+    },
+    "mysterious_wanderer_fur": {
+      "text1": "一个流浪者带着空车到达。说如果她带着毛皮离开，她会带着更多回来。",
+      "text2": "建造者不确定她是否值得信任。",
+      "leave_text": "流浪者离开了，车上装满了毛皮",
+      "notification": "一个神秘的流浪者到达"
+    },
+    "titles": {
+      "神秘流浪者": "神秘流浪者",
+      "神秘陌生人": "神秘流浪者"
+    }
+  },
+  "setpieces": {
+    "outpost": {
+      "title": "前哨站",
+      "start_text": "荒野中的安全之地。",
+      "end_text": "离开了前哨站，回到了荒野中。",
+      "notification": "荒野中的安全之地。"
+    }
+  },
   "world": {
     "title": "荒芜世界",
     "wanderer": "流浪者",
@@ -535,6 +644,39 @@
       "rifle": "步枪",
       "leather armor": "皮甲",
       "iron armor": "铁甲"
+    },
+    "fabricator": {
+      "items": {
+        "energy blade": "能量刃",
+        "fluid recycler": "流体回收器",
+        "cargo drone": "货运无人机",
+        "kinetic armour": "动能护甲",
+        "disruptor": "干扰器",
+        "hypo": "注射器",
+        "stim": "兴奋剂",
+        "plasma rifle": "等离子步枪",
+        "glowstone": "发光石"
+      },
+      "descriptions": {
+        "energy blade": "刀刃嗡嗡作响，带电粒子闪烁着火花。",
+        "fluid recycler": "水进水出，物尽其用。",
+        "cargo drone": "流浪者舰队的主力工具。",
+        "kinetic armour": "流浪者士兵通过转化敌人的愤怒来获得成功。",
+        "disruptor": "有时最好不要战斗。",
+        "hypo": "一把注射器。瓶中的生命。",
+        "stim": "有时最好毫无约束地战斗。",
+        "plasma rifle": "流浪者武器技术的巅峰，光滑而致命。",
+        "glowstone": "一个光滑完美的球体。它的光芒永不熄灭。"
+      },
+      "types": {
+        "weapon": "武器",
+        "upgrade": "升级",
+        "tool": "工具"
+      },
+      "notifications": {
+        "familiar_wanderer_tech": "熟悉的流浪者机械启动声。终于，真正的工具。",
+        "insufficient_resources": "{0}不足"
+      }
     }
   }
 }

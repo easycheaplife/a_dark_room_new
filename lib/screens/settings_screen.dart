@@ -37,9 +37,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
-            title: const Text(
-              '游戏设置',
-              style: TextStyle(
+            title: Text(
+              localization.translate('settings.title'),
+              style: const TextStyle(
                 color: Colors.black,
                 fontFamily: 'Times New Roman',
               ),
@@ -85,9 +85,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '💾 保存状态',
-            style: TextStyle(
+          Text(
+            Localization().translate('settings.save_status'),
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               fontFamily: 'Times New Roman',
@@ -96,7 +96,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 10),
           Text(
-            _saveTimeInfo != null ? '最后保存：$_saveTimeInfo' : '暂无保存记录',
+            _saveTimeInfo != null
+              ? '${Localization().translate('settings.last_save')}$_saveTimeInfo'
+              : Localization().translate('settings.no_save_record'),
             style: const TextStyle(
               fontSize: 14,
               fontFamily: 'Times New Roman',
@@ -104,9 +106,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 5),
-          const Text(
-            '游戏每30秒自动保存一次',
-            style: TextStyle(
+          Text(
+            Localization().translate('settings.auto_save_info'),
+            style: const TextStyle(
               fontSize: 12,
               fontFamily: 'Times New Roman',
               color: Colors.grey,
@@ -139,18 +141,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          const Text(
-            '要导入或导出游戏存档，请点击右上角的导入/导出按钮 📥',
-            style: TextStyle(
+          Text(
+            Localization().translate('settings.import_export_instruction'),
+            style: const TextStyle(
               fontSize: 14,
               fontFamily: 'Times New Roman',
               color: Colors.black87,
             ),
           ),
           const SizedBox(height: 10),
-          const Text(
-            '• 导出：将当前游戏进度保存为文本，可以备份或分享\n• 导入：从导出的文本恢复游戏进度\n• 完全兼容原游戏存档格式',
-            style: TextStyle(
+          Text(
+            Localization().translate('settings.import_export_description'),
+            style: const TextStyle(
               fontSize: 12,
               fontFamily: 'Times New Roman',
               color: Colors.black54,
@@ -173,9 +175,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '⚠️ 危险操作',
-            style: TextStyle(
+          Text(
+            Localization().translate('settings.danger_section'),
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               fontFamily: 'Times New Roman',
@@ -183,9 +185,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          const Text(
-            '清除所有游戏数据，重新开始游戏（此操作不可撤销）',
-            style: TextStyle(
+          Text(
+            Localization().translate('settings.clear_data_description'),
+            style: const TextStyle(
               fontSize: 14,
               fontFamily: 'Times New Roman',
               color: Colors.black87,
@@ -195,7 +197,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ElevatedButton.icon(
             onPressed: _isLoading ? null : () => _clearGameData(stateManager),
             icon: const Icon(Icons.delete_forever),
-            label: const Text('清除游戏数据'),
+            label: Text(Localization().translate('settings.clear_data_button')),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
@@ -208,20 +210,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _clearGameData(StateManager stateManager) async {
     // 显示确认对话框
+    final localization = Localization();
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('⚠️ 危险操作'),
-        content: const Text('确定要清除所有游戏数据吗？此操作不可撤销！'),
+        title: Text(localization.translate('settings.confirm_clear_title')),
+        content: Text(localization.translate('settings.confirm_clear_message')),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('取消'),
+            child: Text(localization.translate('ui.buttons.cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('确定清除'),
+            child: Text(localization.translate('settings.confirm_clear_button')),
           ),
         ],
       ),
@@ -237,9 +240,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await stateManager.clearGameData();
 
       if (mounted) {
+        final localization = Localization();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('🗑️ 游戏数据已清除'),
+          SnackBar(
+            content: Text(localization.translate('settings.clear_success')),
             backgroundColor: Colors.orange,
           ),
         );
@@ -247,9 +251,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
     } catch (e) {
       if (mounted) {
+        final localization = Localization();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('❌ 清除失败：$e'),
+            content: Text('${localization.translate('settings.clear_failed')}$e'),
             backgroundColor: Colors.red,
           ),
         );

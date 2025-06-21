@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/engine.dart';
+import '../core/localization.dart';
 
 /// 导入/导出对话框
 class ImportExportDialog extends StatefulWidget {
@@ -24,9 +25,11 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
 
       // 直接复制到剪贴板
       await Clipboard.setData(ClipboardData(text: exportData));
-      _showSuccessDialog('存档已导出并复制到剪贴板！');
+      final localization = Localization();
+      _showSuccessDialog(localization.translate('import_export.export_success'));
     } catch (e) {
-      _showErrorDialog('导出失败: $e');
+      final localization = Localization();
+      _showErrorDialog('${localization.translate('import_export.export_failed')}: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -46,7 +49,8 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
       if (clipboardData == null ||
           clipboardData.text == null ||
           clipboardData.text!.trim().isEmpty) {
-        _showErrorDialog('剪贴板中没有存档数据');
+        final localization = Localization();
+        _showErrorDialog(localization.translate('import_export.clipboard_empty'));
         return;
       }
 
@@ -54,16 +58,18 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
       final success = await Engine().import64(importData);
 
       if (mounted) {
+        final localization = Localization();
         if (success) {
           Navigator.of(context).pop();
-          _showSuccessDialog('存档导入成功！');
+          _showSuccessDialog(localization.translate('import_export.import_success'));
         } else {
-          _showErrorDialog('存档导入失败，请检查数据格式');
+          _showErrorDialog(localization.translate('import_export.import_failed'));
         }
       }
     } catch (e) {
       if (mounted) {
-        _showErrorDialog('导入失败: $e');
+        final localization = Localization();
+        _showErrorDialog('${localization.translate('import_export.import_failed')}: $e');
       }
     } finally {
       if (mounted) {
@@ -75,15 +81,16 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
   }
 
   void _showErrorDialog(String message) {
+    final localization = Localization();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('错误'),
+        title: Text(localization.translate('import_export.error')),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('确定'),
+            child: Text(localization.translate('import_export.ok')),
           ),
         ],
       ),
@@ -91,15 +98,16 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
   }
 
   void _showSuccessDialog(String message) {
+    final localization = Localization();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('成功'),
+        title: Text(localization.translate('import_export.success')),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('确定'),
+            child: Text(localization.translate('import_export.ok')),
           ),
         ],
       ),
@@ -108,8 +116,9 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final localization = Localization();
     return AlertDialog(
-      title: const Text('导入/导出存档'),
+      title: Text(localization.translate('import_export.title')),
       content: SizedBox(
         width: 400,
         height: 320,
@@ -124,20 +133,20 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
                 border: Border.all(color: Colors.blue[200]!),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '📋 剪贴板操作',
-                    style: TextStyle(
+                    localization.translate('import_export.description'),
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    '• 导出：将存档数据自动复制到剪贴板\n• 导入：从剪贴板读取存档数据\n• 完全兼容原游戏存档格式',
-                    style: TextStyle(fontSize: 14),
+                    localization.translate('import_export.instructions'),
+                    style: const TextStyle(fontSize: 14),
                   ),
                 ],
               ),
@@ -151,9 +160,9 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
               child: ElevatedButton.icon(
                 onPressed: _isLoading ? null : _exportSave,
                 icon: const Icon(Icons.download),
-                label: const Text(
-                  '导出存档到剪贴板',
-                  style: TextStyle(fontSize: 16),
+                label: Text(
+                  localization.translate('import_export.export_button'),
+                  style: const TextStyle(fontSize: 16),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
@@ -181,7 +190,9 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
                       )
                     : const Icon(Icons.upload),
                 label: Text(
-                  _isLoading ? '导入中...' : '从剪贴板导入存档',
+                  _isLoading
+                    ? localization.translate('import_export.importing')
+                    : localization.translate('import_export.import_button'),
                   style: const TextStyle(fontSize: 16),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -199,7 +210,7 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('关闭'),
+                  child: Text(localization.translate('ui.buttons.close')),
                 ),
               ],
             ),

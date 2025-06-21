@@ -1,4 +1,5 @@
 import '../core/state_manager.dart';
+import '../core/localization.dart';
 import '../core/notifications.dart';
 
 /// 全局事件定义
@@ -16,36 +17,50 @@ class GlobalEvents {
       ];
 
   /// 神秘陌生人事件
-  static Map<String, dynamic> get mysteriousStranger => {
-        'title': '神秘流浪者',
-        'isAvailable': () {
-          final fire = _sm.get('game.fire.value', true) ?? 0;
-          final wood = _sm.get('stores.wood', true) ?? 0;
-          return fire > 0 && wood > 0; // 需要有火和木材
+  static Map<String, dynamic> get mysteriousStranger {
+    final localization = Localization();
+    return {
+      'title': localization.translate('events.mysterious_wanderer_event.title'),
+      'isAvailable': () {
+        final fire = _sm.get('game.fire.value', true) ?? 0;
+        final wood = _sm.get('stores.wood', true) ?? 0;
+        return fire > 0 && wood > 0; // 需要有火和木材
+      },
+      'scenes': {
+        'start': {
+          'text': [
+            localization.translate('events.mysterious_wanderer_event.start_text1'),
+            localization.translate('events.mysterious_wanderer_event.start_text2'),
+            localization.translate('events.mysterious_wanderer_event.start_text3')
+          ],
+          'buttons': {
+            'talk': {'text': localization.translate('ui.buttons.talk'), 'nextScene': 'talk'},
+            'ignore': {'text': localization.translate('ui.buttons.ignore'), 'nextScene': 'ignore'}
+          }
         },
-        'scenes': {
-          'start': {
-            'text': ['一个神秘的陌生人从黑暗中走来。', '他的眼中闪烁着奇异的光芒。', '"我有些东西可能对你有用。"他说道。'],
-            'buttons': {
-              'talk': {'text': '与他交谈', 'nextScene': 'talk'},
-              'ignore': {'text': '忽视他', 'nextScene': 'ignore'}
-            }
-          },
-          'talk': {
-            'text': ['陌生人微笑着从袍子里取出一些物品。', '"这些可能在你的旅程中派上用场。"'],
-            'reward': {'wood': 100, 'fur': 10, 'meat': 5},
-            'buttons': {
-              'thank': {'text': '感谢他', 'nextScene': 'end'}
-            }
-          },
-          'ignore': {
-            'text': ['你选择忽视这个陌生人。', '他摇摇头，消失在黑暗中。', '也许你错过了什么重要的东西。'],
-            'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
-            }
+        'talk': {
+          'text': [
+            localization.translate('events.mysterious_wanderer_event.talk_text1'),
+            localization.translate('events.mysterious_wanderer_event.talk_text2')
+          ],
+          'reward': {'wood': 100, 'fur': 10, 'meat': 5},
+          'buttons': {
+            'thank': {'text': localization.translate('ui.buttons.thank'), 'nextScene': 'end'}
+          }
+        },
+        'ignore': {
+          'text': [
+            localization.translate('events.mysterious_wanderer_event.ignore_text1'),
+            localization.translate('events.mysterious_wanderer_event.ignore_text2'),
+            localization.translate('events.mysterious_wanderer_event.ignore_text3')
+          ],
+          'buttons': {
+            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
           }
         }
-      };
+      }
+    };
+  }
 
   /// 游牧部落事件
   static Map<String, dynamic> get nomadicTribe => {
@@ -83,43 +98,54 @@ class GlobalEvents {
       };
 
   /// 病人事件
-  static Map<String, dynamic> get sickMan => {
-        'title': '病人',
-        'isAvailable': () {
-          final medicine = _sm.get('stores.medicine', true) ?? 0;
-          return medicine > 0; // 需要有药品
+  static Map<String, dynamic> get sickMan {
+    final localization = Localization();
+    return {
+      'title': localization.translate('events.sick_man_event.title'),
+      'isAvailable': () {
+        final medicine = _sm.get('stores.medicine', true) ?? 0;
+        return medicine > 0; // 需要有药品
+      },
+      'scenes': {
+        'start': {
+          'text': [
+            localization.translate('events.sick_man_event.start_text1'),
+            localization.translate('events.sick_man_event.start_text2'),
+            localization.translate('events.sick_man_event.start_text3')
+          ],
+          'buttons': {
+            'help': {
+              'text': localization.translate('ui.buttons.help_him'),
+              'cost': {'medicine': 1},
+              'nextScene': 'help'
+            },
+            'turnAway': {'text': localization.translate('ui.buttons.turn_away'), 'nextScene': 'turnAway'}
+          }
         },
-        'scenes': {
-          'start': {
-            'text': [
-              '一个生病的男人蹒跚着走向你的火堆。',
-              '他看起来很虚弱，急需医疗帮助。',
-              '"请帮帮我..."他虚弱地说道。'
-            ],
-            'buttons': {
-              'help': {
-                'text': '帮助他',
-                'cost': {'medicine': 1},
-                'nextScene': 'help'
-              },
-              'turnAway': {'text': '拒绝帮助', 'nextScene': 'turnAway'}
-            }
-          },
-          'help': {
-            'text': ['你给了他一些药品。', '他的脸色很快好转了。', '"谢谢你！"他感激地说，"让我给你一些回报。"'],
-            'reward': {'scales': 3, 'teeth': 5},
-            'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
-            }
-          },
-          'turnAway': {
-            'text': ['你选择不帮助这个病人。', '他失望地离开了。', '你感到有些内疚。'],
-            'buttons': {
-              'continue': {'text': '继续', 'nextScene': 'end'}
-            }
+        'help': {
+          'text': [
+            localization.translate('events.sick_man_event.help_text1'),
+            localization.translate('events.sick_man_event.help_text2'),
+            localization.translate('events.sick_man_event.help_text3')
+          ],
+          'reward': {'scales': 3, 'teeth': 5},
+          'buttons': {
+            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
+          }
+        },
+        'turnAway': {
+          'text': [
+            localization.translate('events.sick_man_event.turn_away_text1'),
+            localization.translate('events.sick_man_event.turn_away_text2'),
+            localization.translate('events.sick_man_event.turn_away_text3')
+          ],
+          'buttons': {
+            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
           }
         }
-      };
+      }
+    };
+  }
 
   /// 拾荒者事件
   static Map<String, dynamic> get scavenger => {

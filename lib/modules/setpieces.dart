@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/state_manager.dart';
+import '../core/localization.dart';
 import 'events.dart';
 import 'world.dart';
 
@@ -20,26 +21,51 @@ class Setpieces extends ChangeNotifier {
   final String name = "场景事件";
 
   /// 场景事件配置
-  static const Map<String, Map<String, dynamic>> setpieces = {
+  static Map<String, Map<String, dynamic>> get setpieces => {
     // 友好前哨站
     'outpost': {
-      'title': '前哨站',
+      'title': () {
+        final localization = Localization();
+        return localization.translate('setpieces.outpost.title');
+      }(),
       'scenes': {
         'start': {
-          'text': ['荒野中的安全之地。'],
-          'notification': '荒野中的安全之地。',
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.outpost.start_text')];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.outpost.notification');
+          }(),
           'loot': {
             'cured meat': {'min': 5, 'max': 10, 'chance': 1.0}
           },
           'onLoad': 'useOutpost',
           'buttons': {
-            'leave': {'text': '离开', 'cooldown': 1, 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'cooldown': 1,
+              'nextScene': 'end'
+            }
           }
         },
         'end': {
-          'text': ['离开了前哨站，回到了荒野中。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.outpost.end_text')];
+          }(),
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'finish'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'finish'
+            }
           }
         }
       },

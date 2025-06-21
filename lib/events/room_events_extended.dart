@@ -1,6 +1,7 @@
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/logger.dart';
+import '../core/localization.dart';
 import '../modules/world.dart';
 import 'dart:math';
 import 'dart:async';
@@ -175,24 +176,48 @@ class RoomEventsExtended {
         },
         'scenes': {
           'start': {
-            'text': ['一个流浪者带着空车到达。说如果他带着木材离开，他会带着更多回来。', '建造者不确定他是否值得信任。'],
-            'notification': '一个神秘的流浪者到达',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.mysterious_wanderer_wood.text1'),
+                localization.translate('events.mysterious_wanderer_wood.text2')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('events.mysterious_wanderer_wood.notification');
+            }(),
             'buttons': {
               'wood100': {
-                'text': '给100',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.give_100');
+                }(),
                 'cost': {'wood': 100},
                 'nextScene': 'wood100'
               },
               'wood500': {
-                'text': '给500',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.give_500');
+                }(),
                 'cost': {'wood': 500},
                 'nextScene': 'wood500'
               },
-              'deny': {'text': '拒绝他', 'nextScene': 'end'}
+              'deny': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.deny');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'wood100': {
-            'text': ['流浪者离开了，车上装满了木材'],
+            'text': () {
+              final localization = Localization();
+              return [localization.translate('events.mysterious_wanderer_wood.leave_text')];
+            }(),
             'onLoad': () {
               // 50%概率在60秒后返回300木材
               if (Random().nextDouble() < 0.5) {
@@ -207,11 +232,20 @@ class RoomEventsExtended {
               }
             },
             'buttons': {
-              'leave': {'text': '告别', 'nextScene': 'end'}
+              'leave': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.farewell');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'wood500': {
-            'text': ['流浪者离开了，车上装满了木材'],
+            'text': () {
+              final localization = Localization();
+              return [localization.translate('events.mysterious_wanderer_wood.leave_text')];
+            }(),
             'onLoad': () {
               // 30%概率在60秒后返回1500木材
               if (Random().nextDouble() < 0.3) {
@@ -241,24 +275,48 @@ class RoomEventsExtended {
         },
         'scenes': {
           'start': {
-            'text': ['一个流浪者带着空车到达。说如果她带着毛皮离开，她会带着更多回来。', '建造者不确定她是否值得信任。'],
-            'notification': '一个神秘的流浪者到达',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.mysterious_wanderer_fur.text1'),
+                localization.translate('events.mysterious_wanderer_fur.text2')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('events.mysterious_wanderer_fur.notification');
+            }(),
             'buttons': {
               'fur100': {
-                'text': '给100',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.give_100');
+                }(),
                 'cost': {'fur': 100},
                 'nextScene': 'fur100'
               },
               'fur500': {
-                'text': '给500',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.give_500');
+                }(),
                 'cost': {'fur': 500},
                 'nextScene': 'fur500'
               },
-              'deny': {'text': '拒绝她', 'nextScene': 'end'}
+              'deny': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.deny');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'fur100': {
-            'text': ['流浪者离开了，车上装满了毛皮'],
+            'text': () {
+              final localization = Localization();
+              return [localization.translate('events.mysterious_wanderer_fur.leave_text')];
+            }(),
             'onLoad': () {
               // 50%概率在60秒后返回300毛皮
               if (Random().nextDouble() < 0.5) {
@@ -271,11 +329,20 @@ class RoomEventsExtended {
               }
             },
             'buttons': {
-              'leave': {'text': '告别', 'nextScene': 'end'}
+              'leave': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.farewell');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'fur500': {
-            'text': ['流浪者离开了，车上装满了毛皮'],
+            'text': () {
+              final localization = Localization();
+              return [localization.translate('events.mysterious_wanderer_fur.leave_text')];
+            }(),
             'onLoad': () {
               // 30%概率在60秒后返回1500毛皮
               if (Random().nextDouble() < 0.3) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
+import '../core/localization.dart';
 import 'events.dart';
 
 /// 飞船模块 - 注册星际飞船功能
@@ -17,7 +18,10 @@ class Ship extends ChangeNotifier {
   Ship._internal();
 
   // 模块名称
-  final String name = "飞船";
+  String get name {
+    final localization = Localization();
+    return localization.translate('ship.name');
+  }
 
   // 常量
   static const int liftoffCooldown = 120;
@@ -96,7 +100,8 @@ class Ship extends ChangeNotifier {
     // 播放音效（暂时注释掉）
     // AudioEngine().playSound(AudioLibrary.reinforceHull);
 
-    NotificationManager().notify(name, "船体已强化");
+    final localization = Localization();
+    NotificationManager().notify(name, localization.translate('ship.hull_reinforced'));
     notifyListeners();
   }
 
@@ -117,7 +122,8 @@ class Ship extends ChangeNotifier {
     // 播放音效（暂时注释掉）
     // AudioEngine().playSound(AudioLibrary.upgradeEngine);
 
-    NotificationManager().notify(name, "引擎已升级");
+    final localization = Localization();
+    NotificationManager().notify(name, localization.translate('ship.engine_upgraded'));
     notifyListeners();
   }
 
@@ -168,7 +174,8 @@ class Ship extends ChangeNotifier {
   /// 起飞
   void liftOff() {
     // 在Flutter中，起飞动画将通过UI组件处理
-    NotificationManager().notify(name, "飞船正在起飞...");
+    final localization = Localization();
+    NotificationManager().notify(name, localization.translate('ship.lifting_off'));
 
     // 切换到太空模块（暂时注释掉）
     // Space().onArrival();
@@ -264,27 +271,29 @@ class Ship extends ChangeNotifier {
 
   /// 获取飞船描述
   String getShipDescription() {
+    final localization = Localization();
     if (hull <= 0) {
-      return "飞船需要强化船体才能起飞";
+      return localization.translate('ship.descriptions.hull_damaged');
     } else if (hull < 5) {
-      return "飞船勉强能够飞行";
+      return localization.translate('ship.descriptions.hull_poor');
     } else if (hull < 10) {
-      return "飞船状况良好";
+      return localization.translate('ship.descriptions.hull_good');
     } else {
-      return "飞船装甲坚固，准备就绪";
+      return localization.translate('ship.descriptions.hull_excellent');
     }
   }
 
   /// 获取引擎描述
   String getEngineDescription() {
+    final localization = Localization();
     if (thrusters <= 1) {
-      return "基础推进器";
+      return localization.translate('ship.descriptions.engine_basic');
     } else if (thrusters < 5) {
-      return "改进的推进系统";
+      return localization.translate('ship.descriptions.engine_improved');
     } else if (thrusters < 10) {
-      return "高效推进系统";
+      return localization.translate('ship.descriptions.engine_efficient');
     } else {
-      return "先进的推进系统";
+      return localization.translate('ship.descriptions.engine_advanced');
     }
   }
 }

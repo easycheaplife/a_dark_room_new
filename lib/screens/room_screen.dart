@@ -319,12 +319,16 @@ class RoomScreen extends StatelessWidget {
         const SizedBox(height: 15),
 
         // 武器区域
-        const StoresDisplay(
-          style: StoresDisplayStyle.light,
-          type: StoresDisplayType.weaponsOnly,
-          collapsible: false,
-          showIncomeInfo: false,
-          customTitle: '武器', // 自定义武器标题
+        Consumer<Localization>(
+          builder: (context, localization, child) {
+            return StoresDisplay(
+              style: StoresDisplayStyle.light,
+              type: StoresDisplayType.weaponsOnly,
+              collapsible: false,
+              showIncomeInfo: false,
+              customTitle: localization.translate('ui.menus.weapons'),
+            );
+          },
         ),
       ],
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
+import '../core/localization.dart';
 
 /// 制造器模块 - 注册制造器功能
 /// 包括高级物品制造、蓝图系统等功能
@@ -17,7 +18,10 @@ class Fabricator extends ChangeNotifier {
   Fabricator._internal();
 
   // 模块名称
-  final String name = "制造器";
+  String get name {
+    final localization = Localization();
+    return localization.translate('ui.modules.fabricator');
+  }
 
   // 常量
   static const int storesOffset = 0;
@@ -25,67 +29,49 @@ class Fabricator extends ChangeNotifier {
   // 可制造物品配置
   static const Map<String, Map<String, dynamic>> craftables = {
     'energy blade': {
-      'name': '能量刃',
       'type': 'weapon',
-      'buildMsg': '刀刃嗡嗡作响，带电粒子闪烁着火花。',
       'cost': {'alien alloy': 1}
     },
     'fluid recycler': {
-      'name': '流体回收器',
       'type': 'upgrade',
       'maximum': 1,
-      'buildMsg': '水进水出，物尽其用。',
       'cost': {'alien alloy': 2}
     },
     'cargo drone': {
-      'name': '货运无人机',
       'type': 'upgrade',
       'maximum': 1,
-      'buildMsg': '流浪者舰队的主力工具。',
       'cost': {'alien alloy': 2}
     },
     'kinetic armour': {
-      'name': '动能护甲',
       'type': 'upgrade',
       'maximum': 1,
       'blueprintRequired': true,
-      'buildMsg': '流浪者士兵通过转化敌人的愤怒来获得成功。',
       'cost': {'alien alloy': 2}
     },
     'disruptor': {
-      'name': '干扰器',
       'type': 'weapon',
       'blueprintRequired': true,
-      'buildMsg': '有时最好不要战斗。',
       'cost': {'alien alloy': 1}
     },
     'hypo': {
-      'name': '注射器',
       'type': 'tool',
       'blueprintRequired': true,
-      'buildMsg': '一把注射器。瓶中的生命。',
       'cost': {'alien alloy': 1},
       'quantity': 5
     },
     'stim': {
-      'name': '兴奋剂',
       'type': 'tool',
       'blueprintRequired': true,
-      'buildMsg': '有时最好毫无约束地战斗。',
       'cost': {'alien alloy': 1}
     },
     'plasma rifle': {
-      'name': '等离子步枪',
       'type': 'weapon',
       'blueprintRequired': true,
-      'buildMsg': '流浪者武器技术的巅峰，光滑而致命。',
       'cost': {'alien alloy': 1}
     },
     'glowstone': {
-      'name': '发光石',
       'type': 'tool',
       'blueprintRequired': true,
-      'buildMsg': '一个光滑完美的球体。它的光芒永不熄灭。',
       'cost': {'alien alloy': 1}
     }
   };
@@ -118,7 +104,8 @@ class Fabricator extends ChangeNotifier {
 
     final sm = StateManager();
     if (sm.get('game.fabricator.seen', true) != true) {
-      NotificationManager().notify(name, '熟悉的流浪者机械启动声。终于，真正的工具。');
+      final localization = Localization();
+      NotificationManager().notify(name, localization.translate('fabricator.notifications.familiar_wanderer_tech'));
       sm.set('game.fabricator.seen', true);
     }
 
@@ -131,7 +118,8 @@ class Fabricator extends ChangeNotifier {
   /// 设置标题
   void setTitle() {
     // 在Flutter中，标题设置将通过状态管理处理
-    // document.title = "嗡嗡作响的制造器";
+    // final localization = Localization();
+    // document.title = localization.translate('ui.modules.fabricator');
   }
 
   /// 更新建造按钮
@@ -185,7 +173,8 @@ class Fabricator extends ChangeNotifier {
       final required = entry.value as int;
       final have = (sm.get('stores["${entry.key}"]', true) ?? 0) as int;
       if (have < required) {
-        NotificationManager().notify(name, '${entry.key}不足');
+        final localization = Localization();
+        NotificationManager().notify(name, localization.translate('fabricator.notifications.insufficient_resources', [entry.key]));
         return false;
       } else {
         storeMod[entry.key] = have - required;
@@ -202,7 +191,8 @@ class Fabricator extends ChangeNotifier {
     sm.add('stores["$itemKey"]', quantity);
 
     // 显示建造消息
-    final buildMsg = craftable['buildMsg'] as String;
+    final localization = Localization();
+    final buildMsg = localization.translate('fabricator.descriptions.$itemKey');
     NotificationManager().notify(name, buildMsg);
 
     // 播放制造音效（暂时注释掉）
@@ -284,16 +274,20 @@ class Fabricator extends ChangeNotifier {
 
   /// 获取物品类型描述
   String getItemTypeDescription(String type) {
-    switch (type) {
-      case 'weapon':
-        return '武器';
-      case 'upgrade':
-        return '升级';
-      case 'tool':
-        return '工具';
-      default:
-        return '未知';
-    }
+    final localization = Localization();
+    return localization.translate('fabricator.types.$type');
+  }
+
+  /// 获取物品名称
+  String getItemName(String itemKey) {
+    final localization = Localization();
+    return localization.translate('fabricator.items.$itemKey');
+  }
+
+  /// 获取物品描述
+  String getItemDescription(String itemKey) {
+    final localization = Localization();
+    return localization.translate('fabricator.descriptions.$itemKey');
   }
 
   /// 获取制造成本描述
