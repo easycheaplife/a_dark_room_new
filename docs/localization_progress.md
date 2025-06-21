@@ -70,10 +70,10 @@
 - ✅ `lib/modules/fabricator.dart` - 制造器模块（仅注释）
 - ✅ `lib/modules/ship.dart` - 飞船模块
 - ✅ `lib/modules/world.dart` - 世界模块（已修复硬编码通知信息）
-- ✅ `lib/modules/setpieces.dart` - 场景事件模块（已完成主要场景事件本地化：cave/house/town/ironmine/coalmine）
+- ✅ `lib/modules/setpieces.dart` - 场景事件模块（已完成所有场景事件的深度本地化：包括所有12个主要场景的标题、通知、按钮和核心文本）
 - ✅ `lib/modules/room.dart` - 房间模块
 - ✅ `lib/modules/outside.dart` - 外部模块
-- ✅ `lib/modules/events.dart` - 事件模块（已完成主要encounter事件本地化：6个战斗遭遇事件）
+- ✅ `lib/modules/events.dart` - 事件模块（已完成所有encounter事件本地化：8个战斗遭遇事件）
 
 ### 事件文件 (lib/events/)
 - ✅ `lib/events/global_events.dart` - 全局事件

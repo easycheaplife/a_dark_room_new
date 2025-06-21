@@ -1246,6 +1246,181 @@
         "text2": "men move about, weapons at the ready.",
         "notification": "this old mine is not abandoned"
       }
+    },
+    "cave_scenes": {
+      "beast_notification": "a startled beast defends its home",
+      "leave_cave": "leave cave",
+      "squeeze_through": "squeeze through",
+      "old_camp_text1": "the remains of an old camp lie just inside the cave.",
+      "old_camp_text2": "bedrolls, torn and blackened, lie beneath a thin layer of dust.",
+      "wanderer_corpse_text1": "a wanderer's corpse lies in a small cavern.",
+      "wanderer_corpse_text2": "decay has set in and some parts are missing.",
+      "wanderer_corpse_text3": "not sure what left it here.",
+      "cave_deep_text1": "the cave is dark deeper in.",
+      "cave_deep_text2": "the torch light dances on the damp walls.",
+      "cave_fork_text1": "the cave forks.",
+      "cave_fork_text2": "the left passage is narrow, the right is wider.",
+      "cave_lizard_notification": "a cave lizard attacks",
+      "cave_deeper_text1": "the cave goes deeper here.",
+      "cave_deeper_text2": "the air grows more damp and cold.",
+      "cave_end_text1": "the end of the cave is ahead.",
+      "cave_end_text2": "faint light trickles in through a crack.",
+      "animal_nest_text": "a large animal's nest sits at the back of the cave.",
+      "supply_cache_text": "a small supply cache is hidden at the back of the cave.",
+      "old_chest_text": "an old chest is wedged behind the rocks, covered in a thick layer of dust.",
+      "cave_narrow_text1": "the cave narrows a few feet in.",
+      "cave_narrow_text2": "the walls are damp and covered in moss",
+      "cave_a3_text1": "the remains of an old camp lie just inside the cave.",
+      "cave_a3_text2": "bedrolls, torn and blackened, lie beneath a thin layer of dust.",
+      "cave_b1_text1": "a wanderer's corpse lies in a small cavern.",
+      "cave_b1_text2": "decay has set in and some parts are missing.",
+      "cave_b1_text3": "not sure what left it here.",
+      "cave_b2_text1": "the cave is dark deeper in.",
+      "cave_b2_text2": "the torch light dances on the damp walls.",
+      "cave_b3_text1": "the cave forks.",
+      "cave_b3_text2": "the left passage is narrow, the right is wider.",
+      "cave_c1_text1": "the cave goes deeper here.",
+      "cave_c1_text2": "the air grows more damp and cold.",
+      "cave_c2_text1": "the end of the cave is ahead.",
+      "cave_c2_text2": "faint light trickles in through a crack.",
+      "cave_end1_text": "a large animal's nest sits at the back of the cave.",
+      "cave_end2_text": "a small supply cache is hidden at the back of the cave.",
+      "cave_end3_text": "an old chest is wedged behind the rocks, covered in a thick layer of dust."
+    },
+    "house_scenes": {
+      "abandoned_text1": "the house has been abandoned, but not yet picked over.",
+      "abandoned_text2": "there are still a few drops of water in the old well.",
+      "looted_text1": "the house has been ransacked.",
+      "looted_text2": "but some medicine is hidden beneath the floorboards.",
+      "squatter_notification": "a man charges down the hall, a rusty blade in his hands"
+    },
+    "town_scenes": {
+      "school_text1": "the school's windows, where they're not broken, are blackened with soot.",
+      "school_text2": "the double doors creak endlessly in the wind.",
+      "ambush_notification": "ambushed on the street.",
+      "abandoned_store_text": "an abandoned store, its doors and windows boarded up.",
+      "empty_school_text": "the school is empty, save for dust and broken desks.",
+      "school_corner_text": "some useful items are found in a corner of the school.",
+      "street_debris_text": "debris is scattered across the street.",
+      "storage_room_text": "a small storage room is found in one of the houses.",
+      "leave_town": "leave town",
+      "town_a1_text1": "the school's windows, where they're not broken, are blackened with soot.",
+      "town_a1_text2": "the double doors creak endlessly in the wind.",
+      "town_a2_notification": "ambushed on the street.",
+      "town_a3_text": "an abandoned store, its doors and windows boarded up.",
+      "town_b1_text": "the school is empty, save for dust and broken desks.",
+      "town_b2_text": "some useful items are found in a corner of the school.",
+      "town_b3_text": "debris is scattered across the street.",
+      "town_b4_text": "a small storage room is found in one of the houses."
+    },
+    "ironmine_scenes": {
+      "beast_notification": "a large creature attacks, muscles rippling in the torchlight",
+      "cleared_text1": "the beast is dead.",
+      "cleared_text2": "the mine is now safe for workers.",
+      "cleared_notification": "iron mine cleared"
+    },
+    "coalmine_scenes": {
+      "man_joins_notification": "a man joins the fight",
+      "chief_notification": "only the chief remains.",
+      "cleared_text1": "the camp is quiet, save for the crackling of the fires.",
+      "cleared_text2": "the mine is now safe for workers.",
+      "cleared_notification": "coal mine cleared",
+      "end_text": "left the coal mine and returned to the wilderness."
+    },
+    "sulphurmine": {
+      "title": "sulphur mine",
+      "start": {
+        "text1": "the military has set up a perimeter around the mine's entrance.",
+        "text2": "soldiers patrol the area, rifles slung over their shoulders.",
+        "notification": "a military perimeter has been set up around the mine."
+      },
+      "soldier_notification": "a soldier opens fire, alerted.",
+      "second_soldier_notification": "a second soldier joins the fight.",
+      "veteran_notification": "a veteran attacks with a bayonet.",
+      "cleared_text1": "the military presence has been cleared.",
+      "cleared_text2": "the mine is now safe for workers.",
+      "cleared_notification": "sulphur mine cleared",
+      "end_text": "left the sulphur mine and returned to the wilderness."
+    },
+    "city": {
+      "title": "ruined city",
+      "start": {
+        "text1": "a battered highway sign stands guard at the entrance to this once-great city.",
+        "text2": "the towers that haven't crumbled jut from the landscape like the ribs of some ancient beast.",
+        "text3": "might be things worth having, inside.",
+        "notification": "the towers of a decaying city dominate the skyline"
+      },
+      "empty_streets_text1": "the streets are empty.",
+      "empty_streets_text2": "the air is filled with dust, driven relentlessly by the hard wind.",
+      "settlement_text1": "a small settlement at the end of the street.",
+      "settlement_text2": "people have made shelters in the ruins.",
+      "hospital_text1": "the ruins of a hospital stand ahead.",
+      "hospital_text2": "the green cross is barely visible behind grimy windows.",
+      "subway_text1": "a subway entrance leads underground.",
+      "subway_text2": "the stairs disappear into darkness.",
+      "store_ruins_text1": "the ruins of a small shop.",
+      "store_ruins_text2": "some useful items are scattered on the shelves.",
+      "thug_notification": "a thug emerges from the shadows.",
+      "bird_nest_text1": "birds must like shiny things.",
+      "bird_nest_text2": "some good stuff woven into its nest.",
+      "leave_city": "leave city",
+      "end_text": "left the city and returned to the wilderness."
+    },
+    "borehole": {
+      "title": "massive borehole",
+      "start": {
+        "text1": "a huge hole, bored deep into the earth, evidence of the past harvest.",
+        "text2": "they took what they wanted, and left.",
+        "text3": "castoff from the massive drills can still be found at the precipice.",
+        "notification": "a massive borehole cuts into the earth"
+      },
+      "end_text": "left the borehole and returned to the wilderness."
+    },
+    "battlefield": {
+      "title": "forgotten battlefield",
+      "start": {
+        "text1": "a battle was fought here, long ago.",
+        "text2": "broken technology from both sides litters the blasted landscape.",
+        "notification": "the debris of an ancient battlefield litters the ground"
+      },
+      "end_text": "left the battlefield and returned to the wilderness."
+    },
+    "ship": {
+      "title": "crashed starship",
+      "start": {
+        "text1": "the familiar curves of a wanderer vessel rise from the dust and ash.",
+        "text2": "lucky that the natives can't work the mechanisms.",
+        "text3": "with a little effort, it might fly again.",
+        "notification": "a crashed starship has been discovered"
+      },
+      "salvage": "salvage",
+      "end_text": "useful parts have been taken from the starship."
+    },
+    "executioner": {
+      "title": "destroyed warship",
+      "start": {
+        "text1": "the wreckage of a huge warship is embedded in the earth.",
+        "text2": "it's tilted in a deep crater, carved out when it fell from the sky.",
+        "text3": "the hatches are all sealed, but the hull has been blasted open above the dirt, providing an entrance.",
+        "notification": "the wreckage of a huge warship is embedded in the earth"
+      },
+      "interior_text1": "the interior of the ship is cold and dark. what little light there is only highlights its harsh angles.",
+      "interior_text2": "the walls hum faintly.",
+      "discovery_text1": "in a small antechamber, a strange device sits on the floor.",
+      "discovery_text2": "it looks important.",
+      "take_device": "take the device and leave",
+      "end_text": "left the warship and returned to the wilderness."
+    },
+    "cache": {
+      "title": "destroyed village",
+      "start": {
+        "text1": "a destroyed village lies in the dust.",
+        "text2": "charred bodies litter the ground.",
+        "notification": "the metallic tang of wanderer afterburners hangs in the air"
+      },
+      "underground_text1": "a hidden cache is found beneath the ruins.",
+      "underground_text2": "it's stocked with supplies from the old world.",
+      "end_text": "left the destroyed village and returned to the wilderness."
     }
   }
 }

@@ -207,32 +207,66 @@ class Setpieces extends ChangeNotifier {
           'hit': 0.8,
           'attackDelay': 1,
           'health': 5,
-          'notification': '一只受惊的野兽保卫着它的家',
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.cave_scenes.beast_notification');
+          }(),
           'loot': {
             'fur': {'min': 1, 'max': 10, 'chance': 1.0},
             'teeth': {'min': 1, 'max': 5, 'chance': 0.8}
           },
           'buttons': {
             'continue': {
-              'text': '继续',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
               'cooldown': 1,
               'nextScene': {'0.5': 'b1', '1': 'b2'}
             },
-            'leave': {'text': '离开洞穴', 'cooldown': 1, 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('setpieces.cave_scenes.leave_cave');
+              }(),
+              'cooldown': 1,
+              'nextScene': 'end'
+            }
           }
         },
         'a2': {
-          'text': ['洞穴在几英尺处变窄。', '墙壁潮湿，长满苔藓'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.cave_scenes.cave_narrow_text1'),
+              localization.translate('setpieces.cave_scenes.cave_narrow_text2')
+            ];
+          }(),
           'buttons': {
             'continue': {
-              'text': '挤过去',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('setpieces.cave_scenes.squeeze_through');
+              }(),
               'nextScene': {'0.5': 'b2', '1': 'b3'}
             },
-            'leave': {'text': '离开洞穴', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('setpieces.cave_scenes.leave_cave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'a3': {
-          'text': ['一个旧营地的遗迹就在洞穴里面。', '床铺，撕裂和发黑，躺在一层薄薄的灰尘下面。'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.cave_scenes.cave_a3_text1'),
+              localization.translate('setpieces.cave_scenes.cave_a3_text2')
+            ];
+          }(),
           'loot': {
             'cured meat': {'min': 1, 'max': 5, 'chance': 1.0},
             'torch': {'min': 1, 'max': 5, 'chance': 0.5},
@@ -240,11 +274,21 @@ class Setpieces extends ChangeNotifier {
           },
           'buttons': {
             'continue': {
-              'text': '继续',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
               'cooldown': 1,
               'nextScene': {'0.5': 'b3', '1': 'b4'}
             },
-            'leave': {'text': '离开洞穴', 'cooldown': 1, 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('setpieces.cave_scenes.leave_cave');
+              }(),
+              'cooldown': 1,
+              'nextScene': 'end'
+            }
           }
         },
         'b1': {
@@ -431,7 +475,13 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'supplies': {
-          'text': ['房子已被遗弃，但尚未被搜刮。', '旧井里还有几滴水。'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.house_scenes.abandoned_text1'),
+              localization.translate('setpieces.house_scenes.abandoned_text2')
+            ];
+          }(),
           'onLoad': 'replenishWater',
           'loot': {
             'cured meat': {'min': 1, 'max': 10, 'chance': 0.8},
@@ -443,7 +493,13 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'medicine': {
-          'text': ['房子已被洗劫。', '但地板下面藏着一些药剂。'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.house_scenes.looted_text1'),
+              localization.translate('setpieces.house_scenes.looted_text2')
+            ];
+          }(),
           'onLoad': 'markVisited',
           'loot': {
             'medicine': {'min': 2, 'max': 5, 'chance': 1.0}
@@ -460,7 +516,10 @@ class Setpieces extends ChangeNotifier {
           'hit': 0.8,
           'attackDelay': 2,
           'health': 10,
-          'notification': '一个男人冲下大厅，手里拿着一把生锈的刀片',
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.house_scenes.squatter_notification');
+          }(),
           'onLoad': 'markVisited',
           'loot': {
             'cured meat': {'min': 1, 'max': 10, 'chance': 0.8},
@@ -527,7 +586,13 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'a1': {
-          'text': ['学校的窗户没有破碎的地方，都被烟灰熏黑了。', '双扇门在风中不停地吱吱作响。'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.town_scenes.town_a1_text1'),
+              localization.translate('setpieces.town_scenes.town_a1_text2')
+            ];
+          }(),
           'buttons': {
             'enter': {
               'text': '进入',
@@ -550,7 +615,10 @@ class Setpieces extends ChangeNotifier {
             'leather': {'min': 5, 'max': 10, 'chance': 0.8},
             'cured meat': {'min': 1, 'max': 5, 'chance': 0.5}
           },
-          'notification': '在街上遭到伏击。',
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.town_scenes.town_a2_notification');
+          }(),
           'buttons': {
             'continue': {
               'text': '继续',
@@ -687,7 +755,10 @@ class Setpieces extends ChangeNotifier {
             'scales': {'min': 5, 'max': 10, 'chance': 0.8},
             'cloth': {'min': 5, 'max': 10, 'chance': 0.5}
           },
-          'notification': '一个大型生物扑来，肌肉在火光中起伏',
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.ironmine_scenes.beast_notification');
+          }(),
           'buttons': {
             'leave': {
               'text': '离开',
@@ -697,11 +768,26 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'cleared': {
-          'text': ['野兽死了。', '矿井现在对工人来说是安全的。'],
-          'notification': '铁矿已清除危险',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.ironmine_scenes.cleared_text1'),
+              localization.translate('setpieces.ironmine_scenes.cleared_text2')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.ironmine_scenes.cleared_notification');
+          }(),
           'onLoad': 'clearIronMine',
           'buttons': {
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'end': {
@@ -771,14 +857,27 @@ class Setpieces extends ChangeNotifier {
             'cured meat': {'min': 1, 'max': 5, 'chance': 0.8},
             'cloth': {'min': 1, 'max': 5, 'chance': 0.8}
           },
-          'notification': '一个男人加入战斗',
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.coalmine_scenes.man_joins_notification');
+          }(),
           'buttons': {
             'continue': {
-              'text': '继续',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
               'cooldown': 1,
               'nextScene': {'1': 'a2'}
             },
-            'run': {'text': '逃跑', 'cooldown': 1, 'nextScene': 'end'}
+            'run': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.run');
+              }(),
+              'cooldown': 1,
+              'nextScene': 'end'
+            }
           }
         },
         'a2': {
@@ -793,14 +892,27 @@ class Setpieces extends ChangeNotifier {
             'cured meat': {'min': 1, 'max': 5, 'chance': 0.8},
             'cloth': {'min': 1, 'max': 5, 'chance': 0.8}
           },
-          'notification': '一个男人加入战斗',
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.coalmine_scenes.man_joins_notification');
+          }(),
           'buttons': {
             'continue': {
-              'text': '继续',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
               'cooldown': 1,
               'nextScene': {'1': 'a3'}
             },
-            'run': {'text': '逃跑', 'cooldown': 1, 'nextScene': 'end'}
+            'run': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.run');
+              }(),
+              'cooldown': 1,
+              'nextScene': 'end'
+            }
           }
         },
         'a3': {
@@ -816,7 +928,10 @@ class Setpieces extends ChangeNotifier {
             'cloth': {'min': 5, 'max': 10, 'chance': 0.8},
             'iron': {'min': 1, 'max': 5, 'chance': 0.8}
           },
-          'notification': '只剩下首领了。',
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.coalmine_scenes.chief_notification');
+          }(),
           'buttons': {
             'continue': {
               'text': '继续',
@@ -826,17 +941,41 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'cleared': {
-          'text': ['营地很安静，只有火焰的噼啪声。', '矿井现在对工人来说是安全的。'],
-          'notification': '煤矿已清除危险',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.coalmine_scenes.cleared_text1'),
+              localization.translate('setpieces.coalmine_scenes.cleared_text2')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.coalmine_scenes.cleared_notification');
+          }(),
           'onLoad': 'clearCoalMine',
           'buttons': {
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'end': {
-          'text': ['离开了煤矿，回到了荒野中。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.coalmine_scenes.end_text')];
+          }(),
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'finish'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'finish'
+            }
           }
         }
       },
@@ -845,17 +984,38 @@ class Setpieces extends ChangeNotifier {
 
     // 硫磺矿
     'sulphurmine': {
-      'title': '硫磺矿',
+      'title': () {
+        final localization = Localization();
+        return localization.translate('setpieces.sulphurmine.title');
+      }(),
       'scenes': {
         'start': {
-          'text': ['军队已经在矿井入口设立了阵地。', '士兵们在周边巡逻，步枪挂在肩膀上。'],
-          'notification': '矿井周围设立了军事警戒线。',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.sulphurmine.start.text1'),
+              localization.translate('setpieces.sulphurmine.start.text2')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.sulphurmine.start.notification');
+          }(),
           'buttons': {
             'attack': {
-              'text': '攻击',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.attack');
+              }(),
               'nextScene': {'1': 'a1'}
             },
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'a1': {
@@ -872,7 +1032,10 @@ class Setpieces extends ChangeNotifier {
             'bullets': {'min': 1, 'max': 5, 'chance': 0.5},
             'rifle': {'min': 1, 'max': 1, 'chance': 0.2}
           },
-          'notification': '一名士兵警觉地开火。',
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.sulphurmine.soldier_notification');
+          }(),
           'buttons': {
             'continue': {
               'text': '继续',
@@ -896,7 +1059,10 @@ class Setpieces extends ChangeNotifier {
             'bullets': {'min': 1, 'max': 5, 'chance': 0.5},
             'rifle': {'min': 1, 'max': 1, 'chance': 0.2}
           },
-          'notification': '第二名士兵加入战斗。',
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.sulphurmine.second_soldier_notification');
+          }(),
           'buttons': {
             'continue': {
               'text': '继续',
@@ -918,7 +1084,10 @@ class Setpieces extends ChangeNotifier {
             'bayonet': {'min': 1, 'max': 1, 'chance': 0.5},
             'cured meat': {'min': 1, 'max': 5, 'chance': 0.8}
           },
-          'notification': '一名老兵挥舞着刺刀攻击。',
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.sulphurmine.veteran_notification');
+          }(),
           'buttons': {
             'continue': {
               'text': '继续',
@@ -928,17 +1097,41 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'cleared': {
-          'text': ['军事存在已被清除。', '矿井现在对工人来说是安全的。'],
-          'notification': '硫磺矿已清除危险',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.sulphurmine.cleared_text1'),
+              localization.translate('setpieces.sulphurmine.cleared_text2')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.sulphurmine.cleared_notification');
+          }(),
           'onLoad': 'clearSulphurMine',
           'buttons': {
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'end': {
-          'text': ['离开了硫磺矿，回到了荒野中。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.sulphurmine.end_text')];
+          }(),
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'finish'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'finish'
+            }
           }
         }
       },
@@ -947,31 +1140,64 @@ class Setpieces extends ChangeNotifier {
 
     // 城市
     'city': {
-      'title': '废墟城市',
+      'title': () {
+        final localization = Localization();
+        return localization.translate('setpieces.city.title');
+      }(),
       'scenes': {
         'start': {
-          'text': [
-            '一块破旧的高速公路标志守卫着这座曾经伟大的城市的入口。',
-            '那些没有倒塌的塔楼从景观中突出，就像某种古老野兽的肋骨。',
-            '里面可能还有值得拥有的东西。'
-          ],
-          'notification': '腐朽城市的塔楼主宰着天际线',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.city.start.text1'),
+              localization.translate('setpieces.city.start.text2'),
+              localization.translate('setpieces.city.start.text3')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.city.start.notification');
+          }(),
           'buttons': {
             'enter': {
-              'text': '探索',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.explore');
+              }(),
               'nextScene': {'0.2': 'a1', '0.5': 'a2', '0.8': 'a3', '1': 'a4'}
             },
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'a1': {
-          'text': ['街道空无一人。', '空气中弥漫着尘土，被猛烈的风无情地驱赶着。'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.city.empty_streets_text1'),
+              localization.translate('setpieces.city.empty_streets_text2')
+            ];
+          }(),
           'buttons': {
             'continue': {
-              'text': '继续',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
               'nextScene': {'0.5': 'b1', '1': 'b2'}
             },
-            'leave': {'text': '离开城市', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('setpieces.city.leave_city');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'a2': {
@@ -1035,7 +1261,10 @@ class Setpieces extends ChangeNotifier {
             'leather': {'min': 5, 'max': 10, 'chance': 0.8},
             'cured meat': {'min': 1, 'max': 5, 'chance': 0.5}
           },
-          'notification': '一个暴徒从阴影中走出。',
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.city.thug_notification');
+          }(),
           'buttons': {
             'continue': {
               'text': '继续',
@@ -1058,9 +1287,18 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'end': {
-          'text': ['离开了城市，回到了荒野中。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.city.end_text')];
+          }(),
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'finish'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'finish'
+            }
           }
         }
       },
@@ -1069,27 +1307,52 @@ class Setpieces extends ChangeNotifier {
 
     // 钻孔事件
     'borehole': {
-      'title': '巨大的钻孔',
+      'title': () {
+        final localization = Localization();
+        return localization.translate('setpieces.borehole.title');
+      }(),
       'scenes': {
         'start': {
-          'text': [
-            '一个巨大的洞深深地切入地球，这是过去收获的证据。',
-            '他们拿走了他们想要的东西，然后离开了。',
-            '巨型钻头的废料仍然可以在悬崖边缘找到。'
-          ],
-          'notification': '一个巨大的钻孔切入大地',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.borehole.start.text1'),
+              localization.translate('setpieces.borehole.start.text2'),
+              localization.translate('setpieces.borehole.start.text3')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.borehole.start.notification');
+          }(),
           'onLoad': 'markVisited',
           'loot': {
             'alien alloy': {'min': 1, 'max': 3, 'chance': 1.0}
           },
           'buttons': {
-            'leave': {'text': '离开', 'cooldown': 1, 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'cooldown': 1,
+              'nextScene': 'end'
+            }
           }
         },
         'end': {
-          'text': ['离开了钻孔，回到了荒野中。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.borehole.end_text')];
+          }(),
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'finish'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'finish'
+            }
           }
         }
       },
@@ -1098,11 +1361,23 @@ class Setpieces extends ChangeNotifier {
 
     // 战场事件
     'battlefield': {
-      'title': '被遗忘的战场',
+      'title': () {
+        final localization = Localization();
+        return localization.translate('setpieces.battlefield.title');
+      }(),
       'scenes': {
         'start': {
-          'text': ['很久以前，这里发生了一场战斗。', '双方破损的技术设备在荒芜的景观上静静地躺着。'],
-          'notification': '古老战场的遗迹散落各处',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.battlefield.start.text1'),
+              localization.translate('setpieces.battlefield.start.text2')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.battlefield.start.notification');
+          }(),
           'onLoad': 'markVisited',
           'loot': {
             'rifle': {'min': 1, 'max': 3, 'chance': 0.5},
@@ -1113,13 +1388,28 @@ class Setpieces extends ChangeNotifier {
             'alien alloy': {'min': 1, 'max': 1, 'chance': 0.3}
           },
           'buttons': {
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'end': {
-          'text': ['离开了战场，回到了荒野中。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.battlefield.end_text')];
+          }(),
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'finish'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'finish'
+            }
           }
         }
       },
@@ -1128,24 +1418,48 @@ class Setpieces extends ChangeNotifier {
 
     // 星舰事件
     'ship': {
-      'title': '坠毁的星舰',
+      'title': () {
+        final localization = Localization();
+        return localization.translate('setpieces.ship.title');
+      }(),
       'scenes': {
         'start': {
-          'text': [
-            '熟悉的流浪者飞船曲线从尘土和灰烬中升起。',
-            '幸运的是，当地人无法操作这些机制。',
-            '稍加努力，它可能会再次飞行。'
-          ],
-          'notification': '发现了一艘坠毁的星舰',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.ship.start.text1'),
+              localization.translate('setpieces.ship.start.text2'),
+              localization.translate('setpieces.ship.start.text3')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.ship.start.notification');
+          }(),
           'onLoad': 'activateShip',
           'buttons': {
-            'salvage': {'text': '打捞', 'nextScene': 'end'}
+            'salvage': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('setpieces.ship.salvage');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'end': {
-          'text': ['从星舰中获得了有用的部件。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.ship.end_text')];
+          }(),
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'finish'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'finish'
+            }
           }
         }
       },
@@ -1154,15 +1468,24 @@ class Setpieces extends ChangeNotifier {
 
     // 执行者事件 - 简化版本
     'executioner': {
-      'title': '被摧毁的战舰',
+      'title': () {
+        final localization = Localization();
+        return localization.translate('setpieces.executioner.title');
+      }(),
       'scenes': {
         'start': {
-          'text': [
-            '一艘巨大战舰的残骸嵌在地球中。',
-            '它在深深的裂缝中倾斜，这是它从天空坠落时切出的。',
-            '舱门都被密封了，但船体在泥土上方被炸开，提供了一个入口。'
-          ],
-          'notification': '巨大战舰的残骸嵌在地球中',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.executioner.start.text1'),
+              localization.translate('setpieces.executioner.start.text2'),
+              localization.translate('setpieces.executioner.start.text3')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.executioner.start.notification');
+          }(),
           'buttons': {
             'enter': {
               'text': '进入',
@@ -1173,14 +1496,26 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'interior': {
-          'text': ['船的内部寒冷而黑暗。仅有的一点光线只会突出其严酷的角度。', '墙壁发出微弱的嗡嗡声。'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.executioner.interior_text1'),
+              localization.translate('setpieces.executioner.interior_text2')
+            ];
+          }(),
           'buttons': {
             'continue': {'text': '继续', 'nextScene': 'discovery'},
             'leave': {'text': '离开', 'nextScene': 'end'}
           }
         },
         'discovery': {
-          'text': ['在一个小前厅中，一个奇怪的装置坐在地板上。', '看起来很重要。'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.executioner.discovery_text1'),
+              localization.translate('setpieces.executioner.discovery_text2')
+            ];
+          }(),
           'onLoad': 'activateExecutioner',
           'loot': {
             'alien alloy': {'min': 2, 'max': 5, 'chance': 1.0},
@@ -1188,13 +1523,28 @@ class Setpieces extends ChangeNotifier {
             'laser rifle': {'min': 1, 'max': 2, 'chance': 0.6}
           },
           'buttons': {
-            'take': {'text': '拿取装置并离开', 'nextScene': 'end'}
+            'take': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('setpieces.executioner.take_device');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'end': {
-          'text': ['离开了战舰，回到了荒野中。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.executioner.end_text')];
+          }(),
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'finish'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'finish'
+            }
           }
         }
       },
@@ -1203,18 +1553,48 @@ class Setpieces extends ChangeNotifier {
 
     // 缓存事件 - 当代遗产
     'cache': {
-      'title': '被摧毁的村庄',
+      'title': () {
+        final localization = Localization();
+        return localization.translate('setpieces.cache.title');
+      }(),
       'scenes': {
         'start': {
-          'text': ['一个被摧毁的村庄躺在尘土中。', '烧焦的尸体散落在地上。'],
-          'notification': '空气中弥漫着流浪者加力燃烧器的金属味',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.cache.start.text1'),
+              localization.translate('setpieces.cache.start.text2')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.cache.start.notification');
+          }(),
           'buttons': {
-            'enter': {'text': '进入', 'nextScene': 'underground'},
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'enter': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.enter');
+              }(),
+              'nextScene': 'underground'
+            },
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'underground': {
-          'text': ['在废墟下面发现了一个隐藏的地下室。', '里面存放着前代人留下的补给品。'],
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.cache.underground_text1'),
+              localization.translate('setpieces.cache.underground_text2')
+            ];
+          }(),
           'onLoad': 'markVisited',
           'loot': {
             'cured meat': {'min': 10, 'max': 20, 'chance': 1.0},
@@ -1229,9 +1609,18 @@ class Setpieces extends ChangeNotifier {
           }
         },
         'end': {
-          'text': ['离开了被摧毁的村庄，回到了荒野中。'],
+          'text': () {
+            final localization = Localization();
+            return [localization.translate('setpieces.cache.end_text')];
+          }(),
           'buttons': {
-            'continue': {'text': '继续', 'nextScene': 'finish'}
+            'continue': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.continue');
+              }(),
+              'nextScene': 'finish'
+            }
           }
         }
       },

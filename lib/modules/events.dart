@@ -304,7 +304,10 @@ class Events extends ChangeNotifier {
           }
         },
         {
-          'title': '拾荒者',
+          'title': () {
+            final localization = Localization();
+            return localization.translate('events.encounters.scavenger.title');
+          }(),
           'isAvailable': () {
             final world = World();
             return world.getDistance() > 10 &&
@@ -315,8 +318,14 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'scavenger',
-              'enemyName': '拾荒者',
-              'deathMessage': '拾荒者死了',
+              'enemyName': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.scavenger.enemy_name');
+              }(),
+              'deathMessage': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.scavenger.death_message');
+              }(),
               'chara': 'E',
               'damage': 4,
               'hit': 0.8,
@@ -328,12 +337,18 @@ class Events extends ChangeNotifier {
                 'iron': {'min': 1, 'max': 5, 'chance': 0.5},
                 'medicine': {'min': 1, 'max': 2, 'chance': 0.1}
               },
-              'notification': '一个拾荒者靠近，希望能轻松得手'
+              'notification': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.scavenger.notification');
+              }()
             }
           }
         },
         {
-          'title': '巨大蜥蜴',
+          'title': () {
+            final localization = Localization();
+            return localization.translate('events.encounters.lizard.title');
+          }(),
           'isAvailable': () {
             final world = World();
             return world.getDistance() > 10 &&
@@ -344,8 +359,14 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'lizard',
-              'enemyName': '蜥蜴',
-              'deathMessage': '蜥蜴死了',
+              'enemyName': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.lizard.enemy_name');
+              }(),
+              'deathMessage': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.lizard.death_message');
+              }(),
               'chara': 'T',
               'damage': 5,
               'hit': 0.8,
@@ -356,7 +377,10 @@ class Events extends ChangeNotifier {
                 'teeth': {'min': 5, 'max': 10, 'chance': 0.5},
                 'meat': {'min': 5, 'max': 10, 'chance': 0.8}
               },
-              'notification': '草丛剧烈摇摆，一只巨大的蜥蜴冲了出来'
+              'notification': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.lizard.notification');
+              }()
             }
           }
         },
@@ -400,7 +424,10 @@ class Events extends ChangeNotifier {
           }
         },
         {
-          'title': '士兵',
+          'title': () {
+            final localization = Localization();
+            return localization.translate('events.encounters.soldier.title');
+          }(),
           'isAvailable': () {
             final world = World();
             return world.getDistance() > 20 && world.getTerrain() == '.'; // 荒地
@@ -409,8 +436,14 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'soldier',
-              'enemyName': '士兵',
-              'deathMessage': '士兵死了',
+              'enemyName': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.soldier.enemy_name');
+              }(),
+              'deathMessage': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.soldier.death_message');
+              }(),
               'ranged': true,
               'chara': 'D',
               'damage': 8,
@@ -423,12 +456,18 @@ class Events extends ChangeNotifier {
                 'rifle': {'min': 1, 'max': 1, 'chance': 0.2},
                 'medicine': {'min': 1, 'max': 2, 'chance': 0.1}
               },
-              'notification': '一名士兵从沙漠对面开火'
+              'notification': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.soldier.notification');
+              }()
             }
           }
         },
         {
-          'title': '狙击手',
+          'title': () {
+            final localization = Localization();
+            return localization.translate('events.encounters.sniper.title');
+          }(),
           'isAvailable': () {
             final world = World();
             return world.getDistance() > 20 && world.getTerrain() == ','; // 田野
@@ -437,8 +476,14 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'sniper',
-              'enemyName': '狙击手',
-              'deathMessage': '狙击手死了',
+              'enemyName': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.sniper.enemy_name');
+              }(),
+              'deathMessage': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.sniper.death_message');
+              }(),
               'chara': 'D',
               'damage': 15,
               'hit': 0.8,
@@ -451,7 +496,10 @@ class Events extends ChangeNotifier {
                 'rifle': {'min': 1, 'max': 1, 'chance': 0.2},
                 'medicine': {'min': 1, 'max': 2, 'chance': 0.1}
               },
-              'notification': '枪声响起，来自长草丛中的某个地方'
+              'notification': () {
+                final localization = Localization();
+                return localization.translate('events.encounters.sniper.notification');
+              }()
             }
           }
         },

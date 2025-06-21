@@ -1238,6 +1238,181 @@
         "text2": "男人们四处走动，武器准备就绪。",
         "notification": "这个旧矿井并没有被遗弃"
       }
+    },
+    "cave_scenes": {
+      "beast_notification": "一只受惊的野兽保卫着它的家",
+      "leave_cave": "离开洞穴",
+      "squeeze_through": "挤过去",
+      "old_camp_text1": "一个旧营地的遗迹就在洞穴里面。",
+      "old_camp_text2": "床铺，撕裂和发黑，躺在一层薄薄的灰尘下面。",
+      "wanderer_corpse_text1": "一个流浪者的尸体躺在一个小洞穴里。",
+      "wanderer_corpse_text2": "腐烂已经开始了，有些部分不见了。",
+      "wanderer_corpse_text3": "不知道是什么把它留在这里的。",
+      "cave_deep_text1": "洞穴深处一片漆黑。",
+      "cave_deep_text2": "火把的光芒在潮湿的墙壁上跳舞。",
+      "cave_fork_text1": "洞穴分叉了。",
+      "cave_fork_text2": "左边的通道很窄，右边的通道更宽。",
+      "cave_lizard_notification": "一只洞穴蜥蜴攻击",
+      "cave_deeper_text1": "洞穴在这里变得更深。",
+      "cave_deeper_text2": "空气变得更加潮湿和寒冷。",
+      "cave_end_text1": "洞穴的尽头就在前方。",
+      "cave_end_text2": "微弱的光线从裂缝中透进来。",
+      "animal_nest_text": "一个大型动物的巢穴位于洞穴的后面。",
+      "supply_cache_text": "一个小的补给缓存隐藏在洞穴的后面。",
+      "old_chest_text": "一个旧箱子被楔在岩石后面，覆盖着厚厚的灰尘层。",
+      "cave_narrow_text1": "洞穴在几英尺处变窄。",
+      "cave_narrow_text2": "墙壁潮湿，长满苔藓",
+      "cave_a3_text1": "一个旧营地的遗迹就在洞穴里面。",
+      "cave_a3_text2": "床铺，撕裂和发黑，躺在一层薄薄的灰尘下面。",
+      "cave_b1_text1": "一个流浪者的尸体躺在一个小洞穴里。",
+      "cave_b1_text2": "腐烂已经开始了，有些部分不见了。",
+      "cave_b1_text3": "不知道是什么把它留在这里的。",
+      "cave_b2_text1": "洞穴深处一片漆黑。",
+      "cave_b2_text2": "火把的光芒在潮湿的墙壁上跳舞。",
+      "cave_b3_text1": "洞穴分叉了。",
+      "cave_b3_text2": "左边的通道很窄，右边的通道更宽。",
+      "cave_c1_text1": "洞穴在这里变得更深。",
+      "cave_c1_text2": "空气变得更加潮湿和寒冷。",
+      "cave_c2_text1": "洞穴的尽头就在前方。",
+      "cave_c2_text2": "微弱的光线从裂缝中透进来。",
+      "cave_end1_text": "一个大型动物的巢穴位于洞穴的后面。",
+      "cave_end2_text": "一个小的补给缓存隐藏在洞穴的后面。",
+      "cave_end3_text": "一个旧箱子被楔在岩石后面，覆盖着厚厚的灰尘层。"
+    },
+    "house_scenes": {
+      "abandoned_text1": "房子已被遗弃，但尚未被搜刮。",
+      "abandoned_text2": "旧井里还有几滴水。",
+      "looted_text1": "房子已被洗劫。",
+      "looted_text2": "但地板下面藏着一些药剂。",
+      "squatter_notification": "一个男人冲下大厅，手里拿着一把生锈的刀片"
+    },
+    "town_scenes": {
+      "school_text1": "学校的窗户没有破碎的地方，都被烟灰熏黑了。",
+      "school_text2": "双扇门在风中不停地吱吱作响。",
+      "ambush_notification": "在街上遭到伏击。",
+      "abandoned_store_text": "一座废弃的商店，门窗都被木板封住了。",
+      "empty_school_text": "学校里空荡荡的，只有灰尘和破碎的桌椅。",
+      "school_corner_text": "在学校的角落里发现了一些有用的物品。",
+      "street_debris_text": "街道上散落着各种废弃物品。",
+      "storage_room_text": "在一栋房子里发现了一个小储藏室。",
+      "leave_town": "离开城镇",
+      "town_a1_text1": "学校的窗户没有破碎的地方，都被烟灰熏黑了。",
+      "town_a1_text2": "双扇门在风中不停地吱吱作响。",
+      "town_a2_notification": "在街上遭到伏击。",
+      "town_a3_text": "一座废弃的商店，门窗都被木板封住了。",
+      "town_b1_text": "学校里空荡荡的，只有灰尘和破碎的桌椅。",
+      "town_b2_text": "在学校的角落里发现了一些有用的物品。",
+      "town_b3_text": "街道上散落着各种废弃物品。",
+      "town_b4_text": "在一栋房子里发现了一个小储藏室。"
+    },
+    "ironmine_scenes": {
+      "beast_notification": "一个大型生物扑来，肌肉在火光中起伏",
+      "cleared_text1": "野兽死了。",
+      "cleared_text2": "矿井现在对工人来说是安全的。",
+      "cleared_notification": "铁矿已清除危险"
+    },
+    "coalmine_scenes": {
+      "man_joins_notification": "一个男人加入战斗",
+      "chief_notification": "只剩下首领了。",
+      "cleared_text1": "营地很安静，只有火焰的噼啪声。",
+      "cleared_text2": "矿井现在对工人来说是安全的。",
+      "cleared_notification": "煤矿已清除危险",
+      "end_text": "离开了煤矿，回到了荒野中。"
+    },
+    "sulphurmine": {
+      "title": "硫磺矿",
+      "start": {
+        "text1": "军队已经在矿井入口设立了阵地。",
+        "text2": "士兵们在周边巡逻，步枪挂在肩膀上。",
+        "notification": "矿井周围设立了军事警戒线。"
+      },
+      "soldier_notification": "一名士兵警觉地开火。",
+      "second_soldier_notification": "第二名士兵加入战斗。",
+      "veteran_notification": "一名老兵挥舞着刺刀攻击。",
+      "cleared_text1": "军事存在已被清除。",
+      "cleared_text2": "矿井现在对工人来说是安全的。",
+      "cleared_notification": "硫磺矿已清除危险",
+      "end_text": "离开了硫磺矿，回到了荒野中。"
+    },
+    "city": {
+      "title": "废墟城市",
+      "start": {
+        "text1": "一块破旧的高速公路标志守卫着这座曾经伟大的城市的入口。",
+        "text2": "那些没有倒塌的塔楼从景观中突出，就像某种古老野兽的肋骨。",
+        "text3": "里面可能还有值得拥有的东西。",
+        "notification": "腐朽城市的塔楼主宰着天际线"
+      },
+      "empty_streets_text1": "街道空无一人。",
+      "empty_streets_text2": "空气中弥漫着尘土，被猛烈的风无情地驱赶着。",
+      "settlement_text1": "一个小定居点在街道的尽头。",
+      "settlement_text2": "人们在废墟中搭建了临时住所。",
+      "hospital_text1": "一座医院的废墟矗立在前方。",
+      "hospital_text2": "绿色十字架在肮脏的窗户后面勉强可见。",
+      "subway_text1": "地铁入口通向地下。",
+      "subway_text2": "台阶消失在黑暗中。",
+      "store_ruins_text1": "一个小商店的废墟。",
+      "store_ruins_text2": "货架上散落着一些有用的物品。",
+      "thug_notification": "一个暴徒从阴影中走出。",
+      "bird_nest_text1": "鸟儿一定喜欢闪亮的东西。",
+      "bird_nest_text2": "一些好东西编织在它的巢穴里。",
+      "leave_city": "离开城市",
+      "end_text": "离开了城市，回到了荒野中。"
+    },
+    "borehole": {
+      "title": "巨大的钻孔",
+      "start": {
+        "text1": "一个巨大的洞深深地切入地球，这是过去收获的证据。",
+        "text2": "他们拿走了他们想要的东西，然后离开了。",
+        "text3": "巨型钻头的废料仍然可以在悬崖边缘找到。",
+        "notification": "一个巨大的钻孔切入大地"
+      },
+      "end_text": "离开了钻孔，回到了荒野中。"
+    },
+    "battlefield": {
+      "title": "被遗忘的战场",
+      "start": {
+        "text1": "很久以前，这里发生了一场战斗。",
+        "text2": "双方破损的技术设备在荒芜的景观上静静地躺着。",
+        "notification": "古老战场的遗迹散落各处"
+      },
+      "end_text": "离开了战场，回到了荒野中。"
+    },
+    "ship": {
+      "title": "坠毁的星舰",
+      "start": {
+        "text1": "熟悉的流浪者飞船曲线从尘土和灰烬中升起。",
+        "text2": "幸运的是，当地人无法操作这些机制。",
+        "text3": "稍加努力，它可能会再次飞行。",
+        "notification": "发现了一艘坠毁的星舰"
+      },
+      "salvage": "打捞",
+      "end_text": "从星舰中获得了有用的部件。"
+    },
+    "executioner": {
+      "title": "被摧毁的战舰",
+      "start": {
+        "text1": "一艘巨大战舰的残骸嵌在地球中。",
+        "text2": "它在深深的裂缝中倾斜，这是它从天空坠落时切出的。",
+        "text3": "舱门都被密封了，但船体在泥土上方被炸开，提供了一个入口。",
+        "notification": "巨大战舰的残骸嵌在地球中"
+      },
+      "interior_text1": "船的内部寒冷而黑暗。仅有的一点光线只会突出其严酷的角度。",
+      "interior_text2": "墙壁发出微弱的嗡嗡声。",
+      "discovery_text1": "在一个小前厅中，一个奇怪的装置坐在地板上。",
+      "discovery_text2": "看起来很重要。",
+      "take_device": "拿取装置并离开",
+      "end_text": "离开了战舰，回到了荒野中。"
+    },
+    "cache": {
+      "title": "被摧毁的村庄",
+      "start": {
+        "text1": "一个被摧毁的村庄躺在尘土中。",
+        "text2": "烧焦的尸体散落在地上。",
+        "notification": "空气中弥漫着流浪者加力燃烧器的金属味"
+      },
+      "underground_text1": "在废墟下面发现了一个隐藏的地下室。",
+      "underground_text2": "里面存放着前代人留下的补给品。",
+      "end_text": "离开了被摧毁的村庄，回到了荒野中。"
     }
   }
 }
