@@ -22,7 +22,7 @@ class Outside extends ChangeNotifier {
   Outside._internal();
 
   // 模块名称
-  final String name = "外部";
+  final String name = "Outside";
 
   // 常量
   // static const int _storesOffset = 0; // 暂时未使用

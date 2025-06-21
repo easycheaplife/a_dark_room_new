@@ -67,7 +67,8 @@ class Ship extends ChangeNotifier {
     final sm = StateManager();
 
     if (sm.get('game.spaceShip.seenShip', true) != true) {
-      NotificationManager().notify(name, '在碎片云的某处，流浪者舰队在盘旋。在这块岩石上待得太久了。');
+      final localization = Localization();
+      NotificationManager().notify(name, localization.translate('ship.notifications.seen_ship'));
       sm.set('game.spaceShip.seenShip', true);
     }
 
@@ -89,7 +90,8 @@ class Ship extends ChangeNotifier {
     final alienAlloy = (sm.get('stores["alien alloy"]', true) ?? 0) as int;
 
     if (alienAlloy < alloyPerHull) {
-      NotificationManager().notify(name, "外星合金不足");
+      final localization = Localization();
+      NotificationManager().notify(name, localization.translate('ship.notifications.insufficient_alloy'));
       return;
     }
 
@@ -111,7 +113,8 @@ class Ship extends ChangeNotifier {
     final alienAlloy = (sm.get('stores["alien alloy"]', true) ?? 0) as int;
 
     if (alienAlloy < alloyPerThruster) {
-      NotificationManager().notify(name, "外星合金不足");
+      final localization = Localization();
+      NotificationManager().notify(name, localization.translate('ship.notifications.insufficient_alloy'));
       return;
     }
 
@@ -139,13 +142,13 @@ class Ship extends ChangeNotifier {
     if (sm.get('game.spaceShip.seenWarning', true) != true) {
       // 显示警告事件
       final liftOffEvent = {
-        'title': '准备离开？',
+        'title': 'ready to leave?',
         'scenes': {
           'start': {
-            'text': ['是时候离开这个地方了。不会再回来了。'],
+            'text': ['time to leave this place. won\'t be coming back.'],
             'buttons': {
               'fly': {
-                'text': '起飞',
+                'text': 'lift off',
                 'onChoose': () {
                   sm.set('game.spaceShip.seenWarning', true);
                   liftOff();
@@ -153,10 +156,11 @@ class Ship extends ChangeNotifier {
                 'nextScene': 'end'
               },
               'wait': {
-                'text': '等待',
+                'text': 'wait',
                 'onChoose': () {
                   // 清除起飞按钮冷却
-                  NotificationManager().notify(name, "决定再等等");
+                  final localization = Localization();
+                  NotificationManager().notify(name, localization.translate('ship.notifications.wait_decision'));
                 },
                 'nextScene': 'end'
               }

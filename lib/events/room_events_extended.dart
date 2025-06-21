@@ -12,7 +12,10 @@ class RoomEventsExtended {
 
   /// 里面的声音事件
   static Map<String, dynamic> get noisesInside => {
-        'title': '声音',
+        'title': () {
+          final localization = Localization();
+          return localization.translate('events.noises_inside.title');
+        }(),
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final wood = _sm.get('stores.wood', true) ?? 0;
@@ -20,18 +23,42 @@ class RoomEventsExtended {
         },
         'scenes': {
           'start': {
-            'text': ['从储藏室可以听到抓挠的声音。', '里面有什么东西。'],
-            'notification': '储藏室里有什么东西',
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.noises_inside.text1'),
+                localization.translate('events.noises_inside.text2')
+              ];
+            }(),
+            'notification': () {
+              final localization = Localization();
+              return localization.translate('events.noises_inside.notification');
+            }(),
             'buttons': {
               'investigate': {
-                'text': '调查',
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.investigate');
+                }(),
                 'nextScene': {'0.5': 'scales', '0.8': 'teeth', '1.0': 'cloth'}
               },
-              'ignore': {'text': '忽视它们', 'nextScene': 'end'}
+              'ignore': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.ignore');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'scales': {
-            'text': ['一些木材不见了。', '地上散落着小鳞片'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.noises_inside.wood_missing'),
+                localization.translate('events.noises_inside.scales_found')
+              ];
+            }(),
             'onLoad': () {
               final numWood = _sm.get('stores.wood', true) ?? 0;
               final lostWood = (numWood * 0.1).floor().clamp(1, numWood);
@@ -40,11 +67,23 @@ class RoomEventsExtended {
               _sm.add('stores.scales', gainedScales);
             },
             'buttons': {
-              'leave': {'text': '离开', 'nextScene': 'end'}
+              'leave': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.leave');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'teeth': {
-            'text': ['一些木材不见了。', '地上散落着小牙齿'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.noises_inside.wood_missing'),
+                localization.translate('events.noises_inside.teeth_found')
+              ];
+            }(),
             'onLoad': () {
               final numWood = _sm.get('stores.wood', true) ?? 0;
               final lostWood = (numWood * 0.1).floor().clamp(1, numWood);
@@ -53,11 +92,23 @@ class RoomEventsExtended {
               _sm.add('stores.teeth', gainedTeeth);
             },
             'buttons': {
-              'leave': {'text': '离开', 'nextScene': 'end'}
+              'leave': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.leave');
+                }(),
+                'nextScene': 'end'
+              }
             }
           },
           'cloth': {
-            'text': ['一些木材不见了。', '地上散落着布料碎片'],
+            'text': () {
+              final localization = Localization();
+              return [
+                localization.translate('events.noises_inside.wood_missing'),
+                localization.translate('events.noises_inside.cloth_found')
+              ];
+            }(),
             'onLoad': () {
               final numWood = _sm.get('stores.wood', true) ?? 0;
               final lostWood = (numWood * 0.1).floor().clamp(1, numWood);
@@ -66,7 +117,13 @@ class RoomEventsExtended {
               _sm.add('stores.cloth', gainedCloth);
             },
             'buttons': {
-              'leave': {'text': '离开', 'nextScene': 'end'}
+              'leave': {
+                'text': () {
+                  final localization = Localization();
+                  return localization.translate('ui.buttons.leave');
+                }(),
+                'nextScene': 'end'
+              }
             }
           }
         }

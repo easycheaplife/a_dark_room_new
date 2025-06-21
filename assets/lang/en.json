@@ -291,6 +291,11 @@
     "hull_reinforced": "hull reinforced",
     "engine_upgraded": "engine upgraded",
     "lifting_off": "ship is lifting off...",
+    "notifications": {
+      "seen_ship": "somewhere above the debris cloud, the wanderer fleet hovers. been on this rock too long.",
+      "insufficient_alloy": "not enough alien alloy",
+      "wait_decision": "decide to wait"
+    },
     "descriptions": {
       "hull_damaged": "ship needs hull reinforcement to take off",
       "hull_poor": "ship can barely fly",
@@ -313,7 +318,8 @@
   },
   "path": {
     "embark_success": "you set out on a journey to the unknown world...",
-    "embark_failed": "embark failed"
+    "embark_failed": "embark failed",
+    "compass_points_east": "the compass points east"
   },
   "game_states": {
     "fire_dead": "dead",
@@ -518,6 +524,10 @@
         "text1": "scratching noises can be heard from the store room.",
         "text2": "something's in there.",
         "notification": "something's in the store room",
+        "wood_missing": "some wood is missing.",
+        "scales_found": "small scales litter the ground",
+        "teeth_found": "small teeth litter the ground",
+        "cloth_found": "scraps of cloth litter the ground",
         "scales_text1": "some wood is missing.",
         "scales_text2": "small scales are scattered on the floor",
         "teeth_text1": "some wood is missing.",

@@ -293,13 +293,13 @@ class World extends ChangeNotifier {
 
     // 如果世界功能未解锁或者世界数据不存在，则生成新地图
     if (worldFeature == null || worldData == null || worldData is! Map) {
-      Logger.info('🌍 生成新的世界地图...');
+      Logger.info('🌍 Generating new world map...');
       sm.set('features.location.world', true);
       sm.set('features.executioner', true);
       sm.setM('game.world', {'map': generateMap(), 'mask': newMask()});
-      Logger.info('🌍 新世界地图生成完成');
+      Logger.info('🌍 New world map generation completed');
     } else if (sm.get('features.executioner', true) != true) {
-      Logger.info('🌍 在现有地图中放置执行者...');
+      Logger.info('🌍 Placing executioner in existing map...');
       // 在之前生成的地图中放置执行者
       final map = sm.get('game.world.map');
       if (map != null && map is List && map.isNotEmpty && map[0] is List) {
@@ -569,8 +569,9 @@ class World extends ChangeNotifier {
   /// 指南针方向
   String compassDir(Map<String, int> pos) {
     String dir = '';
-    final horz = pos['x']! < 0 ? '西' : '东';
-    final vert = pos['y']! < 0 ? '北' : '南';
+    final localization = Localization();
+    final horz = pos['x']! < 0 ? localization.translate('world.directions.west') : localization.translate('world.directions.east');
+    final vert = pos['y']! < 0 ? localization.translate('world.directions.north') : localization.translate('world.directions.south');
 
     if (pos['x']!.abs() / 2 > pos['y']!.abs()) {
       dir = horz;

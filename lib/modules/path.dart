@@ -85,7 +85,8 @@ class Path extends ChangeNotifier {
   void openPath() {
     init();
     Engine().event('progress', 'path');
-    NotificationManager().notify(Room().name, '指南针指向东方'); // 暂时硬编码方向
+    final localization = Localization();
+    NotificationManager().notify(Room().name, localization.translate('path.compass_points_east'));
   }
 
   /// 获取物品重量
@@ -167,16 +168,16 @@ class Path extends ChangeNotifier {
 
     // 可携带物品配置
     final carryable = <String, Map<String, dynamic>>{
-      'cured meat': {'type': 'tool', 'desc': '恢复 10 生命值'},
-      'bullets': {'type': 'tool', 'desc': '与步枪一起使用'},
+      'cured meat': {'type': 'tool', 'desc': 'restores 10 health'},
+      'bullets': {'type': 'tool', 'desc': 'for use with rifle'},
       'grenade': {'type': 'weapon'},
       'bolas': {'type': 'weapon'},
       'laser rifle': {'type': 'weapon'},
-      'energy cell': {'type': 'tool', 'desc': '发出柔和的红光'},
+      'energy cell': {'type': 'tool', 'desc': 'glows softly red'},
       'bayonet': {'type': 'weapon'},
       'charm': {'type': 'tool'},
       'alien alloy': {'type': 'tool'},
-      'medicine': {'type': 'tool', 'desc': '恢复 20 生命值'}
+      'medicine': {'type': 'tool', 'desc': 'restores 20 health'}
     };
 
     // 添加房间和制造器的可制作物品（暂时注释掉）
@@ -271,17 +272,17 @@ class Path extends ChangeNotifier {
     try {
       // 确保outfit已正确初始化
       if (outfit.isEmpty) {
-        Logger.info('⚠️ outfit为空，重新初始化...');
+        Logger.info('⚠️ outfit is empty, reinitializing...');
         updateOutfitting();
       }
 
-      Logger.info('🎒 当前装备状态: $outfit');
+      Logger.info('🎒 Current equipment status: $outfit');
 
       // 扣除装备中的物品
       for (final k in outfit.keys) {
         final amount = outfit[k] ?? 0;
         if (amount > 0) {
-          Logger.info('扣除装备: $k x$amount');
+          Logger.info('Deducting equipment: $k x$amount');
           sm.add('stores["$k"]', -amount);
         }
       }
@@ -297,21 +298,21 @@ class Path extends ChangeNotifier {
       // 初始化World模块
       World().init();
 
-      Logger.info('🌍 设置世界功能为已解锁...');
+      Logger.info('🌍 Setting world feature as unlocked...');
       // 设置世界功能为已解锁
       sm.set('features.location.world', true);
 
-      Logger.info('🌍 切换到World模块...');
+      Logger.info('🌍 Switching to World module...');
       // 切换到世界模块
       Engine().travelTo(World());
 
       // 显示成功消息
       NotificationManager().notify(name, localization.translate('path.embark_success'));
 
-      Logger.info('✅ embark() 完成');
+      Logger.info('✅ embark() completed');
     } catch (e, stackTrace) {
-      Logger.info('❌ embark() 错误: $e');
-      Logger.info('❌ 错误堆栈: $stackTrace');
+      Logger.info('❌ embark() error: $e');
+      Logger.info('❌ Error stack: $stackTrace');
       NotificationManager().notify(name, localization.translate('path.embark_failed'));
     }
 
@@ -338,16 +339,18 @@ class Path extends ChangeNotifier {
   String getArmourType() {
     final sm = StateManager();
 
+    final localization = Localization();
+
     if ((sm.get('stores["kinetic armour"]', true) ?? 0) > 0) {
-      return "动能护甲";
+      return localization.translate('ui.status.kinetic');
     } else if ((sm.get('stores["s armour"]', true) ?? 0) > 0) {
-      return "钢制护甲";
+      return localization.translate('ui.status.steel');
     } else if ((sm.get('stores["i armour"]', true) ?? 0) > 0) {
-      return "铁制护甲";
+      return localization.translate('ui.status.iron');
     } else if ((sm.get('stores["l armour"]', true) ?? 0) > 0) {
-      return "皮革护甲";
+      return localization.translate('ui.status.leather');
     }
-    return "无护甲";
+    return localization.translate('ui.status.none');
   }
 
   /// 获取最大水量（暂时返回固定值）
@@ -360,7 +363,7 @@ class Path extends ChangeNotifier {
   bool canEmbark() {
     final curedMeat = outfit['cured meat'] ?? 0;
     final canGo = curedMeat > 0;
-    Logger.info('🔍 canEmbark: 熏肉=$curedMeat, 可以出发=$canGo');
+    Logger.info('🔍 canEmbark: cured meat=$curedMeat, can go=$canGo');
     return canGo;
   }
 

@@ -18,7 +18,10 @@ class Setpieces extends ChangeNotifier {
   Setpieces._internal();
 
   // 模块名称
-  final String name = "场景事件";
+  String get name {
+    final localization = Localization();
+    return localization.translate('setpieces.module_name');
+  }
 
   /// 场景事件配置
   static Map<String, Map<String, dynamic>> get setpieces => {
@@ -74,17 +77,38 @@ class Setpieces extends ChangeNotifier {
 
     // 阴暗沼泽
     'swamp': {
-      'title': '阴暗沼泽',
+      'title': () {
+        final localization = Localization();
+        return localization.translate('setpieces.swamp.title');
+      }(),
       'scenes': {
         'start': {
-          'text': ['腐烂的芦苇从沼泽地里长出来。', '一只孤独的青蛙静静地坐在泥泞中。'],
-          'notification': '沼泽在停滞的空气中腐烂。',
+          'text': () {
+            final localization = Localization();
+            return [
+              localization.translate('setpieces.swamp.start.text1'),
+              localization.translate('setpieces.swamp.start.text2')
+            ];
+          }(),
+          'notification': () {
+            final localization = Localization();
+            return localization.translate('setpieces.swamp.start.notification');
+          }(),
           'buttons': {
             'enter': {
-              'text': '进入',
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.enter');
+              }(),
               'nextScene': {'1': 'cabin'}
             },
-            'leave': {'text': '离开', 'nextScene': 'end'}
+            'leave': {
+              'text': () {
+                final localization = Localization();
+                return localization.translate('ui.buttons.leave');
+              }(),
+              'nextScene': 'end'
+            }
           }
         },
         'cabin': {
