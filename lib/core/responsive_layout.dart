@@ -188,7 +188,7 @@ class GameLayoutParams {
         notificationHeight: availableHeight * 0.15,
         contentPadding: const EdgeInsets.all(12.0),
         buttonWidth: (availableWidth - 48) / 2, // 两列布局
-        buttonHeight: 44, // 更大的触摸区域
+        buttonHeight: 48, // 增大触摸区域，修复狩猎小屋点击问题
         buttonSpacing: 12.0,
         fontSize: 16,
         titleFontSize: 18,

@@ -188,14 +188,6 @@ class _GameScreenState extends State<GameScreen> {
             // 主布局
             Column(
               children: [
-                // 通知区域 - 顶部
-                if (!layoutParams.showNotificationOnSide)
-                  SizedBox(
-                    width: layoutParams.notificationWidth,
-                    height: layoutParams.notificationHeight,
-                    child: const NotificationDisplay(),
-                  ),
-
                 // 主游戏区域
                 Expanded(
                   child: SizedBox(
@@ -222,6 +214,14 @@ class _GameScreenState extends State<GameScreen> {
                     ),
                   ),
                 ),
+
+                // 通知区域 - 底部（修复：移动端事件日志显示在底部）
+                if (!layoutParams.showNotificationOnSide)
+                  SizedBox(
+                    width: layoutParams.notificationWidth,
+                    height: layoutParams.notificationHeight,
+                    child: const NotificationDisplay(),
+                  ),
               ],
             ),
 

@@ -241,7 +241,11 @@ class _GameButtonState extends State<GameButton> {
               child: GestureDetector(
                 onTap:
                     widget.disabled ? widget.onDisabledTap : widget.onPressed,
+                // 增加触摸反馈，提升移动端体验
+                behavior: HitTestBehavior.opaque,
                 child: Container(
+                  width: double.infinity, // 确保按钮占满整个宽度
+                  height: double.infinity, // 确保按钮占满整个高度
                   padding: EdgeInsets.symmetric(
                     horizontal: layoutParams.useVerticalLayout ? 12 : 8,
                     vertical: layoutParams.useVerticalLayout ? 8 : 3,
