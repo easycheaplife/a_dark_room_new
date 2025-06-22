@@ -4,6 +4,7 @@ import '../modules/room.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
 import '../core/responsive_layout.dart';
+import '../core/logger.dart';
 import '../widgets/game_button.dart';
 import '../widgets/progress_button.dart';
 import '../widgets/unified_stores_container.dart';
@@ -341,7 +342,7 @@ class RoomScreen extends StatelessWidget {
     // 检查是否有足够资源
     bool canAfford = true;
     for (var k in cost.keys) {
-      final have = stateManager.get('stores["$k"]', true) ?? 0;
+      final have = stateManager.get('stores.$k', true) ?? 0;
       if (have < cost[k]!) {
         canAfford = false;
         break;
@@ -355,13 +356,13 @@ class RoomScreen extends StatelessWidget {
       int currentCount = 0;
       switch (item['type']) {
         case 'building':
-          currentCount = stateManager.get('game.buildings["$key"]', true) ?? 0;
+          currentCount = stateManager.get('game.buildings.$key', true) ?? 0;
           break;
         case 'good':
         case 'weapon':
         case 'tool':
         case 'upgrade':
-          currentCount = stateManager.get('stores["$key"]', true) ?? 0;
+          currentCount = stateManager.get('stores.$key', true) ?? 0;
           break;
       }
       hasReachedMaximum = currentCount >= maximum;
@@ -387,7 +388,15 @@ class RoomScreen extends StatelessWidget {
 
     return GameButton(
       text: localizedName,
-      onPressed: isEnabled ? () => room.buildItem(key) : null,
+      onPressed: isEnabled ? () {
+        // 添加调试日志
+        Logger.info('🔨 Building item: $key');
+        final result = room.build(key);
+        Logger.info('🔨 Build result: $result');
+        if (!result) {
+          Logger.error('❌ Build failed for: $key');
+        }
+      } : null,
       cost: cost,
       width: layoutParams.buttonWidth,
       disabled: !isEnabled,
@@ -410,7 +419,7 @@ class RoomScreen extends StatelessWidget {
     // 检查是否有足够资源
     bool canAfford = true;
     for (var k in cost.keys) {
-      final have = stateManager.get('stores["$k"]', true) ?? 0;
+      final have = stateManager.get('stores.$k', true) ?? 0;
       if (have < cost[k]!) {
         canAfford = false;
         break;
@@ -421,7 +430,7 @@ class RoomScreen extends StatelessWidget {
     bool hasReachedMaximum = false;
     final maximum = item['maximum'];
     if (maximum != null) {
-      final currentCount = stateManager.get('stores["$key"]', true) ?? 0;
+      final currentCount = stateManager.get('stores.$key', true) ?? 0;
       hasReachedMaximum = currentCount >= maximum;
     }
 
