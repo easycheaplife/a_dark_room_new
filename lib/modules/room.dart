@@ -56,10 +56,9 @@ class Room with ChangeNotifier {
       'name': 'trap',
       'button': null,
       'maximum': 10,
-      'availableMsg':
-          'builder says she can make traps to catch any creatures might still be alive out there',
-      'buildMsg': 'more traps to catch more creatures',
-      'maxMsg': "more traps won't help now",
+      'availableMsg': 'craftables.trap.availableMsg',
+      'buildMsg': 'craftables.trap.buildMsg',
+      'maxMsg': 'craftables.trap.maxMsg',
       'type': 'building',
       'cost': (StateManager sm) {
         final n = sm.get('game.buildings.trap', true) ?? 0;
@@ -71,8 +70,8 @@ class Room with ChangeNotifier {
       'name': 'cart',
       'button': null,
       'maximum': 1,
-      'availableMsg': 'builder says she can make a cart for carrying wood',
-      'buildMsg': 'the rickety cart will carry more wood from the forest',
+      'availableMsg': 'craftables.cart.availableMsg',
+      'buildMsg': 'craftables.cart.buildMsg',
       'type': 'building',
       'cost': (StateManager sm) {
         return {'wood': 30};
@@ -83,11 +82,9 @@ class Room with ChangeNotifier {
       'name': 'hut',
       'button': null,
       'maximum': 20,
-      'availableMsg':
-          "builder says there are more wanderers. says they'll work, too.",
-      'buildMsg':
-          'builder puts up a hut, out in the forest. says word will get around.',
-      'maxMsg': 'no more room for huts.',
+      'availableMsg': 'craftables.hut.availableMsg',
+      'buildMsg': 'craftables.hut.buildMsg',
+      'maxMsg': 'craftables.hut.maxMsg',
       'type': 'building',
       'cost': (StateManager sm) {
         final n = sm.get('game.buildings.hut', true) ?? 0;
@@ -99,8 +96,8 @@ class Room with ChangeNotifier {
       'name': 'lodge',
       'button': null,
       'maximum': 1,
-      'availableMsg': 'villagers could help hunt, given the means',
-      'buildMsg': 'the hunting lodge stands in the forest, a ways out of town',
+      'availableMsg': 'craftables.lodge.availableMsg',
+      'buildMsg': 'craftables.lodge.buildMsg',
       'type': 'building',
       'cost': (StateManager sm) {
         return {'wood': 200, 'fur': 10, 'meat': 5};
@@ -111,9 +108,8 @@ class Room with ChangeNotifier {
       'name': 'trading post',
       'button': null,
       'maximum': 1,
-      'availableMsg': "a trading post would make commerce easier",
-      'buildMsg':
-          "now the nomads have a place to set up shop, they might stick around a while",
+      'availableMsg': 'craftables.trading post.availableMsg',
+      'buildMsg': 'craftables.trading post.buildMsg',
       'type': 'building',
       'cost': (StateManager sm) {
         return {'wood': 400, 'fur': 100};
@@ -124,9 +120,8 @@ class Room with ChangeNotifier {
       'name': 'tannery',
       'button': null,
       'maximum': 1,
-      'availableMsg':
-          "builder says leather could be useful. says the villagers could make it.",
-      'buildMsg': 'tannery goes up quick, on the edge of the village',
+      'availableMsg': 'craftables.tannery.availableMsg',
+      'buildMsg': 'craftables.tannery.buildMsg',
       'type': 'building',
       'cost': (StateManager sm) {
         return {'wood': 500, 'fur': 50};
@@ -137,9 +132,8 @@ class Room with ChangeNotifier {
       'name': 'smokehouse',
       'button': null,
       'maximum': 1,
-      'availableMsg':
-          "should cure the meat, or it'll spoil. builder says she can fix something up.",
-      'buildMsg': 'builder finishes the smokehouse. she looks hungry.',
+      'availableMsg': 'craftables.smokehouse.availableMsg',
+      'buildMsg': 'craftables.smokehouse.buildMsg',
       'type': 'building',
       'cost': (StateManager sm) {
         return {'wood': 600, 'meat': 50};
@@ -150,9 +144,8 @@ class Room with ChangeNotifier {
       'name': 'workshop',
       'button': null,
       'maximum': 1,
-      'availableMsg':
-          "builder says she could make finer things, if she had the tools",
-      'buildMsg': "workshop's finally ready. builder's excited to get to it",
+      'availableMsg': 'craftables.workshop.availableMsg',
+      'buildMsg': 'craftables.workshop.buildMsg',
       'type': 'building',
       'cost': (StateManager sm) {
         return {'wood': 800, 'leather': 100, 'scales': 10};
@@ -163,9 +156,8 @@ class Room with ChangeNotifier {
       'name': 'steelworks',
       'button': null,
       'maximum': 1,
-      'availableMsg':
-          "builder says the villagers could make steel, given the tools",
-      'buildMsg': "a haze falls over the village as the steelworks fires up",
+      'availableMsg': 'craftables.steelworks.availableMsg',
+      'buildMsg': 'craftables.steelworks.buildMsg',
       'type': 'building',
       'cost': (StateManager sm) {
         return {'wood': 1500, 'iron': 100, 'coal': 100};
@@ -176,9 +168,8 @@ class Room with ChangeNotifier {
       'name': 'armoury',
       'button': null,
       'maximum': 1,
-      'availableMsg':
-          "builder says it'd be useful to have a steady source of bullets",
-      'buildMsg': "armoury's done, welcoming back the weapons of the past.",
+      'availableMsg': 'craftables.armoury.availableMsg',
+      'buildMsg': 'craftables.armoury.buildMsg',
       'type': 'building',
       'cost': (StateManager sm) {
         return {'wood': 3000, 'steel': 100, 'sulphur': 50};
@@ -190,7 +181,7 @@ class Room with ChangeNotifier {
       'name': 'torch',
       'button': null,
       'type': 'tool',
-      'buildMsg': 'a torch to keep the dark away',
+      'buildMsg': 'craftables.torch.buildMsg',
       'cost': (StateManager sm) {
         return {'wood': 1, 'cloth': 1};
       },
@@ -202,7 +193,7 @@ class Room with ChangeNotifier {
       'button': null,
       'type': 'upgrade',
       'maximum': 1,
-      'buildMsg': "this waterskin'll hold a bit of water, at least",
+      'buildMsg': 'craftables.waterskin.buildMsg',
       'cost': (StateManager sm) {
         return {'leather': 50};
       },
@@ -213,7 +204,7 @@ class Room with ChangeNotifier {
       'button': null,
       'type': 'upgrade',
       'maximum': 1,
-      'buildMsg': 'the cask holds enough water for longer expeditions',
+      'buildMsg': 'craftables.cask.buildMsg',
       'cost': (StateManager sm) {
         return {'leather': 100, 'iron': 20};
       },
@@ -224,7 +215,7 @@ class Room with ChangeNotifier {
       'button': null,
       'type': 'upgrade',
       'maximum': 1,
-      'buildMsg': 'never go thirsty again',
+      'buildMsg': 'craftables.water tank.buildMsg',
       'cost': (StateManager sm) {
         return {'iron': 100, 'steel': 50};
       },
@@ -235,7 +226,7 @@ class Room with ChangeNotifier {
       'button': null,
       'type': 'upgrade',
       'maximum': 1,
-      'buildMsg': 'carrying more means longer expeditions to the wilds',
+      'buildMsg': 'craftables.rucksack.buildMsg',
       'cost': (StateManager sm) {
         return {'leather': 200};
       },
@@ -246,7 +237,7 @@ class Room with ChangeNotifier {
       'button': null,
       'type': 'upgrade',
       'maximum': 1,
-      'buildMsg': 'the wagon can carry a lot of supplies',
+      'buildMsg': 'craftables.wagon.buildMsg',
       'cost': (StateManager sm) {
         return {'wood': 500, 'iron': 100};
       },
@@ -257,7 +248,7 @@ class Room with ChangeNotifier {
       'button': null,
       'type': 'upgrade',
       'maximum': 1,
-      'buildMsg': 'the convoy can haul mostly everything',
+      'buildMsg': 'craftables.convoy.buildMsg',
       'cost': (StateManager sm) {
         return {'wood': 1000, 'iron': 200, 'steel': 100};
       },
@@ -268,7 +259,7 @@ class Room with ChangeNotifier {
       'name': 'bone spear',
       'button': null,
       'type': 'weapon',
-      'buildMsg': "this spear's not elegant, but it's pretty good at stabbing",
+      'buildMsg': 'craftables.bone spear.buildMsg',
       'cost': (StateManager sm) {
         return {'wood': 100, 'teeth': 5};
       },
@@ -278,7 +269,7 @@ class Room with ChangeNotifier {
       'name': 'iron sword',
       'button': null,
       'type': 'weapon',
-      'buildMsg': "sword is sharp. good protection out in the wilds.",
+      'buildMsg': 'craftables.iron sword.buildMsg',
       'cost': (StateManager sm) {
         return {'wood': 200, 'leather': 50, 'iron': 20};
       },
@@ -288,7 +279,7 @@ class Room with ChangeNotifier {
       'name': 'steel sword',
       'button': null,
       'type': 'weapon',
-      'buildMsg': "the steel is strong, and the blade true.",
+      'buildMsg': 'craftables.steel sword.buildMsg',
       'cost': (StateManager sm) {
         return {'wood': 500, 'leather': 100, 'steel': 20};
       },
@@ -297,7 +288,7 @@ class Room with ChangeNotifier {
     'rifle': {
       'name': 'rifle',
       'type': 'weapon',
-      'buildMsg': "black powder and bullets, like the old days.",
+      'buildMsg': 'craftables.rifle.buildMsg',
       'cost': (StateManager sm) {
         return {'wood': 200, 'steel': 50, 'sulphur': 50};
       },
@@ -308,7 +299,7 @@ class Room with ChangeNotifier {
       'name': 'l armour',
       'type': 'upgrade',
       'maximum': 1,
-      'buildMsg': "leather's not strong. better than rags, though.",
+      'buildMsg': 'craftables.l armour.buildMsg',
       'cost': (StateManager sm) {
         return {'leather': 200, 'scales': 20};
       },
@@ -318,7 +309,7 @@ class Room with ChangeNotifier {
       'name': 'i armour',
       'type': 'upgrade',
       'maximum': 1,
-      'buildMsg': "iron's stronger than leather",
+      'buildMsg': 'craftables.i armour.buildMsg',
       'cost': (StateManager sm) {
         return {'leather': 200, 'iron': 100};
       },
@@ -328,7 +319,7 @@ class Room with ChangeNotifier {
       'name': 's armour',
       'type': 'upgrade',
       'maximum': 1,
-      'buildMsg': "steel's stronger than iron",
+      'buildMsg': 'craftables.s armour.buildMsg',
       'cost': (StateManager sm) {
         return {'leather': 200, 'steel': 100};
       },
@@ -1270,7 +1261,8 @@ class Room with ChangeNotifier {
     for (var k in cost.keys) {
       final have = sm.get('stores["$k"]', true) ?? 0;
       if (have < cost[k]!) {
-        NotificationManager().notify(name, 'Not enough $k');
+        NotificationManager().notify(name,
+            '${_localization.translate('notifications.not_enough')} ${_localization.translate(k)}');
         return;
       } else {
         storeMod[k] = have - cost[k]!;
@@ -1346,7 +1338,8 @@ class Room with ChangeNotifier {
     for (var k in cost.keys) {
       final have = sm.get('stores["$k"]', true) ?? 0;
       if (have < cost[k]!) {
-        NotificationManager().notify(name, 'Not enough $k');
+        NotificationManager().notify(name,
+            '${_localization.translate('notifications.not_enough')} ${_localization.translate(k)}');
         return;
       } else {
         storeMod[k] = have - cost[k]!;

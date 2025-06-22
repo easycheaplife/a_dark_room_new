@@ -395,6 +395,92 @@
     "burning": "燃烧",
     "roaring": "旺盛"
   },
+  "craftables": {
+    "trap": {
+      "availableMsg": "建造者说她可以制作陷阱来捕捉外面可能还活着的生物",
+      "buildMsg": "更多陷阱可以捕捉更多生物",
+      "maxMsg": "更多陷阱现在也帮不上忙了"
+    },
+    "cart": {
+      "availableMsg": "建造者说她可以制作一辆运木材的手推车",
+      "buildMsg": "这辆摇摇晃晃的手推车可以从森林里运更多木材"
+    },
+    "hut": {
+      "availableMsg": "建造者说有更多流浪者。说他们也会工作。",
+      "buildMsg": "建造者在森林里搭建了一间小屋。说消息会传开的。",
+      "maxMsg": "没有更多空间建造小屋了。"
+    },
+    "lodge": {
+      "availableMsg": "村民们可以帮助狩猎，如果有工具的话",
+      "buildMsg": "狩猎小屋矗立在森林中，离镇子有一段距离"
+    },
+    "trading post": {
+      "availableMsg": "贸易站会让商业更容易",
+      "buildMsg": "现在游牧民有地方开店了，他们可能会停留一段时间"
+    },
+    "tannery": {
+      "availableMsg": "建造者说皮革可能有用。说村民们可以制作它。",
+      "buildMsg": "制革屋很快就建好了，在村子边缘"
+    },
+    "smokehouse": {
+      "availableMsg": "应该腌制肉类，否则会变质。建造者说她可以修理一些东西。",
+      "buildMsg": "建造者完成了熏肉房。她看起来很饿。"
+    },
+    "workshop": {
+      "availableMsg": "建造者说如果她有工具，她可以制作更精细的东西",
+      "buildMsg": "工坊终于准备好了。建造者很兴奋地开始工作"
+    },
+    "steelworks": {
+      "availableMsg": "建造者说村民们可以制作钢铁，如果有工具的话",
+      "buildMsg": "炼钢坊点火时，村子上空笼罩着一层雾霾"
+    },
+    "armoury": {
+      "availableMsg": "建造者说有稳定的子弹来源会很有用",
+      "buildMsg": "军械库完工了，欢迎过去的武器回归。"
+    },
+    "torch": {
+      "buildMsg": "一支火把来驱散黑暗"
+    },
+    "waterskin": {
+      "buildMsg": "这个水壶至少能装一点水"
+    },
+    "cask": {
+      "buildMsg": "水桶能装足够长途探险的水"
+    },
+    "water tank": {
+      "buildMsg": "再也不会口渴了"
+    },
+    "rucksack": {
+      "buildMsg": "携带更多意味着可以进行更长的荒野探险"
+    },
+    "wagon": {
+      "buildMsg": "马车可以携带大量补给"
+    },
+    "convoy": {
+      "buildMsg": "车队几乎可以运载所有东西"
+    },
+    "bone spear": {
+      "buildMsg": "这支长矛不优雅，但很擅长刺击"
+    },
+    "iron sword": {
+      "buildMsg": "剑很锋利。在荒野中是很好的保护。"
+    },
+    "steel sword": {
+      "buildMsg": "钢铁坚固，剑刃锋利。"
+    },
+    "rifle": {
+      "buildMsg": "黑火药和子弹，就像过去的日子。"
+    },
+    "l armour": {
+      "buildMsg": "皮革不强。不过比破布好。"
+    },
+    "i armour": {
+      "buildMsg": "铁比皮革更坚固"
+    },
+    "s armour": {
+      "buildMsg": "钢比铁更坚固"
+    }
+  },
   "logs": {
     "collecting_income_from": "收集来自",
     "income_suffix": "的收入",

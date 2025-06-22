@@ -310,9 +310,9 @@ class OutsideScreen extends StatelessWidget {
                     height: 20, // 容纳两行按钮
                     child: Stack(
                       children: [
-                        // upBtn - 增加1个（右侧，上方）
+                        // upBtn - 增加1个（左侧，上方）
                         Positioned(
-                          right: 0,
+                          right: 15,
                           top: 0,
                           child: _buildWorkerControlButton(
                             'up',
@@ -323,9 +323,9 @@ class OutsideScreen extends StatelessWidget {
                           ),
                         ),
 
-                        // dnBtn - 减少1个（右侧，下方）
+                        // dnBtn - 减少1个（左侧，下方）
                         Positioned(
-                          right: 0,
+                          right: 15,
                           bottom: 0,
                           child: _buildWorkerControlButton(
                             'down',
@@ -336,9 +336,9 @@ class OutsideScreen extends StatelessWidget {
                           ),
                         ),
 
-                        // upManyBtn - 增加10个（左侧，上方）
+                        // upManyBtn - 增加10个（右侧，上方）
                         Positioned(
-                          right: 15,
+                          right: 0,
                           top: 0,
                           child: _buildWorkerControlButton(
                             'up',
@@ -349,9 +349,9 @@ class OutsideScreen extends StatelessWidget {
                           ),
                         ),
 
-                        // dnManyBtn - 减少10个（左侧，下方）
+                        // dnManyBtn - 减少10个（右侧，下方）
                         Positioned(
-                          right: 15,
+                          right: 0,
                           bottom: 0,
                           child: _buildWorkerControlButton(
                             'down',
