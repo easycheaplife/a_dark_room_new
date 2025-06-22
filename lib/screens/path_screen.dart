@@ -5,6 +5,7 @@ import '../modules/path.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
 import '../widgets/game_button.dart';
+import '../widgets/stores_display.dart';
 import '../core/logger.dart';
 
 /// 漫漫尘途界面 - 显示装备管理和出发准备
@@ -26,28 +27,32 @@ class PathScreen extends StatelessWidget {
           width: double.infinity,
           height: double.infinity,
           color: Colors.white,
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              // 左侧：装备区域和出发按钮
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 装备区域
-                  _buildOutfittingSection(path, stateManager, localization),
+              // 左侧：装备区域和出发按钮 - 绝对定位，与小黑屋保持一致
+              Positioned(
+                left: 10,
+                top: 10,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 装备区域
+                    _buildOutfittingSection(path, stateManager, localization),
 
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                  // 出发按钮
-                  _buildEmbarkButton(path, stateManager, localization),
-                ],
+                    // 出发按钮
+                    _buildEmbarkButton(path, stateManager, localization),
+                  ],
+                ),
               ),
 
-              const SizedBox(width: 20),
-
-              // 右侧：技能区域（如果有的话）
-              _buildPerksSection(path, stateManager, localization),
+              // 库存容器 - 绝对定位，与小黑屋完全一致的位置: top: 0px, right: 0px
+              Positioned(
+                right: 0,
+                top: 0,
+                child: _buildStoresContainer(stateManager, localization),
+              ),
             ],
           ),
         );
@@ -163,6 +168,8 @@ class PathScreen extends StatelessWidget {
     );
   }
 
+
+
   /// 构建装备区域 - 模拟原游戏的outfitting容器
   Widget _buildOutfittingSection(
       Path path, StateManager stateManager, Localization localization) {
@@ -171,7 +178,7 @@ class PathScreen extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: Colors.black),
+        border: Border.all(color: Colors.black, width: 1), // 确保边框显示
       ),
       child: Stack(
         children: [
@@ -541,20 +548,22 @@ class PathScreen extends StatelessWidget {
   }
 
   /// 构建技能区域
-  Widget _buildPerksSection(
-      Path path, StateManager stateManager, Localization localization) {
+  Widget _buildPerksSection(StateManager stateManager, Localization localization) {
     final perks = stateManager.get('character.perks', true);
 
+    Logger.info('🎯 技能数据: $perks');
+
     if (perks == null || (perks as Map).isEmpty) {
+      Logger.info('🎯 没有技能数据，隐藏技能区域');
       return const SizedBox.shrink();
     }
 
     return Container(
-      width: 200,
+      width: 200, // 固定宽度，与小黑屋保持一致
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: Colors.black),
+        border: Border.all(color: Colors.black, width: 1), // 与StoresDisplay保持一致的边框宽度
       ),
       child: Stack(
         children: [
@@ -562,9 +571,9 @@ class PathScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 标题
+              // 标题 - 与StoresDisplay保持一致的位置
               Container(
-                transform: Matrix4.translationValues(-8, -13, 0),
+                transform: Matrix4.translationValues(8, -13, 0), // 与StoresDisplay保持一致的位置
                 child: Container(
                   color: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 2),
@@ -609,7 +618,7 @@ class PathScreen extends StatelessWidget {
                 _getLocalizedPerkName(perkName, localization),
                 style: const TextStyle(
                   color: Colors.black,
-                  fontSize: 14,
+                  fontSize: 16, // 与StoresDisplay保持一致的字体大小
                   fontFamily: 'Times New Roman',
                 ),
               ),
@@ -631,6 +640,49 @@ class PathScreen extends StatelessWidget {
   String _getPerkDescription(String perkName, Localization localization) {
     return localization.translate('skill_descriptions.$perkName');
   }
+
+  /// 构建库存容器 - 使用统一的StoresDisplay组件，与小黑屋完全一致的UI风格和绝对位置
+  Widget _buildStoresContainer(StateManager stateManager, Localization localization) {
+    return SizedBox(
+      width: 200, // 固定宽度，与小黑屋保持一致
+      height: 400, // 固定高度，支持滚动
+      child: SingleChildScrollView( // 添加下滑框支持
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 技能区域（如果有技能的话）
+            _buildPerksSection(stateManager, localization),
+
+            // 库存区域 - 使用light样式，只显示资源
+            const StoresDisplay(
+              style: StoresDisplayStyle.light,
+              type: StoresDisplayType.resourcesOnly,
+              collapsible: false,
+              showIncomeInfo: false,
+              customTitle: null, // 使用默认标题，与小黑屋一致
+            ),
+
+            const SizedBox(height: 15), // 与小黑屋保持一致的间距
+
+            // 武器区域 - 使用light样式，只显示武器
+            Consumer<Localization>(
+              builder: (context, localization, child) {
+                return StoresDisplay(
+                  style: StoresDisplayStyle.light,
+                  type: StoresDisplayType.weaponsOnly,
+                  collapsible: false,
+                  showIncomeInfo: false,
+                  customTitle: localization.translate('ui.menus.weapons'),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
 }
 
 /// 三角形按钮绘制器 - 模拟原游戏的上下箭头按钮样式
