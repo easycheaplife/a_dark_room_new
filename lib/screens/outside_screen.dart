@@ -74,9 +74,9 @@ class OutsideScreen extends StatelessWidget {
             child: _buildGatheringButtons(outside, stateManager, layoutParams),
           ),
 
-          // 工人管理区域 - 中间位置
+          // 工人管理区域 - 居中于伐木按钮和库存之间
           Positioned(
-            left: 140,
+            left: 250, // 调整位置，避免与伐木按钮重叠
             top: 10,
             child: Consumer<Localization>(
               builder: (context, localization, child) {
@@ -185,7 +185,7 @@ class OutsideScreen extends StatelessWidget {
     }
 
     return SizedBox(
-      width: layoutParams.useVerticalLayout ? layoutParams.gameAreaWidth : 150,
+      width: layoutParams.useVerticalLayout ? layoutParams.gameAreaWidth : 200, // 进一步增加宽度，确保不重叠
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -233,6 +233,7 @@ class OutsideScreen extends StatelessWidget {
     if (type == 'gatherer') {
       return Container(
         margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 8), // 增加内边距，减少拥挤
         child: Tooltip(
           message: workerInfo,
           child: Row(
@@ -248,13 +249,17 @@ class OutsideScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              // 显示剩余人口数量（伐木者数量）
-              Text(
-                '$availableWorkers',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: layoutParams.fontSize,
-                  fontFamily: 'Times New Roman',
+              // 显示剩余人口数量（伐木者数量）- 右对齐
+              Container(
+                width: 70, // 与其他工人按钮宽度一致
+                alignment: Alignment.centerRight,
+                child: Text(
+                  '$availableWorkers',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: layoutParams.fontSize,
+                    fontFamily: 'Times New Roman',
+                  ),
                 ),
               ),
             ],
@@ -265,6 +270,7 @@ class OutsideScreen extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 8), // 增加内边距，与代木者保持一致
       child: Tooltip(
         message: workerInfo,
         child: Row(
@@ -281,38 +287,42 @@ class OutsideScreen extends StatelessWidget {
               ),
             ),
 
-            // 工人数量和控制按钮
-            Row(
-              children: [
-                Text(
-                  '$currentWorkers',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: layoutParams.fontSize,
-                    fontFamily: 'Times New Roman',
+            // 工人数量和控制按钮 - 修复溢出问题
+            SizedBox(
+              width: 70, // 进一步增加宽度，避免溢出
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    '$currentWorkers',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: layoutParams.fontSize,
+                      fontFamily: 'Times New Roman',
+                    ),
                   ),
-                ),
 
-                const SizedBox(width: 5),
+                  const SizedBox(width: 4), // 适当间距
 
-                // 减少按钮
-                _buildWorkerControlButton(
-                  '▼',
-                  currentWorkers > 0
-                      ? () => outside.decreaseWorker(type, 1)
-                      : null,
-                ),
+                  // 减少按钮
+                  _buildWorkerControlButton(
+                    '▼',
+                    currentWorkers > 0
+                        ? () => outside.decreaseWorker(type, 1)
+                        : null,
+                  ),
 
-                const SizedBox(width: 2),
+                  const SizedBox(width: 1), // 最小间距
 
-                // 增加按钮
-                _buildWorkerControlButton(
-                  '▲',
-                  availableWorkers > 0
-                      ? () => outside.increaseWorker(type, 1)
-                      : null,
-                ),
-              ],
+                  // 增加按钮
+                  _buildWorkerControlButton(
+                    '▲',
+                    availableWorkers > 0
+                        ? () => outside.increaseWorker(type, 1)
+                        : null,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
