@@ -1286,6 +1286,11 @@ class World extends ChangeNotifier {
   void goHome() {
     Logger.info('🏠 World.goHome() 开始');
 
+    // 重新启用页签导航 - 参考原游戏 Engine.restoreNavigation = true
+    final engine = Engine();
+    engine.restoreNavigation = true;
+    Logger.info('🌍 页签导航将在下次按键时恢复');
+
     // 保存世界状态到StateManager - 参考原游戏逻辑
     if (state != null) {
       final sm = StateManager();
@@ -1331,7 +1336,6 @@ class World extends ChangeNotifier {
     returnOutfit();
 
     // 回到小黑屋模块
-    final engine = Engine();
     final room = Room();
     engine.travelTo(room);
 
@@ -1402,6 +1406,11 @@ class World extends ChangeNotifier {
       dead = true;
       health = 0;
       Logger.info('💀 玩家死亡');
+
+      // 重新启用页签导航 - 参考原游戏 Engine.tabNavigation = true
+      final engine = Engine();
+      engine.tabNavigation = true;
+      Logger.info('🌍 页签导航已重新启用');
 
       // 显示死亡通知
       final localization = Localization();
@@ -1479,6 +1488,11 @@ class World extends ChangeNotifier {
   /// 到达时调用 - 参考原游戏的onArrival函数
   void onArrival([int transitionDiff = 0]) {
     final sm = StateManager();
+
+    // 禁用页签导航 - 参考原游戏 Engine.tabNavigation = false
+    final engine = Engine();
+    engine.tabNavigation = false;
+    Logger.info('🌍 页签导航已禁用');
 
     // 创建临时世界状态副本 - 参考原游戏的逻辑
     // World.state = $.extend(true, {}, $SM.get('game.world'));

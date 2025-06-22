@@ -23,6 +23,60 @@ class Header extends StatelessWidget {
       builder: (context, engine, stateManager, localization, child) {
         final activeModule = engine.activeModule;
 
+        // 检查页签导航是否被禁用（如在世界地图中）
+        if (!engine.tabNavigation) {
+          return Container(
+            height: 40, // 保持相同高度
+            decoration: const BoxDecoration(
+              color: Colors.white,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // 右侧空间填充
+                const Spacer(),
+
+                // 语言切换按钮
+                Container(
+                  margin: const EdgeInsets.only(right: 5),
+                  child: PopupMenuButton<String>(
+                    onSelected: (String language) =>
+                        _switchLanguage(context, language),
+                    icon: const Icon(
+                      Icons.language,
+                      color: Colors.black,
+                      size: 20,
+                    ),
+                    itemBuilder: (BuildContext context) => [
+                      const PopupMenuItem<String>(
+                        value: 'zh',
+                        child: Text('中文'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'en',
+                        child: Text('English'),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // 设置按钮
+                Container(
+                  margin: const EdgeInsets.only(right: 10),
+                  child: IconButton(
+                    onPressed: () => _openSettings(context),
+                    icon: const Icon(
+                      Icons.settings,
+                      color: Colors.black,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
         // 构建可用的页签列表
         List<Widget> tabs = [];
 

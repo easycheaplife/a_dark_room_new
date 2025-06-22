@@ -238,6 +238,13 @@ class Engine with ChangeNotifier {
     // 调用新模块的onArrival
     module.onArrival(1);
 
+    // 检查是否需要恢复导航 - 参考原游戏的restoreNavigation逻辑
+    if (restoreNavigation) {
+      tabNavigation = true;
+      restoreNavigation = false;
+      Logger.info('🌍 页签导航已恢复');
+    }
+
     // 打印模块的通知
     NotificationManager().printQueue(module.name);
 
