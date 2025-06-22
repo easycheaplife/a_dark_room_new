@@ -27,33 +27,39 @@ class PathScreen extends StatelessWidget {
           width: double.infinity,
           height: double.infinity,
           color: Colors.white,
-          child: Stack(
-            children: [
-              // 左侧：装备区域和出发按钮 - 绝对定位，与小黑屋保持一致
-              Positioned(
-                left: 10,
-                top: 10,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 装备区域
-                    _buildOutfittingSection(path, stateManager, localization),
+          child: SingleChildScrollView( // 添加整个页面的滚动支持
+            child: SizedBox(
+              width: double.infinity,
+              height: 800, // 设置足够的高度以容纳所有内容
+              child: Stack(
+                children: [
+                  // 左侧：装备区域和出发按钮 - 绝对定位，与小黑屋保持一致
+                  Positioned(
+                    left: 10,
+                    top: 10,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 装备区域
+                        _buildOutfittingSection(path, stateManager, localization),
 
-                    const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                    // 出发按钮
-                    _buildEmbarkButton(path, stateManager, localization),
-                  ],
-                ),
+                        // 出发按钮
+                        _buildEmbarkButton(path, stateManager, localization),
+                      ],
+                    ),
+                  ),
+
+                  // 库存容器 - 绝对定位，与小黑屋完全一致的位置: top: 0px, right: 0px
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: _buildStoresContainer(stateManager, localization),
+                  ),
+                ],
               ),
-
-              // 库存容器 - 绝对定位，与小黑屋完全一致的位置: top: 0px, right: 0px
-              Positioned(
-                right: 0,
-                top: 0,
-                child: _buildStoresContainer(stateManager, localization),
-              ),
-            ],
+            ),
           ),
         );
       },
@@ -641,43 +647,41 @@ class PathScreen extends StatelessWidget {
     return localization.translate('skill_descriptions.$perkName');
   }
 
-  /// 构建库存容器 - 使用统一的StoresDisplay组件，与小黑屋完全一致的UI风格和绝对位置
+  /// 构建库存容器 - 去掉局部滚动，显示全部数据，只保留整个页面滚动
   Widget _buildStoresContainer(StateManager stateManager, Localization localization) {
     return SizedBox(
       width: 200, // 固定宽度，与小黑屋保持一致
-      height: 400, // 固定高度，支持滚动
-      child: SingleChildScrollView( // 添加下滑框支持
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 技能区域（如果有技能的话）
-            _buildPerksSection(stateManager, localization),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min, // 让容器根据内容自适应高度
+        children: [
+          // 技能区域（如果有技能的话）
+          _buildPerksSection(stateManager, localization),
 
-            // 库存区域 - 使用light样式，只显示资源
-            const StoresDisplay(
-              style: StoresDisplayStyle.light,
-              type: StoresDisplayType.resourcesOnly,
-              collapsible: false,
-              showIncomeInfo: false,
-              customTitle: null, // 使用默认标题，与小黑屋一致
-            ),
+          // 库存区域 - 使用light样式，只显示资源
+          const StoresDisplay(
+            style: StoresDisplayStyle.light,
+            type: StoresDisplayType.resourcesOnly,
+            collapsible: false,
+            showIncomeInfo: false,
+            customTitle: null, // 使用默认标题，与小黑屋一致
+          ),
 
-            const SizedBox(height: 15), // 与小黑屋保持一致的间距
+          const SizedBox(height: 15), // 与小黑屋保持一致的间距
 
-            // 武器区域 - 使用light样式，只显示武器
-            Consumer<Localization>(
-              builder: (context, localization, child) {
-                return StoresDisplay(
-                  style: StoresDisplayStyle.light,
-                  type: StoresDisplayType.weaponsOnly,
-                  collapsible: false,
-                  showIncomeInfo: false,
-                  customTitle: localization.translate('ui.menus.weapons'),
-                );
-              },
-            ),
-          ],
-        ),
+          // 武器区域 - 使用light样式，只显示武器
+          Consumer<Localization>(
+            builder: (context, localization, child) {
+              return StoresDisplay(
+                style: StoresDisplayStyle.light,
+                type: StoresDisplayType.weaponsOnly,
+                collapsible: false,
+                showIncomeInfo: false,
+                customTitle: localization.translate('ui.menus.weapons'),
+              );
+            },
+          ),
+        ],
       ),
     );
   }

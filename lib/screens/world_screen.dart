@@ -529,69 +529,62 @@ class _WorldScreenState extends State<WorldScreen> {
             border: Border.all(color: Colors.black, width: 1),
             color: Colors.white,
           ),
-          height: layoutParams.useVerticalLayout ? 60 : 80, // 移动端使用更小的高度
-          child: Stack(
+          padding: const EdgeInsets.all(6),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min, // 让容器根据内容自适应高度
             children: [
-              // 背包标题
-              Positioned(
-                top: 0,
-                left: 10,
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Consumer<Localization>(
-                    builder: (context, localization, child) {
-                      return Text(
-                        (StateManager().get('stores["rucksack"]', true) ?? 0) >
-                                0
-                            ? localization.translate('world.bagspace.backpack')
-                            : localization.translate('world.bagspace.pocket'),
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      );
-                    },
+              // 标题行
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // 背包标题
+                  Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Consumer<Localization>(
+                      builder: (context, localization, child) {
+                        return Text(
+                          (StateManager().get('stores["rucksack"]', true) ?? 0) >
+                                  0
+                              ? localization.translate('world.bagspace.backpack')
+                              : localization.translate('world.bagspace.pocket'),
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
+
+                  // 背包空间信息
+                  Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Consumer<Localization>(
+                      builder: (context, localization, child) {
+                        return Text(
+                          '${localization.translate('world.bagspace.remaining')} ${freeSpace.floor()}/${capacity.floor()}',
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
 
-              // 背包空间信息
-              Positioned(
-                top: 0,
-                right: 10,
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Consumer<Localization>(
-                    builder: (context, localization, child) {
-                      return Text(
-                        '${localization.translate('world.bagspace.remaining')} ${freeSpace.floor()}/${capacity.floor()}',
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 12,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
+              const SizedBox(height: 10),
 
-              // 物品列表
-              Positioned(
-                top: 16,
-                left: 6,
-                right: 6,
-                bottom: 6,
-                child: SingleChildScrollView(
-                  physics: const ClampingScrollPhysics(), // 使用更平滑的滚动物理
-                  child: Wrap(
-                    spacing: 5,
-                    runSpacing: 6,
-                    children: supplies,
-                  ),
-                ),
+              // 物品列表 - 去掉局部滚动，显示全部物品
+              Wrap(
+                spacing: 5,
+                runSpacing: 6,
+                children: supplies,
               ),
             ],
           ),
