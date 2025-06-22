@@ -269,6 +269,7 @@
     "export_failed": "export failed",
     "import_failed": "save import failed, please check data format",
     "clipboard_empty": "no save data in clipboard",
+    "https_required": "clipboard functionality requires HTTPS secure connection. Please access via https:// or test in local environment.",
     "error": "error",
     "success": "success",
     "ok": "ok"

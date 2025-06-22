@@ -261,6 +261,7 @@
     "export_failed": "导出失败",
     "import_failed": "存档导入失败，请检查数据格式",
     "clipboard_empty": "剪贴板中没有存档数据",
+    "https_required": "剪贴板功能需要HTTPS安全连接。请使用https://访问或在本地环境测试。",
     "error": "错误",
     "success": "成功",
     "ok": "确定"

@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/engine.dart';
 import '../core/localization.dart';
+import '../core/logger.dart';
 
 /// 导入/导出对话框
 class ImportExportDialog extends StatefulWidget {
@@ -21,13 +23,37 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
     });
 
     try {
+      // 检查是否在安全上下文中（HTTPS）
+      if (kIsWeb) {
+        Logger.info('🔍 Web环境检查：导出功能的剪贴板API可用性');
+        final currentUrl = Uri.base.toString();
+        Logger.info('🌐 当前URL: $currentUrl');
+        final isSecureContext = currentUrl.startsWith('https://') ||
+                               currentUrl.startsWith('http://localhost') ||
+                               currentUrl.startsWith('http://127.0.0.1');
+        Logger.info('🔒 是否为安全上下文: $isSecureContext');
+
+        if (!isSecureContext) {
+          final localization = Localization();
+          Logger.error('❌ 非安全上下文，剪贴板API不可用');
+          _showErrorDialog(localization.translate('import_export.https_required'));
+          return;
+        }
+      }
+
+      Logger.info('📤 开始导出存档...');
       final exportData = await Engine().export64();
+      Logger.info('📤 存档导出成功，数据长度: ${exportData.length}');
 
       // 直接复制到剪贴板
+      Logger.info('📋 尝试复制到剪贴板...');
       await Clipboard.setData(ClipboardData(text: exportData));
+      Logger.info('📋 复制到剪贴板成功');
+
       final localization = Localization();
       _showSuccessDialog(localization.translate('import_export.export_success'));
     } catch (e) {
+      Logger.error('❌ 导出存档时发生错误: $e');
       final localization = Localization();
       _showErrorDialog('${localization.translate('import_export.export_failed')}: $e');
     } finally {
@@ -44,17 +70,43 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
     });
 
     try {
+      // 检查是否在安全上下文中（HTTPS）
+      if (kIsWeb) {
+        Logger.info('🔍 Web环境检查：当前URL协议和剪贴板API可用性');
+        // 在Web环境中，剪贴板API需要HTTPS或localhost
+        final currentUrl = Uri.base.toString();
+        Logger.info('🌐 当前URL: $currentUrl');
+        final isSecureContext = currentUrl.startsWith('https://') ||
+                               currentUrl.startsWith('http://localhost') ||
+                               currentUrl.startsWith('http://127.0.0.1');
+        Logger.info('🔒 是否为安全上下文: $isSecureContext');
+
+        if (!isSecureContext) {
+          final localization = Localization();
+          Logger.error('❌ 非安全上下文，剪贴板API不可用');
+          _showErrorDialog(localization.translate('import_export.https_required'));
+          return;
+        }
+      }
+
       // 从剪贴板读取数据
+      Logger.info('📋 尝试从剪贴板读取数据...');
       final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+      Logger.info('📋 剪贴板数据获取结果: ${clipboardData != null ? '成功' : '失败'}');
+
       if (clipboardData == null ||
           clipboardData.text == null ||
           clipboardData.text!.trim().isEmpty) {
         final localization = Localization();
+        Logger.error('❌ 剪贴板数据为空或无效');
         _showErrorDialog(localization.translate('import_export.clipboard_empty'));
         return;
       }
 
       final importData = clipboardData.text!.trim();
+      Logger.info('📋 剪贴板数据长度: ${importData.length}');
+      Logger.info('📋 剪贴板数据预览: ${importData.substring(0, importData.length > 50 ? 50 : importData.length)}...');
+
       final success = await Engine().import64(importData);
 
       if (mounted) {
@@ -67,6 +119,7 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
         }
       }
     } catch (e) {
+      Logger.error('❌ 导入存档时发生错误: $e');
       if (mounted) {
         final localization = Localization();
         _showErrorDialog('${localization.translate('import_export.import_failed')}: $e');
