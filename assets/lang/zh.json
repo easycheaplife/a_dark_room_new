@@ -27,6 +27,7 @@
       "help_him": "帮助他",
       "turn_away": "拒绝帮助",
       "deny": "拒绝",
+      "refuse": "拒绝",
       "accept": "接受",
       "ignore": "忽视",
       "fight": "战斗",
@@ -71,7 +72,8 @@
       "drop_one": "一",
       "leave_empty": "一无所获",
       "enter": "进入",
-      "attack": "攻击"
+      "attack": "攻击",
+      "decline": "拒绝"
     },
     "menus": {
       "stores": "库存",

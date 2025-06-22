@@ -27,6 +27,7 @@
       "help_him": "help him",
       "turn_away": "turn away",
       "deny": "deny",
+      "refuse": "refuse",
       "accept": "accept",
       "ignore": "ignore",
       "fight": "fight",
@@ -72,7 +73,8 @@
       "drop_one": "one",
       "leave_empty": "leave with nothing",
       "enter": "enter",
-      "attack": "attack"
+      "attack": "attack",
+      "decline": "decline"
     },
     "menus": {
       "stores": "stores",
