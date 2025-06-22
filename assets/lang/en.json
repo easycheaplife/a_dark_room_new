@@ -744,6 +744,92 @@
       }
     }
   },
+  "craftables": {
+    "trap": {
+      "availableMsg": "builder says she can make traps to catch any creatures might still be alive out there",
+      "buildMsg": "more traps to catch more creatures",
+      "maxMsg": "more traps won't help now"
+    },
+    "cart": {
+      "availableMsg": "builder says she can make a cart for carrying wood",
+      "buildMsg": "the rickety cart will carry more wood from the forest"
+    },
+    "hut": {
+      "availableMsg": "builder says she can make huts for the villagers",
+      "buildMsg": "a hut is built, ready to house a villager",
+      "maxMsg": "the village is full"
+    },
+    "lodge": {
+      "availableMsg": "builder says she can make a hunting lodge",
+      "buildMsg": "the hunting lodge stands ready"
+    },
+    "trading post": {
+      "availableMsg": "builder says she can make a trading post",
+      "buildMsg": "now the nomads will stop to trade"
+    },
+    "tannery": {
+      "availableMsg": "builder says she can make a tannery",
+      "buildMsg": "the tannery is ready to process leather"
+    },
+    "smokehouse": {
+      "availableMsg": "builder says she can make a smokehouse",
+      "buildMsg": "the smokehouse is ready to cure meat"
+    },
+    "workshop": {
+      "availableMsg": "builder says she can make a workshop",
+      "buildMsg": "the workshop is ready to make tools"
+    },
+    "steelworks": {
+      "availableMsg": "builder says she can make a steelworks",
+      "buildMsg": "the steelworks is ready to make steel"
+    },
+    "armoury": {
+      "availableMsg": "builder says she can make an armoury",
+      "buildMsg": "the armoury is ready to make weapons"
+    },
+    "torch": {
+      "buildMsg": "a torch to light the way"
+    },
+    "waterskin": {
+      "buildMsg": "a waterskin. holds a bit of water"
+    },
+    "cask": {
+      "buildMsg": "a cask. holds more water than a waterskin"
+    },
+    "water tank": {
+      "buildMsg": "a water tank. holds much more water"
+    },
+    "rucksack": {
+      "buildMsg": "a rucksack. carries more stuff"
+    },
+    "wagon": {
+      "buildMsg": "a wagon. carries much more stuff"
+    },
+    "convoy": {
+      "buildMsg": "a convoy. carries the most stuff"
+    },
+    "bone spear": {
+      "buildMsg": "a bone spear. better than punching"
+    },
+    "iron sword": {
+      "buildMsg": "an iron sword. sharp"
+    },
+    "steel sword": {
+      "buildMsg": "a steel sword. very sharp"
+    },
+    "rifle": {
+      "buildMsg": "a rifle. shoots bullets"
+    },
+    "l armour": {
+      "buildMsg": "leather armour. protection from the elements"
+    },
+    "i armour": {
+      "buildMsg": "iron armour. protection from weapons"
+    },
+    "s armour": {
+      "buildMsg": "steel armour. maximum protection"
+    }
+  },
   "world": {
     "title": "A Barren World",
     "wanderer": "wanderer",
