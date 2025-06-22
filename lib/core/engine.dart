@@ -8,6 +8,7 @@ import 'state_manager.dart';
 import 'audio_engine.dart';
 import 'notifications.dart';
 import 'localization.dart';
+import 'visibility_manager.dart';
 import '../modules/room.dart';
 import '../modules/outside.dart';
 import '../modules/path.dart';
@@ -93,6 +94,9 @@ class Engine with ChangeNotifier {
     // 初始化本地化
     await Localization().init();
 
+    // 初始化页面可见性管理器
+    VisibilityManager().init();
+
     // 初始化模块
     await Room().init();
 
@@ -137,8 +141,12 @@ class Engine with ChangeNotifier {
       Ship().init();
     }
 
-    // 设置保存计时器
-    _saveTimer = Timer.periodic(const Duration(minutes: 1), (_) => saveGame());
+    // 设置保存计时器 - 使用VisibilityManager管理
+    _saveTimer = VisibilityManager().createPeriodicTimer(
+      const Duration(minutes: 1),
+      () => saveGame(),
+      'Engine.saveTimer'
+    );
 
     // 启动自动保存功能
     sm.startAutoSave();
@@ -149,8 +157,12 @@ class Engine with ChangeNotifier {
     // 根据保存的设置设置音频
     toggleVolume(sm.get('config.soundOn', true) == true);
 
-    // 开始收集收入
-    Timer.periodic(const Duration(seconds: 1), (_) => sm.collectIncome());
+    // 开始收集收入 - 使用VisibilityManager管理
+    VisibilityManager().createPeriodicTimer(
+      const Duration(seconds: 1),
+      () => sm.collectIncome(),
+      'Engine.incomeTimer'
+    );
 
     notifyListeners();
   }
@@ -285,21 +297,31 @@ class Engine with ChangeNotifier {
 
   // 设置间隔，支持双倍时间
   Timer setInterval(Function callback, int interval,
-      {bool skipDouble = false}) {
+      {bool skipDouble = false, String? description}) {
     if (options['doubleTime'] == true && !skipDouble) {
       interval = (interval / 2).round();
     }
 
-    return Timer.periodic(Duration(milliseconds: interval), (_) => callback());
+    final duration = Duration(milliseconds: interval);
+    return VisibilityManager().createPeriodicTimer(
+      duration,
+      () => callback(),
+      description ?? 'Engine.setInterval'
+    );
   }
 
   // 设置超时，支持双倍时间
-  Timer setTimeout(Function callback, int timeout, {bool skipDouble = false}) {
+  Timer setTimeout(Function callback, int timeout, {bool skipDouble = false, String? description}) {
     if (options['doubleTime'] == true && !skipDouble) {
       timeout = (timeout / 2).round();
     }
 
-    return Timer(Duration(milliseconds: timeout), () => callback());
+    final duration = Duration(milliseconds: timeout);
+    return VisibilityManager().createTimer(
+      duration,
+      () => callback(),
+      description ?? 'Engine.setTimeout'
+    );
   }
 
   // 处理按键按下事件
@@ -551,6 +573,7 @@ class Engine with ChangeNotifier {
   @override
   void dispose() {
     _saveTimer?.cancel();
+    VisibilityManager().dispose();
     AudioEngine().dispose();
     super.dispose();
   }

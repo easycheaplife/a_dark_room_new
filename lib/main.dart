@@ -10,6 +10,7 @@ import 'core/notifications.dart';
 import 'core/localization.dart';
 import 'core/responsive_layout.dart';
 import 'core/logger.dart';
+import 'core/progress_manager.dart';
 import 'widgets/header.dart';
 import 'widgets/notification_display.dart';
 
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => StateManager()),
         ChangeNotifierProvider(create: (_) => NotificationManager()),
         ChangeNotifierProvider(create: (_) => Localization()),
+        ChangeNotifierProvider(create: (_) => ProgressManager()),
         ChangeNotifierProvider(create: (_) => Engine()),
         ChangeNotifierProvider(create: (_) => Room()),
         ChangeNotifierProvider(create: (_) => Outside()),

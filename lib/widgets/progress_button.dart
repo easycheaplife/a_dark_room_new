@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/localization.dart';
-import 'dart:async';
+import '../core/logger.dart';
+import '../core/progress_manager.dart';
 
 /// 带进度条的按钮组件
 class ProgressButton extends StatefulWidget {
@@ -32,36 +33,26 @@ class ProgressButton extends StatefulWidget {
   State<ProgressButton> createState() => _ProgressButtonState();
 }
 
-class _ProgressButtonState extends State<ProgressButton>
-    with TickerProviderStateMixin {
-  bool _isProgressing = false;
-  late AnimationController _progressController;
-  late Animation<double> _progressAnimation;
-  Timer? _progressTimer;
+class _ProgressButtonState extends State<ProgressButton> {
   bool _isHovering = false;
   OverlayEntry? _overlayEntry;
   final LayerLink _layerLink = LayerLink();
 
+  // 使用ProgressManager管理进度状态
+  String get _progressId => 'ProgressButton.${widget.text}';
+
+  ProgressState? get _currentProgress => ProgressManager().getProgress(_progressId);
+  bool get _isProgressing => _currentProgress != null;
+
   @override
   void initState() {
     super.initState();
-    _progressController = AnimationController(
-      duration: Duration(milliseconds: widget.progressDuration),
-      vsync: this,
-    );
-    _progressAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _progressController,
-      curve: Curves.linear,
-    ));
   }
 
   @override
   void dispose() {
-    _progressController.dispose();
-    _progressTimer?.cancel();
+    // 不要在dispose时取消进度，让ProgressManager自己管理
+    // ProgressManager().cancelProgress(_progressId);
     _removeTooltip();
     super.dispose();
   }
@@ -149,31 +140,34 @@ class _ProgressButtonState extends State<ProgressButton>
     return localizedName;
   }
 
+  void _completeProgress() {
+    if (mounted) {
+      widget.onPressed?.call();
+    }
+  }
+
   void _startProgress() {
     if (_isProgressing || widget.disabled || widget.onPressed == null) return;
 
-    setState(() {
-      _isProgressing = true;
-    });
+    Logger.info('🚀 ProgressButton started: ${widget.text}, duration: ${widget.progressDuration}ms');
+    Logger.info('🔧 Using ProgressManager for ${_progressId}');
 
-    _progressController.reset();
-    _progressController.forward();
+    // 使用ProgressManager启动进度
+    ProgressManager().startProgress(
+      id: _progressId,
+      duration: widget.progressDuration,
+      onComplete: _completeProgress,
+    );
 
-    _progressTimer = Timer(Duration(milliseconds: widget.progressDuration), () {
-      if (mounted) {
-        setState(() {
-          _isProgressing = false;
-        });
-        widget.onPressed?.call();
-        _progressController.reset();
-      }
-    });
+    Logger.info('✅ ProgressManager.startProgress called for ${_progressId}');
   }
+
+
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<Localization>(
-      builder: (context, localization, child) {
+    return Consumer2<Localization, ProgressManager>(
+      builder: (context, localization, progressManager, child) {
         final bool isDisabled = widget.disabled || _isProgressing;
 
         Widget buttonWidget = Container(
@@ -247,45 +241,40 @@ class _ProgressButtonState extends State<ProgressButton>
 
                   // 进度条覆盖层
                   if (_isProgressing)
-                    AnimatedBuilder(
-                      animation: _progressAnimation,
-                      builder: (context, child) {
-                        return Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black, width: 1),
+                    Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 1),
+                      ),
+                      child: Stack(
+                        children: [
+                          // 进度条背景
+                          Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            color: Colors.grey[200],
                           ),
-                          child: Stack(
-                            children: [
-                              // 进度条背景
-                              Container(
-                                width: double.infinity,
-                                height: double.infinity,
-                                color: Colors.grey[200],
-                              ),
-                              // 进度条填充
-                              Container(
-                                width: widget.width * _progressAnimation.value,
-                                height: double.infinity,
-                                color: Colors.blue[300]?.withValues(alpha: 0.7),
-                              ),
-                              // 进度文本
-                              Center(
-                                child: Text(
-                                  '${(_progressAnimation.value * 100).toInt()}%',
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 12,
-                                    fontFamily: 'Times New Roman',
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          // 进度条填充
+                          Container(
+                            width: widget.width * (_currentProgress?.currentProgress ?? 0.0),
+                            height: double.infinity,
+                            color: Colors.blue[300]?.withValues(alpha: 0.7),
                           ),
-                        );
-                      },
+                          // 进度文本
+                          Center(
+                            child: Text(
+                              '${_currentProgress?.progressPercent ?? 0}%',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontFamily: 'Times New Roman',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                 ],
               ),

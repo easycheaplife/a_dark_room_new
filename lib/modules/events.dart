@@ -5,6 +5,7 @@ import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/engine.dart';
 import '../core/localization.dart';
+import '../core/visibility_manager.dart';
 import 'path.dart';
 import 'world.dart';
 import 'setpieces.dart';
@@ -574,14 +575,15 @@ class Events extends ChangeNotifier {
     // 设置特殊技能定时器
     final specials = scene['specials'] as List<Map<String, dynamic>>? ?? [];
     for (final special in specials) {
-      final timer = Timer.periodic(
+      final timer = VisibilityManager().createPeriodicTimer(
         Duration(milliseconds: ((special['delay'] ?? 5.0) * 1000).round()),
-        (timer) {
+        () {
           // 执行特殊技能
           if (special['action'] != null) {
             special['action']();
           }
         },
+        'Events.specialTimer'
       );
       specialTimers.add(timer);
     }
@@ -614,9 +616,10 @@ class Events extends ChangeNotifier {
     final sceneDelay = scene['attackDelay'];
     final attackDelay =
         delay ?? (sceneDelay != null ? sceneDelay.toDouble() : 2.0);
-    enemyAttackTimer = Timer.periodic(
+    enemyAttackTimer = VisibilityManager().createPeriodicTimer(
       Duration(milliseconds: (attackDelay * 1000).round()),
-      (timer) => enemyAttack(),
+      () => enemyAttack(),
+      'Events.enemyAttackTimer'
     );
   }
 
@@ -660,18 +663,18 @@ class Events extends ChangeNotifier {
     notifyListeners(); // 触发UI更新以显示动画
 
     // 延迟模拟动画时间
-    Timer(Duration(milliseconds: fightSpeed), () {
+    VisibilityManager().createTimer(Duration(milliseconds: fightSpeed), () {
       final enemy = fighterId == 'wanderer' ? 'enemy' : 'wanderer';
       damage(fighterId, enemy, dmg, 'melee');
 
       // 动画结束后的回调
-      Timer(Duration(milliseconds: fightSpeed), () {
+      VisibilityManager().createTimer(Duration(milliseconds: fightSpeed), () {
         currentAnimation = null;
         currentAnimationDamage = 0;
         notifyListeners();
         callback?.call();
-      });
-    });
+      }, 'Events.meleeAnimationEnd');
+    }, 'Events.meleeAnimation');
   }
 
   /// 远程动画 - 参考原游戏的animateRanged函数
@@ -684,7 +687,7 @@ class Events extends ChangeNotifier {
     notifyListeners(); // 触发UI更新以显示动画
 
     // 延迟模拟子弹飞行时间
-    Timer(Duration(milliseconds: fightSpeed * 2), () {
+    VisibilityManager().createTimer(Duration(milliseconds: fightSpeed * 2), () {
       final enemy = fighterId == 'wanderer' ? 'enemy' : 'wanderer';
       damage(fighterId, enemy, dmg, 'ranged');
 
@@ -692,7 +695,7 @@ class Events extends ChangeNotifier {
       currentAnimationDamage = 0;
       notifyListeners();
       callback?.call();
-    });
+    }, 'Events.rangedAnimation');
   }
 
   /// 造成伤害
@@ -776,9 +779,11 @@ class Events extends ChangeNotifier {
     final delay = random.nextInt(eventTimeRange[1] - eventTimeRange[0] + 1) +
         eventTimeRange[0];
 
-    nextEventTimer = Timer(Duration(minutes: delay), () {
-      triggerEvent();
-    });
+    nextEventTimer = VisibilityManager().createTimer(
+      Duration(minutes: delay),
+      () => triggerEvent(),
+      'Events.nextEventTimer'
+    );
   }
 
   /// 触发事件
@@ -993,7 +998,7 @@ class Events extends ChangeNotifier {
     Logger.info('🏆 winFight() 被调用, fought=$fought');
     if (fought) return;
 
-    Timer(Duration(milliseconds: fightSpeed), () {
+    VisibilityManager().createTimer(Duration(milliseconds: fightSpeed), () {
       Logger.info('🏆 winFight() 第一个定时器执行, fought=$fought');
       if (fought) return;
 
@@ -1003,7 +1008,7 @@ class Events extends ChangeNotifier {
       // AudioEngine().playSound(AudioLibrary.WIN_FIGHT);
 
       // 敌人消失动画延迟
-      Timer(const Duration(milliseconds: 1000), () {
+      VisibilityManager().createTimer(const Duration(milliseconds: 1000), () {
         Logger.info('🏆 winFight() 第二个定时器执行，准备显示战利品');
         final event = activeEvent();
         if (event == null) {
@@ -1028,8 +1033,8 @@ class Events extends ChangeNotifier {
         // 只有loseFight才会调用World.die()回到小黑屋
 
         notifyListeners();
-      });
-    });
+      }, 'Events.winFightLoot');
+    }, 'Events.winFight');
   }
 
   /// 结束战斗
@@ -1440,11 +1445,15 @@ class Events extends ChangeNotifier {
     _delayedRewards[key]?.cancel();
 
     // 创建新的延迟奖励
-    _delayedRewards[key] = Timer(Duration(seconds: delaySeconds), () {
-      action();
-      _delayedRewards.remove(key);
-      Logger.info('🎁 延迟奖励执行: $key');
-    });
+    _delayedRewards[key] = VisibilityManager().createTimer(
+      Duration(seconds: delaySeconds),
+      () {
+        action();
+        _delayedRewards.remove(key);
+        Logger.info('🎁 延迟奖励执行: $key');
+      },
+      'Events.delayedReward.$key'
+    );
 
     Logger.info('⏰ 延迟奖励已设置: $key (${delaySeconds}秒后执行)');
   }

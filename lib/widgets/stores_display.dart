@@ -74,7 +74,9 @@ class _StoresDisplayState extends State<StoresDisplay> {
       builder: (context, stateManager, localization, child) {
         // 从StateManager获取实际的资源数据
         final storesData = stateManager.get('stores');
-        final stores = storesData != null ? Map<String, dynamic>.from(storesData) : <String, dynamic>{};
+        final stores = (storesData is Map<String, dynamic>)
+            ? storesData
+            : <String, dynamic>{};
 
         final resources = <String, num>{};
         final weapons = <String, num>{};
