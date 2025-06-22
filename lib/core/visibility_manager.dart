@@ -1,67 +1,42 @@
 import 'dart:async';
-import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
 import 'logger.dart';
+
+// 条件导入：根据平台导入不同的实现
+import 'visibility_manager_stub.dart'
+    if (dart.library.html) 'visibility_manager_web.dart'
+    if (dart.library.io) 'visibility_manager_mobile.dart';
 
 /// 页面可见性管理器
 /// 处理页面失去焦点时的定时器暂停和恢复问题
 class VisibilityManager {
   static final VisibilityManager _instance = VisibilityManager._internal();
   factory VisibilityManager() => _instance;
-  VisibilityManager._internal();
+  VisibilityManager._internal() {
+    _platformManager = createPlatformVisibilityManager();
+  }
+
+  late final PlatformVisibilityManager _platformManager;
 
   bool _isVisible = true;
   bool get isVisible => _isVisible;
 
   final List<Timer> _managedTimers = [];
   final Map<Timer, _TimerInfo> _timerInfoMap = {};
-  
-  StreamSubscription<html.Event>? _visibilitySubscription;
-  StreamSubscription<html.Event>? _focusSubscription;
-  StreamSubscription<html.Event>? _blurSubscription;
 
   /// 初始化可见性管理器
   void init() {
     Logger.info('🔧 VisibilityManager init() called, kIsWeb: $kIsWeb');
 
-    if (!kIsWeb) {
-      Logger.info('⚠️ VisibilityManager skipped - not web platform');
-      return; // 只在Web平台启用
-    }
-
     try {
-      Logger.info('🔧 Setting up visibility listeners...');
-
-      // 监听页面可见性变化
-      _visibilitySubscription = html.document.onVisibilityChange.listen(_handleVisibilityChange);
-      Logger.info('✅ Visibility change listener set up');
-
-      // 监听窗口焦点变化
-      _focusSubscription = html.window.onFocus.listen(_handleFocus);
-      _blurSubscription = html.window.onBlur.listen(_handleBlur);
-      Logger.info('✅ Focus/blur listeners set up');
-
+      _platformManager.init(_updateVisibility);
       Logger.info('👁️ VisibilityManager initialized');
     } catch (e) {
       Logger.error('❌ VisibilityManager initialization failed: $e');
     }
   }
 
-  /// 处理可见性变化
-  void _handleVisibilityChange(html.Event event) {
-    final isHidden = html.document.hidden ?? false;
-    _updateVisibility(!isHidden);
-  }
 
-  /// 处理窗口获得焦点
-  void _handleFocus(html.Event event) {
-    _updateVisibility(true);
-  }
-
-  /// 处理窗口失去焦点
-  void _handleBlur(html.Event event) {
-    _updateVisibility(false);
-  }
 
   /// 更新可见性状态
   void _updateVisibility(bool visible) {
@@ -177,16 +152,14 @@ class VisibilityManager {
   /// 清理所有定时器
   void dispose() {
     Logger.info('🧹 Disposing VisibilityManager');
-    
+
     for (final timer in _managedTimers) {
       timer.cancel();
     }
     _managedTimers.clear();
     _timerInfoMap.clear();
 
-    _visibilitySubscription?.cancel();
-    _focusSubscription?.cancel();
-    _blurSubscription?.cancel();
+    _platformManager.dispose();
   }
 }
 
