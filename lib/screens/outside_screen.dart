@@ -5,7 +5,7 @@ import '../core/state_manager.dart';
 import '../core/localization.dart';
 import '../core/responsive_layout.dart';
 import '../widgets/progress_button.dart';
-import '../widgets/stores_display.dart';
+import '../widgets/unified_stores_container.dart';
 
 /// 外部界面 - 显示村庄状态、建筑和工人管理
 /// 使用与房间界面一致的UI风格
@@ -133,24 +133,13 @@ class OutsideScreen extends StatelessWidget {
     );
   }
 
-  // 右侧信息栏 - 参考房间界面的库存和武器布局方式
+  // 右侧信息栏 - 使用统一的库存容器
   Widget _buildRightInfoPanel(Outside outside, StateManager stateManager, GameLayoutParams layoutParams) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // 库存区域 - 与房间界面相同的配置
-        const StoresDisplay(
-          style: StoresDisplayStyle.light,
-          type: StoresDisplayType.resourcesOnly,
-          collapsible: false,
-          showIncomeInfo: false,
-        ),
-
-        const SizedBox(height: 15), // 与房间界面相同的间距
-
-        // 村庄状态区域 - 排在库存下面
-        _buildVillageStatus(outside, stateManager, layoutParams),
-      ],
+    return UnifiedStoresContainer(
+      showPerks: false,
+      showVillageStatus: true,
+      showBuildings: true, // 村庄页签不显示武器，建筑在村庄状态区域显示
+      villageStatusBuilder: (stateManager, localization) => _buildVillageStatus(outside, stateManager, layoutParams),
     );
   }
 

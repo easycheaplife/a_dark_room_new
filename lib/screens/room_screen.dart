@@ -6,7 +6,7 @@ import '../core/localization.dart';
 import '../core/responsive_layout.dart';
 import '../widgets/game_button.dart';
 import '../widgets/progress_button.dart';
-import '../widgets/stores_display.dart';
+import '../widgets/unified_stores_container.dart';
 
 /// 房间界面 - 显示火焰状态、建筑和交易
 class RoomScreen extends StatelessWidget {
@@ -302,35 +302,11 @@ class RoomScreen extends StatelessWidget {
     );
   }
 
-  // 资源存储区域
+  // 资源存储区域 - 使用统一的库存容器
   Widget _buildStoresContainer(StateManager stateManager, GameLayoutParams layoutParams) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // 库存区域
-        const StoresDisplay(
-          style: StoresDisplayStyle.light,
-          type: StoresDisplayType.resourcesOnly,
-          collapsible: false,
-          showIncomeInfo: false,
-          customTitle: null, // 使用默认标题
-        ),
-
-        const SizedBox(height: 15),
-
-        // 武器区域
-        Consumer<Localization>(
-          builder: (context, localization, child) {
-            return StoresDisplay(
-              style: StoresDisplayStyle.light,
-              type: StoresDisplayType.weaponsOnly,
-              collapsible: false,
-              showIncomeInfo: false,
-              customTitle: localization.translate('ui.menus.weapons'),
-            );
-          },
-        ),
-      ],
+    return const UnifiedStoresContainer(
+      showPerks: false,
+      showVillageStatus: false,
     );
   }
 

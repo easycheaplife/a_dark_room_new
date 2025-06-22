@@ -311,30 +311,31 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Widget _buildActiveModulePanel(Engine engine) {
-    // 根据当前活跃模块的类型显示对应的UI
+    // 根据当前活跃模块的类型显示对应的UI，添加切换动画
     final activeModule = engine.activeModule;
 
     if (activeModule == null) {
       return const RoomScreen(); // 默认显示房间
     }
 
+    Widget screen;
     // 使用模块类型而不是name属性来判断
     if (activeModule is Room) {
-      return const RoomScreen();
+      screen = const RoomScreen();
     } else if (activeModule is Outside) {
-      return const OutsideScreen();
+      screen = const OutsideScreen();
     } else if (activeModule is Path) {
-      return const PathScreen();
+      screen = const PathScreen();
     } else if (activeModule is World) {
-      return const WorldScreen();
+      screen = const WorldScreen();
     } else if (activeModule is Fabricator) {
-      return const FabricatorScreen();
+      screen = const FabricatorScreen();
     } else if (activeModule is Ship) {
-      return const ShipScreen();
+      screen = const ShipScreen();
     } else {
       // 未知模块类型，显示模块名称
       final moduleName = activeModule.name ?? 'Unknown';
-      return Center(
+      screen = Center(
         child: Text(
           'Module: $moduleName',
           style: const TextStyle(
@@ -344,5 +345,30 @@ class _GameScreenState extends State<GameScreen> {
         ),
       );
     }
+
+    // 添加页签切换动画
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300), // 300ms切换动画
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        // 使用淡入淡出 + 轻微滑动的组合动画
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.1, 0), // 从右侧轻微滑入
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic, // 使用平滑的缓动曲线
+            )),
+            child: child,
+          ),
+        );
+      },
+      child: Container(
+        key: ValueKey(activeModule.runtimeType), // 使用模块类型作为key确保动画触发
+        child: screen,
+      ),
+    );
   }
 }

@@ -5,7 +5,7 @@ import '../modules/path.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
 import '../widgets/game_button.dart';
-import '../widgets/stores_display.dart';
+import '../widgets/unified_stores_container.dart';
 import '../core/logger.dart';
 
 /// 漫漫尘途界面 - 显示装备管理和出发准备
@@ -647,42 +647,12 @@ class PathScreen extends StatelessWidget {
     return localization.translate('skill_descriptions.$perkName');
   }
 
-  /// 构建库存容器 - 去掉局部滚动，显示全部数据，只保留整个页面滚动
+  /// 构建库存容器 - 使用统一的库存容器组件
   Widget _buildStoresContainer(StateManager stateManager, Localization localization) {
-    return SizedBox(
-      width: 200, // 固定宽度，与小黑屋保持一致
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min, // 让容器根据内容自适应高度
-        children: [
-          // 技能区域（如果有技能的话）
-          _buildPerksSection(stateManager, localization),
-
-          // 库存区域 - 使用light样式，只显示资源
-          const StoresDisplay(
-            style: StoresDisplayStyle.light,
-            type: StoresDisplayType.resourcesOnly,
-            collapsible: false,
-            showIncomeInfo: false,
-            customTitle: null, // 使用默认标题，与小黑屋一致
-          ),
-
-          const SizedBox(height: 15), // 与小黑屋保持一致的间距
-
-          // 武器区域 - 使用light样式，只显示武器
-          Consumer<Localization>(
-            builder: (context, localization, child) {
-              return StoresDisplay(
-                style: StoresDisplayStyle.light,
-                type: StoresDisplayType.weaponsOnly,
-                collapsible: false,
-                showIncomeInfo: false,
-                customTitle: localization.translate('ui.menus.weapons'),
-              );
-            },
-          ),
-        ],
-      ),
+    return UnifiedStoresContainer(
+      showPerks: true,
+      perksBuilder: _buildPerksSection,
+      showVillageStatus: false,
     );
   }
 
