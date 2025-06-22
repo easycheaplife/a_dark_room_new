@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:ui' as ui;
 import '../modules/path.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
@@ -365,41 +366,66 @@ class PathScreen extends StatelessWidget {
 
                 const SizedBox(width: 5),
 
-                // 减少按钮
-                _buildSupplyButton(
-                    '▼',
-                    equipped > 0
-                        ? () => _decreaseSupply(itemName, 1, path, stateManager)
-                        : null),
+                // 按钮组 - 模拟原游戏的4个按钮布局
+                SizedBox(
+                  width: 30, // 容纳两列按钮
+                  height: 20, // 容纳两行按钮
+                  child: Stack(
+                    children: [
+                      // upBtn - 增加1个（右侧，上方）
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: _buildSupplyButton(
+                          'up',
+                          1,
+                          _canIncreaseSupply(itemName, equipped, available, path)
+                              ? () => _increaseSupply(itemName, 1, path, stateManager)
+                              : null,
+                        ),
+                      ),
 
-                const SizedBox(width: 2),
+                      // dnBtn - 减少1个（右侧，下方）
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: _buildSupplyButton(
+                          'down',
+                          1,
+                          equipped > 0
+                              ? () => _decreaseSupply(itemName, 1, path, stateManager)
+                              : null,
+                        ),
+                      ),
 
-                // 增加按钮
-                _buildSupplyButton(
-                    '▲',
-                    _canIncreaseSupply(itemName, equipped, available, path)
-                        ? () => _increaseSupply(itemName, 1, path, stateManager)
-                        : null),
+                      // upManyBtn - 增加10个（左侧，上方）
+                      Positioned(
+                        right: 15,
+                        top: 0,
+                        child: _buildSupplyButton(
+                          'up',
+                          10,
+                          _canIncreaseSupply(itemName, equipped, available, path, 10)
+                              ? () => _increaseSupply(itemName, 10, path, stateManager)
+                              : null,
+                        ),
+                      ),
 
-                const SizedBox(width: 2),
-
-                // 减少10按钮
-                _buildSupplyButton(
-                    '▼▼',
-                    equipped >= 10
-                        ? () =>
-                            _decreaseSupply(itemName, 10, path, stateManager)
-                        : null),
-
-                const SizedBox(width: 2),
-
-                // 增加10按钮
-                _buildSupplyButton(
-                    '▲▲',
-                    _canIncreaseSupply(itemName, equipped, available, path, 10)
-                        ? () =>
-                            _increaseSupply(itemName, 10, path, stateManager)
-                        : null),
+                      // dnManyBtn - 减少10个（左侧，下方）
+                      Positioned(
+                        right: 15,
+                        bottom: 0,
+                        child: _buildSupplyButton(
+                          'down',
+                          10,
+                          equipped >= 10
+                              ? () => _decreaseSupply(itemName, 10, path, stateManager)
+                              : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ],
@@ -408,27 +434,23 @@ class PathScreen extends StatelessWidget {
     );
   }
 
-  /// 构建供应按钮 - 模拟原游戏的上下箭头按钮
-  Widget _buildSupplyButton(String text, VoidCallback? onPressed) {
+  /// 构建供应按钮 - 模拟原游戏的三角形箭头按钮
+  Widget _buildSupplyButton(String direction, int amount, VoidCallback? onPressed) {
+    final bool isUp = direction == 'up';
+    final bool isEnabled = onPressed != null;
+    final bool isMany = amount >= 10; // 10个或以上为"Many"按钮
+
     return SizedBox(
       width: 14,
       height: 12,
       child: InkWell(
         onTap: onPressed,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-                color: onPressed != null ? Colors.black : Colors.grey),
-          ),
-          child: Center(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: onPressed != null ? Colors.black : Colors.grey,
-                fontSize: 6,
-                fontFamily: 'Times New Roman',
-              ),
-            ),
+        child: CustomPaint(
+          size: const Size(14, 12),
+          painter: _TriangleButtonPainter(
+            isUp: isUp,
+            isEnabled: isEnabled,
+            isMany: isMany,
           ),
         ),
       ),
@@ -608,5 +630,80 @@ class PathScreen extends StatelessWidget {
   /// 获取技能描述
   String _getPerkDescription(String perkName, Localization localization) {
     return localization.translate('skill_descriptions.$perkName');
+  }
+}
+
+/// 三角形按钮绘制器 - 模拟原游戏的上下箭头按钮样式
+class _TriangleButtonPainter extends CustomPainter {
+  final bool isUp;
+  final bool isEnabled;
+  final bool isMany; // 是否为"Many"按钮（10个）
+
+  _TriangleButtonPainter({
+    required this.isUp,
+    required this.isEnabled,
+    this.isMany = false,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final borderPaint = Paint()
+      ..color = isEnabled ? Colors.black : const Color(0xFF999999)
+      ..style = PaintingStyle.fill;
+
+    final whitePaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    // 计算三角形的点位置，模拟原游戏CSS中的border样式
+    final double centerX = size.width / 2;
+    final double borderWidth = 6.0; // 对应原游戏CSS的border-width: 6px
+    // 根据按钮类型设置内部三角形大小
+    final double innerWidth = isMany ? 3.0 : 4.0; // Many按钮更细，普通按钮更粗
+
+    ui.Path outerPath = ui.Path();
+    ui.Path innerPath = ui.Path();
+
+    if (isUp) {
+      // 向上的三角形 - 模拟原游戏的upBtn样式
+      // 外边框三角形
+      outerPath.moveTo(centerX, 1); // 顶点
+      outerPath.lineTo(centerX - borderWidth, size.height - 3); // 左下
+      outerPath.lineTo(centerX + borderWidth, size.height - 3); // 右下
+      outerPath.close();
+
+      // 内部白色三角形（创建空心效果）
+      innerPath.moveTo(centerX, 1 + (borderWidth - innerWidth)); // 顶点
+      innerPath.lineTo(centerX - innerWidth, size.height - 3); // 左下
+      innerPath.lineTo(centerX + innerWidth, size.height - 3); // 右下
+      innerPath.close();
+    } else {
+      // 向下的三角形 - 模拟原游戏的dnBtn样式
+      // 外边框三角形
+      outerPath.moveTo(centerX, size.height - 1); // 底点
+      outerPath.lineTo(centerX - borderWidth, 3); // 左上
+      outerPath.lineTo(centerX + borderWidth, 3); // 右上
+      outerPath.close();
+
+      // 内部白色三角形（创建空心效果）
+      innerPath.moveTo(centerX, size.height - 1 - (borderWidth - innerWidth)); // 底点
+      innerPath.lineTo(centerX - innerWidth, 3); // 左上
+      innerPath.lineTo(centerX + innerWidth, 3); // 右上
+      innerPath.close();
+    }
+
+    // 绘制外边框三角形
+    canvas.drawPath(outerPath, borderPaint);
+
+    // 绘制内部白色三角形（创建空心效果）
+    canvas.drawPath(innerPath, whitePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return oldDelegate is! _TriangleButtonPainter ||
+        oldDelegate.isUp != isUp ||
+        oldDelegate.isEnabled != isEnabled ||
+        oldDelegate.isMany != isMany;
   }
 }

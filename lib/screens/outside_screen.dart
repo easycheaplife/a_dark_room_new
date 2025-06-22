@@ -287,9 +287,9 @@ class OutsideScreen extends StatelessWidget {
               ),
             ),
 
-            // 工人数量和控制按钮 - 修复溢出问题
+            // 工人数量和控制按钮 - 模拟原游戏的4个按钮布局
             SizedBox(
-              width: 70, // 进一步增加宽度，避免溢出
+              width: 85, // 增加宽度以容纳4个按钮
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -304,22 +304,65 @@ class OutsideScreen extends StatelessWidget {
 
                   const SizedBox(width: 4), // 适当间距
 
-                  // 减少按钮
-                  _buildWorkerControlButton(
-                    '▼',
-                    currentWorkers > 0
-                        ? () => outside.decreaseWorker(type, 1)
-                        : null,
-                  ),
+                  // 按钮组 - 模拟原游戏的相对定位
+                  SizedBox(
+                    width: 30, // 容纳两列按钮
+                    height: 20, // 容纳两行按钮
+                    child: Stack(
+                      children: [
+                        // upBtn - 增加1个（右侧，上方）
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: _buildWorkerControlButton(
+                            'up',
+                            1,
+                            availableWorkers > 0
+                                ? () => outside.increaseWorker(type, 1)
+                                : null,
+                          ),
+                        ),
 
-                  const SizedBox(width: 1), // 最小间距
+                        // dnBtn - 减少1个（右侧，下方）
+                        Positioned(
+                          right: 0,
+                          bottom: 0,
+                          child: _buildWorkerControlButton(
+                            'down',
+                            1,
+                            currentWorkers > 0
+                                ? () => outside.decreaseWorker(type, 1)
+                                : null,
+                          ),
+                        ),
 
-                  // 增加按钮
-                  _buildWorkerControlButton(
-                    '▲',
-                    availableWorkers > 0
-                        ? () => outside.increaseWorker(type, 1)
-                        : null,
+                        // upManyBtn - 增加10个（左侧，上方）
+                        Positioned(
+                          right: 15,
+                          top: 0,
+                          child: _buildWorkerControlButton(
+                            'up',
+                            10,
+                            availableWorkers >= 10
+                                ? () => outside.increaseWorker(type, 10)
+                                : null,
+                          ),
+                        ),
+
+                        // dnManyBtn - 减少10个（左侧，下方）
+                        Positioned(
+                          right: 15,
+                          bottom: 0,
+                          child: _buildWorkerControlButton(
+                            'down',
+                            10,
+                            currentWorkers >= 10
+                                ? () => outside.decreaseWorker(type, 10)
+                                : null,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -330,27 +373,23 @@ class OutsideScreen extends StatelessWidget {
     );
   }
 
-  // 构建工人控制按钮 - 模拟原游戏的上下箭头按钮
-  Widget _buildWorkerControlButton(String text, VoidCallback? onPressed) {
+  // 构建工人控制按钮 - 模拟原游戏的三角形箭头按钮
+  Widget _buildWorkerControlButton(String direction, int amount, VoidCallback? onPressed) {
+    final bool isUp = direction == 'up';
+    final bool isEnabled = onPressed != null;
+    final bool isMany = amount >= 10; // 10个或以上为"Many"按钮
+
     return SizedBox(
       width: 14,
       height: 12,
       child: InkWell(
         onTap: onPressed,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-                color: onPressed != null ? Colors.black : Colors.grey),
-          ),
-          child: Center(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: onPressed != null ? Colors.black : Colors.grey,
-                fontSize: 8,
-                fontFamily: 'Times New Roman',
-              ),
-            ),
+        child: CustomPaint(
+          size: const Size(14, 12),
+          painter: _TriangleButtonPainter(
+            isUp: isUp,
+            isEnabled: isEnabled,
+            isMany: isMany,
           ),
         ),
       ),
@@ -637,5 +676,80 @@ class _VillageWidgetState extends State<_VillageWidget> {
 
     // 否则返回原名称
     return buildingName;
+  }
+}
+
+/// 三角形按钮绘制器 - 模拟原游戏的上下箭头按钮样式
+class _TriangleButtonPainter extends CustomPainter {
+  final bool isUp;
+  final bool isEnabled;
+  final bool isMany; // 是否为"Many"按钮（10个）
+
+  _TriangleButtonPainter({
+    required this.isUp,
+    required this.isEnabled,
+    this.isMany = false,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final borderPaint = Paint()
+      ..color = isEnabled ? Colors.black : const Color(0xFF999999)
+      ..style = PaintingStyle.fill;
+
+    final whitePaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    // 计算三角形的点位置，模拟原游戏CSS中的border样式
+    final double centerX = size.width / 2;
+    final double borderWidth = 6.0; // 对应原游戏CSS的border-width: 6px
+    // 根据按钮类型设置内部三角形大小
+    final double innerWidth = isMany ? 3.0 : 4.0; // Many按钮更细，普通按钮更粗
+
+    Path outerPath = Path();
+    Path innerPath = Path();
+
+    if (isUp) {
+      // 向上的三角形 - 模拟原游戏的upBtn样式
+      // 外边框三角形
+      outerPath.moveTo(centerX, 1); // 顶点
+      outerPath.lineTo(centerX - borderWidth, size.height - 3); // 左下
+      outerPath.lineTo(centerX + borderWidth, size.height - 3); // 右下
+      outerPath.close();
+
+      // 内部白色三角形（创建空心效果）
+      innerPath.moveTo(centerX, 1 + (borderWidth - innerWidth)); // 顶点
+      innerPath.lineTo(centerX - innerWidth, size.height - 3); // 左下
+      innerPath.lineTo(centerX + innerWidth, size.height - 3); // 右下
+      innerPath.close();
+    } else {
+      // 向下的三角形 - 模拟原游戏的dnBtn样式
+      // 外边框三角形
+      outerPath.moveTo(centerX, size.height - 1); // 底点
+      outerPath.lineTo(centerX - borderWidth, 3); // 左上
+      outerPath.lineTo(centerX + borderWidth, 3); // 右上
+      outerPath.close();
+
+      // 内部白色三角形（创建空心效果）
+      innerPath.moveTo(centerX, size.height - 1 - (borderWidth - innerWidth)); // 底点
+      innerPath.lineTo(centerX - innerWidth, 3); // 左上
+      innerPath.lineTo(centerX + innerWidth, 3); // 右上
+      innerPath.close();
+    }
+
+    // 绘制外边框三角形
+    canvas.drawPath(outerPath, borderPaint);
+
+    // 绘制内部白色三角形（创建空心效果）
+    canvas.drawPath(innerPath, whitePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return oldDelegate is! _TriangleButtonPainter ||
+        oldDelegate.isUp != isUp ||
+        oldDelegate.isEnabled != isEnabled ||
+        oldDelegate.isMany != isMany;
   }
 }
