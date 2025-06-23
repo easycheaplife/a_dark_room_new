@@ -122,7 +122,8 @@ class Localization with ChangeNotifier {
       'weapons',
       'skills',
       'events',
-      'messages'
+      'messages',
+      'game_states' // 添加游戏状态类别，用于陷阱掉落消息等
     ];
 
     for (String category in categories) {

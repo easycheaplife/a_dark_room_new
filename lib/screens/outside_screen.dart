@@ -25,8 +25,10 @@ class OutsideScreen extends StatelessWidget {
           padding: layoutParams.contentPadding,
           child: SingleChildScrollView(
             child: layoutParams.useVerticalLayout
-                ? _buildMobileLayout(context, outside, stateManager, localization, layoutParams)
-                : _buildDesktopLayout(context, outside, stateManager, localization, layoutParams),
+                ? _buildMobileLayout(
+                    context, outside, stateManager, localization, layoutParams)
+                : _buildDesktopLayout(
+                    context, outside, stateManager, localization, layoutParams),
           ),
         );
       },
@@ -34,8 +36,12 @@ class OutsideScreen extends StatelessWidget {
   }
 
   /// 移动设备垂直布局
-  Widget _buildMobileLayout(BuildContext context, Outside outside, StateManager stateManager,
-      Localization localization, GameLayoutParams layoutParams) {
+  Widget _buildMobileLayout(
+      BuildContext context,
+      Outside outside,
+      StateManager stateManager,
+      Localization localization,
+      GameLayoutParams layoutParams) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -52,7 +58,8 @@ class OutsideScreen extends StatelessWidget {
         // 工人管理区域
         Consumer<Localization>(
           builder: (context, localization, child) {
-            return _buildWorkersButtons(outside, stateManager, localization, layoutParams);
+            return _buildWorkersButtons(
+                outside, stateManager, localization, layoutParams);
           },
         ),
       ],
@@ -60,17 +67,21 @@ class OutsideScreen extends StatelessWidget {
   }
 
   /// 桌面/Web水平布局（保持原有设计）
-  Widget _buildDesktopLayout(BuildContext context, Outside outside, StateManager stateManager,
-      Localization localization, GameLayoutParams layoutParams) {
+  Widget _buildDesktopLayout(
+      BuildContext context,
+      Outside outside,
+      StateManager stateManager,
+      Localization localization,
+      GameLayoutParams layoutParams) {
     return SizedBox(
       width: 700,
       height: 1000, // 确保有足够的高度支持滚动
       child: Stack(
         children: [
-          // 收集木材按钮区域 - 左上角
+          // 收集木材按钮区域 - 左上角（与添柴按钮位置一致）
           Positioned(
-            left: 10,
-            top: 10,
+            left: 0,
+            top: 0,
             child: _buildGatheringButtons(outside, stateManager, layoutParams),
           ),
 
@@ -80,7 +91,8 @@ class OutsideScreen extends StatelessWidget {
             top: 10,
             child: Consumer<Localization>(
               builder: (context, localization, child) {
-                return _buildWorkersButtons(outside, stateManager, localization, layoutParams);
+                return _buildWorkersButtons(
+                    outside, stateManager, localization, layoutParams);
               },
             ),
           ),
@@ -97,7 +109,8 @@ class OutsideScreen extends StatelessWidget {
   }
 
   // 收集木材按钮区域
-  Widget _buildGatheringButtons(Outside outside, StateManager stateManager, GameLayoutParams layoutParams) {
+  Widget _buildGatheringButtons(Outside outside, StateManager stateManager,
+      GameLayoutParams layoutParams) {
     final numTraps = stateManager.get('game.buildings.trap', true) ?? 0;
 
     return Column(
@@ -134,17 +147,20 @@ class OutsideScreen extends StatelessWidget {
   }
 
   // 右侧信息栏 - 使用统一的库存容器
-  Widget _buildRightInfoPanel(Outside outside, StateManager stateManager, GameLayoutParams layoutParams) {
+  Widget _buildRightInfoPanel(Outside outside, StateManager stateManager,
+      GameLayoutParams layoutParams) {
     return UnifiedStoresContainer(
       showPerks: false,
       showVillageStatus: true,
       showBuildings: true, // 村庄页签不显示武器，建筑在村庄状态区域显示
-      villageStatusBuilder: (stateManager, localization) => _buildVillageStatus(outside, stateManager, layoutParams),
+      villageStatusBuilder: (stateManager, localization) =>
+          _buildVillageStatus(outside, stateManager, layoutParams),
     );
   }
 
   // 村庄状态区域 - 模拟原游戏的 village 容器
-  Widget _buildVillageStatus(Outside outside, StateManager stateManager, GameLayoutParams layoutParams) {
+  Widget _buildVillageStatus(Outside outside, StateManager stateManager,
+      GameLayoutParams layoutParams) {
     final numHuts = stateManager.get('game.buildings.hut', true) ?? 0;
 
     // 如果没有小屋，不显示村庄状态
@@ -164,8 +180,8 @@ class OutsideScreen extends StatelessWidget {
   }
 
   // 工人管理区域 - 模拟原游戏的 workers 容器
-  Widget _buildWorkersButtons(
-      Outside outside, StateManager stateManager, Localization localization, GameLayoutParams layoutParams) {
+  Widget _buildWorkersButtons(Outside outside, StateManager stateManager,
+      Localization localization, GameLayoutParams layoutParams) {
     final population = stateManager.get('game.population', true) ?? 0;
 
     // 如果没有人口，不显示工人管理
@@ -174,7 +190,9 @@ class OutsideScreen extends StatelessWidget {
     }
 
     return SizedBox(
-      width: layoutParams.useVerticalLayout ? layoutParams.gameAreaWidth : 200, // 进一步增加宽度，确保不重叠
+      width: layoutParams.useVerticalLayout
+          ? layoutParams.gameAreaWidth
+          : 200, // 进一步增加宽度，确保不重叠
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -197,8 +215,13 @@ class OutsideScreen extends StatelessWidget {
   }
 
   // 构建工人按钮 - 模拟原游戏的 workerRow 样式
-  Widget _buildWorkerButton(String name, String type, Outside outside,
-      StateManager stateManager, Localization localization, GameLayoutParams layoutParams) {
+  Widget _buildWorkerButton(
+      String name,
+      String type,
+      Outside outside,
+      StateManager stateManager,
+      Localization localization,
+      GameLayoutParams layoutParams) {
     final currentWorkers = stateManager.get('game.workers["$type"]', true) ?? 0;
     final population = stateManager.get('game.population', true) ?? 0;
     final totalWorkers = stateManager
@@ -363,7 +386,8 @@ class OutsideScreen extends StatelessWidget {
   }
 
   // 构建工人控制按钮 - 模拟原游戏的三角形箭头按钮
-  Widget _buildWorkerControlButton(String direction, int amount, VoidCallback? onPressed) {
+  Widget _buildWorkerControlButton(
+      String direction, int amount, VoidCallback? onPressed) {
     final bool isUp = direction == 'up';
     final bool isEnabled = onPressed != null;
     final bool isMany = amount >= 10; // 10个或以上为"Many"按钮
@@ -452,7 +476,8 @@ class OutsideScreen extends StatelessWidget {
       if (totalProduction > 0) {
         final producesText =
             localization?.translate('worker_info.produces') ?? 'produces';
-        final everyText = localization?.translate('worker_info.every') ?? 'every';
+        final everyText =
+            localization?.translate('worker_info.every') ?? 'every';
         final secondsText =
             localization?.translate('worker_info.seconds') ?? 'seconds';
         final woodText = localization?.translate('resources.wood') ?? 'wood';
@@ -472,7 +497,8 @@ class OutsideScreen extends StatelessWidget {
           final actionText = totalRate > 0
               ? (localization?.translate('worker_info.produces') ?? 'produces')
               : (localization?.translate('worker_info.consumes') ?? 'consumes');
-          final everyText = localization?.translate('worker_info.every') ?? 'every';
+          final everyText =
+              localization?.translate('worker_info.every') ?? 'every';
           final secondsText =
               localization?.translate('worker_info.seconds') ?? 'seconds';
           effects.add(
@@ -482,12 +508,12 @@ class OutsideScreen extends StatelessWidget {
     }
 
     if (effects.isEmpty) {
-      return localization?.translate('worker_info.no_production') ?? 'no production/consumption';
+      return localization?.translate('worker_info.no_production') ??
+          'no production/consumption';
     }
 
     return effects.join('\n');
   }
-
 }
 
 // 可折叠的村庄状态显示组件
@@ -721,7 +747,8 @@ class _TriangleButtonPainter extends CustomPainter {
       outerPath.close();
 
       // 内部白色三角形（创建空心效果）
-      innerPath.moveTo(centerX, size.height - 1 - (borderWidth - innerWidth)); // 底点
+      innerPath.moveTo(
+          centerX, size.height - 1 - (borderWidth - innerWidth)); // 底点
       innerPath.lineTo(centerX - innerWidth, 3); // 左上
       innerPath.lineTo(centerX + innerWidth, 3); // 右上
       innerPath.close();

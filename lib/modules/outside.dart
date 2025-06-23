@@ -152,7 +152,8 @@ class Outside extends ChangeNotifier {
       } else if (num < 5) {
         message = localization.translate('outside.population.family_arrives');
       } else if (num < 10) {
-        message = localization.translate('outside.population.small_group_arrives');
+        message =
+            localization.translate('outside.population.small_group_arrives');
       } else if (num < 30) {
         message = localization.translate('outside.population.convoy_arrives');
       } else {
@@ -506,15 +507,21 @@ class Outside extends ChangeNotifier {
         '🪤 Checking traps: numTraps=$numTraps, numBait=$numBait, numDrops=$numDrops');
     Logger.info('🏗️ Buildings: ${sm.get('game.buildings')}');
 
+    // 获取本地化实例（提前获取以便在循环中使用）
+    final localization = Localization();
+
     for (var i = 0; i < numDrops; i++) {
       final roll = random.nextDouble();
       for (final drop in trapDrops) {
         if (roll < drop['rollUnder']) {
           final name = drop['name'] as String;
-          final message = drop['message'] as String;
+          final messageKey = drop['message'] as String;
           final num = drops[name] ?? 0;
           if (num == 0) {
-            msg.add(message);
+            // 翻译消息键并添加到消息列表
+            final translatedMessage = localization.translate(messageKey);
+            msg.add(translatedMessage);
+            Logger.info('🪤 陷阱掉落: $name -> $messageKey -> $translatedMessage');
           }
           drops[name] = num + 1;
           break;
@@ -523,7 +530,6 @@ class Outside extends ChangeNotifier {
     }
 
     // 构建消息
-    final localization = Localization();
     if (msg.isEmpty) {
       NotificationManager().notify(
           name, localization.translate('notifications.nothing_in_traps'));
@@ -535,7 +541,7 @@ class Outside extends ChangeNotifier {
         } else if (msg.length > 1 && l == msg.length - 1) {
           s += " ${localization.translate('formats.and')} ";
         }
-        s += msg[l];
+        s += msg[l]; // 现在 msg[l] 已经是翻译后的文本
       }
       NotificationManager().notify(
           name, localization.translate('notifications.traps_yield', [s]));
