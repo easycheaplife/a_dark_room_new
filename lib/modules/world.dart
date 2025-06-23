@@ -933,8 +933,12 @@ class World extends ChangeNotifier {
           if (setpieces.isSetpieceAvailable(sceneName)) {
             Logger.info('🏛️ 启动Setpiece场景: $sceneName');
             setpieces.startSetpiece(sceneName);
-            // 立即标记为已访问，防止重复访问
-            markVisited(curPos[0], curPos[1]);
+            // 对于某些特殊场景（如洞穴），不立即标记为已访问
+            // 只有在场景完成时才标记
+            if (sceneName != 'cave') {
+              // 立即标记为已访问，防止重复访问
+              markVisited(curPos[0], curPos[1]);
+            }
           } else {
             // 为缺失的场景提供默认处理
             Logger.info('🏛️ 场景不存在，使用默认处理: $sceneName');
@@ -1041,6 +1045,9 @@ class World extends ChangeNotifier {
         break;
 
       case 'V': // 潮湿洞穴
+        // 注意：潮湿洞穴应该有完整的Setpiece场景，不应该使用这个默认处理
+        // 如果到达这里，说明'cave' Setpiece场景有问题
+        Logger.info('⚠️ 潮湿洞穴的Setpiece场景缺失，使用默认处理');
         NotificationManager().notify(name, '发现了一个潮湿的洞穴。里面很黑，但可能藏着什么。');
         final random2 = Random();
         if (random2.nextDouble() < 0.3) {
@@ -1049,7 +1056,9 @@ class World extends ChangeNotifier {
         if (random2.nextDouble() < 0.2) {
           _addToOutfit('teeth', random2.nextInt(3) + 1);
         }
-        markVisited(curPos[0], curPos[1]);
+        // 对于洞穴，不立即标记为已访问，允许重复访问
+        // 只有完成洞穴探索后才会通过clearDungeon转换为前哨站
+        Logger.info('🏛️ 潮湿洞穴未标记为已访问，允许重复探索');
         break;
 
       case 'M': // 阴暗沼泽
