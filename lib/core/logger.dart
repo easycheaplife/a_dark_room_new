@@ -16,104 +16,67 @@ class Logger {
     try {
       final localization = Localization();
 
-      // 定义日志消息的本地化映射
-      final logMessages = {
-        'zh': {
-          'Game loading successful': '游戏加载成功',
-          'Error loading game': '加载游戏时出错',
-          'Game save state cleared': '游戏保存状态已清除',
-          'Error deleting save': '删除保存时出错',
-          'Archive import successful': '存档导入成功',
-          'Archive import failed': '存档导入失败',
-          'Error importing archive': '导入存档时出错',
-          'Player died': '玩家死亡',
-          'Returned to dark room': '返回小黑屋',
-          'Moving': '移动',
-          'Triggered village event': '触发村庄事件',
-          'Found executioner device': '发现执行者装置',
-          'Equipment status saved': '装备状态已保存',
-          'Initializing World module': '初始化世界模块',
-          'Setting world feature as unlocked': '设置世界功能为已解锁',
-          'Switching to World module': '切换到世界模块',
-          'embark() completed': 'embark() 完成',
-          'embark() error': 'embark() 错误',
-          'Error stack': '错误堆栈',
-          'Cannot save empty state': '无法保存空状态',
-          'Saving data length': '保存数据长度',
-          'Saving data preview': '保存数据预览',
-          'Error loading game state': '加载游戏错误',
-          'Upgrading save to': '升级存档到',
-          'Export game state failed': '导出游戏状态失败',
-          'Import data format invalid': '导入数据格式无效',
-          'canEmbark': '可以出发',
-          'Embark button clicked': '出发按钮被点击',
-          'mapSearch: Invalid map data': 'mapSearch: 地图数据无效',
-          'mapSearch error': 'mapSearch错误',
-          'move() - state is null, cannot move': 'move() - state为null，无法移动',
-          'move() - Player is dead, cannot move': 'move() - 玩家已死亡，无法移动',
-          'doSpace() call completed': 'doSpace()调用完成',
-          'Error clearing equipment': '清空装备时出错',
-        },
-        'en': {
-          '游戏加载成功': 'Game loading successful',
-          '加载游戏时出错': 'Error loading game',
-          '游戏保存状态已清除': 'Game save state cleared',
-          '删除保存时出错': 'Error deleting save',
-          '存档导入成功': 'Archive import successful',
-          '存档导入失败': 'Archive import failed',
-          '导入存档时出错': 'Error importing archive',
-          '玩家死亡': 'Player died',
-          '返回小黑屋': 'Returned to dark room',
-          '移动': 'Moving',
-          '触发村庄事件': 'Triggered village event',
-          '发现执行者装置': 'Found executioner device',
-          '装备状态已保存': 'Equipment status saved',
-          '初始化世界模块': 'Initializing World module',
-          '设置世界功能为已解锁': 'Setting world feature as unlocked',
-          '切换到世界模块': 'Switching to World module',
-          'embark() 完成': 'embark() completed',
-          'embark() 错误': 'embark() error',
-          '错误堆栈': 'Error stack',
-          '无法保存空状态': 'Cannot save empty state',
-          '保存数据长度': 'Saving data length',
-          '保存数据预览': 'Saving data preview',
-          '加载游戏错误': 'Error loading game',
-          '升级存档到': 'Upgrading save to',
-          '导出游戏状态失败': 'Export game state failed',
-          '导入数据格式无效': 'Import data format invalid',
-          '可以出发': 'canEmbark',
-          '出发按钮被点击': 'Embark button clicked',
-          'mapSearch: 地图数据无效': 'mapSearch: Invalid map data',
-          'mapSearch错误': 'mapSearch error',
-          'move() - state为null，无法移动': 'move() - state is null, cannot move',
-          'move() - 玩家已死亡，无法移动': 'move() - Player is dead, cannot move',
-          'doSpace()调用完成': 'doSpace() call completed',
-          '清空装备时出错': 'Error clearing equipment',
-        }
+      // 定义消息键映射表
+      final messageKeyMap = {
+        'Game loading successful': 'logger.game_loading_successful',
+        'Error loading game': 'logger.error_loading_game',
+        'Game save state cleared': 'logger.game_save_state_cleared',
+        'Error deleting save': 'logger.error_deleting_save',
+        'Archive import successful': 'logger.archive_import_successful',
+        'Archive import failed': 'logger.archive_import_failed',
+        'Error importing archive': 'logger.error_importing_archive',
+        'Player died': 'logger.player_died',
+        'Returned to dark room': 'logger.returned_to_dark_room',
+        'Moving': 'logger.moving',
+        'Triggered village event': 'logger.triggered_village_event',
+        'Found executioner device': 'logger.found_executioner_device',
+        'Equipment status saved': 'logger.equipment_status_saved',
+        'Initializing World module': 'logger.initializing_world_module',
+        'Setting world feature as unlocked':
+            'logger.setting_world_feature_as_unlocked',
+        'Switching to World module': 'logger.switching_to_world_module',
+        'embark() completed': 'logger.embark_completed',
+        'embark() error': 'logger.embark_error',
+        'Error stack': 'logger.error_stack',
+        'Cannot save empty state': 'logger.cannot_save_empty_state',
+        'Saving data length': 'logger.saving_data_length',
+        'Saving data preview': 'logger.saving_data_preview',
+        'Error loading game state': 'logger.error_loading_game_state',
+        'Upgrading save to': 'logger.upgrading_save_to',
+        'Export game state failed': 'logger.export_game_state_failed',
+        'Import data format invalid': 'logger.import_data_format_invalid',
+        'canEmbark': 'logger.can_embark',
+        'Embark button clicked': 'logger.embark_button_clicked',
+        'mapSearch: Invalid map data': 'logger.map_search_invalid_map_data',
+        'mapSearch error': 'logger.map_search_error',
+        'move() - state is null, cannot move':
+            'logger.move_state_is_null_cannot_move',
+        'move() - Player is dead, cannot move':
+            'logger.move_player_is_dead_cannot_move',
+        'doSpace() call completed': 'logger.do_space_call_completed',
+        'Error clearing equipment': 'logger.error_clearing_equipment',
       };
-
-      // 获取当前语言的消息映射
-      final currentLangMessages = logMessages[_currentLanguage] ?? {};
 
       // 查找本地化消息
       String localizedMessage = message;
 
       // 首先尝试直接匹配
-      if (currentLangMessages.containsKey(message)) {
-        localizedMessage = currentLangMessages[message]!;
+      if (messageKeyMap.containsKey(message)) {
+        localizedMessage = localization.translate(messageKeyMap[message]!);
       } else {
         // 尝试部分匹配（去掉表情符号和特殊字符）
         final cleanMessage = message
             .replaceAll(RegExp(r'[🔍✅❌⚠️🎮💾🏭🪵🔥🎭💀🏠🌲🌍🎒🎯🚶🔮]'), '')
             .trim();
-        if (currentLangMessages.containsKey(cleanMessage)) {
+        if (messageKeyMap.containsKey(cleanMessage)) {
           // 保留原始表情符号，只替换文字部分
           final emojis = RegExp(r'[🔍✅❌⚠️🎮💾🏭🪵🔥🎭💀🏠🌲🌍🎒🎯🚶🔮]')
               .allMatches(message)
               .map((m) => m.group(0))
               .join(' ');
-          localizedMessage =
-              '$emojis ${currentLangMessages[cleanMessage]!}'.trim();
+          final translatedText =
+              localization.translate(messageKeyMap[cleanMessage]!);
+          localizedMessage = '$emojis $translatedText'.trim();
         }
       }
 
