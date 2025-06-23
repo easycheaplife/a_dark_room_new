@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:ui' as ui;
 import '../modules/path.dart';
+import '../modules/world.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
 import '../widgets/game_button.dart';
@@ -262,8 +263,8 @@ class PathScreen extends StatelessWidget {
 
   /// 构建水行
   Widget _buildWaterRow(StateManager stateManager, Localization localization) {
-    // 这里应该从World模块获取最大水量，暂时使用固定值
-    final maxWater = 10;
+    // 从World模块获取实际的最大水量
+    final maxWater = World.instance.getMaxWater();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
