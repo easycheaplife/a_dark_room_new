@@ -176,7 +176,8 @@ class _EventsScreenState extends State<EventsScreen> {
                                           minimumSize: const Size(0, 24),
                                         ),
                                         child: Text(
-                                          _getLocalizedText('带走 所有', 'take all'),
+                                          _getLocalizedText(
+                                              '带走 所有', 'take all'),
                                           style: const TextStyle(fontSize: 10),
                                         ),
                                       ),
@@ -229,7 +230,8 @@ class _EventsScreenState extends State<EventsScreen> {
   void _handleButtonPress(
       Events events, String buttonKey, Map<String, dynamic> buttonConfig) {
     final localization = Localization();
-    Logger.info('🎮 ${localization.translateLog('event_button_clicked')}: $buttonKey');
+    Logger.info(
+        '🎮 ${localization.translateLog('event_button_clicked')}: $buttonKey');
 
     // 使用事件系统的统一按钮处理逻辑
     events.handleButtonClick(buttonKey, buttonConfig);
@@ -408,7 +410,8 @@ class _EventsScreenState extends State<EventsScreen> {
                               child: Consumer<Localization>(
                                 builder: (context, localization, child) {
                                   return Text(
-                                    localization.translate('ui.buttons.drop_one'),
+                                    localization
+                                        .translate('ui.buttons.drop_one'),
                                     style: const TextStyle(fontSize: 10),
                                   );
                                 },
@@ -476,18 +479,27 @@ class _EventsScreenState extends State<EventsScreen> {
   /// 获取本地化的事件标题
   String _getLocalizedEventTitle(Map<String, dynamic> event) {
     final localization = Localization();
-    final title = event['title'] ?? localization.translate('events.default_title');
+    final title =
+        event['title'] ?? localization.translate('events.default_title');
+
+    // 首先尝试直接翻译标题（处理完整的本地化键，如 events.encounters.man_eater.title）
+    String directTranslation = localization.translate(title);
+    if (directTranslation != title) {
+      return directTranslation;
+    }
 
     // 特殊处理神秘流浪者事件
     if (title == 'mysterious wanderer' || title == 'mysterious stranger') {
-      String translatedTitle = localization.translate('events.mysterious_wanderer_event.title');
+      String translatedTitle =
+          localization.translate('events.mysterious_wanderer_event.title');
       if (translatedTitle != 'events.mysterious_wanderer_event.title') {
         return translatedTitle;
       }
     }
 
     // 尝试从房间事件翻译中获取标题
-    String translatedTitle = localization.translate('events.room_events.$title.title');
+    String translatedTitle =
+        localization.translate('events.room_events.$title.title');
     if (translatedTitle != 'events.room_events.$title.title') {
       return translatedTitle;
     }
@@ -533,9 +545,21 @@ class _EventsScreenState extends State<EventsScreen> {
     ];
 
     for (final baseKey in eventTextKeys) {
-      final textKeys = ['text1', 'text2', 'text3', 'trade_text1', 'trade_text2',
-                       'decline_text1', 'decline_text2', 'talk_text1', 'talk_text2',
-                       'ignore_text1', 'ignore_text2', 'ignore_text3', 'leave_text'];
+      final textKeys = [
+        'text1',
+        'text2',
+        'text3',
+        'trade_text1',
+        'trade_text2',
+        'decline_text1',
+        'decline_text2',
+        'talk_text1',
+        'talk_text2',
+        'ignore_text1',
+        'ignore_text2',
+        'ignore_text3',
+        'leave_text'
+      ];
 
       for (final textKey in textKeys) {
         final fullKey = '$baseKey.$textKey';
@@ -545,8 +569,6 @@ class _EventsScreenState extends State<EventsScreen> {
         }
       }
     }
-
-
 
     // 如果没有找到映射，返回原文本
     return text;

@@ -65,7 +65,9 @@ class _CombatScreenState extends State<CombatScreen> {
                         ),
                       ),
                       child: Text(
-                        activeEvent['title'] ?? Localization().translate('combat.title'),
+                        activeEvent['title'] != null
+                            ? Localization().translate(activeEvent['title'])
+                            : Localization().translate('combat.title'),
                         style: const TextStyle(
                           color: Colors.black, // 黑色文字
                           fontSize: 18,
@@ -86,7 +88,7 @@ class _CombatScreenState extends State<CombatScreen> {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          scene['notification'],
+                          Localization().translate(scene['notification']),
                           style: const TextStyle(
                             color: Colors.black, // 黑色文字
                             fontSize: 13,
@@ -127,7 +129,10 @@ class _CombatScreenState extends State<CombatScreen> {
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 400),
                               child: _buildFighterDiv(
-                                scene['enemyName'] ?? Localization().translate('combat.enemy'),
+                                scene['enemyName'] != null
+                                    ? Localization()
+                                        .translate(scene['enemyName'])
+                                    : Localization().translate('combat.enemy'),
                                 scene['chara'] ?? 'E',
                                 events.getCurrentEnemyHealth(),
                                 scene['health'] ?? 10,
@@ -400,7 +405,9 @@ class _CombatScreenState extends State<CombatScreen> {
         children: [
           // 死亡消息
           Text(
-            scene['deathMessage'] ?? Localization().translate('combat.enemy_dead'),
+            scene['deathMessage'] != null
+                ? Localization().translate(scene['deathMessage'])
+                : Localization().translate('combat.enemy_dead'),
             style: const TextStyle(
               color: Colors.black,
               fontSize: 15,
@@ -484,7 +491,10 @@ class _CombatScreenState extends State<CombatScreen> {
                               minimumSize: const Size(0, 24),
                             ),
                             child: Text(
-                              _showDropInterface ? '${Localization().translate('ui.buttons.take_all').split(' ')[0]} 0' : Localization().translate('ui.buttons.take_all'),
+                              _showDropInterface
+                                  ? '${Localization().translate('ui.buttons.take_all').split(' ')[0]} 0'
+                                  : Localization()
+                                      .translate('ui.buttons.take_all'),
                               style: const TextStyle(fontSize: 10),
                             ),
                           ),

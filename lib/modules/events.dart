@@ -109,10 +109,7 @@ class Events extends ChangeNotifier {
   List<Map<String, dynamic>> get encounters => [
         // Tier 1 - 距离 <= 10
         {
-          'title': () {
-            final localization = Localization();
-            return localization.translate('events.encounters.snarling_beast.title');
-          }(),
+          'title': 'outside_events.encounters.snarling_beast.title',
           'isAvailable': () {
             final world = World();
             return world.getDistance() <= 10 && world.getTerrain() == ';'; // 森林
@@ -121,14 +118,10 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'snarling beast',
-              'enemyName': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.snarling_beast.enemy_name');
-              }(),
-              'deathMessage': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.snarling_beast.death_message');
-              }(),
+              'enemyName':
+                  'outside_events.encounters.snarling_beast.enemy_name',
+              'deathMessage':
+                  'outside_events.encounters.snarling_beast.death_message',
               'chara': 'R',
               'damage': 1,
               'hit': 0.8,
@@ -139,18 +132,13 @@ class Events extends ChangeNotifier {
                 'meat': {'min': 1, 'max': 3, 'chance': 1.0},
                 'teeth': {'min': 1, 'max': 3, 'chance': 0.8}
               },
-              'notification': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.snarling_beast.notification');
-              }()
+              'notification':
+                  'outside_events.encounters.snarling_beast.notification'
             }
           }
         },
         {
-          'title': () {
-            final localization = Localization();
-            return localization.translate('events.encounters.gaunt_man.title');
-          }(),
+          'title': 'outside_events.encounters.gaunt_man.title',
           'isAvailable': () {
             final world = World();
             return world.getDistance() <= 10 && world.getTerrain() == '.'; // 荒地
@@ -159,14 +147,9 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'gaunt man',
-              'enemyName': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.gaunt_man.enemy_name');
-              }(),
-              'deathMessage': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.gaunt_man.death_message');
-              }(),
+              'enemyName': 'outside_events.encounters.gaunt_man.enemy_name',
+              'deathMessage':
+                  'outside_events.encounters.gaunt_man.death_message',
               'chara': 'E',
               'damage': 2,
               'hit': 0.8,
@@ -177,18 +160,12 @@ class Events extends ChangeNotifier {
                 'teeth': {'min': 1, 'max': 2, 'chance': 0.8},
                 'leather': {'min': 1, 'max': 2, 'chance': 0.5}
               },
-              'notification': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.gaunt_man.notification');
-              }()
+              'notification': 'outside_events.encounters.gaunt_man.notification'
             }
           }
         },
         {
-          'title': () {
-            final localization = Localization();
-            return localization.translate('events.encounters.strange_bird.title');
-          }(),
+          'title': 'outside_events.encounters.strange_bird.title',
           'isAvailable': () {
             final world = World();
             return world.getDistance() <= 10 && world.getTerrain() == ','; // 田野
@@ -197,14 +174,9 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'strange bird',
-              'enemyName': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.strange_bird.enemy_name');
-              }(),
-              'deathMessage': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.strange_bird.death_message');
-              }(),
+              'enemyName': 'outside_events.encounters.strange_bird.enemy_name',
+              'deathMessage':
+                  'outside_events.encounters.strange_bird.death_message',
               'chara': 'R',
               'damage': 3,
               'hit': 0.8,
@@ -215,19 +187,14 @@ class Events extends ChangeNotifier {
                 'teeth': {'min': 1, 'max': 2, 'chance': 0.5},
                 'meat': {'min': 1, 'max': 3, 'chance': 0.8}
               },
-              'notification': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.strange_bird.notification');
-              }()
+              'notification':
+                  'outside_events.encounters.strange_bird.notification'
             }
           }
         },
         // Tier 2 - 距离 10-20
         {
-          'title': () {
-            final localization = Localization();
-            return localization.translate('events.encounters.shivering_man.title');
-          }(),
+          'title': 'outside_events.encounters.shivering_man.title',
           'isAvailable': () {
             final world = World();
             return world.getDistance() > 10 &&
@@ -238,14 +205,9 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'shivering man',
-              'enemyName': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.shivering_man.enemy_name');
-              }(),
-              'deathMessage': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.shivering_man.death_message');
-              }(),
+              'enemyName': 'outside_events.encounters.shivering_man.enemy_name',
+              'deathMessage':
+                  'outside_events.encounters.shivering_man.death_message',
               'chara': 'E',
               'damage': 5,
               'hit': 0.5,
@@ -257,18 +219,13 @@ class Events extends ChangeNotifier {
                 'leather': {'min': 1, 'max': 1, 'chance': 0.2},
                 'medicine': {'min': 1, 'max': 3, 'chance': 0.7}
               },
-              'notification': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.shivering_man.notification');
-              }()
+              'notification':
+                  'outside_events.encounters.shivering_man.notification'
             }
           }
         },
         {
-          'title': () {
-            final localization = Localization();
-            return localization.translate('events.encounters.man_eater.title');
-          }(),
+          'title': 'outside_events.encounters.man_eater.title',
           'isAvailable': () {
             final world = World();
             return world.getDistance() > 10 &&
@@ -279,14 +236,9 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'man-eater',
-              'enemyName': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.man_eater.enemy_name');
-              }(),
-              'deathMessage': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.man_eater.death_message');
-              }(),
+              'enemyName': 'outside_events.encounters.man_eater.enemy_name',
+              'deathMessage':
+                  'outside_events.encounters.man_eater.death_message',
               'chara': 'T',
               'damage': 3,
               'hit': 0.8,
@@ -299,16 +251,14 @@ class Events extends ChangeNotifier {
               },
               'notification': () {
                 final localization = Localization();
-                return localization.translate('events.encounters.man_eater.notification');
+                return localization.translate(
+                    'outside_events.encounters.man_eater.notification');
               }()
             }
           }
         },
         {
-          'title': () {
-            final localization = Localization();
-            return localization.translate('events.encounters.scavenger.title');
-          }(),
+          'title': 'outside_events.encounters.scavenger.title',
           'isAvailable': () {
             final world = World();
             return world.getDistance() > 10 &&
@@ -319,14 +269,9 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'scavenger',
-              'enemyName': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.scavenger.enemy_name');
-              }(),
-              'deathMessage': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.scavenger.death_message');
-              }(),
+              'enemyName': 'outside_events.encounters.scavenger.enemy_name',
+              'deathMessage':
+                  'outside_events.encounters.scavenger.death_message',
               'chara': 'E',
               'damage': 4,
               'hit': 0.8,
@@ -340,16 +285,14 @@ class Events extends ChangeNotifier {
               },
               'notification': () {
                 final localization = Localization();
-                return localization.translate('events.encounters.scavenger.notification');
+                return localization.translate(
+                    'outside_events.encounters.scavenger.notification');
               }()
             }
           }
         },
         {
-          'title': () {
-            final localization = Localization();
-            return localization.translate('events.encounters.lizard.title');
-          }(),
+          'title': 'outside_events.encounters.lizard.title',
           'isAvailable': () {
             final world = World();
             return world.getDistance() > 10 &&
@@ -360,14 +303,8 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'lizard',
-              'enemyName': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.lizard.enemy_name');
-              }(),
-              'deathMessage': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.lizard.death_message');
-              }(),
+              'enemyName': 'outside_events.encounters.lizard.enemy_name',
+              'deathMessage': 'outside_events.encounters.lizard.death_message',
               'chara': 'T',
               'damage': 5,
               'hit': 0.8,
@@ -380,17 +317,15 @@ class Events extends ChangeNotifier {
               },
               'notification': () {
                 final localization = Localization();
-                return localization.translate('events.encounters.lizard.notification');
+                return localization
+                    .translate('outside_events.encounters.lizard.notification');
               }()
             }
           }
         },
         // Tier 3 - 距离 > 20
         {
-          'title': () {
-            final localization = Localization();
-            return localization.translate('events.encounters.feral_terror.title');
-          }(),
+          'title': 'outside_events.encounters.feral_terror.title',
           'isAvailable': () {
             final world = World();
             return world.getDistance() > 20 && world.getTerrain() == ';'; // 森林
@@ -399,14 +334,9 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'feral terror',
-              'enemyName': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.feral_terror.enemy_name');
-              }(),
-              'deathMessage': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.feral_terror.death_message');
-              }(),
+              'enemyName': 'outside_events.encounters.feral_terror.enemy_name',
+              'deathMessage':
+                  'outside_events.encounters.feral_terror.death_message',
               'chara': 'T',
               'damage': 6,
               'hit': 0.8,
@@ -419,16 +349,14 @@ class Events extends ChangeNotifier {
               },
               'notification': () {
                 final localization = Localization();
-                return localization.translate('events.encounters.feral_terror.notification');
+                return localization.translate(
+                    'outside_events.encounters.feral_terror.notification');
               }()
             }
           }
         },
         {
-          'title': () {
-            final localization = Localization();
-            return localization.translate('events.encounters.soldier.title');
-          }(),
+          'title': 'outside_events.encounters.soldier.title',
           'isAvailable': () {
             final world = World();
             return world.getDistance() > 20 && world.getTerrain() == '.'; // 荒地
@@ -437,14 +365,8 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'soldier',
-              'enemyName': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.soldier.enemy_name');
-              }(),
-              'deathMessage': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.soldier.death_message');
-              }(),
+              'enemyName': 'outside_events.encounters.soldier.enemy_name',
+              'deathMessage': 'outside_events.encounters.soldier.death_message',
               'ranged': true,
               'chara': 'D',
               'damage': 8,
@@ -459,16 +381,14 @@ class Events extends ChangeNotifier {
               },
               'notification': () {
                 final localization = Localization();
-                return localization.translate('events.encounters.soldier.notification');
+                return localization.translate(
+                    'outside_events.encounters.soldier.notification');
               }()
             }
           }
         },
         {
-          'title': () {
-            final localization = Localization();
-            return localization.translate('events.encounters.sniper.title');
-          }(),
+          'title': 'outside_events.encounters.sniper.title',
           'isAvailable': () {
             final world = World();
             return world.getDistance() > 20 && world.getTerrain() == ','; // 田野
@@ -477,14 +397,8 @@ class Events extends ChangeNotifier {
             'start': {
               'combat': true,
               'enemy': 'sniper',
-              'enemyName': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.sniper.enemy_name');
-              }(),
-              'deathMessage': () {
-                final localization = Localization();
-                return localization.translate('events.encounters.sniper.death_message');
-              }(),
+              'enemyName': 'outside_events.encounters.sniper.enemy_name',
+              'deathMessage': 'outside_events.encounters.sniper.death_message',
               'chara': 'D',
               'damage': 15,
               'hit': 0.8,
@@ -499,7 +413,8 @@ class Events extends ChangeNotifier {
               },
               'notification': () {
                 final localization = Localization();
-                return localization.translate('events.encounters.sniper.notification');
+                return localization
+                    .translate('outside_events.encounters.sniper.notification');
               }()
             }
           }
@@ -576,15 +491,13 @@ class Events extends ChangeNotifier {
     final specials = scene['specials'] as List<Map<String, dynamic>>? ?? [];
     for (final special in specials) {
       final timer = VisibilityManager().createPeriodicTimer(
-        Duration(milliseconds: ((special['delay'] ?? 5.0) * 1000).round()),
-        () {
-          // 执行特殊技能
-          if (special['action'] != null) {
-            special['action']();
-          }
-        },
-        'Events.specialTimer'
-      );
+          Duration(milliseconds: ((special['delay'] ?? 5.0) * 1000).round()),
+          () {
+        // 执行特殊技能
+        if (special['action'] != null) {
+          special['action']();
+        }
+      }, 'Events.specialTimer');
       specialTimers.add(timer);
     }
 
@@ -617,10 +530,9 @@ class Events extends ChangeNotifier {
     final attackDelay =
         delay ?? (sceneDelay != null ? sceneDelay.toDouble() : 2.0);
     enemyAttackTimer = VisibilityManager().createPeriodicTimer(
-      Duration(milliseconds: (attackDelay * 1000).round()),
-      () => enemyAttack(),
-      'Events.enemyAttackTimer'
-    );
+        Duration(milliseconds: (attackDelay * 1000).round()),
+        () => enemyAttack(),
+        'Events.enemyAttackTimer');
   }
 
   /// 敌人攻击
@@ -779,11 +691,8 @@ class Events extends ChangeNotifier {
     final delay = random.nextInt(eventTimeRange[1] - eventTimeRange[0] + 1) +
         eventTimeRange[0];
 
-    nextEventTimer = VisibilityManager().createTimer(
-      Duration(minutes: delay),
-      () => triggerEvent(),
-      'Events.nextEventTimer'
-    );
+    nextEventTimer = VisibilityManager().createTimer(Duration(minutes: delay),
+        () => triggerEvent(), 'Events.nextEventTimer');
   }
 
   /// 触发事件
@@ -1127,12 +1036,13 @@ class Events extends ChangeNotifier {
 
       // 显示获取通知
       final localization = Localization();
-      NotificationManager()
-          .notify(name, '${localization.translate('messages.gained')} ${_getItemDisplayName(itemName)} x$canTake');
+      NotificationManager().notify(name,
+          '${localization.translate('messages.gained')} ${_getItemDisplayName(itemName)} x$canTake');
     } else {
       Logger.info('🎒 背包空间不足，无法拾取');
       final localization = Localization();
-      NotificationManager().notify(name, localization.translate('messages.backpack_full'));
+      NotificationManager()
+          .notify(name, localization.translate('messages.backpack_full'));
 
       // 如果提供了背包满回调，则调用它
       if (onBagFull != null) {
@@ -1445,15 +1355,12 @@ class Events extends ChangeNotifier {
     _delayedRewards[key]?.cancel();
 
     // 创建新的延迟奖励
-    _delayedRewards[key] = VisibilityManager().createTimer(
-      Duration(seconds: delaySeconds),
-      () {
-        action();
-        _delayedRewards.remove(key);
-        Logger.info('🎁 延迟奖励执行: $key');
-      },
-      'Events.delayedReward.$key'
-    );
+    _delayedRewards[key] =
+        VisibilityManager().createTimer(Duration(seconds: delaySeconds), () {
+      action();
+      _delayedRewards.remove(key);
+      Logger.info('🎁 延迟奖励执行: $key');
+    }, 'Events.delayedReward.$key');
 
     Logger.info('⏰ 延迟奖励已设置: $key (${delaySeconds}秒后执行)');
   }
