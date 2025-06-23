@@ -284,12 +284,15 @@ class World extends ChangeNotifier {
       };
     }
 
-    Logger.info('🌍 ${localization.translateLog('initializing_world_state')}...');
+    Logger.info(
+        '🌍 ${localization.translateLog('initializing_world_state')}...');
     // 初始化世界状态
     final worldFeature = sm.get('features.location.world', true);
     final worldData = sm.get('game.world', true);
-    Logger.info('🌍 ${localization.translateLog('checking_world_function_status')}: $worldFeature');
-    Logger.info('🌍 ${localization.translateLog('checking_world_data_status')}: $worldData');
+    Logger.info(
+        '🌍 ${localization.translateLog('checking_world_function_status')}: $worldFeature');
+    Logger.info(
+        '🌍 ${localization.translateLog('checking_world_data_status')}: $worldData');
 
     // 如果世界功能未解锁或者世界数据不存在，则生成新地图
     if (worldFeature == null || worldData == null || worldData is! Map) {
@@ -570,8 +573,12 @@ class World extends ChangeNotifier {
   String compassDir(Map<String, int> pos) {
     String dir = '';
     final localization = Localization();
-    final horz = pos['x']! < 0 ? localization.translate('world.directions.west') : localization.translate('world.directions.east');
-    final vert = pos['y']! < 0 ? localization.translate('world.directions.north') : localization.translate('world.directions.south');
+    final horz = pos['x']! < 0
+        ? localization.translate('world.directions.west')
+        : localization.translate('world.directions.east');
+    final vert = pos['y']! < 0
+        ? localization.translate('world.directions.north')
+        : localization.translate('world.directions.south');
 
     if (pos['x']!.abs() / 2 > pos['y']!.abs()) {
       dir = horz;
@@ -926,6 +933,8 @@ class World extends ChangeNotifier {
           if (setpieces.isSetpieceAvailable(sceneName)) {
             Logger.info('🏛️ 启动Setpiece场景: $sceneName');
             setpieces.startSetpiece(sceneName);
+            // 立即标记为已访问，防止重复访问
+            markVisited(curPos[0], curPos[1]);
           } else {
             // 为缺失的场景提供默认处理
             Logger.info('🏛️ 场景不存在，使用默认处理: $sceneName');
@@ -957,16 +966,22 @@ class World extends ChangeNotifier {
       case 'I': // 铁矿
         // 触发铁矿事件
         Events().triggerSetpiece('ironmine');
+        // 立即标记为已访问，防止重复访问
+        markVisited(curPos[0], curPos[1]);
         break;
 
       case 'C': // 煤矿
         // 触发煤矿事件
         Events().triggerSetpiece('coalmine');
+        // 立即标记为已访问，防止重复访问
+        markVisited(curPos[0], curPos[1]);
         break;
 
       case 'S': // 硫磺矿
         // 触发硫磺矿事件
         Events().triggerSetpiece('sulphurmine');
+        // 立即标记为已访问，防止重复访问
+        markVisited(curPos[0], curPos[1]);
         break;
 
       case 'H': // 旧房子
@@ -1095,14 +1110,18 @@ class World extends ChangeNotifier {
 
         if (num == 0) {
           final localization = Localization();
-          NotificationManager().notify(name, localization.translate('world.notifications.out_of_meat'));
+          NotificationManager().notify(
+              name, localization.translate('world.notifications.out_of_meat'));
           Logger.info('⚠️ Out of meat');
         } else if (num < 0) {
           // 饥饿！
           num = 0;
           if (!starvation) {
             final localization = Localization();
-            NotificationManager().notify(name, localization.translate('world.notifications.starvation_begins'));
+            NotificationManager().notify(
+                name,
+                localization
+                    .translate('world.notifications.starvation_begins'));
             starvation = true;
             Logger.info('⚠️ Starvation begins');
           } else {
@@ -1147,13 +1166,15 @@ class World extends ChangeNotifier {
 
       if (waterAmount == 0) {
         final localization = Localization();
-        NotificationManager().notify(name, localization.translate('world.notifications.no_more_water'));
+        NotificationManager().notify(
+            name, localization.translate('world.notifications.no_more_water'));
         Logger.info('⚠️ No more water');
       } else if (waterAmount < 0) {
         waterAmount = 0;
         if (!thirst) {
           final localization = Localization();
-          NotificationManager().notify(name, localization.translate('world.notifications.thirst_unbearable'));
+          NotificationManager().notify(name,
+              localization.translate('world.notifications.thirst_unbearable'));
           thirst = true;
           Logger.info('⚠️ Thirst begins');
         } else {
@@ -1324,7 +1345,8 @@ class World extends ChangeNotifier {
         // Fabricator.init(); // 暂时注释掉，需要实现Fabricator模块
         sm.set('features.location.fabricator', true);
         final localization = Localization();
-        NotificationManager().notify(name, localization.translate('world.notifications.builder_takes_device'));
+        NotificationManager().notify(name,
+            localization.translate('world.notifications.builder_takes_device'));
         Logger.info('🏠 解锁制造器');
       }
 
@@ -1340,7 +1362,8 @@ class World extends ChangeNotifier {
     engine.travelTo(room);
 
     final localization = Localization();
-    NotificationManager().notify(name, localization.translate('world.notifications.safely_returned'));
+    NotificationManager().notify(
+        name, localization.translate('world.notifications.safely_returned'));
     Logger.info('🏠 World.goHome() 完成');
     notifyListeners();
   }
@@ -1675,7 +1698,7 @@ class World extends ChangeNotifier {
           final currentTile = map[x][y];
 
           if (!currentTile.endsWith('!')) {
-            map[x][y] = currentTile + '!';
+            map[x][y] = '$currentTile!';
             Logger.info('🗺️ 标记位置 ($x, $y) 为已访问: ${map[x][y]}');
 
             // 更新state中的地图数据（仅在临时状态中）
