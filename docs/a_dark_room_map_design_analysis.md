@@ -383,7 +383,7 @@ chooseTile: function(x, y, map) {
 ### 5.3 特殊地标
 
 #### 沼泽 (Swamp)
-- **需求**：护身符 (charm)
+- **需求**：符咒 (charm)
 - **奖励**：美食家技能 (gastronome perk)
 - **效果**：减少食物消耗
 

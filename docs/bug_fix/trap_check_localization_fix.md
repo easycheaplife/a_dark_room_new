@@ -202,7 +202,7 @@ List<String> categories = [
     "some_scales": "一些鳞片",
     "some_teeth": "一些牙齿",
     "some_cloth": "一些布料",
-    "a_charm": "一个护身符"
+    "a_charm": "一个符咒"
   }
 }
 ```

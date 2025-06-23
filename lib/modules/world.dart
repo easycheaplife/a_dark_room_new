@@ -705,8 +705,8 @@ class World extends ChangeNotifier {
     final newTile = state!['map'][curPos[0]][curPos[1]];
 
     Logger.info(
-        '移动: [${oldPos[0]}, ${oldPos[1]}] -> [${curPos[0]}, ${curPos[1]}], $oldTile -> $newTile');
-    Logger.info('即将调用doSpace()...');
+        'Moving: [${oldPos[0]}, ${oldPos[1]}] -> [${curPos[0]}, ${curPos[1]}], $oldTile -> $newTile');
+    Logger.info('About to call doSpace()...');
 
     narrateMove(oldTile, newTile);
 
@@ -879,12 +879,20 @@ class World extends ChangeNotifier {
             } else {
               // 为缺失的场景提供默认处理
               Logger.info('🔮 执行者场景不存在，使用默认处理: $sceneName');
-              NotificationManager().notify(name, '发现了一个神秘的装置');
+              final localization = Localization();
+              NotificationManager().notify(
+                  name,
+                  localization
+                      .translate('world.notifications.mysterious_device'));
               markVisited(curPos[0], curPos[1]);
             }
           } else {
             Logger.info('🔮 执行者地标信息无效: $landmarkInfo');
-            NotificationManager().notify(name, '发现了一个神秘的装置');
+            final localization = Localization();
+            NotificationManager().notify(
+                name,
+                localization
+                    .translate('world.notifications.mysterious_device'));
             markVisited(curPos[0], curPos[1]);
           }
         } else {
@@ -946,7 +954,11 @@ class World extends ChangeNotifier {
           }
         } else {
           Logger.info('🏛️ 地标信息无效: $landmarkInfo');
-          _handleMissingSetpiece(originalTile, {'label': '未知地标'});
+          final localization = Localization();
+          _handleMissingSetpiece(originalTile, {
+            'label':
+                localization.translate('world.notifications.unknown_landmark')
+          });
         }
       } else {
         Logger.info('🏛️ 地标已访问，跳过事件');
@@ -964,7 +976,9 @@ class World extends ChangeNotifier {
   /// 处理缺失的场景事件
   void _handleMissingSetpiece(
       String curTile, Map<String, dynamic> landmarkInfo) {
-    final label = landmarkInfo['label'] ?? '未知地点';
+    final localization = Localization();
+    final label = landmarkInfo['label'] ??
+        localization.translate('world.notifications.unknown_location');
 
     switch (curTile) {
       case 'I': // 铁矿
@@ -989,7 +1003,8 @@ class World extends ChangeNotifier {
         break;
 
       case 'H': // 旧房子
-        NotificationManager().notify(name, '发现了一座废弃的房子。也许里面有什么有用的东西。');
+        NotificationManager().notify(
+            name, localization.translate('world.notifications.old_house'));
         // 随机奖励
         final random = Random();
         if (random.nextDouble() < 0.5) {
@@ -1002,12 +1017,14 @@ class World extends ChangeNotifier {
         break;
 
       case 'B': // 钻孔
-        NotificationManager().notify(name, '发现了一个深深的钻孔。底部传来奇怪的声音。');
+        NotificationManager().notify(
+            name, localization.translate('world.notifications.deep_borehole'));
         markVisited(curPos[0], curPos[1]);
         break;
 
       case 'F': // 战场
-        NotificationManager().notify(name, '这里曾经发生过激烈的战斗。地上散落着武器和装备。');
+        NotificationManager().notify(
+            name, localization.translate('world.notifications.battlefield'));
         final random = Random();
         if (random.nextDouble() < 0.4) {
           _addToOutfit('bullets', random.nextInt(5) + 1);
@@ -1019,17 +1036,20 @@ class World extends ChangeNotifier {
         break;
 
       case 'Y': // 废墟城市
-        NotificationManager().notify(name, '巨大的废墟城市矗立在眼前。曾经的繁华已成过往。');
+        NotificationManager().notify(
+            name, localization.translate('world.notifications.ruined_city'));
         markVisited(curPos[0], curPos[1]);
         break;
 
       case 'W': // 坠毁星舰
-        NotificationManager().notify(name, '发现了一艘坠毁的星舰。金属外壳闪闪发光。');
+        NotificationManager().notify(name,
+            localization.translate('world.notifications.crashed_starship'));
         markVisited(curPos[0], curPos[1]);
         break;
 
       case 'O': // 废弃小镇
-        NotificationManager().notify(name, '发现了一个废弃的小镇。街道上空无一人，但可能还有有用的物品。');
+        NotificationManager().notify(
+            name, localization.translate('world.notifications.abandoned_town'));
         final random = Random();
         // 小镇可能有各种物品
         if (random.nextDouble() < 0.4) {
@@ -1048,7 +1068,8 @@ class World extends ChangeNotifier {
         // 注意：潮湿洞穴应该有完整的Setpiece场景，不应该使用这个默认处理
         // 如果到达这里，说明'cave' Setpiece场景有问题
         Logger.info('⚠️ 潮湿洞穴的Setpiece场景缺失，使用默认处理');
-        NotificationManager().notify(name, '发现了一个潮湿的洞穴。里面很黑，但可能藏着什么。');
+        NotificationManager().notify(
+            name, localization.translate('world.notifications.damp_cave'));
         final random2 = Random();
         if (random2.nextDouble() < 0.3) {
           _addToOutfit('fur', random2.nextInt(2) + 1);
@@ -1062,7 +1083,8 @@ class World extends ChangeNotifier {
         break;
 
       case 'M': // 阴暗沼泽
-        NotificationManager().notify(name, '进入了一片阴暗的沼泽。空气潮湿，充满了腐败的气味。');
+        NotificationManager().notify(
+            name, localization.translate('world.notifications.dark_swamp'));
         final random3 = Random();
         // 沼泽可能有特殊的物品
         if (random3.nextDouble() < 0.3) {
@@ -1078,12 +1100,27 @@ class World extends ChangeNotifier {
         break;
 
       case 'U': // 被摧毁的村庄
-        NotificationManager().notify(name, '这里曾经是一个村庄，现在只剩下废墟。');
+        NotificationManager().notify(name,
+            localization.translate('world.notifications.destroyed_village'));
         markVisited(curPos[0], curPos[1]);
         break;
 
+      case 'X': // 执行者
+        // 注意：执行者应该有完整的Setpiece场景，不应该使用这个默认处理
+        // 如果到达这里，说明'executioner' Setpiece场景有问题
+        Logger.info('⚠️ 执行者的Setpiece场景缺失，使用默认处理');
+        NotificationManager().notify(name,
+            localization.translate('world.notifications.executioner_appears'));
+        // 执行者是最终Boss，应该通过完整的Setpiece事件处理
+        // 暂时不标记为已访问，等待Setpiece事件实现
+        Logger.info('🏛️ 执行者未标记为已访问，等待Setpiece事件实现');
+        break;
+
       default:
-        NotificationManager().notify(name, '发现了$label。');
+        NotificationManager().notify(
+            name,
+            localization
+                .translate('world.notifications.discovered_location', [label]));
         markVisited(curPos[0], curPos[1]);
         break;
     }
@@ -1408,7 +1445,7 @@ class World extends ChangeNotifier {
 
   /// 检查物品是否应该留在家里 - 参考原游戏的leaveItAtHome函数
   bool leaveItAtHome(String thing) {
-    // 这些物品可以带走：食物、弹药、能量电池、护身符、药物、武器、可制作物品
+    // 这些物品可以带走：食物、弹药、能量电池、符咒、药物、武器、可制作物品
     return thing != 'cured meat' &&
         thing != 'bullets' &&
         thing != 'energy cell' &&
@@ -1506,7 +1543,9 @@ class World extends ChangeNotifier {
       Logger.info('⚠️ 重置装备时出错: $e');
     }
 
-    NotificationManager().notify(name, '你重生了，回到了村庄');
+    final localization = Localization();
+    NotificationManager()
+        .notify(name, localization.translate('world.notifications.respawned'));
     Logger.info('✅ 重生完成 - 生命值: $health, 水: $water');
     notifyListeners();
   }
@@ -1682,7 +1721,9 @@ class World extends ChangeNotifier {
   void useOutpost() {
     // 补充水到最大值
     water = getMaxWater();
-    NotificationManager().notify(name, '水已补充');
+    final localization = Localization();
+    NotificationManager().notify(
+        name, localization.translate('world.notifications.water_replenished'));
 
     // 标记前哨站为已使用
     markOutpostUsed();
@@ -1768,7 +1809,9 @@ class World extends ChangeNotifier {
 
     final sm = StateManager();
     sm.set('game.world.dungeonCleared', true);
-    NotificationManager().notify(name, '地牢已清理完毕，这里现在是一个前哨站');
+    final localization = Localization();
+    NotificationManager().notify(
+        name, localization.translate('world.notifications.dungeon_cleared'));
     notifyListeners();
   }
 

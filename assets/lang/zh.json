@@ -150,7 +150,7 @@
     "cask": "水桶",
     "water tank": "水罐",
     "compass": "指南针",
-    "charm": "护身符",
+    "charm": "符咒",
     "rucksack": "双肩包",
     "l armour": "皮甲",
     "i armour": "铁甲",
@@ -360,7 +360,7 @@
     "some_scales": "一些鳞片",
     "some_teeth": "一些牙齿",
     "some_cloth": "一些布料",
-    "a_charm": "一个护身符"
+    "a_charm": "一个符咒"
   },
   "notifications": {
     "the_room_is": "房间",
@@ -901,7 +901,24 @@
       "no_more_water": "没有更多的水了",
       "thirst_unbearable": "口渴变得难以忍受",
       "builder_takes_device": "建造者知道这个奇怪的装置。很快就把它拿走了。没有问它从哪里来的。",
-      "safely_returned": "安全回到了村庄"
+      "safely_returned": "安全回到了村庄",
+      "mysterious_device": "发现了一个神秘的装置",
+      "unknown_landmark": "未知地标",
+      "unknown_location": "未知地点",
+      "old_house": "发现了一座废弃的房子。也许里面有什么有用的东西。",
+      "deep_borehole": "发现了一个深深的钻孔。底部传来奇怪的声音。",
+      "battlefield": "这里曾经发生过激烈的战斗。地上散落着武器和装备。",
+      "ruined_city": "巨大的废墟城市矗立在眼前。曾经的繁华已成过往。",
+      "crashed_starship": "发现了一艘坠毁的星舰。金属外壳闪闪发光。",
+      "abandoned_town": "发现了一个废弃的小镇。街道上空无一人，但可能还有有用的物品。",
+      "damp_cave": "发现了一个潮湿的洞穴。里面很黑，但可能藏着什么。",
+      "dark_swamp": "进入了一片阴暗的沼泽。空气潮湿，充满了腐败的气味。",
+      "destroyed_village": "这里曾经是一个村庄，现在只剩下废墟。",
+      "executioner_appears": "一个巨大的身影出现在远处。这就是传说中的执行者。",
+      "discovered_location": "发现了{0}。",
+      "respawned": "你重生了，回到了村庄",
+      "water_replenished": "水已补充",
+      "dungeon_cleared": "地牢已清理完毕，这里现在是一个前哨站"
     },
     "weapons": {
       "punch": "拳击",
@@ -1296,7 +1313,7 @@
         "text2": "一个老流浪者坐在里面，似乎在恍惚中。"
       },
       "talk": {
-        "text1": "流浪者接过护身符，慢慢点头。",
+        "text1": "流浪者接过符咒，慢慢点头。",
         "text2": "他说起曾经带领伟大的舰队前往新世界。",
         "text3": "为了满足流浪者的饥饿而进行的不可理解的破坏。",
         "text4": "他在这里的时间，现在，是他的忏悔。"
