@@ -27,7 +27,8 @@ class PathScreen extends StatelessWidget {
           width: double.infinity,
           height: double.infinity,
           color: Colors.white,
-          child: SingleChildScrollView( // 添加整个页面的滚动支持
+          child: SingleChildScrollView(
+            // 添加整个页面的滚动支持
             child: SizedBox(
               width: double.infinity,
               height: 800, // 设置足够的高度以容纳所有内容
@@ -41,7 +42,8 @@ class PathScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // 装备区域
-                        _buildOutfittingSection(path, stateManager, localization),
+                        _buildOutfittingSection(
+                            path, stateManager, localization),
 
                         const SizedBox(height: 20),
 
@@ -67,11 +69,13 @@ class PathScreen extends StatelessWidget {
   }
 
   /// 构建没有指南针时的视图
-  Widget _buildNoCompassView(StateManager stateManager, Localization localization) {
+  Widget _buildNoCompassView(
+      StateManager stateManager, Localization localization) {
     final fur = stateManager.get('stores.fur', true) ?? 0;
     final scales = stateManager.get('stores.scales', true) ?? 0;
     final teeth = stateManager.get('stores.teeth', true) ?? 0;
-    final hasTradingPost = (stateManager.get('game.buildings["trading post"]', true) ?? 0) > 0;
+    final hasTradingPost =
+        (stateManager.get('game.buildings["trading post"]', true) ?? 0) > 0;
 
     return Container(
       width: double.infinity,
@@ -91,9 +95,7 @@ class PathScreen extends StatelessWidget {
                 fontFamily: 'Times New Roman',
               ),
             ),
-
             const SizedBox(height: 20),
-
             Text(
               localization.translate('path.need_compass'),
               style: const TextStyle(
@@ -103,9 +105,7 @@ class PathScreen extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-
             const SizedBox(height: 20),
-
             if (hasTradingPost) ...[
               Text(
                 '${localization.translate('path.compass_requirements')}:',
@@ -116,9 +116,7 @@ class PathScreen extends StatelessWidget {
                   fontFamily: 'Times New Roman',
                 ),
               ),
-
               const SizedBox(height: 10),
-
               Text(
                 '${localization.translate('resources.fur')}: $fur / 400',
                 style: TextStyle(
@@ -127,7 +125,6 @@ class PathScreen extends StatelessWidget {
                   fontFamily: 'Times New Roman',
                 ),
               ),
-
               Text(
                 '${localization.translate('resources.scales')}: $scales / 20',
                 style: TextStyle(
@@ -136,7 +133,6 @@ class PathScreen extends StatelessWidget {
                   fontFamily: 'Times New Roman',
                 ),
               ),
-
               Text(
                 '${localization.translate('resources.teeth')}: $teeth / 10',
                 style: TextStyle(
@@ -145,9 +141,7 @@ class PathScreen extends StatelessWidget {
                   fontFamily: 'Times New Roman',
                 ),
               ),
-
               const SizedBox(height: 20),
-
               Text(
                 localization.translate('path.craft_compass_hint'),
                 style: const TextStyle(
@@ -173,8 +167,6 @@ class PathScreen extends StatelessWidget {
       ),
     );
   }
-
-
 
   /// 构建装备区域 - 模拟原游戏的outfitting容器
   Widget _buildOutfittingSection(
@@ -303,6 +295,7 @@ class PathScreen extends StatelessWidget {
 
     // 可携带物品配置 - 基于原游戏的carryable对象
     final carryableItems = {
+      // 基础可携带物品
       'cured meat': {'type': 'tool', 'desc_key': 'messages.restores_2_health'},
       'bullets': {'type': 'tool', 'desc_key': 'messages.for_use_with_rifle'},
       'grenade': {'type': 'weapon'},
@@ -313,11 +306,23 @@ class PathScreen extends StatelessWidget {
       'charm': {'type': 'tool'},
       'alien alloy': {'type': 'tool'},
       'medicine': {'type': 'tool', 'desc_key': 'messages.restores_20_health'},
-      // 从Room.Craftables添加
+
+      // 从Room.Craftables添加的武器
       'bone spear': {'type': 'weapon'},
       'iron sword': {'type': 'weapon'},
       'steel sword': {'type': 'weapon'},
       'rifle': {'type': 'weapon'},
+
+      // 从Room.Craftables添加的工具 - 遗漏的重要物品！
+      'torch': {'type': 'tool', 'desc_key': 'messages.torch_desc'},
+
+      // 从Fabricator.Craftables添加的工具 - 遗漏的重要物品！
+      'hypo': {'type': 'tool', 'desc_key': 'messages.hypo_desc'},
+      'stim': {'type': 'tool', 'desc_key': 'messages.stim_desc'},
+      'glowstone': {'type': 'tool', 'desc_key': 'messages.glowstone_desc'},
+      'energy blade': {'type': 'weapon'},
+      'disruptor': {'type': 'weapon'},
+      'plasma rifle': {'type': 'weapon'},
     };
 
     for (final entry in carryableItems.entries) {
@@ -392,8 +397,10 @@ class PathScreen extends StatelessWidget {
                         child: _buildSupplyButton(
                           'up',
                           1,
-                          _canIncreaseSupply(itemName, equipped, available, path)
-                              ? () => _increaseSupply(itemName, 1, path, stateManager)
+                          _canIncreaseSupply(
+                                  itemName, equipped, available, path)
+                              ? () => _increaseSupply(
+                                  itemName, 1, path, stateManager)
                               : null,
                         ),
                       ),
@@ -406,7 +413,8 @@ class PathScreen extends StatelessWidget {
                           'down',
                           1,
                           equipped > 0
-                              ? () => _decreaseSupply(itemName, 1, path, stateManager)
+                              ? () => _decreaseSupply(
+                                  itemName, 1, path, stateManager)
                               : null,
                         ),
                       ),
@@ -418,8 +426,10 @@ class PathScreen extends StatelessWidget {
                         child: _buildSupplyButton(
                           'up',
                           10,
-                          _canIncreaseSupply(itemName, equipped, available, path, 10)
-                              ? () => _increaseSupply(itemName, 10, path, stateManager)
+                          _canIncreaseSupply(
+                                  itemName, equipped, available, path, 10)
+                              ? () => _increaseSupply(
+                                  itemName, 10, path, stateManager)
                               : null,
                         ),
                       ),
@@ -432,7 +442,8 @@ class PathScreen extends StatelessWidget {
                           'down',
                           10,
                           equipped >= 10
-                              ? () => _decreaseSupply(itemName, 10, path, stateManager)
+                              ? () => _decreaseSupply(
+                                  itemName, 10, path, stateManager)
                               : null,
                         ),
                       ),
@@ -448,7 +459,8 @@ class PathScreen extends StatelessWidget {
   }
 
   /// 构建供应按钮 - 模拟原游戏的三角形箭头按钮
-  Widget _buildSupplyButton(String direction, int amount, VoidCallback? onPressed) {
+  Widget _buildSupplyButton(
+      String direction, int amount, VoidCallback? onPressed) {
     final bool isUp = direction == 'up';
     final bool isEnabled = onPressed != null;
     final bool isMany = amount >= 10; // 10个或以上为"Many"按钮
@@ -544,7 +556,8 @@ class PathScreen extends StatelessWidget {
         text: localization.translate('ui.buttons.embark'),
         onPressed: canEmbark
             ? () {
-                Logger.info('🎯 PathScreen: ${localization.translateLog('embark_button_clicked')}');
+                Logger.info(
+                    '🎯 PathScreen: ${localization.translateLog('embark_button_clicked')}');
                 path.embark();
               }
             : null,
@@ -554,7 +567,8 @@ class PathScreen extends StatelessWidget {
   }
 
   /// 构建技能区域
-  Widget _buildPerksSection(StateManager stateManager, Localization localization) {
+  Widget _buildPerksSection(
+      StateManager stateManager, Localization localization) {
     final perks = stateManager.get('character.perks', true);
 
     Logger.info('🎯 技能数据: $perks');
@@ -569,7 +583,8 @@ class PathScreen extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: Colors.black, width: 1), // 与StoresDisplay保持一致的边框宽度
+        border: Border.all(
+            color: Colors.black, width: 1), // 与StoresDisplay保持一致的边框宽度
       ),
       child: Stack(
         children: [
@@ -579,7 +594,8 @@ class PathScreen extends StatelessWidget {
             children: [
               // 标题 - 与StoresDisplay保持一致的位置
               Container(
-                transform: Matrix4.translationValues(8, -13, 0), // 与StoresDisplay保持一致的位置
+                transform: Matrix4.translationValues(
+                    8, -13, 0), // 与StoresDisplay保持一致的位置
                 child: Container(
                   color: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 2),
@@ -648,15 +664,14 @@ class PathScreen extends StatelessWidget {
   }
 
   /// 构建库存容器 - 使用统一的库存容器组件
-  Widget _buildStoresContainer(StateManager stateManager, Localization localization) {
+  Widget _buildStoresContainer(
+      StateManager stateManager, Localization localization) {
     return UnifiedStoresContainer(
       showPerks: true,
       perksBuilder: _buildPerksSection,
       showVillageStatus: false,
     );
   }
-
-
 }
 
 /// 三角形按钮绘制器 - 模拟原游戏的上下箭头按钮样式
@@ -712,7 +727,8 @@ class _TriangleButtonPainter extends CustomPainter {
       outerPath.close();
 
       // 内部白色三角形（创建空心效果）
-      innerPath.moveTo(centerX, size.height - 1 - (borderWidth - innerWidth)); // 底点
+      innerPath.moveTo(
+          centerX, size.height - 1 - (borderWidth - innerWidth)); // 底点
       innerPath.lineTo(centerX - innerWidth, 3); // 左上
       innerPath.lineTo(centerX + innerWidth, 3); // 右上
       innerPath.close();

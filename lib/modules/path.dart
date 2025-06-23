@@ -86,7 +86,8 @@ class Path extends ChangeNotifier {
     init();
     Engine().event('progress', 'path');
     final localization = Localization();
-    NotificationManager().notify(Room().name, localization.translate('path.compass_points_east'));
+    NotificationManager().notify(
+        Room().name, localization.translate('path.compass_points_east'));
   }
 
   /// 获取物品重量
@@ -166,8 +167,9 @@ class Path extends ChangeNotifier {
     double currentBagCapacity = 0;
     // final freeSpace = getFreeSpace(); // 暂时不使用
 
-    // 可携带物品配置
+    // 可携带物品配置 - 基于原游戏的carryable对象
     final carryable = <String, Map<String, dynamic>>{
+      // 基础可携带物品
       'cured meat': {'type': 'tool', 'desc': 'restores 10 health'},
       'bullets': {'type': 'tool', 'desc': 'for use with rifle'},
       'grenade': {'type': 'weapon'},
@@ -177,7 +179,24 @@ class Path extends ChangeNotifier {
       'bayonet': {'type': 'weapon'},
       'charm': {'type': 'tool'},
       'alien alloy': {'type': 'tool'},
-      'medicine': {'type': 'tool', 'desc': 'restores 20 health'}
+      'medicine': {'type': 'tool', 'desc': 'restores 20 health'},
+
+      // 从Room.Craftables添加的武器
+      'bone spear': {'type': 'weapon'},
+      'iron sword': {'type': 'weapon'},
+      'steel sword': {'type': 'weapon'},
+      'rifle': {'type': 'weapon'},
+
+      // 从Room.Craftables添加的工具 - 遗漏的重要物品！
+      'torch': {'type': 'tool', 'desc': 'provides light in dark places'},
+
+      // 从Fabricator.Craftables添加的工具 - 遗漏的重要物品！
+      'hypo': {'type': 'tool', 'desc': 'restores 30 health'},
+      'stim': {'type': 'tool', 'desc': 'provides temporary boost'},
+      'glowstone': {'type': 'tool', 'desc': 'inextinguishable light source'},
+      'energy blade': {'type': 'weapon'},
+      'disruptor': {'type': 'weapon'},
+      'plasma rifle': {'type': 'weapon'},
     };
 
     // 添加房间和制造器的可制作物品（暂时注释掉）
@@ -294,7 +313,8 @@ class Path extends ChangeNotifier {
       }
       Logger.info('🎒 ${localization.translateLog('equipment_status_saved')}');
 
-      Logger.info('🌍 ${localization.translateLog('initializing_world_module')}...');
+      Logger.info(
+          '🌍 ${localization.translateLog('initializing_world_module')}...');
       // 初始化World模块
       World().init();
 
@@ -307,13 +327,15 @@ class Path extends ChangeNotifier {
       Engine().travelTo(World());
 
       // 显示成功消息
-      NotificationManager().notify(name, localization.translate('path.embark_success'));
+      NotificationManager()
+          .notify(name, localization.translate('path.embark_success'));
 
       Logger.info('✅ embark() completed');
     } catch (e, stackTrace) {
       Logger.info('❌ embark() error: $e');
       Logger.info('❌ Error stack: $stackTrace');
-      NotificationManager().notify(name, localization.translate('path.embark_failed'));
+      NotificationManager()
+          .notify(name, localization.translate('path.embark_failed'));
     }
 
     notifyListeners();

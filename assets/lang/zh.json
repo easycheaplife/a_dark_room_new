@@ -247,6 +247,10 @@
     "for_use_with_rifle": "配合步枪使用",
     "glows_softly_red": "发出柔和的红光",
     "restores_20_health": "恢复 20 生命值",
+    "torch_desc": "在黑暗中提供照明",
+    "hypo_desc": "恢复 30 生命值",
+    "stim_desc": "提供临时增益效果",
+    "glowstone_desc": "永不熄灭的光源",
     "backpack_full": "背包空间不足",
     "found": "发现了：",
     "drop": "丢弃:"

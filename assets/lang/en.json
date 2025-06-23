@@ -255,6 +255,10 @@
     "for_use_with_rifle": "for use with rifle",
     "glows_softly_red": "glows softly red",
     "restores_20_health": "restores 20 health",
+    "torch_desc": "provides light in dark places",
+    "hypo_desc": "restores 30 health",
+    "stim_desc": "provides temporary boost",
+    "glowstone_desc": "inextinguishable light source",
     "found": "found:",
     "backpack_full": "backpack is full",
     "drop": "drop:"
