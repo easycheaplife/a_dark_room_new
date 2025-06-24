@@ -1982,6 +1982,17 @@ class World extends ChangeNotifier {
       final sm = StateManager();
       sm.set('outfit["$itemName"]', path.outfit[itemName]);
 
+      // 显示获得物品的通知
+      final localization = Localization();
+      final itemDisplayName = localization.translate('resources.$itemName');
+      final displayName =
+          itemDisplayName != 'resources.$itemName' ? itemDisplayName : itemName;
+
+      NotificationManager().notify(
+          name,
+          localization.translate('world.notifications.found_item',
+              [displayName, amount.toString()]));
+
       Logger.info(
           '🎒 添加到装备: $itemName x$amount (总计: ${path.outfit[itemName]})');
     } catch (e) {

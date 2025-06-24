@@ -5,6 +5,7 @@ import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/audio_engine.dart';
 import '../core/logger.dart';
+import '../core/localization.dart';
 import 'global_events.dart';
 import 'room_events.dart';
 import 'outside_events.dart';
@@ -146,11 +147,22 @@ class Events extends ChangeNotifier {
     if (scene['reward'] != null) {
       final sm = StateManager();
       final rewards = scene['reward'] as Map<String, dynamic>;
+      final localization = Localization();
       for (final entry in rewards.entries) {
         final key = entry.key;
         final value = entry.value as int;
         final current = sm.get('stores.$key', true) ?? 0;
         sm.set('stores.$key', current + value);
+
+        // 显示获得奖励的通知
+        final itemDisplayName = localization.translate('resources.$key');
+        final displayName =
+            itemDisplayName != 'resources.$key' ? itemDisplayName : key;
+        NotificationManager().notify(
+            'events',
+            localization.translate('world.notifications.found_item',
+                [displayName, value.toString()]));
+
         Logger.info('🎁 Reward gained: $key +$value');
       }
     }
@@ -306,7 +318,8 @@ class Events extends ChangeNotifier {
         final cost = entry.value as int;
         final current = sm.get('stores.$key', true) ?? 0;
         if (current < cost) {
-          NotificationManager().notify('events', 'Insufficient resources: $key');
+          NotificationManager()
+              .notify('events', 'Insufficient resources: $key');
           return;
         }
       }
@@ -324,11 +337,22 @@ class Events extends ChangeNotifier {
     // 给予奖励
     if (buttonConfig['reward'] != null) {
       final rewards = buttonConfig['reward'] as Map<String, dynamic>;
+      final localization = Localization();
       for (final entry in rewards.entries) {
         final key = entry.key;
         final value = entry.value as int;
         final current = sm.get('stores.$key', true) ?? 0;
         sm.set('stores.$key', current + value);
+
+        // 显示获得奖励的通知
+        final itemDisplayName = localization.translate('resources.$key');
+        final displayName =
+            itemDisplayName != 'resources.$key' ? itemDisplayName : key;
+        NotificationManager().notify(
+            'events',
+            localization.translate('world.notifications.found_item',
+                [displayName, value.toString()]));
+
         Logger.info('🎁 Reward gained: $key +$value');
       }
     }
