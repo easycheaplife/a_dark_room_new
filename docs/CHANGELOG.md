@@ -24,13 +24,22 @@
   - 添加了endEvent回调支持，确保离开操作直接结束事件
   - 修复了所有Setpiece场景的结束逻辑
 
+- **Setpiece场景离开界面问题修复** (`docs/bug_fix/setpiece_leave_interface_fix.md`)
+  - 修复潮湿洞穴选择离开后界面显示"继续"按钮且点击无反应的问题
+  - 识别并分析了13个Setpiece场景的系统性离开界面问题
+  - 建立了标准修复模式：添加leave_end场景使用endEvent回调
+  - 修复了潮湿洞穴中10个场景的离开按钮配置
+  - 添加了相应的本地化翻译支持
+
 ### 技术细节
 - 修改 `lib/modules/world.dart` 第953-963行，将house、ironmine、coalmine、sulphurmine、town加入不立即标记的例外列表
 - 修改 `lib/modules/setpieces.dart` 第638行，确保house场景的supplies分支正确标记为已访问
 - 修改 `lib/modules/setpieces.dart` town场景结构，为leave选择创建独立的leave_end场景
 - 修改 `lib/modules/events.dart` 场景跳转逻辑，正确处理finish场景和end场景
 - 添加 `lib/modules/events.dart` 中endEvent回调支持，确保离开操作直接结束事件
-- 添加本地化翻译支持新的leave_text文本
+- 修改 `lib/modules/setpieces.dart` 潮湿洞穴场景，添加leave_end场景并修改10个离开按钮配置
+- 添加本地化翻译支持新的leave_text文本（中英文）
+- 建立了标准Setpiece离开界面修复模式，为其他场景修复提供模板
 - 通过实际测试验证修复效果，确认与原游戏行为一致
 
 ### 测试验证
@@ -40,6 +49,8 @@
 - ✅ 废弃城镇（T）的访问逻辑已修复，与其他地标保持一致
 - ✅ 废弃小镇（O）离开操作直接关闭界面，无"继续"按钮
 - ✅ 废弃小镇（O）进入后正确标记为已访问，字母变灰
+- ✅ 潮湿洞穴（V）离开操作直接关闭界面，无"继续"按钮
+- ✅ 潮湿洞穴（V）所有10个场景的离开按钮都正常工作
 
 ## 2025-06-24 - 文档系统标准化
 

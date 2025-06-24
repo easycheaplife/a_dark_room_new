@@ -1336,7 +1336,8 @@
         "text2": "can't see what's inside.",
         "notification": "the earth here is split, as if bearing an ancient wound"
       },
-      "end_text": "left the cave and returned to the wilderness."
+      "end_text": "left the cave and returned to the wilderness.",
+      "leave_text": "decided not to enter the cave, and continued on."
     },
     "house": {
       "title": "old house",
