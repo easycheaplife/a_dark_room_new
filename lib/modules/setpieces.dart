@@ -635,7 +635,7 @@ class Setpieces extends ChangeNotifier {
                       .translate('setpieces.house_scenes.abandoned_text2')
                 ];
               }(),
-              'onLoad': 'replenishWater',
+              'onLoad': 'markVisited',
               'loot': {
                 'cured meat': {'min': 1, 'max': 10, 'chance': 0.8},
                 'leather': {'min': 1, 'max': 10, 'chance': 0.2},
