@@ -926,6 +926,7 @@
       "discovered_location": "found {0}.",
       "respawned": "you have respawned and returned to the village",
       "water_replenished": "water replenished",
+      "outpost_already_used": "this outpost has already been used",
       "dungeon_cleared": "the dungeon has been cleared, this is now an outpost",
       "found_item": "found {0} x{1}"
     },

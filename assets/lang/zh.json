@@ -918,6 +918,7 @@
       "discovered_location": "发现了{0}。",
       "respawned": "你重生了，回到了村庄",
       "water_replenished": "水已补充",
+      "outpost_already_used": "这个前哨站已经使用过了",
       "dungeon_cleared": "地牢已清理完毕，这里现在是一个前哨站",
       "found_item": "发现了 {0} x{1}"
     },
