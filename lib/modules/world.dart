@@ -950,13 +950,14 @@ class World extends ChangeNotifier {
           if (setpieces.isSetpieceAvailable(sceneName)) {
             Logger.info('🏛️ 启动Setpiece场景: $sceneName');
             setpieces.startSetpiece(sceneName);
-            // 对于某些特殊场景（如洞穴、房子、矿物），不立即标记为已访问
+            // 对于某些特殊场景（如洞穴、房子、矿物、城镇），不立即标记为已访问
             // 只有在场景完成时才标记
             if (sceneName != 'cave' &&
                 sceneName != 'house' &&
                 sceneName != 'ironmine' &&
                 sceneName != 'coalmine' &&
-                sceneName != 'sulphurmine') {
+                sceneName != 'sulphurmine' &&
+                sceneName != 'town') {
               // 立即标记为已访问，防止重复访问
               markVisited(curPos[0], curPos[1]);
             }

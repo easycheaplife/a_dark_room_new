@@ -1354,7 +1354,8 @@
         "text2": "broken streetlights stand, rusted. light hasn't shone here for a long time.",
         "notification": "the town is abandoned, its inhabitants long dead"
       },
-      "end_text": "left the abandoned town and returned to the wilderness."
+      "end_text": "left the abandoned town and returned to the wilderness.",
+      "leave_text": "decided not to enter the town and continued on."
     },
     "ironmine": {
       "title": "iron mine",

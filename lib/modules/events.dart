@@ -1269,6 +1269,10 @@ class Events extends ChangeNotifier {
         Logger.info('🔧 调用 Setpieces().clearSulphurMine()');
         Setpieces().clearSulphurMine();
         break;
+      case 'endEvent':
+        Logger.info('🔧 调用 endEvent()');
+        endEvent();
+        break;
       default:
         Logger.info('⚠️ 未知的onLoad回调: $callbackName');
         break;
@@ -1353,7 +1357,7 @@ class Events extends ChangeNotifier {
         return;
       }
 
-      if (nextScene == 'end') {
+      if (nextScene == 'finish') {
         endEvent();
       } else {
         loadScene(nextScene);

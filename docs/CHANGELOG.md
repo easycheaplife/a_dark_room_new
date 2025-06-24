@@ -10,21 +10,36 @@
 
 ### Bug修复
 - **地标访问逻辑修复** (`docs/bug_fix/landmark_visit_logic_fix.md`)
-  - 修复地标H（房子）、铁矿I、煤矿C、硫磺矿S的访问逻辑问题
+  - 修复地标H（房子）、铁矿I、煤矿C、硫磺矿S、废弃城镇T的访问逻辑问题
   - 确保只有进入地标后才标记为已访问，直接离开不标记
   - 实现与原游戏完全一致的访问行为
   - 修复了world.dart中的地标处理逻辑
-  - 修复了setpieces.dart中house场景的配置
+  - 修复了setpieces.dart中house场景的配置和town场景结构
+  - 添加了相应的本地化翻译
+
+- **废弃小镇界面问题修复** (`docs/bug_fix/town_setpiece_interface_fix.md`)
+  - 修复废弃小镇选择离开后界面显示"继续"按钮且点击无反应的问题
+  - 修复废弃小镇选择进入后字母没有变灰色的问题
+  - 改善了Events模块的场景跳转逻辑，正确处理finish场景
+  - 添加了endEvent回调支持，确保离开操作直接结束事件
+  - 修复了所有Setpiece场景的结束逻辑
 
 ### 技术细节
-- 修改 `lib/modules/world.dart` 第952-962行，将house、ironmine、coalmine、sulphurmine加入不立即标记的例外列表
+- 修改 `lib/modules/world.dart` 第953-963行，将house、ironmine、coalmine、sulphurmine、town加入不立即标记的例外列表
 - 修改 `lib/modules/setpieces.dart` 第638行，确保house场景的supplies分支正确标记为已访问
+- 修改 `lib/modules/setpieces.dart` town场景结构，为leave选择创建独立的leave_end场景
+- 修改 `lib/modules/events.dart` 场景跳转逻辑，正确处理finish场景和end场景
+- 添加 `lib/modules/events.dart` 中endEvent回调支持，确保离开操作直接结束事件
+- 添加本地化翻译支持新的leave_text文本
 - 通过实际测试验证修复效果，确认与原游戏行为一致
 
 ### 测试验证
 - ✅ 直接选择离开：不标记为已访问，地标保持黑色，可重复访问
 - ✅ 选择进入后：标记为已访问，地标变灰，不可再访问
 - ✅ 所有矿物地标（I、C、S）都遵循相同逻辑
+- ✅ 废弃城镇（T）的访问逻辑已修复，与其他地标保持一致
+- ✅ 废弃小镇（O）离开操作直接关闭界面，无"继续"按钮
+- ✅ 废弃小镇（O）进入后正确标记为已访问，字母变灰
 
 ## 2025-06-24 - 文档系统标准化
 

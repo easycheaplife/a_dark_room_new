@@ -757,7 +757,7 @@ class Setpieces extends ChangeNotifier {
                     final localization = Localization();
                     return localization.translate('ui.buttons.leave');
                   }(),
-                  'nextScene': 'end'
+                  'nextScene': 'leave_end'
                 }
               }
             },
@@ -987,6 +987,14 @@ class Setpieces extends ChangeNotifier {
                   'nextScene': 'finish'
                 }
               }
+            },
+            'leave_end': {
+              'text': () {
+                final localization = Localization();
+                return [localization.translate('setpieces.town.leave_text')];
+              }(),
+              'onLoad': 'endEvent',
+              'buttons': {}
             }
           },
           'audio': 'landmark_town'
