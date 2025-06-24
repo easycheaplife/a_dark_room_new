@@ -1,5 +1,7 @@
 # A Dark Room 游戏功能对比分析
 
+**最后更新**: 2025-06-24
+
 ## 项目概述
 
 本文档详细对比了原版 A Dark Room 游戏（JavaScript/HTML）与 Flutter 移植版本的功能实现情况。

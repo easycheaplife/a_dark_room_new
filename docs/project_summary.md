@@ -1,5 +1,7 @@
 # A Dark Room Flutter 移植项目总结
 
+**最后更新**: 2025-06-24
+
 ## 项目概述
 
 这是经典文字冒险游戏 **A Dark Room** 的 Flutter 移植版本。本项目将原版的 JavaScript/HTML 游戏完整移植到 Flutter 平台，支持多平台运行，并保持了原游戏的核心体验和游戏机制。
