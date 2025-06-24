@@ -38,8 +38,9 @@ class UnifiedStoresContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Logger.info('🏪 UnifiedStoresContainer: 构建统一库存容器 - 技能:$showPerks, 村庄:$showVillageStatus');
-    
+    Logger.info(
+        '🏪 UnifiedStoresContainer: 构建统一库存容器 - 技能:$showPerks, 村庄:$showVillageStatus');
+
     return Consumer2<StateManager, Localization>(
       builder: (context, stateManager, localization, child) {
         return SizedBox(
@@ -54,6 +55,15 @@ class UnifiedStoresContainer extends StatelessWidget {
                   Logger.info('🎯 UnifiedStoresContainer: 显示技能区域');
                   return perksBuilder!(stateManager, localization);
                 }(),
+              ],
+
+              // 村庄状态区域（仅村庄页签显示）- 调换到库存之前
+              if (showVillageStatus && villageStatusBuilder != null) ...[
+                () {
+                  Logger.info('🏘️ UnifiedStoresContainer: 显示村庄状态区域（建筑）');
+                  return villageStatusBuilder!(stateManager, localization);
+                }(),
+                const SizedBox(height: 15), // 与其他区域保持一致的间距
               ],
 
               // 库存区域 - 使用light样式，只显示资源
@@ -80,15 +90,6 @@ class UnifiedStoresContainer extends StatelessWidget {
                     );
                   },
                 ),
-              ],
-
-              // 村庄状态区域（仅村庄页签显示）
-              if (showVillageStatus && villageStatusBuilder != null) ...[
-                const SizedBox(height: 15), // 与其他区域保持一致的间距
-                () {
-                  Logger.info('🏘️ UnifiedStoresContainer: 显示村庄状态区域');
-                  return villageStatusBuilder!(stateManager, localization);
-                }(),
               ],
             ],
           ),
