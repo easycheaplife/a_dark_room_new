@@ -423,23 +423,36 @@ class Events extends ChangeNotifier {
 
   /// 加载场景
   void loadScene(String sceneName) {
-    // Engine().log('加载场景: $sceneName'); // 暂时注释掉
+    Logger.info('🎬 Events.loadScene() 被调用: $sceneName');
     activeScene = sceneName;
     final event = activeEvent();
-    if (event == null) return;
+    if (event == null) {
+      Logger.info('⚠️ 没有活动事件');
+      return;
+    }
 
     final scene = event['scenes'][sceneName];
-    if (scene == null) return;
+    if (scene == null) {
+      Logger.info('⚠️ 场景不存在: $sceneName');
+      return;
+    }
+
+    Logger.info('🎬 成功加载场景: $sceneName');
 
     // onLoad 回调 - 支持函数和字符串形式
     if (scene['onLoad'] != null) {
       final onLoad = scene['onLoad'];
+      Logger.info('🔧 场景有onLoad回调: $onLoad');
       if (onLoad is Function) {
+        Logger.info('🔧 执行函数形式的onLoad回调');
         onLoad();
       } else if (onLoad is String) {
+        Logger.info('🔧 执行字符串形式的onLoad回调: $onLoad');
         // 处理字符串形式的回调
         _handleOnLoadCallback(onLoad);
       }
+    } else {
+      Logger.info('🔧 场景没有onLoad回调');
     }
 
     // 场景通知
@@ -1222,35 +1235,45 @@ class Events extends ChangeNotifier {
 
   /// 处理onLoad回调 - 根据字符串名称调用相应的方法
   void _handleOnLoadCallback(String callbackName) {
+    Logger.info('🔧 _handleOnLoadCallback() 被调用: $callbackName');
     switch (callbackName) {
       case 'useOutpost':
+        Logger.info('🔧 调用 Setpieces().useOutpost()');
         Setpieces().useOutpost();
         break;
       case 'addGastronomePerk':
+        Logger.info('🔧 调用 Setpieces().addGastronomePerk()');
         Setpieces().addGastronomePerk();
         break;
       case 'clearDungeon':
+        Logger.info('🔧 调用 Setpieces().clearDungeon()');
         Setpieces().clearDungeon();
         break;
       case 'markVisited':
+        Logger.info('🔧 调用 Setpieces().markVisited()');
         Setpieces().markVisited();
         break;
       case 'replenishWater':
+        Logger.info('🔧 调用 Setpieces().replenishWater()');
         Setpieces().replenishWater();
         break;
       case 'clearIronMine':
+        Logger.info('🔧 调用 Setpieces().clearIronMine()');
         Setpieces().clearIronMine();
         break;
       case 'clearCoalMine':
+        Logger.info('🔧 调用 Setpieces().clearCoalMine()');
         Setpieces().clearCoalMine();
         break;
       case 'clearSulphurMine':
+        Logger.info('🔧 调用 Setpieces().clearSulphurMine()');
         Setpieces().clearSulphurMine();
         break;
       default:
         Logger.info('⚠️ 未知的onLoad回调: $callbackName');
         break;
     }
+    Logger.info('🔧 _handleOnLoadCallback() 完成: $callbackName');
   }
 
   /// 处理按钮点击

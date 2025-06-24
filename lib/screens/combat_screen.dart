@@ -785,6 +785,28 @@ class _CombatScreenState extends State<CombatScreen> {
             ),
           ),
 
+        // 继续按钮 - 如果有下一个场景的话
+        if (_hasNextScene(events, scene))
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(vertical: 2),
+            child: ElevatedButton(
+              onPressed: () => _continueToNextScene(events, scene),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                side: const BorderSide(color: Colors.black),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                minimumSize: const Size(0, 32),
+              ),
+              child: Text(
+                Localization().translate('ui.buttons.continue'),
+                style: const TextStyle(fontSize: 12),
+              ),
+            ),
+          ),
+
         // 离开按钮
         Container(
           width: double.infinity,
@@ -857,5 +879,26 @@ class _CombatScreenState extends State<CombatScreen> {
 
     // 如果没有找到翻译，返回原名称
     return weaponName;
+  }
+
+  /// 检查是否有下一个场景
+  bool _hasNextScene(Events events, Map<String, dynamic> scene) {
+    // 检查场景的buttons中是否有continue按钮且有nextScene配置
+    final buttons = scene['buttons'] as Map<String, dynamic>? ?? {};
+    final continueButton = buttons['continue'] as Map<String, dynamic>?;
+    return continueButton != null && continueButton['nextScene'] != null;
+  }
+
+  /// 继续到下一个场景
+  void _continueToNextScene(Events events, Map<String, dynamic> scene) {
+    final buttons = scene['buttons'] as Map<String, dynamic>? ?? {};
+    final continueButton = buttons['continue'] as Map<String, dynamic>?;
+
+    if (continueButton != null && continueButton['nextScene'] != null) {
+      // 直接调用Events的按钮点击处理逻辑
+      events.handleButtonClick('continue', continueButton);
+    } else {
+      events.endEvent();
+    }
   }
 }

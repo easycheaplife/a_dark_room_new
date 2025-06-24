@@ -336,6 +336,8 @@ class Outside extends ChangeNotifier {
 
   /// 检查工人
   bool checkWorker(String name) {
+    Logger.info('👷 checkWorker() 开始检查: $name');
+
     final jobMap = {
       'lodge': ['hunter', 'trapper'],
       'tannery': ['tanner'],
@@ -348,19 +350,35 @@ class Outside extends ChangeNotifier {
     };
 
     final jobs = jobMap[name];
+    Logger.info('👷 建筑 $name 对应的工人: $jobs');
+
     var added = false;
     final sm = StateManager();
 
     if (jobs != null) {
       for (final job in jobs) {
-        if (sm.get('game.buildings["$name"]') != null &&
-            sm.get('game.workers["$job"]') == null) {
-          // Engine().log('添加 $job 到工人列表'); // 暂时注释掉
+        final buildingExists = sm.get('game.buildings["$name"]') != null;
+        final workerExists = sm.get('game.workers["$job"]') != null;
+
+        Logger.info('👷 检查工人 $job: 建筑存在=$buildingExists, 工人存在=$workerExists');
+
+        if (buildingExists && !workerExists) {
+          Logger.info('👷 添加 $job 到工人列表');
           sm.set('game.workers["$job"]', 0);
           added = true;
+
+          // 验证工人是否成功添加
+          final verifyWorker = sm.get('game.workers["$job"]', true);
+          Logger.info('👷 验证工人 $job 添加结果: $verifyWorker');
+        } else {
+          Logger.info('👷 跳过工人 $job: 建筑不存在或工人已存在');
         }
       }
+    } else {
+      Logger.info('👷 未找到建筑 $name 对应的工人配置');
     }
+
+    Logger.info('👷 checkWorker() 完成，添加了工人: $added');
     return added;
   }
 

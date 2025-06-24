@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../modules/outside.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
+import '../core/logger.dart';
 import '../core/responsive_layout.dart';
 import '../widgets/progress_button.dart';
 import '../widgets/unified_stores_container.dart';
@@ -184,6 +185,26 @@ class OutsideScreen extends StatelessWidget {
       Localization localization, GameLayoutParams layoutParams) {
     final population = stateManager.get('game.population', true) ?? 0;
 
+    // 添加调试日志
+    final allBuildings = stateManager.get('game.buildings', true) ?? {};
+    final allWorkers = stateManager.get('game.workers', true) ?? {};
+    Logger.info('🖥️ 构建工人按钮 - 人口: $population');
+    Logger.info('🖥️ 所有建筑: $allBuildings');
+    Logger.info('🖥️ 所有工人: $allWorkers');
+
+    // 特别检查矿物建筑和工人
+    final coalMine = stateManager.get('game.buildings["coal mine"]', true) ?? 0;
+    final coalMiner = stateManager.get('game.workers["coal miner"]', true);
+    final ironMine = stateManager.get('game.buildings["iron mine"]', true) ?? 0;
+    final ironMiner = stateManager.get('game.workers["iron miner"]', true);
+    final sulphurMine =
+        stateManager.get('game.buildings["sulphur mine"]', true) ?? 0;
+    final sulphurMiner =
+        stateManager.get('game.workers["sulphur miner"]', true);
+    Logger.info('🖥️ 煤矿建筑: $coalMine, 煤矿工人: $coalMiner');
+    Logger.info('🖥️ 铁矿建筑: $ironMine, 铁矿工人: $ironMiner');
+    Logger.info('🖥️ 硫磺矿建筑: $sulphurMine, 硫磺矿工人: $sulphurMiner');
+
     // 如果没有人口，不显示工人管理
     if (population == 0) {
       return const SizedBox.shrink();
@@ -207,8 +228,21 @@ class OutsideScreen extends StatelessWidget {
               outside, stateManager, localization, layoutParams),
           _buildWorkerButton(localization.translate('workers.charcutier'),
               'charcutier', outside, stateManager, localization, layoutParams),
+          _buildWorkerButton(localization.translate('workers.iron_miner'),
+              'iron miner', outside, stateManager, localization, layoutParams),
+          _buildWorkerButton(localization.translate('workers.coal_miner'),
+              'coal miner', outside, stateManager, localization, layoutParams),
+          _buildWorkerButton(
+              localization.translate('workers.sulphur_miner'),
+              'sulphur miner',
+              outside,
+              stateManager,
+              localization,
+              layoutParams),
           _buildWorkerButton(localization.translate('workers.steelworker'),
               'steelworker', outside, stateManager, localization, layoutParams),
+          _buildWorkerButton(localization.translate('workers.armourer'),
+              'armourer', outside, stateManager, localization, layoutParams),
         ],
       ),
     );
@@ -233,6 +267,19 @@ class OutsideScreen extends StatelessWidget {
 
     // 检查是否有相应的建筑物解锁此工人类型
     bool isUnlocked = _isWorkerUnlocked(type, stateManager);
+
+    // 添加调试日志
+    if (type.contains('miner')) {
+      Logger.info('🖥️ 工人按钮检查 $type: 解锁状态=$isUnlocked, 当前工人数=$currentWorkers');
+      if (type == 'coal miner') {
+        final coalMineBuilding =
+            stateManager.get('game.buildings["coal mine"]', true) ?? 0;
+        final coalMinerWorker =
+            stateManager.get('game.workers["coal miner"]', true);
+        Logger.info('🖥️ 煤矿建筑数量: $coalMineBuilding, 煤矿工人: $coalMinerWorker');
+      }
+    }
+
     if (!isUnlocked) {
       return const SizedBox.shrink();
     }
@@ -424,8 +471,17 @@ class OutsideScreen extends StatelessWidget {
       case 'charcutier':
         return (stateManager.get('game.buildings.smokehouse', true) ?? 0) >
             0; // 熏肉师由熏肉房解锁
+      case 'iron miner':
+        return (stateManager.get('game.buildings["iron mine"]', true) ?? 0) > 0;
+      case 'coal miner':
+        return (stateManager.get('game.buildings["coal mine"]', true) ?? 0) > 0;
+      case 'sulphur miner':
+        return (stateManager.get('game.buildings["sulphur mine"]', true) ?? 0) >
+            0;
       case 'steelworker':
         return (stateManager.get('game.buildings.steelworks', true) ?? 0) > 0;
+      case 'armourer':
+        return (stateManager.get('game.buildings.armoury', true) ?? 0) > 0;
       default:
         return false;
     }
@@ -456,9 +512,25 @@ class OutsideScreen extends StatelessWidget {
         'delay': 10,
         'stores': {'meat': -5, 'wood': -5, 'cured meat': 1}
       },
+      'iron miner': {
+        'delay': 10,
+        'stores': {'cured meat': -1, 'iron': 1}
+      },
+      'coal miner': {
+        'delay': 10,
+        'stores': {'cured meat': -1, 'coal': 1}
+      },
+      'sulphur miner': {
+        'delay': 10,
+        'stores': {'cured meat': -1, 'sulphur': 1}
+      },
       'steelworker': {
         'delay': 10,
         'stores': {'coal': -1, 'iron': -1, 'steel': 1}
+      },
+      'armourer': {
+        'delay': 10,
+        'stores': {'steel': -1, 'sulphur': -1, 'bullets': 1}
       },
     };
 
@@ -613,9 +685,14 @@ class _VillageWidgetState extends State<_VillageWidget> {
     final List<Widget> buildings = [];
     final gameBuildings = widget.stateManager.get('game.buildings', true) ?? {};
 
+    Logger.info('🏗️ _buildBuildingsList() 开始构建建筑列表');
+    Logger.info('🏗️ 所有建筑数据: $gameBuildings');
+
     for (final entry in gameBuildings.entries) {
       final buildingName = entry.key;
       final buildingCount = entry.value as int;
+
+      Logger.info('🏗️ 处理建筑: $buildingName, 数量: $buildingCount');
 
       if (buildingCount > 0) {
         if (buildingName == 'trap') {
@@ -659,6 +736,8 @@ class _VillageWidgetState extends State<_VillageWidget> {
         } else {
           // 其他建筑物的显示
           String localizedName = _getBuildingLocalizedName(buildingName);
+          Logger.info(
+              '🏗️ 添加建筑到列表: $buildingName -> $localizedName: $buildingCount');
           buildings.add(
             Padding(
               padding: const EdgeInsets.only(top: 5),
@@ -676,6 +755,7 @@ class _VillageWidgetState extends State<_VillageWidget> {
       }
     }
 
+    Logger.info('🏗️ _buildBuildingsList() 完成，生成了 ${buildings.length} 个建筑组件');
     return buildings;
   }
 
@@ -683,6 +763,9 @@ class _VillageWidgetState extends State<_VillageWidget> {
   String _getBuildingLocalizedName(String buildingName) {
     final translatedName =
         widget.localization.translate('buildings.$buildingName');
+
+    // 添加调试日志
+    Logger.info('🏗️ 建筑本地化: $buildingName -> $translatedName');
 
     // 如果翻译存在且不等于原键名，返回翻译
     if (translatedName != 'buildings.$buildingName') {
