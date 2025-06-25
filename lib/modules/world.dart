@@ -273,8 +273,11 @@ class World extends ChangeNotifier {
       'label': localization.translate('world.terrain.destroyed_starship')
     };
 
-    // 只有在有声望数据时才添加缓存
-    if (sm.get('previous.stores') != null) {
+    // 只有在有声望数据时才添加缓存 - 与原游戏逻辑一致
+    final previousStores = sm.get('previous.stores');
+    if (previousStores != null &&
+        previousStores is List &&
+        previousStores.isNotEmpty) {
       landmarks[tile['cache']!] = {
         'num': 1,
         'minRadius': 10,
