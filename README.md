@@ -221,6 +221,9 @@ terrain_analysis.md文档错误修正记录。
 #### [地标访问逻辑修复](./docs/bug_fix/landmark_visit_logic_fix.md)
 修复地标H（房子）、铁矿I、煤矿C、硫磺矿S的访问逻辑问题，确保只有进入地标后才标记为已访问，直接离开不标记。
 
+#### [事件继续按钮修复](./docs/bug_fix/event_continue_button_fix.md)
+修复弹出事件（如小偷事件）点击"继续"按钮无反应、界面不关闭的问题。
+
 ### ⚡ 优化文档
 
 #### [按钮布局优化](./docs/optimize/button_layout_optimization.md)

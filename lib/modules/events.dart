@@ -1357,7 +1357,7 @@ class Events extends ChangeNotifier {
         return;
       }
 
-      if (nextScene == 'finish') {
+      if (nextScene == 'finish' || nextScene == 'end') {
         endEvent();
       } else {
         loadScene(nextScene);
