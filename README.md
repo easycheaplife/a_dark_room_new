@@ -79,6 +79,9 @@ flutter run -d [platform]
 #### [地标事件设计模式分析](./docs/landmark_event_patterns.md)
 五种主要事件结构类型、奖励设计层级、心理学技巧应用分析。
 
+#### [火把使用分析](./docs/torch_usage_analysis.md)
+详细分析火把的作用、获取方式以及需要火把的地形，包括5个需要火把的地标和完整的探索策略。
+
 #### [地标到前哨站转换机制](./docs/landmarks_to_outposts.md)
 地标发现、清理、转换为前哨站的完整机制分析。
 
