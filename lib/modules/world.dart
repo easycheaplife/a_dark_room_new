@@ -1029,8 +1029,8 @@ class World extends ChangeNotifier {
       case 'S': // 硫磺矿
         // 触发硫磺矿事件
         Events().triggerSetpiece('sulphurmine');
-        // 立即标记为已访问，防止重复访问
-        markVisited(curPos[0], curPos[1]);
+        // 注意：硫磺矿不立即标记为已访问，只有完成setpiece事件后才标记
+        // 这与原游戏行为一致，允许玩家重复访问直到完成事件
         break;
 
       case 'H': // 旧房子
