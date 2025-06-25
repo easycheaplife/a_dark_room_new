@@ -872,6 +872,7 @@ class World extends ChangeNotifier {
 
     Logger.info(
         '🗺️ doSpace() - 当前位置: [${curPos[0]}, ${curPos[1]}], 地形: $curTile');
+    Logger.info('🗺️ 原始地形: $originalTile, 已访问: $isVisited');
 
     if (curTile == tile['village']) {
       Logger.info('🏠 触发村庄事件 - 回到小黑屋');
@@ -913,8 +914,20 @@ class World extends ChangeNotifier {
       }
     } else if (originalTile == tile['outpost']) {
       // 前哨站特殊处理
-      Logger.info('🏛️ 到达前哨站: $originalTile (已使用: ${outpostUsed()})');
-      if (!outpostUsed()) {
+      final isUsed = outpostUsed();
+      final key = '${curPos[0]},${curPos[1]}';
+      Logger.info('🏛️ 到达前哨站: $originalTile (已使用: $isUsed, 已访问: $isVisited)');
+      Logger.info('🏛️ 前哨站位置: [${curPos[0]}, ${curPos[1]}], 键: $key');
+      Logger.info('🏛️ 当前地形: $curTile, 原始地形: $originalTile');
+
+      // 调试：检查usedOutposts状态
+      Logger.info('🏛️ usedOutposts[$key]: ${usedOutposts[key]}');
+      final sm = StateManager();
+      final persistedUsedOutposts =
+          sm.get('game.world.usedOutposts', true) ?? {};
+      Logger.info('🏛️ 持久化状态[$key]: ${persistedUsedOutposts[key]}');
+
+      if (!isUsed && !isVisited) {
         // 前哨站未使用，触发前哨站事件
         final landmarkInfo = landmarks[originalTile];
         if (landmarkInfo != null && landmarkInfo['scene'] != null) {
@@ -935,7 +948,7 @@ class World extends ChangeNotifier {
           useOutpost();
         }
       } else {
-        Logger.info('🏛️ 前哨站已使用，跳过事件');
+        Logger.info('🏛️ 前哨站已使用或已访问，跳过事件');
       }
       // 注意：前哨站事件不消耗补给！
     } else if (landmarks.containsKey(originalTile)) {
@@ -960,7 +973,8 @@ class World extends ChangeNotifier {
                 sceneName != 'ironmine' &&
                 sceneName != 'coalmine' &&
                 sceneName != 'sulphurmine' &&
-                sceneName != 'town') {
+                sceneName != 'town' &&
+                sceneName != 'city') {
               // 立即标记为已访问，防止重复访问
               markVisited(curPos[0], curPos[1]);
             }
@@ -1055,7 +1069,8 @@ class World extends ChangeNotifier {
       case 'Y': // 废墟城市
         NotificationManager().notify(
             name, localization.translate('world.notifications.ruined_city'));
-        markVisited(curPos[0], curPos[1]);
+        // 注意：废墟城市不在这里标记为已访问
+        // 只有完成完整探索后才会在clearCity中转换为前哨站
         break;
 
       case 'W': // 坠毁星舰
@@ -1775,10 +1790,18 @@ class World extends ChangeNotifier {
 
   /// 使用前哨站 - 参考原游戏的World.useOutpost函数
   void useOutpost() {
-    Logger.info('🏛️ 使用前哨站 - 位置: [${curPos[0]}, ${curPos[1]}]');
+    Logger.info('🏛️ useOutpost() 开始执行 - 位置: [${curPos[0]}, ${curPos[1]}]');
+
+    final currentTile = state != null && state!['map'] != null
+        ? (state!['map'] as List<List<String>>)[curPos[0]][curPos[1]]
+        : 'unknown';
+    Logger.info('🏛️ 当前地形: $currentTile');
 
     // 检查前哨站是否已经使用过
-    if (outpostUsed()) {
+    final isUsed = outpostUsed();
+    Logger.info('🏛️ 前哨站是否已使用: $isUsed');
+
+    if (isUsed) {
       Logger.info('🏛️ 前哨站已经使用过，无法再次使用');
       final localization = Localization();
       NotificationManager().notify(name,
@@ -1794,10 +1817,19 @@ class World extends ChangeNotifier {
         name, localization.translate('world.notifications.water_replenished'));
 
     // 同时标记前哨站为已使用和已访问，确保状态同步
+    Logger.info('🏛️ 调用 markOutpostUsed()');
     markOutpostUsed();
+    Logger.info('🏛️ 调用 markVisited()');
     markVisited(curPos[0], curPos[1]);
 
-    Logger.info('🏛️ 前哨站使用完成 - 水: $oldWater -> $water, 位置已标记为已访问和已使用');
+    // 验证状态
+    final finalUsed = outpostUsed();
+    final finalTile = state != null && state!['map'] != null
+        ? (state!['map'] as List<List<String>>)[curPos[0]][curPos[1]]
+        : 'unknown';
+
+    Logger.info('🏛️ 前哨站使用完成 - 水: $oldWater -> $water');
+    Logger.info('🏛️ 最终状态 - 已使用: $finalUsed, 地形: $finalTile');
     notifyListeners();
   }
 
@@ -1836,41 +1868,65 @@ class World extends ChangeNotifier {
 
   /// 清除地牢状态 - 参考原游戏的clearDungeon函数
   void clearDungeon() {
-    Logger.info('🏛️ World.clearDungeon() - 将当前位置转换为前哨站');
+    Logger.info('🏛️ ========== World.clearDungeon() 开始执行 ==========');
+    Logger.info('🏛️ 将当前位置转换为前哨站');
+    Logger.info('🏛️ 当前位置: [${curPos[0]}, ${curPos[1]}]');
 
-    if (state != null && state!['map'] != null) {
-      try {
-        // 安全地转换地图数据类型
-        final mapData = state!['map'];
-        final map = List<List<String>>.from(
-            mapData.map((row) => List<String>.from(row)));
+    if (state == null || state!['map'] == null) {
+      Logger.error('❌ 状态或地图数据为空！');
+      return;
+    }
 
-        if (curPos[0] >= 0 &&
-            curPos[0] < map.length &&
-            curPos[1] >= 0 &&
-            curPos[1] < map[curPos[0]].length) {
-          final oldTile = map[curPos[0]][curPos[1]];
-          // 确保前哨站不带已访问标记，始终显示为黑色
-          map[curPos[0]][curPos[1]] = tile['outpost']!;
+    try {
+      // 安全地转换地图数据类型
+      final mapData = state!['map'];
+      final map =
+          List<List<String>>.from(mapData.map((row) => List<String>.from(row)));
 
-          Logger.info(
-              '🏛️ 地形转换: $oldTile -> ${tile['outpost']} 在位置 [${curPos[0]}, ${curPos[1]}]');
+      if (curPos[0] >= 0 &&
+          curPos[0] < map.length &&
+          curPos[1] >= 0 &&
+          curPos[1] < map[curPos[0]].length) {
+        final oldTile = map[curPos[0]][curPos[1]];
+        Logger.info('🏛️ 转换前地形: $oldTile');
 
-          // 更新state中的地图数据
-          state!['map'] = map;
+        // 确保前哨站不带已访问标记，始终显示为黑色
+        map[curPos[0]][curPos[1]] = tile['outpost']!;
+        Logger.info('🏛️ 设置新地形: ${tile['outpost']}');
 
-          // 绘制道路连接到前哨站 - 参考原游戏的drawRoad函数
-          drawRoad();
+        Logger.info(
+            '🏛️ 地形转换: $oldTile -> ${tile['outpost']} 在位置 [${curPos[0]}, ${curPos[1]}]');
 
-          // 注意：不要立即标记前哨站为已使用
-          // 新创建的前哨站应该可以立即使用来补充水源
+        // 更新state中的地图数据
+        state!['map'] = map;
+        Logger.info('🏛️ 更新state中的地图数据');
 
-          // 重新绘制地图以更新显示 - 关键！
-          notifyListeners();
+        // 验证转换结果
+        final verifyTile = map[curPos[0]][curPos[1]];
+        if (verifyTile == tile['outpost']) {
+          Logger.info('✅ 地形转换验证成功: $verifyTile');
+        } else {
+          Logger.error('❌ 地形转换验证失败: $verifyTile');
         }
-      } catch (e) {
-        Logger.info('⚠️ clearDungeon失败: $e');
+
+        // 绘制道路连接到前哨站 - 参考原游戏的drawRoad函数
+        Logger.info('🏛️ 调用 drawRoad()');
+        drawRoad();
+
+        // 注意：不要立即标记前哨站为已使用
+        // 新创建的前哨站应该可以立即使用来补充水源
+
+        // 重新绘制地图以更新显示 - 关键！
+        Logger.info('🏛️ 调用 notifyListeners()');
+        notifyListeners();
+
+        Logger.info('🏛️ ========== clearDungeon() 地形转换完成 ==========');
+      } else {
+        Logger.error('❌ 位置超出地图范围！');
       }
+    } catch (e, stackTrace) {
+      Logger.error('❌ clearDungeon失败: $e');
+      Logger.error('❌ 堆栈跟踪: $stackTrace');
     }
 
     final sm = StateManager();

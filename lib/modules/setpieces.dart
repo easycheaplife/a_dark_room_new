@@ -985,7 +985,7 @@ class Setpieces extends ChangeNotifier {
                 final localization = Localization();
                 return [localization.translate('setpieces.town.end_text')];
               }(),
-              'onLoad': 'markVisited',
+              'onLoad': 'clearDungeon',
               'buttons': {
                 'continue': {
                   'text': () {
@@ -1526,12 +1526,19 @@ class Setpieces extends ChangeNotifier {
                     '1': 'a4'
                   }
                 },
+                'test_clear': {
+                  'text': () {
+                    return '测试转换';
+                  }(),
+                  'onLoad': 'clearCity',
+                  'nextScene': 'finish'
+                },
                 'leave': {
                   'text': () {
                     final localization = Localization();
                     return localization.translate('ui.buttons.leave');
                   }(),
-                  'nextScene': 'end'
+                  'nextScene': 'finish'
                 }
               }
             },
@@ -1550,13 +1557,6 @@ class Setpieces extends ChangeNotifier {
                     return localization.translate('ui.buttons.continue');
                   }(),
                   'nextScene': {'0.5': 'b1', '1': 'b2'}
-                },
-                'leave': {
-                  'text': () {
-                    final localization = Localization();
-                    return localization.translate('setpieces.city.leave_city');
-                  }(),
-                  'nextScene': 'end'
                 }
               }
             },
@@ -1577,13 +1577,6 @@ class Setpieces extends ChangeNotifier {
                     return localization.translate('ui.buttons.continue');
                   }(),
                   'nextScene': {'0.5': 'b3', '1': 'b4'}
-                },
-                'leave': {
-                  'text': () {
-                    final localization = Localization();
-                    return localization.translate('ui.buttons.leave_city');
-                  }(),
-                  'nextScene': 'end'
                 }
               }
             },
@@ -1604,13 +1597,6 @@ class Setpieces extends ChangeNotifier {
                   }(),
                   'cost': {'torch': 1},
                   'nextScene': {'0.5': 'b5', '1': 'b6'}
-                },
-                'leave': {
-                  'text': () {
-                    final localization = Localization();
-                    return localization.translate('ui.buttons.leave_city');
-                  }(),
-                  'nextScene': 'end'
                 }
               }
             },
@@ -1630,13 +1616,6 @@ class Setpieces extends ChangeNotifier {
                   }(),
                   'cost': {'torch': 1},
                   'nextScene': {'0.5': 'b7', '1': 'b8'}
-                },
-                'leave': {
-                  'text': () {
-                    final localization = Localization();
-                    return localization.translate('ui.buttons.leave_city');
-                  }(),
-                  'nextScene': 'end'
                 }
               }
             },
@@ -1663,14 +1642,6 @@ class Setpieces extends ChangeNotifier {
                   }(),
                   'cooldown': 1,
                   'nextScene': {'0.5': 'c1', '1': 'c2'}
-                },
-                'leave': {
-                  'text': () {
-                    final localization = Localization();
-                    return localization.translate('ui.buttons.leave_city');
-                  }(),
-                  'cooldown': 1,
-                  'nextScene': 'end'
                 }
               }
             },
@@ -1700,14 +1671,403 @@ class Setpieces extends ChangeNotifier {
                   }(),
                   'cooldown': 1,
                   'nextScene': {'0.5': 'c2', '1': 'c3'}
-                },
-                'leave': {
+                }
+              }
+            },
+            'b3': {
+              'text': () {
+                final localization = Localization();
+                return [
+                  localization
+                      .translate('setpieces.city_scenes.settlement_b3_text1'),
+                  localization
+                      .translate('setpieces.city_scenes.settlement_b3_text2')
+                ];
+              }(),
+              'loot': {
+                'steel': {'min': 1, 'max': 3, 'chance': 0.8},
+                'bullets': {'min': 5, 'max': 15, 'chance': 0.6},
+                'medicine': {'min': 1, 'max': 2, 'chance': 0.3}
+              },
+              'buttons': {
+                'continue': {
                   'text': () {
                     final localization = Localization();
-                    return localization.translate('ui.buttons.leave_city');
+                    return localization.translate('ui.buttons.continue');
                   }(),
                   'cooldown': 1,
-                  'nextScene': 'end'
+                  'nextScene': {'0.5': 'c4', '1': 'c5'}
+                }
+              }
+            },
+            'b4': {
+              'combat': true,
+              'enemy': 'scavenger',
+              'chara': 'S',
+              'damage': 4,
+              'hit': 0.7,
+              'attackDelay': 2.5,
+              'health': 25,
+              'loot': {
+                'cloth': {'min': 3, 'max': 8, 'chance': 0.9},
+                'leather': {'min': 2, 'max': 6, 'chance': 0.7},
+                'steel': {'min': 1, 'max': 2, 'chance': 0.4}
+              },
+              'notification': () {
+                final localization = Localization();
+                return localization
+                    .translate('setpieces.city.scavenger_notification');
+              }(),
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'cooldown': 1,
+                  'nextScene': {'0.5': 'c5', '1': 'c6'}
+                }
+              }
+            },
+            'b5': {
+              'text': () {
+                final localization = Localization();
+                return [
+                  localization
+                      .translate('setpieces.city_scenes.hospital_b5_text1'),
+                  localization
+                      .translate('setpieces.city_scenes.hospital_b5_text2')
+                ];
+              }(),
+              'loot': {
+                'medicine': {'min': 3, 'max': 8, 'chance': 1.0},
+                'steel': {'min': 1, 'max': 2, 'chance': 0.5},
+                'cloth': {'min': 2, 'max': 5, 'chance': 0.7}
+              },
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'cooldown': 1,
+                  'nextScene': {'0.5': 'c7', '1': 'c8'}
+                }
+              }
+            },
+            'b6': {
+              'combat': true,
+              'enemy': 'beast',
+              'chara': 'B',
+              'damage': 5,
+              'hit': 0.6,
+              'attackDelay': 3,
+              'health': 40,
+              'loot': {
+                'meat': {'min': 8, 'max': 15, 'chance': 1.0},
+                'fur': {'min': 3, 'max': 8, 'chance': 0.8},
+                'teeth': {'min': 2, 'max': 5, 'chance': 0.6}
+              },
+              'notification': () {
+                final localization = Localization();
+                return localization
+                    .translate('setpieces.city.beast_notification');
+              }(),
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'cooldown': 1,
+                  'nextScene': {'0.5': 'c8', '1': 'c9'}
+                }
+              }
+            },
+            'b7': {
+              'text': () {
+                final localization = Localization();
+                return [
+                  localization
+                      .translate('setpieces.city_scenes.subway_b7_text1'),
+                  localization
+                      .translate('setpieces.city_scenes.subway_b7_text2')
+                ];
+              }(),
+              'loot': {
+                'steel': {'min': 2, 'max': 5, 'chance': 0.9},
+                'bullets': {'min': 10, 'max': 20, 'chance': 0.7},
+                'energy cell': {'min': 1, 'max': 3, 'chance': 0.3}
+              },
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'cooldown': 1,
+                  'nextScene': {'0.5': 'c10', '1': 'end1'}
+                }
+              }
+            },
+            'b8': {
+              'combat': true,
+              'enemy': 'soldier',
+              'chara': 'S',
+              'damage': 6,
+              'hit': 0.8,
+              'attackDelay': 2,
+              'health': 50,
+              'loot': {
+                'rifle': {'min': 1, 'max': 1, 'chance': 0.8},
+                'bullets': {'min': 15, 'max': 30, 'chance': 1.0},
+                'steel': {'min': 2, 'max': 4, 'chance': 0.6}
+              },
+              'notification': () {
+                final localization = Localization();
+                return localization
+                    .translate('setpieces.city.soldier_notification');
+              }(),
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'cooldown': 1,
+                  'nextScene': {'0.5': 'end1', '1': 'c11'}
+                }
+              }
+            },
+            'c1': {
+              'text': () {
+                final localization = Localization();
+                return [
+                  localization.translate('setpieces.city_scenes.c1_text')
+                ];
+              }(),
+              'loot': {
+                'cloth': {'min': 2, 'max': 6, 'chance': 0.8},
+                'steel': {'min': 1, 'max': 2, 'chance': 0.5}
+              },
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'nextScene': 'end1'
+                }
+              }
+            },
+            'c2': {
+              'text': () {
+                final localization = Localization();
+                return [
+                  localization.translate('setpieces.city_scenes.c2_text')
+                ];
+              }(),
+              'loot': {
+                'medicine': {'min': 1, 'max': 3, 'chance': 0.7},
+                'bullets': {'min': 5, 'max': 10, 'chance': 0.6}
+              },
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'nextScene': 'end1'
+                }
+              }
+            },
+            'c3': {
+              'text': () {
+                final localization = Localization();
+                return [
+                  localization.translate('setpieces.city_scenes.c3_text')
+                ];
+              }(),
+              'loot': {
+                'steel': {'min': 2, 'max': 4, 'chance': 0.9},
+                'rifle': {'min': 1, 'max': 1, 'chance': 0.4}
+              },
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'nextScene': 'end1'
+                }
+              }
+            },
+            'c4': {
+              'text': () {
+                final localization = Localization();
+                return [
+                  localization.translate('setpieces.city_scenes.c4_text')
+                ];
+              }(),
+              'loot': {
+                'steel': {'min': 1, 'max': 3, 'chance': 0.8},
+                'bullets': {'min': 8, 'max': 15, 'chance': 0.7}
+              },
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'nextScene': 'end1'
+                }
+              }
+            },
+            'c5': {
+              'text': () {
+                final localization = Localization();
+                return [
+                  localization.translate('setpieces.city_scenes.c5_text')
+                ];
+              }(),
+              'loot': {
+                'medicine': {'min': 2, 'max': 5, 'chance': 0.9},
+                'steel': {'min': 1, 'max': 2, 'chance': 0.6}
+              },
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'nextScene': 'end1'
+                }
+              }
+            },
+            'c6': {
+              'text': () {
+                final localization = Localization();
+                return [
+                  localization.translate('setpieces.city_scenes.c6_text')
+                ];
+              }(),
+              'loot': {
+                'cloth': {'min': 5, 'max': 10, 'chance': 1.0},
+                'leather': {'min': 3, 'max': 6, 'chance': 0.8}
+              },
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'nextScene': 'end1'
+                }
+              }
+            },
+            'c7': {
+              'text': () {
+                final localization = Localization();
+                return [
+                  localization.translate('setpieces.city_scenes.c7_text')
+                ];
+              }(),
+              'loot': {
+                'medicine': {'min': 4, 'max': 8, 'chance': 1.0},
+                'steel': {'min': 2, 'max': 3, 'chance': 0.7}
+              },
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'nextScene': 'end1'
+                }
+              }
+            },
+            'c8': {
+              'text': () {
+                final localization = Localization();
+                return [
+                  localization.translate('setpieces.city_scenes.c8_text')
+                ];
+              }(),
+              'loot': {
+                'meat': {'min': 10, 'max': 20, 'chance': 1.0},
+                'fur': {'min': 5, 'max': 10, 'chance': 0.9}
+              },
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'nextScene': 'end1'
+                }
+              }
+            },
+            'c9': {
+              'text': () {
+                final localization = Localization();
+                return [
+                  localization.translate('setpieces.city_scenes.c9_text')
+                ];
+              }(),
+              'loot': {
+                'teeth': {'min': 3, 'max': 8, 'chance': 1.0},
+                'scales': {'min': 2, 'max': 5, 'chance': 0.8}
+              },
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'nextScene': 'end1'
+                }
+              }
+            },
+            'c10': {
+              'text': () {
+                final localization = Localization();
+                return [
+                  localization.translate('setpieces.city_scenes.c10_text')
+                ];
+              }(),
+              'loot': {
+                'steel': {'min': 3, 'max': 6, 'chance': 1.0},
+                'energy cell': {'min': 2, 'max': 4, 'chance': 0.6}
+              },
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'nextScene': 'end1'
+                }
+              }
+            },
+            'c11': {
+              'text': () {
+                final localization = Localization();
+                return [
+                  localization.translate('setpieces.city_scenes.c11_text')
+                ];
+              }(),
+              'loot': {
+                'rifle': {'min': 1, 'max': 1, 'chance': 1.0},
+                'bullets': {'min': 20, 'max': 40, 'chance': 1.0},
+                'alien alloy': {'min': 1, 'max': 2, 'chance': 0.5}
+              },
+              'buttons': {
+                'continue': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.continue');
+                  }(),
+                  'nextScene': 'end1'
                 }
               }
             },
@@ -1728,31 +2088,16 @@ class Setpieces extends ChangeNotifier {
                 'alien alloy': {'min': 1, 'max': 1, 'chance': 0.5}
               },
               'buttons': {
-                'leave': {
-                  'text': () {
-                    final localization = Localization();
-                    return localization.translate('ui.buttons.leave_city');
-                  }(),
-                  'cooldown': 1,
-                  'nextScene': 'end'
-                }
-              }
-            },
-            'end': {
-              'text': () {
-                final localization = Localization();
-                return [localization.translate('setpieces.city.end_text')];
-              }(),
-              'buttons': {
                 'continue': {
                   'text': () {
                     final localization = Localization();
                     return localization.translate('ui.buttons.continue');
                   }(),
+                  'cooldown': 1,
                   'nextScene': 'finish'
                 }
               }
-            }
+            },
           },
           'audio': 'landmark_city'
         },
@@ -2253,9 +2598,94 @@ class Setpieces extends ChangeNotifier {
 
   /// 清理城市
   void clearCity() {
+    Logger.info('🏛️ ========== clearCity() 开始执行 ==========');
+
+    final world = World();
+    Logger.info('🏛️ 当前位置: [${world.curPos[0]}, ${world.curPos[1]}]');
+    Logger.info('🏛️ World状态是否存在: ${world.state != null}');
+
+    // 如果World状态不存在，尝试初始化
+    if (world.state == null) {
+      Logger.error('❌ World状态为空，尝试初始化...');
+      world.onArrival();
+      if (world.state == null) {
+        Logger.error('❌ 无法初始化World状态！');
+        return;
+      }
+      Logger.info('✅ World状态初始化成功');
+    }
+
+    // 检查当前地形
+    final mapData = world.state?['map'];
+    if (mapData == null) {
+      Logger.error('❌ 地图数据为空！');
+      return;
+    }
+
+    // 安全地转换地图数据类型
+    final currentMap =
+        List<List<String>>.from(mapData.map((row) => List<String>.from(row)));
+    if (currentMap.isEmpty) {
+      Logger.error('❌ 地图数据为空！');
+      return;
+    }
+
+    final currentTile = currentMap[world.curPos[0]][world.curPos[1]];
+    Logger.info('🏛️ 转换前地形: $currentTile');
+
+    // 验证当前位置确实是城市
+    if (currentTile != 'Y' && currentTile != 'Y!') {
+      Logger.error('❌ 当前位置不是城市！当前地形: $currentTile');
+      Logger.info('🔧 强制设置当前位置为城市Y');
+      currentMap[world.curPos[0]][world.curPos[1]] = 'Y';
+      world.state!['map'] = currentMap;
+    }
+
     final sm = StateManager();
     sm.set('game.world.cityCleared', true);
-    World().markVisited(World().curPos[0], World().curPos[1]);
+    Logger.info('🏛️ 设置 game.world.cityCleared = true');
+
+    // 城市清理后直接转换为前哨站，不需要先标记为已访问
+    // 因为clearDungeon会直接将地形改为P，而不是Y!
+    Logger.info('🏛️ 调用 World().clearDungeon()');
+    world.clearDungeon();
+
+    // 验证转换结果
+    final newMap = world.state?['map'] as List<List<String>>?;
+    final newTile = newMap?[world.curPos[0]][world.curPos[1]];
+    Logger.info('🏛️ 转换后地形: $newTile');
+
+    if (newTile == 'P') {
+      Logger.info('✅ 城市转换成功！');
+    } else {
+      Logger.error('❌ 城市转换失败！预期: P, 实际: $newTile');
+
+      // 强制转换 - 直接操作地图数据
+      Logger.info('🔧 强制转换城市为前哨站');
+      if (newMap != null) {
+        newMap[world.curPos[0]][world.curPos[1]] = 'P';
+        world.state!['map'] = newMap;
+        Logger.info('🔧 强制转换完成，新地形: P');
+
+        // 同时更新持久化状态
+        final sm = StateManager();
+        sm.setM('game.world', world.state!);
+        Logger.info('🔧 强制保存到持久化状态');
+      }
+    }
+
+    // 最终验证
+    final finalMap = world.state?['map'] as List<List<String>>?;
+    final finalTile = finalMap?[world.curPos[0]][world.curPos[1]];
+    Logger.info('🏛️ 最终地形: $finalTile');
+
+    if (finalTile == 'P') {
+      Logger.info('🎉 城市转换最终成功！');
+    } else {
+      Logger.error('💥 城市转换最终失败！');
+    }
+
+    Logger.info('🏛️ ========== clearCity() 执行完成 ==========');
     notifyListeners();
   }
 
@@ -2271,9 +2701,9 @@ class Setpieces extends ChangeNotifier {
   /// 激活执行者
   void activateExecutioner() {
     final sm = StateManager();
-    World().markVisited(World().curPos[0], World().curPos[1]);
-    World().drawRoad();
     sm.set('game.world.executioner', true);
+    // 执行者完成后也要转换为前哨站
+    World().clearDungeon();
     notifyListeners();
   }
 

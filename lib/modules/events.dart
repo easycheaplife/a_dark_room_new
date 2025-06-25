@@ -433,7 +433,9 @@ class Events extends ChangeNotifier {
 
     final scene = event['scenes'][sceneName];
     if (scene == null) {
-      Logger.info('⚠️ 场景不存在: $sceneName');
+      Logger.error('⚠️ 场景不存在: $sceneName');
+      Logger.error('⚠️ 可用场景: ${event['scenes'].keys.toList()}');
+      endEvent(); // 场景不存在时结束事件
       return;
     }
 
@@ -1269,6 +1271,10 @@ class Events extends ChangeNotifier {
         Logger.info('🔧 调用 Setpieces().clearSulphurMine()');
         Setpieces().clearSulphurMine();
         break;
+      case 'clearCity':
+        Logger.info('🔧 调用 Setpieces().clearCity()');
+        Setpieces().clearCity();
+        break;
       case 'endEvent':
         Logger.info('🔧 调用 endEvent()');
         endEvent();
@@ -1282,87 +1288,103 @@ class Events extends ChangeNotifier {
 
   /// 处理按钮点击
   void handleButtonClick(String buttonKey, Map<String, dynamic> buttonConfig) {
-    final sm = StateManager();
+    try {
+      Logger.info('🔘 handleButtonClick() 被调用: $buttonKey');
+      Logger.info('🔘 按钮配置: $buttonConfig');
+      final sm = StateManager();
 
-    // 检查成本
-    if (buttonConfig['cost'] != null) {
-      final costs = buttonConfig['cost'] as Map<String, dynamic>;
-      for (final entry in costs.entries) {
-        final key = entry.key;
-        final cost = entry.value as int;
-        final current = sm.get('stores.$key', true) ?? 0;
-        if (current < cost) {
-          NotificationManager().notify(name, '资源不足: $key');
-          return;
+      // 检查成本
+      if (buttonConfig['cost'] != null) {
+        final costs = buttonConfig['cost'] as Map<String, dynamic>;
+        for (final entry in costs.entries) {
+          final key = entry.key;
+          final cost = entry.value as int;
+          final current = sm.get('stores.$key', true) ?? 0;
+          if (current < cost) {
+            NotificationManager().notify(name, '资源不足: $key');
+            return;
+          }
+        }
+
+        // 扣除成本
+        for (final entry in costs.entries) {
+          final key = entry.key;
+          final cost = entry.value as int;
+          final current = sm.get('stores.$key', true) ?? 0;
+          sm.set('stores.$key', current - cost);
+          Logger.info('💰 消耗: $key -$cost');
         }
       }
 
-      // 扣除成本
-      for (final entry in costs.entries) {
-        final key = entry.key;
-        final cost = entry.value as int;
-        final current = sm.get('stores.$key', true) ?? 0;
-        sm.set('stores.$key', current - cost);
-        Logger.info('💰 消耗: $key -$cost');
+      // 给予奖励
+      if (buttonConfig['reward'] != null) {
+        final rewards = buttonConfig['reward'] as Map<String, dynamic>;
+        final localization = Localization();
+        for (final entry in rewards.entries) {
+          final key = entry.key;
+          final value = entry.value as int;
+          final current = sm.get('stores.$key', true) ?? 0;
+          sm.set('stores.$key', current + value);
+
+          // 显示获得奖励的通知
+          final itemDisplayName = localization.translate('resources.$key');
+          final displayName =
+              itemDisplayName != 'resources.$key' ? itemDisplayName : key;
+          NotificationManager().notify(
+              name,
+              localization.translate('world.notifications.found_item',
+                  [displayName, value.toString()]));
+
+          Logger.info('🎁 获得奖励: $key +$value');
+        }
       }
-    }
 
-    // 给予奖励
-    if (buttonConfig['reward'] != null) {
-      final rewards = buttonConfig['reward'] as Map<String, dynamic>;
-      final localization = Localization();
-      for (final entry in rewards.entries) {
-        final key = entry.key;
-        final value = entry.value as int;
-        final current = sm.get('stores.$key', true) ?? 0;
-        sm.set('stores.$key', current + value);
-
-        // 显示获得奖励的通知
-        final itemDisplayName = localization.translate('resources.$key');
-        final displayName =
-            itemDisplayName != 'resources.$key' ? itemDisplayName : key;
-        NotificationManager().notify(
-            name,
-            localization.translate('world.notifications.found_item',
-                [displayName, value.toString()]));
-
-        Logger.info('🎁 获得奖励: $key +$value');
+      // 执行onLoad回调
+      if (buttonConfig['onLoad'] != null) {
+        final onLoad = buttonConfig['onLoad'];
+        if (onLoad is Function) {
+          onLoad();
+        } else if (onLoad is String) {
+          _handleOnLoadCallback(onLoad);
+        }
       }
-    }
 
-    // 执行onLoad回调
-    if (buttonConfig['onLoad'] != null) {
-      final onLoad = buttonConfig['onLoad'];
-      if (onLoad is Function) {
-        onLoad();
-      } else if (onLoad is String) {
-        _handleOnLoadCallback(onLoad);
-      }
-    }
+      // 跳转到下一个场景
+      if (buttonConfig['nextScene'] != null) {
+        final nextSceneConfig = buttonConfig['nextScene'];
+        Logger.info('🔘 nextScene配置: $nextSceneConfig');
+        String nextScene;
 
-    // 跳转到下一个场景
-    if (buttonConfig['nextScene'] != null) {
-      final nextSceneConfig = buttonConfig['nextScene'];
-      String nextScene;
+        if (nextSceneConfig is String) {
+          // 固定场景跳转
+          nextScene = nextSceneConfig;
+          Logger.info('🔘 固定场景跳转: $nextScene');
+        } else if (nextSceneConfig is Map<String, dynamic>) {
+          // 概率性场景跳转
+          nextScene = _selectRandomScene(nextSceneConfig);
+          Logger.info('🔘 概率性场景跳转: $nextScene');
+        } else {
+          Logger.error('❌ 无效的nextScene配置: $nextSceneConfig');
+          endEvent();
+          return;
+        }
 
-      if (nextSceneConfig is String) {
-        // 固定场景跳转
-        nextScene = nextSceneConfig;
-      } else if (nextSceneConfig is Map<String, dynamic>) {
-        // 概率性场景跳转
-        nextScene = _selectRandomScene(nextSceneConfig);
+        if (nextScene == 'finish') {
+          Logger.info('🔘 结束事件');
+          endEvent();
+        } else {
+          Logger.info('🔘 加载下一个场景: $nextScene');
+          loadScene(nextScene);
+        }
       } else {
-        Logger.error('❌ 无效的nextScene配置: $nextSceneConfig');
+        Logger.info('🔘 没有nextScene配置，结束事件');
         endEvent();
-        return;
       }
+    } catch (e, stackTrace) {
+      Logger.error('❌ handleButtonClick异常: $e');
+      Logger.error('❌ 堆栈跟踪: $stackTrace');
 
-      if (nextScene == 'finish' || nextScene == 'end') {
-        endEvent();
-      } else {
-        loadScene(nextScene);
-      }
-    } else {
+      // 错误恢复：直接结束事件
       endEvent();
     }
   }

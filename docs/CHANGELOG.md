@@ -6,6 +6,31 @@
 
 本文档记录了 A Dark Room Flutter 移植项目的所有重要更新、修复和优化。所有文档都已添加更新日期，并建立了统一的更新日志系统。
 
+## 2025-01-28 - 废墟城市Y问题综合修复和文档整理
+
+### Bug修复
+- **废墟城市Y问题综合修复** (`docs/bug_fix/city_y_comprehensive_fix.md`)
+  - 合并了7个相关修复文档，记录了从初始分析到最终成功修复的完整过程
+  - 修复废墟城市Y进入时立即变灰的问题，确保城市在探索过程中保持黑色状态
+  - 修复clearCity函数中的调用顺序问题，城市直接转换为前哨站而不经过灰色状态
+  - 修复Web环境下的类型转换错误，解决clearCity函数中的JSArray类型转换异常
+  - 移除doSpace方法中对废墟城市Y的立即markVisited调用
+  - 调整clearCity函数，直接调用clearDungeon而不先标记为已访问
+  - 实现安全的地图数据类型转换，兼容Web环境的JSArray类型
+  - 总结了关键经验教训：问题定位的重要性、系统性分析、原游戏逻辑理解等
+  - 确保城市转换逻辑与原游戏完全一致
+
+- **废墟城市Y访问逻辑修复** (`docs/bug_fix/city_y_access_logic_fix.md`)
+  - 最终成功修复的详细技术文档，包含具体的代码修改和测试验证
+  - 修复了doSpace中的立即标记问题、clearCity中的调用顺序问题和类型转换错误
+  - 通过flutter run -d chrome测试验证，所有功能正常工作
+
+### 文档整理
+- **文档合并和清理**
+  - 删除了6个中间的、未能解决问题的修复文档
+  - 合并相关修复历程到综合文档中，便于理解完整的问题解决过程
+  - 更新了README.md和CHANGELOG.md中的文档统计信息
+
 ## 2025-06-25 - 事件继续按钮修复
 
 ### Bug修复
@@ -15,6 +40,24 @@
   - 修复了Events模块中`handleButtonClick`方法的场景跳转逻辑
   - 影响所有使用`'nextScene': 'end'`配置的全局事件、房间事件和扩展事件
   - 确保所有事件的"继续"按钮都能正常工作
+
+- **地标转换为前哨站修复** (`docs/bug_fix/landmark_to_outpost_conversion_fix.md`)
+  - 修复只有洞穴（V）会转换为前哨站，而其他地标（O、Y、X）不转换的问题
+  - 修复town setpiece的end场景，从`markVisited`改为`clearDungeon`
+  - 修复city setpiece的`clearCity`函数，添加`clearDungeon`调用
+  - 修复executioner setpiece的`activateExecutioner`函数，添加`clearDungeon`调用
+  - 修复Events模块错误地将`nextScene == 'end'`直接结束事件的问题
+  - 将city添加到World类的特殊处理列表中，防止进入时立即标记为已访问
+  - 确保所有完成探索的地标都能正确转换为前哨站，与原游戏逻辑一致
+
+- **废墟城市继续按钮修复** (`docs/bug_fix/city_continue_button_fix.md`)
+  - 修复废墟城市无法继续，点击"继续"按钮无反应的问题
+  - 添加缺失的b3-b8场景：定居点、战斗、医院、地铁等中级探索场景
+  - 添加缺失的c1-c11场景：最终探索阶段，提供丰富战利品
+  - 完善本地化文本，添加所有新场景的中文描述和战斗通知
+  - 确保城市探索流程完整，从a场景到b场景再到c场景，最终到达end1
+
+
 
 ## 2025-01-27 - 地标访问逻辑修复
 
