@@ -1526,13 +1526,6 @@ class Setpieces extends ChangeNotifier {
                     '1': 'a4'
                   }
                 },
-                'test_clear': {
-                  'text': () {
-                    return '测试转换';
-                  }(),
-                  'onLoad': 'clearCity',
-                  'nextScene': 'finish'
-                },
                 'leave': {
                   'text': () {
                     final localization = Localization();
