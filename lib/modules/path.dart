@@ -205,15 +205,22 @@ class Path extends ChangeNotifier {
 
     for (final k in carryable.keys) {
       final store = carryable[k]!;
-      final have = (sm.get('stores["$k"]', true) ?? 0) as int;
+      final have = sm.get('stores["$k"]', true);
       var num = outfit[k] ?? 0;
 
-      if (have < num) {
-        num = have;
+      // 参考原游戏逻辑：只有当仓库中有这个物品时才检查数量限制
+      if (have != null) {
+        final haveInt = have as int;
+        if (haveInt < num) {
+          num = haveInt;
+        }
+        // 重要：原游戏总是同步outfit数据到StateManager
+        sm.set('outfit["$k"]', num);
+        outfit[k] = num;
       }
-      outfit[k] = num;
 
-      if ((store['type'] == 'tool' || store['type'] == 'weapon') && have > 0) {
+      if ((store['type'] == 'tool' || store['type'] == 'weapon') &&
+          (have ?? 0) > 0) {
         currentBagCapacity += num * getWeight(k);
       }
     }

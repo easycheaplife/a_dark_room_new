@@ -1060,8 +1060,8 @@ class Events extends ChangeNotifier {
       final sm = StateManager();
       sm.set('outfit["$itemName"]', path.outfit[itemName]);
 
-      // 通知Path模块更新
-      path.updateOutfitting();
+      // 注意：原游戏在拾取战利品时不会调用updateOutfitting
+      // updateOutfitting只在增减补给、到达路径界面、收入更新时调用
 
       // 显示获取通知
       final localization = Localization();
@@ -1157,19 +1157,47 @@ class Events extends ChangeNotifier {
     }
   }
 
-  /// 获取可用武器列表
+  /// 获取可用武器列表 - 参考原游戏events.js的武器显示逻辑
   List<String> getAvailableWeapons() {
     final path = Path();
     final availableWeapons = <String>[];
-
-    // 总是可用的拳头
-    availableWeapons.add('fists');
+    int numWeapons = 0;
 
     // 检查背包中的武器
     for (final weaponName in World.weapons.keys) {
       if (weaponName != 'fists' && (path.outfit[weaponName] ?? 0) > 0) {
-        availableWeapons.add(weaponName);
+        final weapon = World.weapons[weaponName]!;
+
+        // 检查武器是否有效（有伤害）
+        if (weapon['damage'] == null || weapon['damage'] == 0) {
+          continue; // 无伤害武器不计入
+        }
+
+        // 检查是否有足够的弹药
+        bool canUse = true;
+        if (weapon['cost'] != null) {
+          final cost = weapon['cost'] as Map<String, dynamic>;
+          for (final entry in cost.entries) {
+            final required = entry.value as int;
+            final available = path.outfit[entry.key] ?? 0;
+            if (available < required) {
+              canUse = false;
+              break;
+            }
+          }
+        }
+
+        if (canUse) {
+          numWeapons++;
+          availableWeapons.add(weaponName);
+        }
       }
+    }
+
+    // 如果没有可用武器，显示拳头
+    if (numWeapons == 0) {
+      availableWeapons.clear();
+      availableWeapons.add('fists');
     }
 
     return availableWeapons;

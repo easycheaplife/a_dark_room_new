@@ -867,17 +867,32 @@ class _CombatScreenState extends State<CombatScreen> {
     return itemName;
   }
 
-  /// 获取武器显示名称
+  /// 获取武器显示名称 - 使用武器的verb属性作为攻击动作名称
   String _getWeaponDisplayName(String weaponName) {
     final localization = Localization();
+    final weapon = World.weapons[weaponName];
 
-    // 尝试从本地化获取武器名称
-    final translatedName = localization.translate('combat.weapons.$weaponName');
-    if (translatedName != 'combat.weapons.$weaponName') {
-      return translatedName;
+    if (weapon != null && weapon['verb'] != null) {
+      final verb = weapon['verb'] as String;
+
+      // 尝试从本地化获取动作名称
+      final translatedVerb = localization.translate('combat.weapons.$verb');
+      if (translatedVerb != 'combat.weapons.$verb') {
+        return translatedVerb;
+      }
+
+      // 如果没有找到翻译，尝试使用武器名称
+      final translatedName =
+          localization.translate('combat.weapons.$weaponName');
+      if (translatedName != 'combat.weapons.$weaponName') {
+        return translatedName;
+      }
+
+      // 最后返回原verb
+      return verb;
     }
 
-    // 如果没有找到翻译，返回原名称
+    // 如果没有找到武器配置，返回原名称
     return weaponName;
   }
 

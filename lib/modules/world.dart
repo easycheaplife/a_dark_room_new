@@ -79,18 +79,23 @@ class World extends ChangeNotifier {
   // 地标配置
   Map<String, Map<String, dynamic>> landmarks = {};
 
-  // 武器配置
+  // 武器配置 - 参考原游戏World.Weapons
   static const Map<String, Map<String, dynamic>> weapons = {
     'fists': {'verb': 'punch', 'type': 'unarmed', 'damage': 1, 'cooldown': 2},
-    'bone spear': {'verb': 'stab', 'type': 'melee', 'damage': 2, 'cooldown': 2},
+    'bone spear': {
+      'verb': 'stab',
+      'type': 'melee',
+      'damage': 2,
+      'cooldown': 2
+    }, // 注意：骨枪没有cost，不消耗
     'iron sword': {
-      'verb': 'slash',
+      'verb': 'swing', // 修正：原游戏是swing不是slash
       'type': 'melee',
       'damage': 4,
       'cooldown': 2
     },
     'steel sword': {
-      'verb': 'strike',
+      'verb': 'slash', // 修正：原游戏是slash不是strike
       'type': 'melee',
       'damage': 6,
       'cooldown': 2
@@ -104,28 +109,28 @@ class World extends ChangeNotifier {
       'cost': {'bullets': 1}
     },
     'laser rifle': {
-      'verb': 'laser',
+      'verb': 'blast', // 修正：原游戏是blast不是laser
       'type': 'ranged',
       'damage': 8,
       'cooldown': 1,
       'cost': {'energy cell': 1}
     },
     'grenade': {
-      'verb': 'throw',
+      'verb': 'lob', // 修正：原游戏是lob不是throw
       'type': 'ranged',
       'damage': 15,
       'cooldown': 5,
       'cost': {'grenade': 1}
     },
     'bolas': {
-      'verb': 'entangle',
+      'verb': 'tangle', // 修正：原游戏是tangle不是entangle
       'type': 'ranged',
       'damage': 'stun',
       'cooldown': 15,
       'cost': {'bolas': 1}
     },
     'plasma rifle': {
-      'verb': 'disintegrate',
+      'verb': 'disintigrate', // 修正：原游戏是disintigrate不是disintegrate
       'type': 'ranged',
       'damage': 12,
       'cooldown': 1,
