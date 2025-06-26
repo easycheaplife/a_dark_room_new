@@ -8,6 +8,7 @@ import '../core/localization.dart';
 import '../widgets/game_button.dart';
 import '../widgets/unified_stores_container.dart';
 import '../core/logger.dart';
+import '../utils/weapon_utils.dart';
 
 /// 漫漫尘途界面 - 显示装备管理和出发准备
 class PathScreen extends StatelessWidget {
@@ -295,36 +296,24 @@ class PathScreen extends StatelessWidget {
     final List<Widget> items = [];
 
     // 可携带物品配置 - 基于原游戏的carryable对象
-    final carryableItems = {
+    final carryableItems = <String, Map<String, String>>{
       // 基础可携带物品
       'cured meat': {'type': 'tool', 'desc_key': 'messages.restores_2_health'},
       'bullets': {'type': 'tool', 'desc_key': 'messages.for_use_with_rifle'},
-      'grenade': {'type': 'weapon'},
-      'bolas': {'type': 'weapon'},
-      'laser rifle': {'type': 'weapon'},
       'energy cell': {'type': 'tool', 'desc_key': 'messages.glows_softly_red'},
-      'bayonet': {'type': 'weapon'},
       'charm': {'type': 'tool'},
       'alien alloy': {'type': 'tool'},
       'medicine': {'type': 'tool', 'desc_key': 'messages.restores_20_health'},
-
-      // 从Room.Craftables添加的武器
-      'bone spear': {'type': 'weapon'},
-      'iron sword': {'type': 'weapon'},
-      'steel sword': {'type': 'weapon'},
-      'rifle': {'type': 'weapon'},
-
-      // 从Room.Craftables添加的工具 - 遗漏的重要物品！
       'torch': {'type': 'tool', 'desc_key': 'messages.torch_desc'},
-
-      // 从Fabricator.Craftables添加的工具 - 遗漏的重要物品！
       'hypo': {'type': 'tool', 'desc_key': 'messages.hypo_desc'},
       'stim': {'type': 'tool', 'desc_key': 'messages.stim_desc'},
       'glowstone': {'type': 'tool', 'desc_key': 'messages.glowstone_desc'},
-      'energy blade': {'type': 'weapon'},
-      'disruptor': {'type': 'weapon'},
-      'plasma rifle': {'type': 'weapon'},
     };
+
+    // 动态添加所有武器 - 使用WeaponUtils确保一致性
+    for (final weaponName in WeaponUtils.allWeapons) {
+      carryableItems[weaponName] = {'type': 'weapon'};
+    }
 
     for (final entry in carryableItems.entries) {
       final itemName = entry.key;

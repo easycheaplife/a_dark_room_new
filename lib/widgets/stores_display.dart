@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
+import '../utils/weapon_utils.dart';
 
 /// 库存显示样式枚举
 enum StoresDisplayStyle {
   /// 黑色背景样式（原始样式）
   dark,
+
   /// 白色背景带边框样式（房间和外部界面）
   light,
 }
@@ -15,8 +17,10 @@ enum StoresDisplayStyle {
 enum StoresDisplayType {
   /// 显示所有物品
   all,
+
   /// 只显示资源（非武器）
   resourcesOnly,
+
   /// 只显示武器
   weaponsOnly,
 }
@@ -86,13 +90,13 @@ class _StoresDisplayState extends State<StoresDisplay> {
         for (final entry in stores.entries) {
           final value = entry.value as num? ?? 0;
 
-
-
           // 根据显示类型过滤
-          if (widget.type == StoresDisplayType.weaponsOnly && !_isWeapon(entry.key)) {
+          if (widget.type == StoresDisplayType.weaponsOnly &&
+              !_isWeapon(entry.key)) {
             continue;
           }
-          if (widget.type == StoresDisplayType.resourcesOnly && _isWeapon(entry.key)) {
+          if (widget.type == StoresDisplayType.resourcesOnly &&
+              _isWeapon(entry.key)) {
             continue;
           }
 
@@ -144,15 +148,14 @@ class _StoresDisplayState extends State<StoresDisplay> {
           }
         }
 
-
-
         // 根据显示类型决定显示哪些分类
-        final showResources = widget.type != StoresDisplayType.weaponsOnly && resources.isNotEmpty;
-        final showWeapons = widget.type != StoresDisplayType.resourcesOnly && weapons.isNotEmpty;
+        final showResources = widget.type != StoresDisplayType.weaponsOnly &&
+            resources.isNotEmpty;
+        final showWeapons = widget.type != StoresDisplayType.resourcesOnly &&
+            weapons.isNotEmpty;
         // Special物品在resourcesOnly模式下也应该显示（如指南针等）
-        final showSpecial = widget.type != StoresDisplayType.weaponsOnly && special.isNotEmpty;
-
-
+        final showSpecial =
+            widget.type != StoresDisplayType.weaponsOnly && special.isNotEmpty;
 
         // 如果没有任何物品，不显示
         if (!showResources && !showWeapons && !showSpecial) {
@@ -191,7 +194,8 @@ class _StoresDisplayState extends State<StoresDisplay> {
 
         // 内容部分（可折叠）
         if (!widget.collapsible || _isExpanded) ...[
-          _buildContent(stateManager, localization, resources, weapons, special, textColor),
+          _buildContent(stateManager, localization, resources, weapons, special,
+              textColor),
         ],
       ],
     );
@@ -328,8 +332,8 @@ class _StoresDisplayState extends State<StoresDisplay> {
                 ),
               ),
             ],
-            ...resources.entries.map((entry) =>
-                _buildResourceRow(stateManager, entry.key, entry.value, localization, textColor)),
+            ...resources.entries.map((entry) => _buildResourceRow(
+                stateManager, entry.key, entry.value, localization, textColor)),
           ],
 
           // Special items
@@ -346,8 +350,8 @@ class _StoresDisplayState extends State<StoresDisplay> {
                 ),
               ),
             ],
-            ...special.entries.map((entry) =>
-                _buildResourceRow(stateManager, entry.key, entry.value, localization, textColor)),
+            ...special.entries.map((entry) => _buildResourceRow(
+                stateManager, entry.key, entry.value, localization, textColor)),
           ],
 
           // Weapons
@@ -364,8 +368,8 @@ class _StoresDisplayState extends State<StoresDisplay> {
                 ),
               ),
             ],
-            ...weapons.entries.map((entry) =>
-                _buildResourceRow(stateManager, entry.key, entry.value, localization, textColor)),
+            ...weapons.entries.map((entry) => _buildResourceRow(
+                stateManager, entry.key, entry.value, localization, textColor)),
           ],
         ],
       ),
@@ -424,7 +428,9 @@ class _StoresDisplayState extends State<StoresDisplay> {
       );
     } else {
       return Padding(
-        padding: isLight ? const EdgeInsets.only(bottom: 2) : const EdgeInsets.symmetric(vertical: 4),
+        padding: isLight
+            ? const EdgeInsets.only(bottom: 2)
+            : const EdgeInsets.symmetric(vertical: 4),
         child: row,
       );
     }
@@ -444,21 +450,12 @@ class _StoresDisplayState extends State<StoresDisplay> {
 
   /// 判断是否为武器
   bool _isWeapon(String itemName) {
-    const weapons = [
-      'bone spear',
-      'iron sword',
-      'steel sword',
-      'rifle',
-      'bolas',
-      'grenade',
-      'bayonet',
-      'laser rifle'
-    ];
-    return weapons.contains(itemName);
+    return WeaponUtils.isWeapon(itemName);
   }
 
   /// 获取资源的收入信息
-  String _getResourceIncomeInfo(StateManager stateManager, Localization localization, String resourceKey) {
+  String _getResourceIncomeInfo(StateManager stateManager,
+      Localization localization, String resourceKey) {
     final income = stateManager.get('income', true) ?? {};
     List<String> effects = [];
 
@@ -472,7 +469,8 @@ class _StoresDisplayState extends State<StoresDisplay> {
       if (stores.containsKey(resourceKey)) {
         final rate = stores[resourceKey] as num;
         if (rate != 0) {
-          final sourceDisplayName = _getWorkerDisplayName(localization, sourceName);
+          final sourceDisplayName =
+              _getWorkerDisplayName(localization, sourceName);
           final prefix = rate > 0 ? '+' : '';
           final everyText = localization.translate('worker_info.every');
           final secondsText = localization.translate('worker_info.seconds');

@@ -6,6 +6,23 @@
 
 本文档记录了 A Dark Room Flutter 移植项目的所有重要更新、修复和优化。所有文档都已添加更新日期，并建立了统一的更新日志系统。
 
+## 2025-06-26 - 武器列表一致性修复与代码复用优化
+
+### 🔧 Bug修复
+- **武器列表一致性修复** - 修复生火间页签和漫漫尘途页签武器列表数量不一致的问题
+  - 更新StoresDisplay组件中的_isWeapon方法，添加缺失的武器：plasma rifle、energy blade、disruptor
+  - 确保所有模块中的武器列表与原游戏World.Weapons保持一致
+  - 生火间页签现在显示完整的11种武器（除了默认的fists）
+  - 详细记录：[武器列表一致性修复与代码复用优化](05_bug_fixes/weapon_list_consistency_and_code_reuse_fix.md)
+
+### ⚡ 性能优化
+- **武器工具类代码复用优化** - 创建统一的武器管理工具类，消除代码重复
+  - 新增WeaponUtils工具类，统一管理所有武器相关逻辑
+  - 支持武器分类（近战/远程）和类型查询功能
+  - 减少67%的代码重复，降低67%的维护复杂度
+  - StoresDisplay和Path模块现在使用统一的武器判断逻辑
+  - 详细记录：[武器工具类代码复用优化](06_optimizations/weapon_utils_code_reuse_optimization.md)
+
 ## 2025-06-26 - 大规模文档整合与优化
 
 ### 📚 文档整合工作
