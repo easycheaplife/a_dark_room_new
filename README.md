@@ -1,6 +1,6 @@
 # A Dark Room Flutter 移植项目
 
-**最后更新**: 2025-06-25
+**最后更新**: 2025-06-26
 
 ## 项目概述
 
@@ -81,6 +81,9 @@ flutter run -d [platform]
 
 #### [火把使用分析](./docs/torch_usage_analysis.md)
 详细分析火把的作用、获取方式以及需要火把的地形，包括5个需要火把的地标和完整的探索策略。
+
+#### [火把背包检查实现总结](./docs/torch_backpack_check_implementation.md)
+火把背包检查功能的完整实现总结，包括核心逻辑、UI层实现、测试验证和用户体验优化。
 
 #### [地标到前哨站转换机制](./docs/landmarks_to_outposts.md)
 地标发现、清理、转换为前哨站的完整机制分析。
@@ -238,6 +241,9 @@ terrain_analysis.md文档错误修正记录。
 
 #### [废墟城市Y访问逻辑修复](./docs/bug_fix/city_y_access_logic_fix.md)
 修复废墟城市Y进入时立即变灰的问题，确保城市在探索过程中保持黑色状态，并修复Web环境下的类型转换错误。
+
+#### [火把背包检查修复](./docs/bug_fix/torch_backpack_only_check_fix.md)
+修复火把检查逻辑，确保只检查背包中的火把而不是库存，包括按钮置灰、工具提示显示和统一的检查消耗逻辑。
 
 ### ⚡ 优化文档
 

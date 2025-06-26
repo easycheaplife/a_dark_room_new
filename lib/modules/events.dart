@@ -1286,40 +1286,95 @@ class Events extends ChangeNotifier {
     Logger.info('🔧 _handleOnLoadCallback() 完成: $callbackName');
   }
 
+  /// 检查是否有足够的背包资源（专门用于火把等工具）
+  bool canAffordBackpackCost(Map<String, dynamic> costs) {
+    final path = Path();
+
+    for (final entry in costs.entries) {
+      final key = entry.key;
+      final cost = entry.value as int;
+
+      // 对于火把等工具，只检查背包
+      if (_isToolItem(key)) {
+        final outfitAmount = path.outfit[key] ?? 0;
+        if (outfitAmount < cost) {
+          Logger.info('🎒 背包中$key不足: 需要$cost, 拥有$outfitAmount');
+          return false;
+        }
+      } else {
+        // 非工具物品，检查库存
+        final sm = StateManager();
+        final current = sm.get('stores.$key', true) ?? 0;
+        if (current < cost) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /// 检查是否是工具类物品（需要从背包消耗）
+  bool _isToolItem(String itemName) {
+    return itemName == 'torch' ||
+        itemName == 'cured meat' ||
+        itemName == 'bullets' ||
+        itemName == 'medicine' ||
+        itemName == 'hypo' ||
+        itemName == 'stim' ||
+        itemName == 'energy cell' ||
+        itemName == 'charm';
+  }
+
+  /// 消耗背包资源（专门用于火把等工具）
+  void consumeBackpackCost(Map<String, dynamic> costs) {
+    final path = Path();
+    final sm = StateManager();
+
+    for (final entry in costs.entries) {
+      final key = entry.key;
+      final cost = entry.value as int;
+
+      if (_isToolItem(key)) {
+        // 从背包消耗
+        final outfitAmount = path.outfit[key] ?? 0;
+        path.outfit[key] = outfitAmount - cost;
+        sm.set('outfit["$key"]', path.outfit[key]);
+        Logger.info('💰 从背包消耗: $key -$cost (剩余: ${path.outfit[key]})');
+      } else {
+        // 非工具物品，从库存消耗
+        final current = sm.get('stores.$key', true) ?? 0;
+        sm.set('stores.$key', current - cost);
+        Logger.info('💰 从库存消耗: $key -$cost (剩余: ${current - cost})');
+      }
+    }
+  }
+
   /// 处理按钮点击
   void handleButtonClick(String buttonKey, Map<String, dynamic> buttonConfig) {
     try {
       Logger.info('🔘 handleButtonClick() 被调用: $buttonKey');
       Logger.info('🔘 按钮配置: $buttonConfig');
-      final sm = StateManager();
 
       // 检查成本
       if (buttonConfig['cost'] != null) {
         final costs = buttonConfig['cost'] as Map<String, dynamic>;
-        for (final entry in costs.entries) {
-          final key = entry.key;
-          final cost = entry.value as int;
-          final current = sm.get('stores.$key', true) ?? 0;
-          if (current < cost) {
-            NotificationManager().notify(name, '资源不足: $key');
-            return;
-          }
+
+        if (!canAffordBackpackCost(costs)) {
+          final localization = Localization();
+          NotificationManager().notify(
+              name, localization.translate('messages.insufficient_resources'));
+          return;
         }
 
         // 扣除成本
-        for (final entry in costs.entries) {
-          final key = entry.key;
-          final cost = entry.value as int;
-          final current = sm.get('stores.$key', true) ?? 0;
-          sm.set('stores.$key', current - cost);
-          Logger.info('💰 消耗: $key -$cost');
-        }
+        consumeBackpackCost(costs);
       }
 
       // 给予奖励
       if (buttonConfig['reward'] != null) {
         final rewards = buttonConfig['reward'] as Map<String, dynamic>;
         final localization = Localization();
+        final sm = StateManager();
         for (final entry in rewards.entries) {
           final key = entry.key;
           final value = entry.value as int;

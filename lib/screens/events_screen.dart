@@ -216,14 +216,99 @@ class _EventsScreenState extends State<EventsScreen> {
       children: buttons.entries.map((entry) {
         final buttonConfig = entry.value as Map<String, dynamic>;
         final text = buttonConfig['text'] ?? entry.key;
+        final cost = buttonConfig['cost'] as Map<String, dynamic>?;
+
+        // 检查按钮是否可用（专门检查背包中的火把等工具）
+        final canAfford = _canAffordButtonCost(cost);
+        final isDisabled = !canAfford;
+
+        // 生成禁用原因
+        String? disabledReason;
+        if (isDisabled && cost != null) {
+          disabledReason = _getDisabledReason(cost);
+        }
 
         return GameButton(
           text: _getLocalizedButtonText(text),
-          onPressed: () => _handleButtonPress(events, entry.key, buttonConfig),
+          onPressed: canAfford
+              ? () => _handleButtonPress(events, entry.key, buttonConfig)
+              : null,
           width: 120,
+          disabled: isDisabled,
+          disabledReason: disabledReason,
+          cost: cost?.map((k, v) => MapEntry(k, (v as num).toInt())),
         );
       }).toList(),
     );
+  }
+
+  /// 检查是否能承担按钮成本（专门检查背包中的火把等工具）
+  bool _canAffordButtonCost(Map<String, dynamic>? cost) {
+    if (cost == null || cost.isEmpty) return true;
+
+    final path = Path();
+    final sm = StateManager();
+
+    for (final entry in cost.entries) {
+      final key = entry.key;
+      final required = (entry.value as num).toInt();
+
+      // 对于火把等工具，只检查背包
+      if (_isToolItem(key)) {
+        final outfitAmount = path.outfit[key] ?? 0;
+        if (outfitAmount < required) {
+          return false;
+        }
+      } else {
+        // 非工具物品，检查库存
+        final current = sm.get('stores.$key', true) ?? 0;
+        if (current < required) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /// 检查是否是工具类物品（需要从背包消耗）
+  bool _isToolItem(String itemName) {
+    return itemName == 'torch' ||
+        itemName == 'cured meat' ||
+        itemName == 'bullets' ||
+        itemName == 'medicine' ||
+        itemName == 'hypo' ||
+        itemName == 'stim' ||
+        itemName == 'energy cell' ||
+        itemName == 'charm';
+  }
+
+  /// 获取禁用原因
+  String _getDisabledReason(Map<String, dynamic> cost) {
+    final localization = Localization();
+    final path = Path();
+    final sm = StateManager();
+
+    for (final entry in cost.entries) {
+      final key = entry.key;
+      final required = (entry.value as num).toInt();
+
+      if (_isToolItem(key)) {
+        final outfitAmount = path.outfit[key] ?? 0;
+        if (outfitAmount < required) {
+          final itemName = localization.translate('resources.$key');
+          final displayName = itemName != 'resources.$key' ? itemName : key;
+          return '$displayName $required';
+        }
+      } else {
+        final current = sm.get('stores.$key', true) ?? 0;
+        if (current < required) {
+          final itemName = localization.translate('resources.$key');
+          final displayName = itemName != 'resources.$key' ? itemName : key;
+          return '$displayName $required';
+        }
+      }
+    }
+    return '';
   }
 
   /// 处理按钮点击

@@ -1483,7 +1483,7 @@ class World extends ChangeNotifier {
 
   /// 检查物品是否应该留在家里 - 参考原游戏的leaveItAtHome函数
   bool leaveItAtHome(String thing) {
-    // 这些物品可以带走：食物、弹药、能量电池、符咒、药物、武器、可制作物品
+    // 这些物品可以带走：食物、弹药、能量电池、符咒、药物、武器、工具（包括火把）
     return thing != 'cured meat' &&
         thing != 'bullets' &&
         thing != 'energy cell' &&
@@ -1491,8 +1491,15 @@ class World extends ChangeNotifier {
         thing != 'medicine' &&
         thing != 'stim' &&
         thing != 'hypo' &&
-        !weapons.containsKey(thing); // 武器可以带走
-    // && typeof Room.Craftables[thing] == 'undefined'; // 暂时注释掉，需要实现Room.Craftables
+        thing != 'torch' && // 火把可以带走
+        !weapons.containsKey(thing) && // 武器可以带走
+        !_isRoomCraftable(thing); // Room中的可制作物品可以带走
+  }
+
+  /// 检查是否是房间中的可制作物品
+  bool _isRoomCraftable(String thing) {
+    final room = Room();
+    return room.craftables.containsKey(thing);
   }
 
   /// 检查前哨站是否已使用
