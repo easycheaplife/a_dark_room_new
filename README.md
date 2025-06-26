@@ -85,6 +85,12 @@ flutter run -d [platform]
 #### [火把背包检查实现总结](./docs/torch_backpack_check_implementation.md)
 火把背包检查功能的完整实现总结，包括核心逻辑、UI层实现、测试验证和用户体验优化。
 
+#### [原游戏火把需求分析](./docs/original_game_torch_analysis.md)
+基于原游戏源代码的详细分析，确定哪些地形真正需要火把，纠正之前文档中的错误信息。
+
+#### [火把需求最终分析报告](./docs/torch_requirements_final_analysis.md)
+完整的火把需求分析报告，包括原游戏源代码分析、测试验证结果和最终结论。
+
 #### [地标到前哨站转换机制](./docs/landmarks_to_outposts.md)
 地标发现、清理、转换为前哨站的完整机制分析。
 
