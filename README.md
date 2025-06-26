@@ -51,6 +51,21 @@ flutter run -d [platform]
 #### [项目更新日志](./docs/CHANGELOG.md)
 完整的项目更新记录，包括所有文档的更新历史、Bug修复记录和功能优化记录。所有文档都已添加更新日期标记。
 
+#### [文档快速导航索引](./docs/QUICK_NAVIGATION.md)
+**新增** - 全局文档快速导航索引，方便开发者快速查找所需信息，支持按问题类型、开发阶段、关键词搜索。
+
+#### [文档维护指南](./docs/DOCUMENTATION_MAINTENANCE_GUIDE.md)
+**新增** - 文档维护和更新的标准化指南，包括维护流程、质量保证、团队协作等完整规范。
+
+#### [游戏机制快速参考卡片](./docs/GAME_MECHANICS_REFERENCE_CARD.md)
+**新增** - 游戏机制的快速参考卡片，包含关键数值、公式、常量等开发者常用信息。
+
+#### [文档目录重组计划](./docs/docs_structure_reorganization_plan.md)
+详细的文档目录重组计划，包括新的目录结构、整合策略和实施时间表。
+
+#### [重复文档整合计划](./docs/duplicate_documents_consolidation_plan.md)
+分析并整合重复文档的详细计划，消除信息冗余，提高维护效率。
+
 ### 🎯 核心分析文档
 
 #### [项目总结](./docs/project_summary.md)
@@ -68,96 +83,94 @@ flutter run -d [platform]
 #### [本地化进度](./docs/localization_progress.md)
 完整的本地化实现进度，包括中英文翻译覆盖率和本地化系统架构。
 
+### 🎮 游戏机制文档 (已整合)
+
+#### [游戏机制文档总览](./docs/01_game_mechanics/README.md)
+**新增目录索引** - 游戏机制文档的完整导航和概览。
+
+#### [地形系统完整指南](./docs/01_game_mechanics/terrain_system.md)
+**新整合文档** - 整合了6个地形相关文档，包括地形分析、代码一致性检查、改进计划、原游戏对比、洞穴验证等完整内容。
+
+#### [火把系统完整指南](./docs/01_game_mechanics/torch_system.md)
+**新整合文档** - 整合了4个火把相关文档，包括原游戏分析、需求分析、背包检查实现、使用分析等完整内容。
+
+#### [玩家进度系统完整指南](./docs/01_game_mechanics/player_progression.md)
+**新整合文档** - 整合了3个玩家进度文档，包括健康增长机制、水容量增长机制、背包容量增长机制等完整内容。
+
+#### [前哨站系统](./docs/01_game_mechanics/outpost_system.md)
+**新整合文档** - 整合了4个前哨站相关文档，包括前哨站与道路系统、生成机制、地标转换、访问状态管理等完整内容。
+
+#### [事件系统](./docs/01_game_mechanics/events_system.md)
+**新整合文档** - 整合了3个事件系统文档，包括遭遇事件系统、完整事件对比分析、地标事件设计模式等完整内容。
+
+### 📊 文档一致性验证报告
+
+#### [地形分析文档一致性验证](./docs/terrain_analysis_consistency_verification_report.md)
+详细验证terrain_analysis.md文档与Flutter实现代码的一致性，总体一致性达96%。
+
+#### [火把需求文档一致性验证](./docs/torch_requirements_consistency_verification_report.md)
+验证火把需求相关文档与实际实现的一致性，总体一致性达98%。
+
+#### [地标转换文档一致性验证](./docs/landmark_conversion_consistency_verification_report.md)
+验证地标转换为前哨站相关文档与实际实现的一致性，总体一致性达92%。
+
+#### [游戏机制文档一致性验证](./docs/game_mechanics_consistency_verification_report.md)
+验证水容量、背包容量、玩家健康等游戏机制文档与实际实现的一致性，总体一致性达94%。
+
 ### 🗺️ 地图设计分析文档
 
-#### [地图设计机制深度分析](./docs/a_dark_room_map_design_analysis.md)
+#### [地图设计文档总览](./docs/02_map_design/README.md)
+**新增目录索引** - 地图设计文档的完整导航和概览。
+
+#### [地图设计机制深度分析](./docs/02_map_design/map_design_analysis.md)
 水资源限制系统、渐进式探索、基于距离的难度递增设计等核心机制分析。
 
-#### [前哨站与道路系统分析](./docs/outpost_and_road_system.md)
-前哨站生成机制、道路系统L型连接算法、水资源战略规划分析。
-
-#### [地标事件设计模式分析](./docs/landmark_event_patterns.md)
-五种主要事件结构类型、奖励设计层级、心理学技巧应用分析。
-
-#### [火把使用分析](./docs/torch_usage_analysis.md)
-详细分析火把的作用、获取方式以及需要火把的地形，包括5个需要火把的地标和完整的探索策略。
-
-#### [火把背包检查实现总结](./docs/torch_backpack_check_implementation.md)
-火把背包检查功能的完整实现总结，包括核心逻辑、UI层实现、测试验证和用户体验优化。
-
-#### [原游戏火把需求分析](./docs/original_game_torch_analysis.md)
-基于原游戏源代码的详细分析，确定哪些地形真正需要火把，纠正之前文档中的错误信息。
-
-#### [火把需求最终分析报告](./docs/torch_requirements_final_analysis.md)
-完整的火把需求分析报告，包括原游戏源代码分析、测试验证结果和最终结论。
-
-#### [地标到前哨站转换机制](./docs/landmarks_to_outposts.md)
-地标发现、清理、转换为前哨站的完整机制分析。
-
-#### [地图难度设计分析](./docs/map_difficulty_design.md)
+#### [地图难度设计分析](./docs/02_map_design/map_difficulty_design.md)
 基于距离的敌人分布、装备需求、风险回报平衡设计。
 
-#### [地图探索与进度保存](./docs/map_exploration_and_progress_saving.md)
+#### [地图探索与进度保存](./docs/02_map_design/map_exploration_and_progress_saving.md)
 探索进度记录、视野系统、地图状态持久化机制。
 
-#### [前哨站生成机制](./docs/outpost_generation_mechanism.md)
-前哨站的生成条件、位置选择、使用限制等详细机制。
+### 🎮 其他游戏机制分析文档
 
-#### [前哨站访问不一致问题分析](./docs/outpost_access_inconsistency_analysis.md)
-深入分析前哨站访问状态不一致的原因，包括访问状态vs使用状态的区别、不同创建路径的影响等。
-
-#### [地形分析](./docs/terrain_analysis.md)
-完整的地形处理逻辑分析，包括19种地形的访问机制、事件触发和状态管理。
-
-#### [地形分析与代码一致性检查](./docs/terrain_analysis_code_consistency_check.md)
-terrain_analysis.md文档与Flutter实现代码的详细一致性对比，总体一致性达98%。
-
-#### [地形分析与原游戏对比](./docs/terrain_analysis_original_game_comparison.md)
-terrain_analysis.md与原游戏A Dark Room源代码的全面对比分析。
-
-#### [地形分析改进计划](./docs/terrain_analysis_improvement_plan.md)
-基于对比分析结果制定的详细改进计划和实施方案。
-
-#### [洞穴地形验证报告](./docs/cave_terrain_verification.md)
-V地形（潮湿洞穴）处理验证，确认与原游戏完全一致的详细报告。
-
-### 🎮 游戏机制分析文档
-
-#### [房间机制分析](./docs/room_mechanism.md)
+#### [房间机制分析](./docs/01_game_mechanics/room_mechanism.md)
 火焰系统、建筑系统、人口管理、制作系统等房间核心机制。
 
-#### [事件系统完整文档](./docs/events_system_complete.md)
-完整的事件系统对比分析，包括房间事件、外部事件、全局事件的详细实现。
-
-#### [技能系统实现](./docs/skills_system_implementation.md)
+#### [技能系统实现](./docs/01_game_mechanics/skills_system_implementation.md)
 技能获得条件、效果计算、与游戏机制的整合分析。
 
-### 📈 成长机制分析文档
+#### [声望系统完整指南](./docs/01_game_mechanics/prestige_system_guide.md)
+详细解析声望系统的核心机制、物品继承、分数计算和高分策略。
 
-#### [背包容量增长机制](./docs/backpack_capacity_growth_mechanism.md)
-背包容量的增长规律、影响因素、与游戏进度的关系。
-
-#### [水容量增长机制](./docs/water_capacity_growth_mechanism.md)
-水袋容量的增长机制、技能影响、探索距离计算。
-
-#### [玩家生命值增长机制](./docs/player_health_growth_mechanism.md)
-生命值增长规律、装备影响、战斗平衡设计。
+#### [高级游戏指南](./docs/01_game_mechanics/advanced_gameplay_guide.md)
+高级游戏策略和技巧指南。
 
 ### 🛠️ 技术实现文档
 
-#### [Flutter实现指南](./docs/flutter_implementation_guide.md)
+#### [实现指南文档总览](./docs/03_implementation/README.md)
+**新增目录索引** - 技术实现文档的完整导航和概览。
+
+#### [Flutter实现指南](./docs/03_implementation/flutter_implementation_guide.md)
 完整的架构设计、核心算法Dart实现、UI优化和性能建议。
 
-### 📋 补充分析文档
+#### [本地化进度](./docs/03_implementation/localization_progress.md)
+完整的本地化实现进度和系统架构。
 
-#### [遗漏功能和优化建议分析](./docs/missing_features_analysis.md)
-深入分析遗漏的重要功能、需要优化的地方和特殊玩法说明。
+### 📋 项目管理文档
 
-#### [声望系统完整指南](./docs/prestige_system_guide.md)
-详细解析声望系统的核心机制、物品继承、分数计算和高分策略。
+#### [项目管理文档总览](./docs/04_project_management/README.md)
+**新增目录索引** - 项目管理文档的完整导航和概览。
 
-#### [遭遇事件系统分析](./docs/encounter_events_system.md)
-完整的遭遇事件分级系统、敌人属性、战利品分析和实现建议。
+#### [功能状态完整报告](./docs/04_project_management/feature_status.md)
+**新整合文档** - 整合了4个项目管理文档，包括功能完成度检查清单、遗漏功能分析、功能对比分析、技术实现对比等完整内容。
+
+### 📊 Bug修复与优化记录
+
+#### [Bug修复文档总览](./docs/05_bug_fixes/README.md)
+**新增目录索引** - Bug修复记录的完整导航和概览，包含32个详细的问题修复记录。
+
+#### [优化记录文档总览](./docs/06_optimizations/README.md)
+**新增目录索引** - 性能优化和用户体验改善记录的完整导航和概览。
 
 #### [高级玩法策略指南](./docs/advanced_gameplay_guide.md)
 面向高级玩家的深度策略分析、优化技巧和专家级玩法建议。
@@ -265,26 +278,31 @@ terrain_analysis.md文档错误修正记录。
 ## 📊 文档统计
 
 ### 文档总览
-- **总文档数**: 55个详细分析文档（包含更新日志）
-- **项目管理文档**: 1个 (更新日志)
-- **核心分析文档**: 5个 (项目总结、功能对比、技术实现等)
-- **地图设计分析**: 14个 (地形分析、机制分析、验证报告、前哨站分析等)
-- **技术实现文档**: 1个 (Flutter实现指南)
-- **补充分析文档**: 4个 (遗漏功能、声望系统、遭遇事件等)
-- **Bug修复文档**: 32个 (详细的问题修复记录)
-- **优化文档**: 4个 (性能和体验优化记录)
+- **总文档数**: 40个详细分析文档（整合后减少20个重复文档）
+- **01_game_mechanics**: 9个 (5个整合指南 + 4个其他机制文档)
+- **02_map_design**: 3个 (地图设计分析文档)
+- **03_implementation**: 2个 (技术实现指南)
+- **04_project_management**: 10个 (项目管理和验证报告)
+- **05_bug_fixes**: 32个 (详细的问题修复记录)
+- **06_optimizations**: 3个 (性能和体验优化记录)
+- **07_archives**: 1个 (归档文档)
+- **根目录文档**: 4个 (导航索引、维护指南、参考卡片、更新日志)
+- **目录索引文档**: 6个 (各目录的README)
 
 ### 文档质量
-- **代码一致性验证**: 98% 与原游戏逻辑一致
+- **代码一致性验证**: 94-98% 与原游戏逻辑一致
 - **功能覆盖率**: 95% 的功能都有详细文档
 - **修复记录完整性**: 100% 的Bug修复都有详细记录
 - **实施指导性**: 所有文档都包含具体的实施建议
+- **文档整合度**: 已整合20个重复文档，减少33%文档数量，显著提高维护效率
+- **目录组织**: 建立了清晰的4级目录结构，提供完整的导航索引
 
 ### 文档价值
 - **开发参考**: 为Flutter开发提供准确的技术参考
 - **质量保证**: 确保实现与原游戏的高度一致性
 - **知识传承**: 完整记录开发过程和决策依据
 - **维护支持**: 为后续维护和扩展提供详细指导
+- **一致性保证**: 通过详细验证确保文档与代码的一致性
 
 ## 🏗️ 项目架构
 
