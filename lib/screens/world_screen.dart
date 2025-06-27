@@ -53,99 +53,19 @@ class _WorldScreenState extends State<WorldScreen> {
             builder: (context, world, child) {
               return Column(
                 children: [
-                  // 标题栏
-                  Container(
-                    padding: EdgeInsets.all(layoutParams.useVerticalLayout ? 12 : 16),
-                    decoration: const BoxDecoration(
-                      color: Colors.white, // 白色背景
-                      border: Border(
-                        bottom:
-                            BorderSide(color: Colors.black, width: 1), // 黑色底边框
-                      ),
-                    ),
-                    child: Consumer<Localization>(
-                      builder: (context, localization, child) {
-                        return Text(
-                          localization.translate('world.title'),
-                          style: TextStyle(
-                            color: Colors.black, // 黑色文字
-                            fontSize: layoutParams.titleFontSize + 8, // 标题稍大
-                            fontWeight: FontWeight.bold,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  // 状态信息 - 参考原游戏的状态栏布局
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: layoutParams.useVerticalLayout ? 12 : 16,
-                      vertical: layoutParams.useVerticalLayout ? 6 : 8
-                    ),
-                    decoration: const BoxDecoration(
-                      color: Colors.white, // 白色背景
-                      border: Border(
-                        bottom:
-                            BorderSide(color: Colors.black, width: 1), // 黑色底边框
-                      ),
-                    ),
-                    child: Consumer<Localization>(
-                      builder: (context, localization, child) {
-                        return layoutParams.useVerticalLayout
-                            ? Column(
-                                children: [
-                                  Text(
-                                    '${localization.translate('world.status.health')}: ${world.health}',
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: layoutParams.fontSize,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    '${localization.translate('world.status.distance')}: ${world.getDistance()}',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: layoutParams.fontSize,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  Text(
-                                    '${localization.translate('world.status.health')}: ${world.health}',
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: layoutParams.fontSize,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${localization.translate('world.status.distance')}: ${world.getDistance()}',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: layoutParams.fontSize,
-                                    ),
-                                  ),
-                                ],
-                              );
-                      },
-                    ),
-                  ),
-
                   // 主内容区域 - 使用SingleChildScrollView让页面可滚动
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.all(layoutParams.useVerticalLayout ? 12 : 16),
+                      padding: EdgeInsets.all(
+                          layoutParams.useVerticalLayout ? 12 : 16),
                       physics: const ClampingScrollPhysics(), // 使用更平滑的滚动物理
                       child: Column(
                         children: [
                           // 背包区域 - 参考原游戏的bagspace-world
                           _buildBagspace(world, layoutParams),
 
-                          SizedBox(height: layoutParams.useVerticalLayout ? 12 : 16),
+                          SizedBox(
+                              height: layoutParams.useVerticalLayout ? 12 : 16),
 
                           // 地图区域 - 固定大小，不滚动
                           _buildMap(world, layoutParams),
@@ -273,8 +193,8 @@ class _WorldScreenState extends State<WorldScreen> {
   }
 
   /// 构建地图瓦片 - 参考原游戏的drawMap函数逻辑
-  Widget _buildMapTile(
-      String tile, bool visible, bool isPlayer, int x, int y, World world, GameLayoutParams layoutParams) {
+  Widget _buildMapTile(String tile, bool visible, bool isPlayer, int x, int y,
+      World world, GameLayoutParams layoutParams) {
     // 如果不可见且不是玩家位置，显示空白（对应原游戏的'&nbsp;'）
     if (!visible && !isPlayer) {
       final tileSize = layoutParams.useVerticalLayout ? 8.0 : 12.0;
@@ -534,48 +454,103 @@ class _WorldScreenState extends State<WorldScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min, // 让容器根据内容自适应高度
             children: [
-              // 标题行
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // 背包标题
-                  Container(
-                    color: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Consumer<Localization>(
-                      builder: (context, localization, child) {
-                        return Text(
-                          (StateManager().get('stores["rucksack"]', true) ?? 0) >
-                                  0
-                              ? localization.translate('world.bagspace.backpack')
-                              : localization.translate('world.bagspace.pocket'),
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        );
-                      },
+              // 标题行 - 参考原游戏的布局，使用Stack来实现绝对定位
+              SizedBox(
+                height: 20, // 给Stack设置高度
+                child: Stack(
+                  children: [
+                    // 背包标题 - 左侧
+                    Positioned(
+                      left: 10,
+                      top: 0,
+                      child: Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Consumer<Localization>(
+                          builder: (context, localization, child) {
+                            return Text(
+                              (StateManager().get('stores["rucksack"]', true) ??
+                                          0) >
+                                      0
+                                  ? localization
+                                      .translate('world.bagspace.backpack')
+                                  : localization
+                                      .translate('world.bagspace.pocket'),
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  ),
 
-                  // 背包空间信息
-                  Container(
-                    color: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Consumer<Localization>(
-                      builder: (context, localization, child) {
-                        return Text(
-                          '${localization.translate('world.bagspace.remaining')} ${freeSpace.floor()}/${capacity.floor()}',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 12,
-                          ),
-                        );
-                      },
+                    // 生命值 - 左侧中间位置
+                    Positioned(
+                      left: 80,
+                      top: 0,
+                      child: Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Consumer<Localization>(
+                          builder: (context, localization, child) {
+                            return Text(
+                              '${localization.translate('world.status.health')}: ${world.health}/${world.getMaxHealth()}',
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+
+                    // 距离信息 - 中间位置
+                    Positioned(
+                      left: 200,
+                      top: 0,
+                      child: Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Consumer<Localization>(
+                          builder: (context, localization, child) {
+                            return Text(
+                              '${localization.translate('world.status.distance')}: ${world.getDistance()}',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+
+                    // 背包空间信息 - 右侧
+                    Positioned(
+                      right: 10,
+                      top: 0,
+                      child: Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Consumer<Localization>(
+                          builder: (context, localization, child) {
+                            return Text(
+                              '${localization.translate('world.bagspace.remaining')} ${freeSpace.floor()}/${capacity.floor()}',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
               const SizedBox(height: 10),
