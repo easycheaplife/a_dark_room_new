@@ -1590,6 +1590,13 @@ class Setpieces extends ChangeNotifier {
                   }(),
                   'cost': {'torch': 1},
                   'nextScene': {'0.5': 'b5', '1': 'b6'}
+                },
+                'leave': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.leave_city');
+                  }(),
+                  'nextScene': 'finish'
                 }
               }
             },
@@ -1609,6 +1616,13 @@ class Setpieces extends ChangeNotifier {
                   }(),
                   'cost': {'torch': 1},
                   'nextScene': {'0.5': 'b7', '1': 'b8'}
+                },
+                'leave': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.leave_city');
+                  }(),
+                  'nextScene': 'finish'
                 }
               }
             },
@@ -1878,20 +1892,26 @@ class Setpieces extends ChangeNotifier {
               'text': () {
                 final localization = Localization();
                 return [
-                  localization.translate('setpieces.city_scenes.c3_text')
+                  localization.translate('setpieces.city_scenes.c3_text1'),
+                  localization.translate('setpieces.city_scenes.c3_text2'),
+                  localization.translate('setpieces.city_scenes.c3_text3')
                 ];
               }(),
-              'loot': {
-                'steel': {'min': 2, 'max': 4, 'chance': 0.9},
-                'rifle': {'min': 1, 'max': 1, 'chance': 0.4}
-              },
               'buttons': {
-                'continue': {
+                'enter': {
                   'text': () {
                     final localization = Localization();
-                    return localization.translate('ui.buttons.continue');
+                    return localization.translate('ui.buttons.investigate');
                   }(),
-                  'nextScene': 'end1'
+                  'cost': {'torch': 1},
+                  'nextScene': {'0.5': 'd2', '1': 'd3'}
+                },
+                'leave': {
+                  'text': () {
+                    final localization = Localization();
+                    return localization.translate('ui.buttons.leave_city');
+                  }(),
+                  'nextScene': 'finish'
                 }
               }
             },
