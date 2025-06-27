@@ -137,6 +137,7 @@ class _CombatScreenState extends State<CombatScreen> {
                                 events.getCurrentEnemyHealth(),
                                 scene['health'] ?? 10,
                                 isPlayer: false,
+                                isStunned: events.isEnemyStunned,
                               ),
                             ),
                           ),
@@ -184,7 +185,7 @@ class _CombatScreenState extends State<CombatScreen> {
 
   /// 构建战斗者Div - 参考原游戏的createFighterDiv
   Widget _buildFighterDiv(String name, String chara, int hp, int maxHp,
-      {required bool isPlayer}) {
+      {required bool isPlayer, bool isStunned = false}) {
     return Container(
       padding: const EdgeInsets.all(0),
       child: Column(
@@ -222,6 +223,26 @@ class _CombatScreenState extends State<CombatScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
+
+          // 眩晕状态显示
+          if (isStunned)
+            Container(
+              margin: const EdgeInsets.only(top: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+              decoration: BoxDecoration(
+                color: Colors.yellow[200],
+                border: Border.all(color: Colors.orange),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: const Text(
+                '😵 眩晕',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
         ],
       ),
     );

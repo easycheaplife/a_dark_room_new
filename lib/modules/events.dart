@@ -76,6 +76,7 @@ class Events extends ChangeNotifier {
   // 敌人血量管理
   int currentEnemyHealth = 0;
   int maxEnemyHealth = 0;
+  bool enemyStunned = false; // 敌人眩晕状态
 
   // 战斗胜利状态
   bool showingLoot = false;
@@ -506,6 +507,7 @@ class Events extends ChangeNotifier {
     currentLoot.clear();
     currentAnimation = null;
     currentAnimationDamage = 0;
+    enemyStunned = false; // 重置眩晕状态
 
     // 初始化敌人血量
     currentEnemyHealth = scene['health'] ?? 10;
@@ -573,6 +575,12 @@ class Events extends ChangeNotifier {
       return;
     }
 
+    // 检查敌人是否被眩晕
+    if (enemyStunned) {
+      Logger.info('😵 敌人被眩晕，跳过攻击');
+      return;
+    }
+
     final event = activeEvent();
     if (event == null) return;
 
@@ -603,7 +611,13 @@ class Events extends ChangeNotifier {
 
   /// 近战动画 - 参考原游戏的animateMelee函数
   void animateMelee(String fighterId, int dmg, VoidCallback? callback) {
-    Logger.info('🎬 执行近战动画: $fighterId 造成 $dmg 伤害');
+    animateMeleeWithType(fighterId, dmg, 'melee', callback);
+  }
+
+  /// 近战动画（支持自定义伤害类型）
+  void animateMeleeWithType(
+      String fighterId, int dmg, String damageType, VoidCallback? callback) {
+    Logger.info('🎬 执行近战动画: $fighterId 造成 $dmg 伤害 (类型: $damageType)');
 
     // 设置动画状态
     currentAnimation = 'melee_$fighterId';
@@ -613,7 +627,7 @@ class Events extends ChangeNotifier {
     // 延迟模拟动画时间
     VisibilityManager().createTimer(Duration(milliseconds: fightSpeed), () {
       final enemy = fighterId == 'wanderer' ? 'enemy' : 'wanderer';
-      damage(fighterId, enemy, dmg, 'melee');
+      damage(fighterId, enemy, dmg, damageType);
 
       // 动画结束后的回调
       VisibilityManager().createTimer(Duration(milliseconds: fightSpeed), () {
@@ -627,7 +641,13 @@ class Events extends ChangeNotifier {
 
   /// 远程动画 - 参考原游戏的animateRanged函数
   void animateRanged(String fighterId, int dmg, VoidCallback? callback) {
-    Logger.info('🎬 执行远程动画: $fighterId 造成 $dmg 伤害');
+    animateRangedWithType(fighterId, dmg, 'ranged', callback);
+  }
+
+  /// 远程动画（支持自定义伤害类型）
+  void animateRangedWithType(
+      String fighterId, int dmg, String damageType, VoidCallback? callback) {
+    Logger.info('🎬 执行远程动画: $fighterId 造成 $dmg 伤害 (类型: $damageType)');
 
     // 设置动画状态
     currentAnimation = 'ranged_$fighterId';
@@ -637,7 +657,7 @@ class Events extends ChangeNotifier {
     // 延迟模拟子弹飞行时间
     VisibilityManager().createTimer(Duration(milliseconds: fightSpeed * 2), () {
       final enemy = fighterId == 'wanderer' ? 'enemy' : 'wanderer';
-      damage(fighterId, enemy, dmg, 'ranged');
+      damage(fighterId, enemy, dmg, damageType);
 
       currentAnimation = null;
       currentAnimationDamage = 0;
@@ -648,7 +668,7 @@ class Events extends ChangeNotifier {
 
   /// 造成伤害
   void damage(String fighterId, String enemyId, int dmg, String type) {
-    if (dmg <= 0) return; // 未命中
+    if (dmg < 0) return; // 未命中
 
     if (enemyId == 'wanderer') {
       // 对玩家造成伤害
@@ -656,7 +676,22 @@ class Events extends ChangeNotifier {
       World().setHp(newHp);
     } else {
       // 对敌人造成伤害
-      currentEnemyHealth = max(0, currentEnemyHealth - dmg);
+      if (dmg == 0 && type == 'stun') {
+        // 眩晕效果：不造成伤害但使敌人眩晕
+        enemyStunned = true;
+        Logger.info('😵 敌人被眩晕，持续$stunDuration毫秒');
+
+        // 设置眩晕持续时间
+        VisibilityManager().createTimer(Duration(milliseconds: stunDuration),
+            () {
+          enemyStunned = false;
+          Logger.info('😵 敌人眩晕效果结束');
+          notifyListeners();
+        }, 'Events.stunEffect');
+      } else {
+        // 普通伤害
+        currentEnemyHealth = max(0, currentEnemyHealth - dmg);
+      }
     }
 
     // 播放音效（暂时注释掉）
@@ -834,6 +869,7 @@ class Events extends ChangeNotifier {
     maxEnemyHealth = 0;
     currentAnimation = null;
     currentAnimationDamage = 0;
+    enemyStunned = false; // 重置眩晕状态
 
     notifyListeners();
   }
@@ -887,7 +923,14 @@ class Events extends ChangeNotifier {
     }
 
     if (Random().nextDouble() <= hitChance) {
-      dmg = weapon['damage'] ?? 1;
+      final weaponDamage = weapon['damage'];
+
+      // 处理特殊伤害类型（如stun）
+      if (weaponDamage == 'stun') {
+        dmg = 0; // stun不造成数值伤害，但会产生眩晕效果
+      } else {
+        dmg = weaponDamage ?? 1;
+      }
 
       // 技能加成
       final weaponType = weapon['type'] ?? 'unarmed';
@@ -915,12 +958,15 @@ class Events extends ChangeNotifier {
 
     // 执行攻击
     final attackType = weapon['type'] == 'ranged' ? 'ranged' : 'melee';
+    final weaponDamage = weapon['damage'];
+    final damageType = weaponDamage == 'stun' ? 'stun' : attackType;
+
     if (attackType == 'ranged') {
-      animateRanged('wanderer', dmg, () {
+      animateRangedWithType('wanderer', dmg, damageType, () {
         checkEnemyDeath(dmg);
       });
     } else {
-      animateMelee('wanderer', dmg, () {
+      animateMeleeWithType('wanderer', dmg, damageType, () {
         checkEnemyDeath(dmg);
       });
     }
@@ -1214,6 +1260,9 @@ class Events extends ChangeNotifier {
   int getCurrentEnemyHealth() {
     return currentEnemyHealth;
   }
+
+  /// 获取敌人眩晕状态
+  bool get isEnemyStunned => enemyStunned;
 
   /// 触发战斗
   void triggerFight() {
