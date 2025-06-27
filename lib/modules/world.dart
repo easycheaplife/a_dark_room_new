@@ -368,18 +368,10 @@ class World extends ChangeNotifier {
     testMap();
     Logger.info('🌍 地图可见性检查完成');
 
-    Logger.info('🏛️ 加载前哨站使用状态...');
-    // 从StateManager加载已使用的前哨站状态
-    final persistedUsedOutposts = sm.get('game.world.usedOutposts', true);
-    if (persistedUsedOutposts != null && persistedUsedOutposts is Map) {
-      usedOutposts = Map<String, bool>.from(persistedUsedOutposts);
-      Logger.info('🏛️ 已加载 ${usedOutposts.length} 个已使用的前哨站状态');
-    } else {
-      // 如果没有使用状态数据，尝试从地图推断（兼容原游戏存档）
-      usedOutposts = {};
-      _inferUsedOutpostsFromMap();
-      Logger.info('🏛️ 初始化前哨站使用状态');
-    }
+    Logger.info('🏛️ 初始化前哨站使用状态...');
+    // 前哨站使用状态是临时的，每次出发时重置（参考原游戏逻辑）
+    usedOutposts = {};
+    Logger.info('🏛️ 前哨站使用状态初始化完成');
 
     Logger.info('🌍 World.init() 完成');
     notifyListeners();
@@ -932,7 +924,7 @@ class World extends ChangeNotifier {
           sm.get('game.world.usedOutposts', true) ?? {};
       Logger.info('🏛️ 持久化状态[$key]: ${persistedUsedOutposts[key]}');
 
-      if (!isUsed && !isVisited) {
+      if (!isUsed) {
         // 前哨站未使用，触发前哨站事件
         final landmarkInfo = landmarks[originalTile];
         if (landmarkInfo != null && landmarkInfo['scene'] != null) {
@@ -1507,39 +1499,26 @@ class World extends ChangeNotifier {
     return room.craftables.containsKey(thing);
   }
 
-  /// 检查前哨站是否已使用
+  /// 检查前哨站是否已使用（仅检查当次探索的临时状态）
   bool outpostUsed([int? x, int? y]) {
     x ??= curPos[0];
     y ??= curPos[1];
     final key = '$x,$y';
 
-    // 首先检查内存中的状态
-    if (usedOutposts[key] == true) {
-      return true;
-    }
-
-    // 然后检查StateManager中的持久化状态
-    final sm = StateManager();
-    final persistedUsedOutposts = sm.get('game.world.usedOutposts', true) ?? {};
-    return persistedUsedOutposts[key] == true;
+    // 只检查内存中的临时状态（参考原游戏：使用状态不持久化）
+    return usedOutposts[key] == true;
   }
 
-  /// 标记前哨站为已使用
+  /// 标记前哨站为已使用（临时状态，每次出发重置）
   void markOutpostUsed([int? x, int? y]) {
     x ??= curPos[0];
     y ??= curPos[1];
     final key = '$x,$y';
 
-    // 更新内存状态
+    // 只更新内存状态（参考原游戏：使用状态是临时的，不持久化）
     usedOutposts[key] = true;
 
-    // 立即持久化到StateManager
-    final sm = StateManager();
-    final persistedUsedOutposts = sm.get('game.world.usedOutposts', true) ?? {};
-    persistedUsedOutposts[key] = true;
-    sm.set('game.world.usedOutposts', persistedUsedOutposts);
-
-    Logger.info('🏛️ 前哨站 ($x, $y) 已标记为已使用并持久化');
+    Logger.info('🏛️ 前哨站 ($x, $y) 已标记为已使用（临时状态）');
   }
 
   /// 死亡 - 参考原游戏的World.die函数
@@ -1667,15 +1646,10 @@ class World extends ChangeNotifier {
     health = getMaxHealth();
     water = getMaxWater();
 
-    // 恢复前哨站使用状态
-    final persistedUsedOutposts = sm.get('game.world.usedOutposts', true);
-    if (persistedUsedOutposts != null && persistedUsedOutposts is Map) {
-      usedOutposts = Map<String, bool>.from(persistedUsedOutposts);
-      Logger.info('🏛️ 恢复前哨站使用状态: ${usedOutposts.length} 个已使用');
-    } else {
-      usedOutposts = {};
-      Logger.info('🏛️ 初始化空的前哨站使用状态');
-    }
+    // 重置前哨站使用状态（参考原游戏逻辑：每次出发都重置）
+    // 前哨站的永久状态通过地图上的访问标记(!)保存，使用状态是临时的
+    usedOutposts = {};
+    Logger.info('🏛️ 重置前哨站使用状态（每次出发都重置）');
 
     // 如果有有效的地图数据，点亮当前位置
     if (state != null && state!['mask'] != null) {
@@ -1805,7 +1779,7 @@ class World extends ChangeNotifier {
     Logger.info('🏛️ useOutpost() 开始执行 - 位置: [${curPos[0]}, ${curPos[1]}]');
 
     final currentTile = state != null && state!['map'] != null
-        ? (state!['map'] as List<List<String>>)[curPos[0]][curPos[1]]
+        ? (state!['map'] as List<dynamic>)[curPos[0]][curPos[1]] as String
         : 'unknown';
     Logger.info('🏛️ 当前地形: $currentTile');
 
@@ -1837,7 +1811,7 @@ class World extends ChangeNotifier {
     // 验证状态
     final finalUsed = outpostUsed();
     final finalTile = state != null && state!['map'] != null
-        ? (state!['map'] as List<List<String>>)[curPos[0]][curPos[1]]
+        ? (state!['map'] as List<dynamic>)[curPos[0]][curPos[1]] as String
         : 'unknown';
 
     Logger.info('🏛️ 前哨站使用完成 - 水: $oldWater -> $water');
@@ -2103,40 +2077,6 @@ class World extends ChangeNotifier {
     }
 
     return copy;
-  }
-
-  /// 从地图推断前哨站使用状态 - 兼容原游戏存档
-  void _inferUsedOutpostsFromMap() {
-    final sm = StateManager();
-    final worldMap = sm.get('game.world.map');
-
-    if (worldMap == null || worldMap is! List) return;
-
-    try {
-      final map = List<List<String>>.from(
-          worldMap.map((row) => List<String>.from(row)));
-
-      int inferredCount = 0;
-      for (int i = 0; i < map.length; i++) {
-        for (int j = 0; j < map[i].length; j++) {
-          if (map[i][j] == 'P!') {
-            // 已访问的前哨站，推断为已使用
-            final key = '$i,$j';
-            usedOutposts[key] = true;
-            inferredCount++;
-            Logger.info('🏛️ 推断前哨站 ($i, $j) 为已使用状态');
-          }
-        }
-      }
-
-      if (inferredCount > 0) {
-        // 保存推断的状态
-        sm.set('game.world.usedOutposts', usedOutposts);
-        Logger.info('🏛️ 从地图推断了 $inferredCount 个前哨站使用状态并保存');
-      }
-    } catch (e) {
-      Logger.info('⚠️ 推断前哨站状态失败: $e');
-    }
   }
 
   /// 将物品添加到装备中 - 参考原游戏的临时状态逻辑
