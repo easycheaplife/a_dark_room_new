@@ -12,10 +12,7 @@ class RoomEventsExtended {
 
   /// 里面的声音事件
   static Map<String, dynamic> get noisesInside => {
-        'title': () {
-          final localization = Localization();
-          return localization.translate('events.noises_inside.title');
-        }(),
+        'title': 'events.noises_inside.title',
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final wood = _sm.get('stores.wood', true) ?? 0;
@@ -23,42 +20,24 @@ class RoomEventsExtended {
         },
         'scenes': {
           'start': {
-            'text': () {
-              final localization = Localization();
-              return [
-                localization.translate('events.noises_inside.text1'),
-                localization.translate('events.noises_inside.text2')
-              ];
-            }(),
-            'notification': () {
-              final localization = Localization();
-              return localization.translate('events.noises_inside.notification');
-            }(),
+            'text': [
+              'events.noises_inside.text1',
+              'events.noises_inside.text2'
+            ],
+            'notification': 'events.noises_inside.notification',
             'buttons': {
               'investigate': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.investigate');
-                }(),
+                'text': 'ui.buttons.investigate',
                 'nextScene': {'0.5': 'scales', '0.8': 'teeth', '1.0': 'cloth'}
               },
-              'ignore': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.ignore');
-                }(),
-                'nextScene': 'end'
-              }
+              'ignore': {'text': 'ui.buttons.ignore', 'nextScene': 'end'}
             }
           },
           'scales': {
-            'text': () {
-              final localization = Localization();
-              return [
-                localization.translate('events.noises_inside.wood_missing'),
-                localization.translate('events.noises_inside.scales_found')
-              ];
-            }(),
+            'text': [
+              'events.noises_inside.wood_missing',
+              'events.noises_inside.scales_found'
+            ],
             'onLoad': () {
               final numWood = _sm.get('stores.wood', true) ?? 0;
               final lostWood = (numWood * 0.1).floor().clamp(1, numWood);
@@ -67,23 +46,14 @@ class RoomEventsExtended {
               _sm.add('stores.scales', gainedScales);
             },
             'buttons': {
-              'leave': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.leave');
-                }(),
-                'nextScene': 'end'
-              }
+              'leave': {'text': 'ui.buttons.leave', 'nextScene': 'end'}
             }
           },
           'teeth': {
-            'text': () {
-              final localization = Localization();
-              return [
-                localization.translate('events.noises_inside.wood_missing'),
-                localization.translate('events.noises_inside.teeth_found')
-              ];
-            }(),
+            'text': [
+              'events.noises_inside.wood_missing',
+              'events.noises_inside.teeth_found'
+            ],
             'onLoad': () {
               final numWood = _sm.get('stores.wood', true) ?? 0;
               final lostWood = (numWood * 0.1).floor().clamp(1, numWood);
@@ -92,23 +62,14 @@ class RoomEventsExtended {
               _sm.add('stores.teeth', gainedTeeth);
             },
             'buttons': {
-              'leave': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.leave');
-                }(),
-                'nextScene': 'end'
-              }
+              'leave': {'text': 'ui.buttons.leave', 'nextScene': 'end'}
             }
           },
           'cloth': {
-            'text': () {
-              final localization = Localization();
-              return [
-                localization.translate('events.noises_inside.wood_missing'),
-                localization.translate('events.noises_inside.cloth_found')
-              ];
-            }(),
+            'text': [
+              'events.noises_inside.wood_missing',
+              'events.noises_inside.cloth_found'
+            ],
             'onLoad': () {
               final numWood = _sm.get('stores.wood', true) ?? 0;
               final lostWood = (numWood * 0.1).floor().clamp(1, numWood);
@@ -117,13 +78,7 @@ class RoomEventsExtended {
               _sm.add('stores.cloth', gainedCloth);
             },
             'buttons': {
-              'leave': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.leave');
-                }(),
-                'nextScene': 'end'
-              }
+              'leave': {'text': 'ui.buttons.leave', 'nextScene': 'end'}
             }
           }
         }
@@ -131,10 +86,7 @@ class RoomEventsExtended {
 
   /// 乞丐事件
   static Map<String, dynamic> get beggar => {
-        'title': () {
-          final localization = Localization();
-          return localization.translate('events.room_events.beggar.title');
-        }(),
+        'title': 'events.room_events.beggar.title',
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final fur = _sm.get('stores.fur', true) ?? 0;
@@ -142,98 +94,53 @@ class RoomEventsExtended {
         },
         'scenes': {
           'start': {
-            'text': () {
-              final localization = Localization();
-              return [
-                localization.translate('events.room_events.beggar.text1'),
-                localization.translate('events.room_events.beggar.text2')
-              ];
-            }(),
-            'notification': () {
-              final localization = Localization();
-              return localization.translate('events.room_events.beggar.notification');
-            }(),
+            'text': [
+              'events.room_events.beggar.text1',
+              'events.room_events.beggar.text2'
+            ],
+            'notification': 'events.room_events.beggar.notification',
             'buttons': {
               '50furs': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.give_50');
-                }(),
+                'text': 'ui.buttons.give_50',
                 'cost': {'fur': 50},
                 'nextScene': {'0.5': 'scales', '0.8': 'teeth', '1.0': 'cloth'}
               },
               '100furs': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.give_100');
-                }(),
+                'text': 'ui.buttons.give_100',
                 'cost': {'fur': 100},
                 'nextScene': {'0.5': 'teeth', '0.8': 'scales', '1.0': 'cloth'}
               },
-              'deny': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.deny');
-                }(),
-                'nextScene': 'end'
-              }
+              'deny': {'text': 'ui.buttons.deny', 'nextScene': 'end'}
             }
           },
           'scales': {
             'reward': {'scales': 20},
-            'text': () {
-              final localization = Localization();
-              return [
-                localization.translate('events.room_events.beggar.scales_text1'),
-                localization.translate('events.room_events.beggar.scales_text2')
-              ];
-            }(),
+            'text': [
+              'events.room_events.beggar.scales_text1',
+              'events.room_events.beggar.scales_text2'
+            ],
             'buttons': {
-              'leave': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.farewell');
-                }(),
-                'nextScene': 'end'
-              }
+              'leave': {'text': 'ui.buttons.farewell', 'nextScene': 'end'}
             }
           },
           'teeth': {
             'reward': {'teeth': 20},
-            'text': () {
-              final localization = Localization();
-              return [
-                localization.translate('events.room_events.beggar.teeth_text1'),
-                localization.translate('events.room_events.beggar.teeth_text2')
-              ];
-            }(),
+            'text': [
+              'events.room_events.beggar.teeth_text1',
+              'events.room_events.beggar.teeth_text2'
+            ],
             'buttons': {
-              'leave': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.farewell');
-                }(),
-                'nextScene': 'end'
-              }
+              'leave': {'text': 'ui.buttons.farewell', 'nextScene': 'end'}
             }
           },
           'cloth': {
             'reward': {'cloth': 20},
-            'text': () {
-              final localization = Localization();
-              return [
-                localization.translate('events.room_events.beggar.cloth_text1'),
-                localization.translate('events.room_events.beggar.cloth_text2')
-              ];
-            }(),
+            'text': [
+              'events.room_events.beggar.cloth_text1',
+              'events.room_events.beggar.cloth_text2'
+            ],
             'buttons': {
-              'leave': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.farewell');
-                }(),
-                'nextScene': 'end'
-              }
+              'leave': {'text': 'ui.buttons.farewell', 'nextScene': 'end'}
             }
           }
         }
@@ -243,7 +150,8 @@ class RoomEventsExtended {
   static Map<String, dynamic> get shadyBuilder => {
         'title': () {
           final localization = Localization();
-          return localization.translate('events.room_events.shady_builder.title');
+          return localization
+              .translate('events.room_events.shady_builder.title');
         }(),
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
@@ -255,13 +163,15 @@ class RoomEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('events.room_events.shady_builder.text1'),
+                localization
+                    .translate('events.room_events.shady_builder.text1'),
                 localization.translate('events.room_events.shady_builder.text2')
               ];
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('events.room_events.shady_builder.notification');
+              return localization
+                  .translate('events.room_events.shady_builder.notification');
             }(),
             'buttons': {
               'build': {
@@ -284,11 +194,15 @@ class RoomEventsExtended {
           'steal': {
             'text': () {
               final localization = Localization();
-              return [localization.translate('events.room_events.shady_builder.steal_text')];
+              return [
+                localization
+                    .translate('events.room_events.shady_builder.steal_text')
+              ];
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('events.room_events.shady_builder.steal_notification');
+              return localization.translate(
+                  'events.room_events.shady_builder.steal_notification');
             }(),
             'buttons': {
               'end': {
@@ -303,11 +217,15 @@ class RoomEventsExtended {
           'build': {
             'text': () {
               final localization = Localization();
-              return [localization.translate('events.room_events.shady_builder.build_text')];
+              return [
+                localization
+                    .translate('events.room_events.shady_builder.build_text')
+              ];
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('events.room_events.shady_builder.build_notification');
+              return localization.translate(
+                  'events.room_events.shady_builder.build_notification');
             }(),
             'onLoad': () {
               final huts = _sm.get('game.buildings.hut', true) ?? 0;
@@ -347,7 +265,8 @@ class RoomEventsExtended {
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('events.mysterious_wanderer_wood.notification');
+              return localization
+                  .translate('events.mysterious_wanderer_wood.notification');
             }(),
             'buttons': {
               'wood100': {
@@ -378,7 +297,10 @@ class RoomEventsExtended {
           'wood100': {
             'text': () {
               final localization = Localization();
-              return [localization.translate('events.mysterious_wanderer_wood.leave_text')];
+              return [
+                localization
+                    .translate('events.mysterious_wanderer_wood.leave_text')
+              ];
             }(),
             'onLoad': () {
               // 50%概率在60秒后返回300木材
@@ -406,7 +328,10 @@ class RoomEventsExtended {
           'wood500': {
             'text': () {
               final localization = Localization();
-              return [localization.translate('events.mysterious_wanderer_wood.leave_text')];
+              return [
+                localization
+                    .translate('events.mysterious_wanderer_wood.leave_text')
+              ];
             }(),
             'onLoad': () {
               // 30%概率在60秒后返回1500木材
@@ -446,7 +371,8 @@ class RoomEventsExtended {
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('events.mysterious_wanderer_fur.notification');
+              return localization
+                  .translate('events.mysterious_wanderer_fur.notification');
             }(),
             'buttons': {
               'fur100': {
@@ -477,7 +403,10 @@ class RoomEventsExtended {
           'fur100': {
             'text': () {
               final localization = Localization();
-              return [localization.translate('events.mysterious_wanderer_fur.leave_text')];
+              return [
+                localization
+                    .translate('events.mysterious_wanderer_fur.leave_text')
+              ];
             }(),
             'onLoad': () {
               // 50%概率在60秒后返回300毛皮
@@ -503,7 +432,10 @@ class RoomEventsExtended {
           'fur500': {
             'text': () {
               final localization = Localization();
-              return [localization.translate('events.mysterious_wanderer_fur.leave_text')];
+              return [
+                localization
+                    .translate('events.mysterious_wanderer_fur.leave_text')
+              ];
             }(),
             'onLoad': () {
               // 30%概率在60秒后返回1500毛皮
@@ -546,13 +478,15 @@ class RoomEventsExtended {
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('events.room_events.scout.notification');
+              return localization
+                  .translate('events.room_events.scout.notification');
             }(),
             'buttons': {
               'buyMap': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.scout.buy_map');
+                  return localization
+                      .translate('events.room_events.scout.buy_map');
                 }(),
                 'cost': {'fur': 200, 'scales': 10},
                 'available': () {
@@ -562,7 +496,8 @@ class RoomEventsExtended {
                 },
                 'notification': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.scout.map_notification');
+                  return localization
+                      .translate('events.room_events.scout.map_notification');
                 }(),
                 'onChoose': () {
                   // 应用地图效果
@@ -574,7 +509,8 @@ class RoomEventsExtended {
               'learn': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.scout.learn_scouting');
+                  return localization
+                      .translate('events.room_events.scout.learn_scouting');
                 }(),
                 'cost': {'fur': 1000, 'scales': 50, 'teeth': 20},
                 'available': () {
@@ -622,7 +558,8 @@ class RoomEventsExtended {
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('events.room_events.master.notification');
+              return localization
+                  .translate('events.room_events.master.notification');
             }(),
             'buttons': {
               'agree': {
@@ -645,13 +582,16 @@ class RoomEventsExtended {
           'agree': {
             'text': () {
               final localization = Localization();
-              return [localization.translate('events.room_events.master.agree_text')];
+              return [
+                localization.translate('events.room_events.master.agree_text')
+              ];
             }(),
             'buttons': {
               'evasion': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.master.evasion');
+                  return localization
+                      .translate('events.room_events.master.evasion');
                 }(),
                 'available': () {
                   final hasEvasivePerk =
@@ -667,7 +607,8 @@ class RoomEventsExtended {
               'precision': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.master.precision');
+                  return localization
+                      .translate('events.room_events.master.precision');
                 }(),
                 'available': () {
                   final hasPrecisePerk =
@@ -683,7 +624,8 @@ class RoomEventsExtended {
               'force': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.master.force');
+                  return localization
+                      .translate('events.room_events.master.force');
                 }(),
                 'available': () {
                   final hasBarbarianPerk =
@@ -699,7 +641,8 @@ class RoomEventsExtended {
               'boxing': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.master.boxing');
+                  return localization
+                      .translate('events.room_events.master.boxing');
                 }(),
                 'available': () {
                   final hasBoxerPerk =
@@ -715,7 +658,8 @@ class RoomEventsExtended {
               'nothing': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.master.nothing');
+                  return localization
+                      .translate('events.room_events.master.nothing');
                 }(),
                 'nextScene': 'end'
               }
@@ -746,18 +690,21 @@ class RoomEventsExtended {
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('events.room_events.sick_man.notification');
+              return localization
+                  .translate('events.room_events.sick_man.notification');
             }(),
             'buttons': {
               'help': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.sick_man.help');
+                  return localization
+                      .translate('events.room_events.sick_man.help');
                 }(),
                 'cost': {'medicine': 1},
                 'notification': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.sick_man.help_notification');
+                  return localization.translate(
+                      'events.room_events.sick_man.help_notification');
                 }(),
                 'nextScene': {
                   '0.1': 'alloy',
@@ -769,7 +716,8 @@ class RoomEventsExtended {
               'ignore': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.sick_man.ignore');
+                  return localization
+                      .translate('events.room_events.sick_man.ignore');
                 }(),
                 'nextScene': 'end'
               }
@@ -779,9 +727,12 @@ class RoomEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('events.room_events.sick_man.alloy_text1'),
-                localization.translate('events.room_events.sick_man.alloy_text2'),
-                localization.translate('events.room_events.sick_man.alloy_text3')
+                localization
+                    .translate('events.room_events.sick_man.alloy_text1'),
+                localization
+                    .translate('events.room_events.sick_man.alloy_text2'),
+                localization
+                    .translate('events.room_events.sick_man.alloy_text3')
               ];
             }(),
             'reward': {'alien alloy': 1},
@@ -799,9 +750,12 @@ class RoomEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('events.room_events.sick_man.cells_text1'),
-                localization.translate('events.room_events.sick_man.cells_text2'),
-                localization.translate('events.room_events.sick_man.cells_text3')
+                localization
+                    .translate('events.room_events.sick_man.cells_text1'),
+                localization
+                    .translate('events.room_events.sick_man.cells_text2'),
+                localization
+                    .translate('events.room_events.sick_man.cells_text3')
               ];
             }(),
             'reward': {'energy cell': 3},
@@ -819,9 +773,12 @@ class RoomEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('events.room_events.sick_man.scales_text1'),
-                localization.translate('events.room_events.sick_man.scales_text2'),
-                localization.translate('events.room_events.sick_man.scales_text3')
+                localization
+                    .translate('events.room_events.sick_man.scales_text1'),
+                localization
+                    .translate('events.room_events.sick_man.scales_text2'),
+                localization
+                    .translate('events.room_events.sick_man.scales_text3')
               ];
             }(),
             'reward': {'scales': 5},
@@ -838,7 +795,10 @@ class RoomEventsExtended {
           'nothing': {
             'text': () {
               final localization = Localization();
-              return [localization.translate('events.room_events.sick_man.nothing_text')];
+              return [
+                localization
+                    .translate('events.room_events.sick_man.nothing_text')
+              ];
             }(),
             'buttons': {
               'bye': {
@@ -857,7 +817,8 @@ class RoomEventsExtended {
   static Map<String, dynamic> get martialMaster => {
         'title': () {
           final localization = Localization();
-          return localization.translate('events.room_events.martial_master.title');
+          return localization
+              .translate('events.room_events.martial_master.title');
         }(),
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
@@ -870,20 +831,25 @@ class RoomEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('events.room_events.martial_master.text1'),
-                localization.translate('events.room_events.martial_master.text2'),
-                localization.translate('events.room_events.martial_master.text3')
+                localization
+                    .translate('events.room_events.martial_master.text1'),
+                localization
+                    .translate('events.room_events.martial_master.text2'),
+                localization
+                    .translate('events.room_events.martial_master.text3')
               ];
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('events.room_events.martial_master.notification');
+              return localization
+                  .translate('events.room_events.martial_master.notification');
             }(),
             'buttons': {
               'learn': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.martial_master.learn');
+                  return localization
+                      .translate('events.room_events.martial_master.learn');
                 }(),
                 'cost': {'cured meat': 200, 'fur': 200},
                 'nextScene': 'learn'
@@ -900,13 +866,17 @@ class RoomEventsExtended {
           'learn': {
             'text': () {
               final localization = Localization();
-              return [localization.translate('events.room_events.martial_master.learn_text')];
+              return [
+                localization
+                    .translate('events.room_events.martial_master.learn_text')
+              ];
             }(),
             'buttons': {
               'martial_artist': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.martial_master.martial_artist');
+                  return localization.translate(
+                      'events.room_events.martial_master.martial_artist');
                 }(),
                 'available': () {
                   final hasMartialArtist =
@@ -922,7 +892,8 @@ class RoomEventsExtended {
               'unarmed_master': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.martial_master.unarmed_master');
+                  return localization.translate(
+                      'events.room_events.martial_master.unarmed_master');
                 }(),
                 'available': () {
                   final hasMartialArtist =
@@ -940,7 +911,8 @@ class RoomEventsExtended {
               'nothing': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.martial_master.nothing');
+                  return localization
+                      .translate('events.room_events.martial_master.nothing');
                 }(),
                 'nextScene': 'end'
               }
@@ -953,7 +925,8 @@ class RoomEventsExtended {
   static Map<String, dynamic> get desertGuide => {
         'title': () {
           final localization = Localization();
-          return localization.translate('events.room_events.desert_guide.title');
+          return localization
+              .translate('events.room_events.desert_guide.title');
         }(),
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
@@ -974,13 +947,15 @@ class RoomEventsExtended {
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('events.room_events.desert_guide.notification');
+              return localization
+                  .translate('events.room_events.desert_guide.notification');
             }(),
             'buttons': {
               'learn': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.desert_guide.learn');
+                  return localization
+                      .translate('events.room_events.desert_guide.learn');
                 }(),
                 'cost': {'water': 100, 'cured meat': 50},
                 'nextScene': 'learn'
@@ -997,13 +972,17 @@ class RoomEventsExtended {
           'learn': {
             'text': () {
               final localization = Localization();
-              return [localization.translate('events.room_events.desert_guide.learn_text')];
+              return [
+                localization
+                    .translate('events.room_events.desert_guide.learn_text')
+              ];
             }(),
             'buttons': {
               'slow_metabolism': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.desert_guide.slow_metabolism');
+                  return localization.translate(
+                      'events.room_events.desert_guide.slow_metabolism');
                 }(),
                 'available': () {
                   final hasSlowMetabolism =
@@ -1019,7 +998,8 @@ class RoomEventsExtended {
               'desert_rat': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.desert_guide.desert_rat');
+                  return localization
+                      .translate('events.room_events.desert_guide.desert_rat');
                 }(),
                 'available': () {
                   final hasDesertRat =
@@ -1035,7 +1015,8 @@ class RoomEventsExtended {
               'stealthy': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.desert_guide.stealthy');
+                  return localization
+                      .translate('events.room_events.desert_guide.stealthy');
                 }(),
                 'available': () {
                   final hasStealthy =
@@ -1051,7 +1032,8 @@ class RoomEventsExtended {
               'nothing': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('events.room_events.desert_guide.nothing');
+                  return localization
+                      .translate('events.room_events.desert_guide.nothing');
                 }(),
                 'nextScene': 'end'
               }

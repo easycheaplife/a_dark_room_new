@@ -15,6 +15,7 @@ import 'package:a_dark_room_new/modules/world.dart';
 import 'package:a_dark_room_new/modules/prestige.dart';
 
 import 'package:a_dark_room_new/main.dart';
+import '../lib/core/logger.dart';
 
 void main() {
   group('Cache Landmark Generation Tests', () {
@@ -59,9 +60,9 @@ void main() {
       }
 
       // 输出地标统计
-      print('\n=== 地图地标统计 (无prestige数据) ===');
-      print('总地标类型数: ${landmarkCounts.length}');
-      print('总地标数量: ${landmarkCounts.values.fold(0, (a, b) => a + b)}');
+      Logger.info('\n=== 地图地标统计 (无prestige数据) ===');
+      Logger.info('总地标类型数: ${landmarkCounts.length}');
+      Logger.info('总地标数量: ${landmarkCounts.values.fold(0, (a, b) => a + b)}');
 
       final sortedLandmarks = landmarkCounts.entries.toList()
         ..sort((a, b) => b.value.compareTo(a.value));
@@ -71,9 +72,9 @@ void main() {
         final moreText = landmarkPositions[entry.key]!.length > 3
             ? '... (+${landmarkPositions[entry.key]!.length - 3}个)'
             : '';
-        print('${entry.key}: ${entry.value}个 - $positions$moreText');
+        Logger.info('${entry.key}: ${entry.value}个 - $positions$moreText');
       }
-      print('=====================================\n');
+      Logger.info('=====================================\n');
 
       // 验证缓存地标不存在
       expect(landmarkCounts.containsKey('U'), false);
@@ -110,9 +111,9 @@ void main() {
       }
 
       // 输出地标统计
-      print('\n=== 地图地标统计 (有prestige数据) ===');
-      print('总地标类型数: ${landmarkCounts.length}');
-      print('总地标数量: ${landmarkCounts.values.fold(0, (a, b) => a + b)}');
+      Logger.info('\n=== 地图地标统计 (有prestige数据) ===');
+      Logger.info('总地标类型数: ${landmarkCounts.length}');
+      Logger.info('总地标数量: ${landmarkCounts.values.fold(0, (a, b) => a + b)}');
 
       final sortedLandmarks = landmarkCounts.entries.toList()
         ..sort((a, b) => b.value.compareTo(a.value));
@@ -122,9 +123,9 @@ void main() {
         final moreText = landmarkPositions[entry.key]!.length > 3
             ? '... (+${landmarkPositions[entry.key]!.length - 3}个)'
             : '';
-        print('${entry.key}: ${entry.value}个 - $positions$moreText');
+        Logger.info('${entry.key}: ${entry.value}个 - $positions$moreText');
       }
-      print('=====================================\n');
+      Logger.info('=====================================\n');
 
       // 验证缓存地标存在
       expect(landmarkCounts.containsKey('U'), true);
