@@ -566,6 +566,13 @@ class Events extends ChangeNotifier {
 
   /// 敌人攻击
   void enemyAttack() {
+    // 检查战斗是否已经结束或敌人是否已死亡
+    if (fought || won || currentEnemyHealth <= 0) {
+      Logger.info(
+          '⚔️ 敌人攻击被阻止: fought=$fought, won=$won, enemyHealth=$currentEnemyHealth');
+      return;
+    }
+
     final event = activeEvent();
     if (event == null) return;
 
