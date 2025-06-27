@@ -1975,8 +1975,9 @@ class World extends ChangeNotifier {
 
     if (xDist == 0 && yDist == 0) return; // 已经在道路上
 
-    final xDir = xDist.abs() ~/ xDist; // 方向：1 或 -1
-    final yDir = yDist.abs() ~/ yDist; // 方向：1 或 -1
+    // 修复除零错误：当距离为0时，方向为0
+    final xDir = xDist == 0 ? 0 : (xDist.abs() ~/ xDist); // 方向：1, -1 或 0
+    final yDir = yDist == 0 ? 0 : (yDist.abs() ~/ yDist); // 方向：1, -1 或 0
 
     int xIntersect, yIntersect;
     if (xDist.abs() > yDist.abs()) {

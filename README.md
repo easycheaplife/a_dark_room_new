@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Web%20%7C%20Mobile%20%7C%20Desktop-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-Open%20Source-green.svg)
 
-**最后更新**: 2025-06-27 (废墟城市离开按钮修复)
+**最后更新**: 2025-06-27 (前哨站道路生成修复)
 
 ## 📋 目录
 
