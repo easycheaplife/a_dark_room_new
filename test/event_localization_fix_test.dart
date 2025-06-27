@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:a_dark_room_new/events/room_events_extended.dart';
 import 'package:a_dark_room_new/core/state_manager.dart';
-import '../lib/core/logger.dart';
+import 'package:a_dark_room_new/core/logger.dart';
 
 /// 事件本地化修复测试
 /// 测试事件定义中的本地化键是否能正确翻译为对应的文本

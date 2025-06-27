@@ -1,5 +1,4 @@
 import '../core/state_manager.dart';
-import '../core/notifications.dart';
 import '../core/logger.dart';
 import '../core/localization.dart';
 import 'outside_events_extended.dart';
@@ -287,7 +286,8 @@ class OutsideEvents {
               'buyMedicine': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('outside_events.trader.buy_medicine');
+                  return localization
+                      .translate('outside_events.trader.buy_medicine');
                 }(),
                 'cost': {'scales': 10},
                 'nextScene': 'buyMedicine'
@@ -295,7 +295,8 @@ class OutsideEvents {
               'buyWeapon': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('outside_events.trader.buy_weapon');
+                  return localization
+                      .translate('outside_events.trader.buy_weapon');
                 }(),
                 'cost': {'scales': 15, 'teeth': 5},
                 'nextScene': 'buyWeapon'
@@ -303,7 +304,8 @@ class OutsideEvents {
               'decline': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('outside_events.trader.decline_buy');
+                  return localization
+                      .translate('outside_events.trader.decline_buy');
                 }(),
                 'nextScene': 'decline'
               }
@@ -313,8 +315,10 @@ class OutsideEvents {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events.trader.buy_medicine_text1'),
-                localization.translate('outside_events.trader.buy_medicine_text2')
+                localization
+                    .translate('outside_events.trader.buy_medicine_text1'),
+                localization
+                    .translate('outside_events.trader.buy_medicine_text2')
               ];
             }(),
             'reward': {'medicine': 5},
@@ -332,7 +336,8 @@ class OutsideEvents {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events.trader.buy_weapon_text1'),
+                localization
+                    .translate('outside_events.trader.buy_weapon_text1'),
                 localization.translate('outside_events.trader.buy_weapon_text2')
               ];
             }(),
@@ -394,7 +399,8 @@ class OutsideEvents {
               'accept': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('outside_events.refugees.accept');
+                  return localization
+                      .translate('outside_events.refugees.accept');
                 }(),
                 'cost': {'meat': 50, 'fur': 20},
                 'nextScene': 'accept'
@@ -402,7 +408,8 @@ class OutsideEvents {
               'refuse': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('outside_events.refugees.refuse');
+                  return localization
+                      .translate('outside_events.refugees.refuse');
                 }(),
                 'nextScene': 'refuse'
               }
@@ -493,8 +500,10 @@ class OutsideEvents {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events.scout_report.investigate_text1'),
-                localization.translate('outside_events.scout_report.investigate_text2')
+                localization
+                    .translate('outside_events.scout_report.investigate_text1'),
+                localization
+                    .translate('outside_events.scout_report.investigate_text2')
               ];
             }(),
             'reward': {'bullets': 30, 'medicine': 2, 'energy cell': 1},
@@ -512,8 +521,10 @@ class OutsideEvents {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events.scout_report.ignore_text1'),
-                localization.translate('outside_events.scout_report.ignore_text2')
+                localization
+                    .translate('outside_events.scout_report.ignore_text1'),
+                localization
+                    .translate('outside_events.scout_report.ignore_text2')
               ];
             }(),
             'buttons': {
@@ -550,7 +561,8 @@ class OutsideEvents {
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('outside_events.ruined_trap.notification');
+              return localization
+                  .translate('outside_events.ruined_trap.notification');
             }(),
             'onLoad': () {
               // 减少一个陷阱
@@ -563,7 +575,8 @@ class OutsideEvents {
               'track': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('outside_events.ruined_trap.track');
+                  return localization
+                      .translate('outside_events.ruined_trap.track');
                 }(),
                 'available': () {
                   final hasScoutPerk =
@@ -585,7 +598,8 @@ class OutsideEvents {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events.ruined_trap.catch_text1'),
+                localization
+                    .translate('outside_events.ruined_trap.catch_text1'),
                 localization.translate('outside_events.ruined_trap.catch_text2')
               ];
             }(),
@@ -660,7 +674,8 @@ class OutsideEvents {
                 final newPop = (population - lostPop).clamp(0, population);
                 _sm.set('game.population', newPop);
 
-                Logger.info('🔥 Fire damage: $lostHuts huts, $lostPop villagers');
+                Logger.info(
+                    '🔥 Fire damage: $lostHuts huts, $lostPop villagers');
               }
             },
             'buttons': {

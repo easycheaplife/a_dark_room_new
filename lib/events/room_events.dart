@@ -1,5 +1,4 @@
 import '../core/state_manager.dart';
-import '../core/notifications.dart';
 import '../core/logger.dart';
 import '../core/localization.dart';
 import 'room_events_extended.dart';
@@ -46,14 +45,18 @@ class RoomEvents {
             localization.translate('events.room_events.firekeeper.text2'),
             localization.translate('events.room_events.firekeeper.text3')
           ],
-          'notification': localization.translate('events.room_events.firekeeper.notification'),
+          'notification': localization
+              .translate('events.room_events.firekeeper.notification'),
           'onLoad': () {
             // 解锁建造者
             _sm.set('game.builder.level', 0);
             Logger.info('🔨 Builder unlocked');
           },
           'buttons': {
-            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
+            'continue': {
+              'text': localization.translate('ui.buttons.continue'),
+              'nextScene': 'end'
+            }
           }
         }
       }
@@ -78,7 +81,8 @@ class RoomEvents {
             localization.translate('events.room_events.builder.text1'),
             localization.translate('events.room_events.builder.text2')
           ],
-          'notification': localization.translate('events.room_events.builder.notification'),
+          'notification':
+              localization.translate('events.room_events.builder.notification'),
           'onLoad': () {
             final currentLevel = _sm.get('game.builder.level', true) ?? 0;
             if (currentLevel < 4) {
@@ -87,7 +91,10 @@ class RoomEvents {
             }
           },
           'buttons': {
-            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
+            'continue': {
+              'text': localization.translate('ui.buttons.continue'),
+              'nextScene': 'end'
+            }
           }
         }
       }
@@ -117,7 +124,10 @@ class RoomEvents {
               'cost': {'meat': 10},
               'nextScene': 'feed'
             },
-            'ignore': {'text': localization.translate('ui.buttons.ignore'), 'nextScene': 'ignore'}
+            'ignore': {
+              'text': localization.translate('ui.buttons.ignore'),
+              'nextScene': 'ignore'
+            }
           }
         },
         'feed': {
@@ -128,7 +138,10 @@ class RoomEvents {
           ],
           'reward': {'charm': 1},
           'buttons': {
-            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
+            'continue': {
+              'text': localization.translate('ui.buttons.continue'),
+              'nextScene': 'end'
+            }
           }
         },
         'ignore': {
@@ -137,7 +150,10 @@ class RoomEvents {
             localization.translate('events.room_events.straycat.ignore_text2')
           ],
           'buttons': {
-            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
+            'continue': {
+              'text': localization.translate('ui.buttons.continue'),
+              'nextScene': 'end'
+            }
           }
         }
       }
@@ -167,7 +183,10 @@ class RoomEvents {
               'cost': {'cloth': 5},
               'nextScene': 'help'
             },
-            'refuse': {'text': localization.translate('ui.buttons.refuse'), 'nextScene': 'refuse'}
+            'refuse': {
+              'text': localization.translate('ui.buttons.refuse'),
+              'nextScene': 'refuse'
+            }
           }
         },
         'help': {
@@ -178,7 +197,10 @@ class RoomEvents {
           ],
           'reward': {'scales': 2, 'teeth': 3},
           'buttons': {
-            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
+            'continue': {
+              'text': localization.translate('ui.buttons.continue'),
+              'nextScene': 'end'
+            }
           }
         },
         'refuse': {
@@ -188,7 +210,10 @@ class RoomEvents {
             localization.translate('events.room_events.wounded.refuse_text3')
           ],
           'buttons': {
-            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
+            'continue': {
+              'text': localization.translate('ui.buttons.continue'),
+              'nextScene': 'end'
+            }
           }
         }
       }
@@ -218,7 +243,10 @@ class RoomEvents {
               'cost': {'wood': 200},
               'nextScene': 'trade'
             },
-            'decline': {'text': localization.translate('ui.buttons.decline'), 'nextScene': 'decline'}
+            'decline': {
+              'text': localization.translate('ui.buttons.decline'),
+              'nextScene': 'decline'
+            }
           }
         },
         'trade': {
@@ -228,7 +256,10 @@ class RoomEvents {
           ],
           'reward': {'iron': 10, 'leather': 5, 'fur': 15},
           'buttons': {
-            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
+            'continue': {
+              'text': localization.translate('ui.buttons.continue'),
+              'nextScene': 'end'
+            }
           }
         },
         'decline': {
@@ -237,7 +268,10 @@ class RoomEvents {
             localization.translate('events.room_events.stranger.decline_text2')
           ],
           'buttons': {
-            'continue': {'text': localization.translate('ui.buttons.continue'), 'nextScene': 'end'}
+            'continue': {
+              'text': localization.translate('ui.buttons.continue'),
+              'nextScene': 'end'
+            }
           }
         }
       }
@@ -260,7 +294,8 @@ class RoomEvents {
             localization.translate('events.room_events.nomad.text1'),
             localization.translate('events.room_events.nomad.text2')
           ],
-          'notification': localization.translate('events.room_events.nomad.notification'),
+          'notification':
+              localization.translate('events.room_events.nomad.notification'),
           'buttons': {
             'buyScales': {
               'text': localization.translate('ui.buttons.buy_scales'),
@@ -276,16 +311,21 @@ class RoomEvents {
               'text': localization.translate('ui.buttons.buy_bait'),
               'cost': {'fur': 5},
               'reward': {'bait': 1},
-              'notification': localization.translate('events.room_events.nomad.bait_notification')
+              'notification': localization
+                  .translate('events.room_events.nomad.bait_notification')
             },
             'buyCompass': {
               'text': localization.translate('ui.buttons.buy_compass'),
               'cost': {'fur': 300, 'scales': 15, 'teeth': 5},
               'reward': {'compass': 1},
               'available': () => (_sm.get('stores.compass', true) ?? 0) < 1,
-              'notification': localization.translate('events.room_events.nomad.compass_notification')
+              'notification': localization
+                  .translate('events.room_events.nomad.compass_notification')
             },
-            'goodbye': {'text': localization.translate('ui.buttons.goodbye'), 'nextScene': 'end'}
+            'goodbye': {
+              'text': localization.translate('ui.buttons.goodbye'),
+              'nextScene': 'end'
+            }
           }
         }
       }
@@ -296,7 +336,8 @@ class RoomEvents {
   static Map<String, dynamic> get noisesOutside {
     final localization = Localization();
     return {
-      'title': localization.translate('events.room_events.noises_outside.title'),
+      'title':
+          localization.translate('events.room_events.noises_outside.title'),
       'isAvailable': () {
         final fire = _sm.get('game.fire.value', true) ?? 0;
         final wood = _sm.get('stores.wood', true) ?? 0;
@@ -308,32 +349,46 @@ class RoomEvents {
             localization.translate('events.room_events.noises_outside.text1'),
             localization.translate('events.room_events.noises_outside.text2')
           ],
-          'notification': localization.translate('events.room_events.noises_outside.notification'),
+          'notification': localization
+              .translate('events.room_events.noises_outside.notification'),
           'buttons': {
             'investigate': {
               'text': localization.translate('ui.buttons.investigate'),
               'nextScene': {'0.3': 'stuff', '1.0': 'nothing'}
             },
-            'ignore': {'text': localization.translate('ui.buttons.ignore'), 'nextScene': 'end'}
+            'ignore': {
+              'text': localization.translate('ui.buttons.ignore'),
+              'nextScene': 'end'
+            }
           }
         },
         'nothing': {
           'text': [
-            localization.translate('events.room_events.noises_outside.nothing_text1'),
-            localization.translate('events.room_events.noises_outside.nothing_text2')
+            localization
+                .translate('events.room_events.noises_outside.nothing_text1'),
+            localization
+                .translate('events.room_events.noises_outside.nothing_text2')
           ],
           'buttons': {
-            'backinside': {'text': localization.translate('ui.buttons.back_inside'), 'nextScene': 'end'}
+            'backinside': {
+              'text': localization.translate('ui.buttons.back_inside'),
+              'nextScene': 'end'
+            }
           }
         },
         'stuff': {
           'reward': {'wood': 100, 'fur': 10},
           'text': [
-            localization.translate('events.room_events.noises_outside.stuff_text1'),
-            localization.translate('events.room_events.noises_outside.stuff_text2')
+            localization
+                .translate('events.room_events.noises_outside.stuff_text1'),
+            localization
+                .translate('events.room_events.noises_outside.stuff_text2')
           ],
           'buttons': {
-            'backinside': {'text': localization.translate('ui.buttons.back_inside'), 'nextScene': 'end'}
+            'backinside': {
+              'text': localization.translate('ui.buttons.back_inside'),
+              'nextScene': 'end'
+            }
           }
         }
       }

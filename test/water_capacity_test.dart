@@ -1,12 +1,9 @@
 // Flutter测试文件，验证水容量显示修复
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 // 导入项目文件
-import '../lib/modules/world.dart';
-import '../lib/core/state_manager.dart';
-import '../lib/core/localization.dart';
+import 'package:a_dark_room_new/modules/world.dart';
+import 'package:a_dark_room_new/core/state_manager.dart';
 
 void main() {
   group('水容量显示修复测试', () {
@@ -17,7 +14,7 @@ void main() {
       // 初始化测试环境
       stateManager = StateManager();
       world = World.instance;
-      
+
       // 清理状态
       stateManager.set('stores.waterskin', 0);
       stateManager.set('stores.cask', 0);

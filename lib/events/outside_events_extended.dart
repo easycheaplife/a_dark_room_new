@@ -1,5 +1,4 @@
 import '../core/state_manager.dart';
-import '../core/notifications.dart';
 import '../core/logger.dart';
 import '../core/localization.dart';
 import 'dart:math';
@@ -12,7 +11,8 @@ class OutsideEventsExtended {
   static Map<String, dynamic> get sickness => {
         'title': () {
           final localization = Localization();
-          return localization.translate('outside_events_extended.sickness.title');
+          return localization
+              .translate('outside_events_extended.sickness.title');
         }(),
         'isAvailable': () {
           final population = _sm.get('game.population', true) ?? 0;
@@ -23,19 +23,22 @@ class OutsideEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events_extended.sickness.text1'),
+                localization
+                    .translate('outside_events_extended.sickness.text1'),
                 localization.translate('outside_events_extended.sickness.text2')
               ];
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('outside_events_extended.sickness.notification');
+              return localization
+                  .translate('outside_events_extended.sickness.notification');
             }(),
             'buttons': {
               'medicine': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('outside_events_extended.sickness.use_medicine');
+                  return localization.translate(
+                      'outside_events_extended.sickness.use_medicine');
                 }(),
                 'cost': {'medicine': 5},
                 'nextScene': 'cured'
@@ -53,8 +56,10 @@ class OutsideEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events_extended.sickness.cured_text1'),
-                localization.translate('outside_events_extended.sickness.cured_text2')
+                localization
+                    .translate('outside_events_extended.sickness.cured_text1'),
+                localization
+                    .translate('outside_events_extended.sickness.cured_text2')
               ];
             }(),
             'buttons': {
@@ -71,8 +76,10 @@ class OutsideEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events_extended.sickness.wait_text1'),
-                localization.translate('outside_events_extended.sickness.wait_text2')
+                localization
+                    .translate('outside_events_extended.sickness.wait_text1'),
+                localization
+                    .translate('outside_events_extended.sickness.wait_text2')
               ];
             }(),
             'onLoad': () {
@@ -116,13 +123,15 @@ class OutsideEventsExtended {
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('outside_events_extended.plague.notification');
+              return localization
+                  .translate('outside_events_extended.plague.notification');
             }(),
             'buttons': {
               'buyMedicine': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('outside_events_extended.plague.buy_medicine');
+                  return localization
+                      .translate('outside_events_extended.plague.buy_medicine');
                 }(),
                 'cost': {'scales': 50},
                 'reward': {'medicine': 10},
@@ -131,7 +140,8 @@ class OutsideEventsExtended {
               'useMedicine': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('outside_events_extended.plague.use_medicine');
+                  return localization
+                      .translate('outside_events_extended.plague.use_medicine');
                 }(),
                 'cost': {'medicine': 15},
                 'nextScene': 'useMedicine'
@@ -149,15 +159,18 @@ class OutsideEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events_extended.plague.buy_text1'),
-                localization.translate('outside_events_extended.plague.buy_text2')
+                localization
+                    .translate('outside_events_extended.plague.buy_text1'),
+                localization
+                    .translate('outside_events_extended.plague.buy_text2')
               ];
             }(),
             'buttons': {
               'useMedicine': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('outside_events_extended.plague.use_medicine');
+                  return localization
+                      .translate('outside_events_extended.plague.use_medicine');
                 }(),
                 'cost': {'medicine': 15},
                 'nextScene': 'useMedicine'
@@ -175,8 +188,10 @@ class OutsideEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events_extended.plague.use_text1'),
-                localization.translate('outside_events_extended.plague.use_text2')
+                localization
+                    .translate('outside_events_extended.plague.use_text1'),
+                localization
+                    .translate('outside_events_extended.plague.use_text2')
               ];
             }(),
             'onLoad': () {
@@ -200,8 +215,10 @@ class OutsideEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events_extended.plague.wait_text1'),
-                localization.translate('outside_events_extended.plague.wait_text2')
+                localization
+                    .translate('outside_events_extended.plague.wait_text1'),
+                localization
+                    .translate('outside_events_extended.plague.wait_text2')
               ];
             }(),
             'onLoad': () {
@@ -228,7 +245,8 @@ class OutsideEventsExtended {
   static Map<String, dynamic> get beastAttack => {
         'title': () {
           final localization = Localization();
-          return localization.translate('outside_events_extended.beast_attack.title');
+          return localization
+              .translate('outside_events_extended.beast_attack.title');
         }(),
         'isAvailable': () {
           final population = _sm.get('game.population', true) ?? 0;
@@ -239,13 +257,16 @@ class OutsideEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events_extended.beast_attack.text1'),
-                localization.translate('outside_events_extended.beast_attack.text2')
+                localization
+                    .translate('outside_events_extended.beast_attack.text1'),
+                localization
+                    .translate('outside_events_extended.beast_attack.text2')
               ];
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('outside_events_extended.beast_attack.notification');
+              return localization.translate(
+                  'outside_events_extended.beast_attack.notification');
             }(),
             'buttons': {
               'fight': {
@@ -268,8 +289,10 @@ class OutsideEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events_extended.beast_attack.win_text1'),
-                localization.translate('outside_events_extended.beast_attack.win_text2')
+                localization.translate(
+                    'outside_events_extended.beast_attack.win_text1'),
+                localization
+                    .translate('outside_events_extended.beast_attack.win_text2')
               ];
             }(),
             'reward': {'fur': 100, 'meat': 100, 'teeth': 10},
@@ -287,8 +310,10 @@ class OutsideEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events_extended.beast_attack.lose_text1'),
-                localization.translate('outside_events_extended.beast_attack.lose_text2')
+                localization.translate(
+                    'outside_events_extended.beast_attack.lose_text1'),
+                localization.translate(
+                    'outside_events_extended.beast_attack.lose_text2')
               ];
             }(),
             'onLoad': () {
@@ -312,8 +337,10 @@ class OutsideEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events_extended.beast_attack.hide_text1'),
-                localization.translate('outside_events_extended.beast_attack.hide_text2')
+                localization.translate(
+                    'outside_events_extended.beast_attack.hide_text1'),
+                localization.translate(
+                    'outside_events_extended.beast_attack.hide_text2')
               ];
             }(),
             'onLoad': () {
@@ -342,7 +369,8 @@ class OutsideEventsExtended {
   static Map<String, dynamic> get militaryRaid => {
         'title': () {
           final localization = Localization();
-          return localization.translate('outside_events_extended.military_raid.title');
+          return localization
+              .translate('outside_events_extended.military_raid.title');
         }(),
         'isAvailable': () {
           final population = _sm.get('game.population', true) ?? 0;
@@ -354,13 +382,16 @@ class OutsideEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events_extended.military_raid.text1'),
-                localization.translate('outside_events_extended.military_raid.text2')
+                localization
+                    .translate('outside_events_extended.military_raid.text1'),
+                localization
+                    .translate('outside_events_extended.military_raid.text2')
               ];
             }(),
             'notification': () {
               final localization = Localization();
-              return localization.translate('outside_events_extended.military_raid.notification');
+              return localization.translate(
+                  'outside_events_extended.military_raid.notification');
             }(),
             'buttons': {
               'fight': {
@@ -373,7 +404,8 @@ class OutsideEventsExtended {
               'surrender': {
                 'text': () {
                   final localization = Localization();
-                  return localization.translate('outside_events_extended.military_raid.surrender');
+                  return localization.translate(
+                      'outside_events_extended.military_raid.surrender');
                 }(),
                 'nextScene': 'surrender'
               }
@@ -383,8 +415,10 @@ class OutsideEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events_extended.military_raid.win_text1'),
-                localization.translate('outside_events_extended.military_raid.win_text2')
+                localization.translate(
+                    'outside_events_extended.military_raid.win_text1'),
+                localization.translate(
+                    'outside_events_extended.military_raid.win_text2')
               ];
             }(),
             'reward': {'rifle': 5, 'bullets': 100, 'steel': 50},
@@ -402,8 +436,10 @@ class OutsideEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events_extended.military_raid.lose_text1'),
-                localization.translate('outside_events_extended.military_raid.lose_text2')
+                localization.translate(
+                    'outside_events_extended.military_raid.lose_text1'),
+                localization.translate(
+                    'outside_events_extended.military_raid.lose_text2')
               ];
             }(),
             'onLoad': () {
@@ -427,8 +463,10 @@ class OutsideEventsExtended {
             'text': () {
               final localization = Localization();
               return [
-                localization.translate('outside_events_extended.military_raid.surrender_text1'),
-                localization.translate('outside_events_extended.military_raid.surrender_text2')
+                localization.translate(
+                    'outside_events_extended.military_raid.surrender_text1'),
+                localization.translate(
+                    'outside_events_extended.military_raid.surrender_text2')
               ];
             }(),
             'onLoad': () {

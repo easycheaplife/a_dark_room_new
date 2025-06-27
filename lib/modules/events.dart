@@ -781,7 +781,7 @@ class Events extends ChangeNotifier {
       }
 
       Logger.info(
-          '🎭 ${currentModule}场景可用事件数量: ${availableEvents.length}/${contextEvents.length}');
+          '🎭 $currentModule场景可用事件数量: ${availableEvents.length}/${contextEvents.length}');
 
       if (availableEvents.isNotEmpty) {
         final random = Random();
@@ -789,7 +789,7 @@ class Events extends ChangeNotifier {
         Logger.info('🎭 触发事件: ${event['title']}');
         startEvent(event);
       } else {
-        Logger.info('🎭 ${currentModule}场景没有可用的事件');
+        Logger.info('🎭 $currentModule场景没有可用的事件');
       }
     }
     scheduleNextEvent();
@@ -1526,7 +1526,7 @@ class Events extends ChangeNotifier {
       Logger.info('🎁 延迟奖励执行: $key');
     }, 'Events.delayedReward.$key');
 
-    Logger.info('⏰ 延迟奖励已设置: $key (${delaySeconds}秒后执行)');
+    Logger.info('⏰ 延迟奖励已设置: $key ($delaySeconds秒后执行)');
   }
 
   /// 取消延迟奖励

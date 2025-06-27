@@ -51,7 +51,7 @@ class _EventsScreenState extends State<EventsScreen> {
   Widget _buildEventDialog(BuildContext context, Events events,
       Map<String, dynamic> event, Map<String, dynamic> scene) {
     return Container(
-      color: Colors.black.withOpacity(0.8),
+      color: Colors.black.withValues(alpha: 0.8),
       child: Center(
         child: Container(
           width: 600,

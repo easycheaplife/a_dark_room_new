@@ -41,7 +41,8 @@ class _ProgressButtonState extends State<ProgressButton> {
   // 使用ProgressManager管理进度状态
   String get _progressId => 'ProgressButton.${widget.text}';
 
-  ProgressState? get _currentProgress => ProgressManager().getProgress(_progressId);
+  ProgressState? get _currentProgress =>
+      ProgressManager().getProgress(_progressId);
   bool get _isProgressing => _currentProgress != null;
 
   @override
@@ -96,7 +97,8 @@ class _ProgressButtonState extends State<ProgressButton> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              _getLocalizedResourceName(entry.key, localization),
+                              _getLocalizedResourceName(
+                                  entry.key, localization),
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 14,
@@ -149,8 +151,9 @@ class _ProgressButtonState extends State<ProgressButton> {
   void _startProgress() {
     if (_isProgressing || widget.disabled || widget.onPressed == null) return;
 
-    Logger.info('🚀 ProgressButton started: ${widget.text}, duration: ${widget.progressDuration}ms');
-    Logger.info('🔧 Using ProgressManager for ${_progressId}');
+    Logger.info(
+        '🚀 ProgressButton started: ${widget.text}, duration: ${widget.progressDuration}ms');
+    Logger.info('🔧 Using ProgressManager for $_progressId');
 
     // 使用ProgressManager启动进度
     ProgressManager().startProgress(
@@ -159,10 +162,8 @@ class _ProgressButtonState extends State<ProgressButton> {
       onComplete: _completeProgress,
     );
 
-    Logger.info('✅ ProgressManager.startProgress called for ${_progressId}');
+    Logger.info('✅ ProgressManager.startProgress called for $_progressId');
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +181,9 @@ class _ProgressButtonState extends State<ProgressButton> {
               onEnter: (_) {
                 setState(() => _isHovering = true);
                 // 显示tooltip（如果有成本信息且不是免费的）
-                if (widget.cost != null && widget.cost!.isNotEmpty && !widget.free) {
+                if (widget.cost != null &&
+                    widget.cost!.isNotEmpty &&
+                    !widget.free) {
                   _showTooltip(context, localization);
                 }
               },
@@ -257,7 +260,8 @@ class _ProgressButtonState extends State<ProgressButton> {
                           ),
                           // 进度条填充
                           Container(
-                            width: widget.width * (_currentProgress?.currentProgress ?? 0.0),
+                            width: widget.width *
+                                (_currentProgress?.currentProgress ?? 0.0),
                             height: double.infinity,
                             color: Colors.blue[300]?.withValues(alpha: 0.7),
                           ),

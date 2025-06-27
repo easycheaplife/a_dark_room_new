@@ -40,7 +40,7 @@ class Room with ChangeNotifier {
 
   // 计时器
   Timer? _fireTimer;
-  Timer? _tempTimer;
+  Timer? _tempTimer; // 用于延迟调整房间温度
   Timer? _builderTimer;
 
   // 状态
@@ -833,7 +833,8 @@ class Room with ChangeNotifier {
         'stores': {'wood': 2}
       });
 
-      NotificationManager().notify(name, _localization.translate('room.builderHelps'));
+      NotificationManager()
+          .notify(name, _localization.translate('room.builderHelps'));
 
       // 更新收入视图
       updateIncomeView();
@@ -1214,7 +1215,8 @@ class Room with ChangeNotifier {
 
     // 检查温度是否足够
     if (sm.get('game.temperature.value') <= tempEnum['Cold']!['value']) {
-      NotificationManager().notify(name, _localization.translate('room.builderShivers'));
+      NotificationManager()
+          .notify(name, _localization.translate('room.builderShivers'));
       return;
     }
 

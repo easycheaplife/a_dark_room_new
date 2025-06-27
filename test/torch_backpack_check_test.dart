@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/modules/events.dart';
-import '../lib/modules/path.dart';
-import '../lib/modules/world.dart';
-import '../lib/modules/room.dart';
-import '../lib/core/state_manager.dart';
-import '../lib/core/logger.dart';
+import 'package:a_dark_room_new/modules/events.dart';
+import 'package:a_dark_room_new/modules/path.dart';
+import 'package:a_dark_room_new/modules/world.dart';
+import 'package:a_dark_room_new/modules/room.dart';
+import 'package:a_dark_room_new/core/state_manager.dart';
+import 'package:a_dark_room_new/core/logger.dart';
 
 /// 测试火把背包检查修复
 ///

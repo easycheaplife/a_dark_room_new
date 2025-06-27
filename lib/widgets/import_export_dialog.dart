@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,8 +37,8 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
     if (kIsWeb) {
       final currentUrl = Uri.base.toString();
       _isSecureContext = currentUrl.startsWith('https://') ||
-                        currentUrl.startsWith('http://localhost') ||
-                        currentUrl.startsWith('http://127.0.0.1');
+          currentUrl.startsWith('http://localhost') ||
+          currentUrl.startsWith('http://127.0.0.1');
       Logger.info('🔒 安全上下文检查: $_isSecureContext (URL: $currentUrl)');
     }
   }
@@ -63,7 +62,8 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
           Logger.info('📋 复制到剪贴板成功');
 
           final localization = Localization();
-          _showSuccessDialog(localization.translate('import_export.export_success'));
+          _showSuccessDialog(
+              localization.translate('import_export.export_success'));
           return;
         } catch (e) {
           Logger.error('⚠️ 剪贴板复制失败，回退到文本显示: $e');
@@ -78,11 +78,13 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
       });
 
       final localization = Localization();
-      _showSuccessDialog(localization.translate('import_export.export_success_manual'));
+      _showSuccessDialog(
+          localization.translate('import_export.export_success_manual'));
     } catch (e) {
       Logger.error('❌ 导出存档时发生错误: $e');
       final localization = Localization();
-      _showErrorDialog('${localization.translate('import_export.export_failed')}: $e');
+      _showErrorDialog(
+          '${localization.translate('import_export.export_failed')}: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -102,7 +104,8 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
     } catch (e) {
       Logger.error('❌ 手动复制失败: $e');
       final localization = Localization();
-      _showErrorDialog('${localization.translate('import_export.copy_failed')}: $e');
+      _showErrorDialog(
+          '${localization.translate('import_export.copy_failed')}: $e');
     }
   }
 
@@ -122,7 +125,8 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
           clipboardData.text!.trim().isEmpty) {
         final localization = Localization();
         Logger.error('❌ 剪贴板数据为空或无效');
-        _showErrorDialog(localization.translate('import_export.clipboard_empty'));
+        _showErrorDialog(
+            localization.translate('import_export.clipboard_empty'));
         return;
       }
 
@@ -132,7 +136,8 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
       Logger.error('❌ 从剪贴板导入时发生错误: $e');
       if (mounted) {
         final localization = Localization();
-        _showErrorDialog('${localization.translate('import_export.import_failed')}: $e');
+        _showErrorDialog(
+            '${localization.translate('import_export.import_failed')}: $e');
       }
     } finally {
       if (mounted) {
@@ -162,7 +167,8 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
       Logger.error('❌ 从文本导入时发生错误: $e');
       if (mounted) {
         final localization = Localization();
-        _showErrorDialog('${localization.translate('import_export.import_failed')}: $e');
+        _showErrorDialog(
+            '${localization.translate('import_export.import_failed')}: $e');
       }
     } finally {
       if (mounted) {
@@ -176,7 +182,8 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
   // 执行导入操作
   Future<void> _performImport(String importData) async {
     Logger.info('📋 开始导入存档，数据长度: ${importData.length}');
-    Logger.info('📋 数据预览: ${importData.substring(0, importData.length > 50 ? 50 : importData.length)}...');
+    Logger.info(
+        '📋 数据预览: ${importData.substring(0, importData.length > 50 ? 50 : importData.length)}...');
 
     final success = await Engine().import64(importData);
 
@@ -184,7 +191,8 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
       final localization = Localization();
       if (success) {
         Navigator.of(context).pop();
-        _showSuccessDialog(localization.translate('import_export.import_success'));
+        _showSuccessDialog(
+            localization.translate('import_export.import_success'));
       } else {
         _showErrorDialog(localization.translate('import_export.import_failed'));
       }
@@ -243,8 +251,9 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
                 decoration: BoxDecoration(
                   color: _isSecureContext ? Colors.blue[50] : Colors.orange[50],
                   border: Border.all(
-                    color: _isSecureContext ? Colors.blue[200]! : Colors.orange[200]!
-                  ),
+                      color: _isSecureContext
+                          ? Colors.blue[200]!
+                          : Colors.orange[200]!),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -270,8 +279,9 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
                     const SizedBox(height: 8),
                     Text(
                       _isSecureContext
-                        ? localization.translate('import_export.instructions')
-                        : localization.translate('import_export.non_https_notice'),
+                          ? localization.translate('import_export.instructions')
+                          : localization
+                              .translate('import_export.non_https_notice'),
                       style: const TextStyle(fontSize: 14),
                     ),
                   ],
@@ -304,7 +314,8 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      localization.translate('import_export.export_data_instruction'),
+                      localization
+                          .translate('import_export.export_data_instruction'),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     ElevatedButton.icon(
@@ -317,7 +328,8 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orange,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                       ),
                     ),
                   ],
@@ -363,8 +375,9 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
                         : const Icon(Icons.content_paste),
                     label: Text(
                       _isLoading
-                        ? localization.translate('import_export.importing')
-                        : localization.translate('import_export.import_clipboard_button'),
+                          ? localization.translate('import_export.importing')
+                          : localization.translate(
+                              'import_export.import_clipboard_button'),
                       style: const TextStyle(fontSize: 16),
                     ),
                     style: ElevatedButton.styleFrom(
@@ -424,8 +437,9 @@ class _ImportExportDialogState extends State<ImportExportDialog> {
                       : const Icon(Icons.text_fields),
                   label: Text(
                     _isLoading
-                      ? localization.translate('import_export.importing')
-                      : localization.translate('import_export.import_text_button'),
+                        ? localization.translate('import_export.importing')
+                        : localization
+                            .translate('import_export.import_text_button'),
                     style: const TextStyle(fontSize: 16),
                   ),
                   style: ElevatedButton.styleFrom(

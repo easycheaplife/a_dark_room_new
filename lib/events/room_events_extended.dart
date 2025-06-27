@@ -1,5 +1,4 @@
 import '../core/state_manager.dart';
-import '../core/notifications.dart';
 import '../core/logger.dart';
 import '../core/localization.dart';
 import '../modules/world.dart';
