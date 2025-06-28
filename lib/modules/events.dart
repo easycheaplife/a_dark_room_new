@@ -668,11 +668,24 @@ class Events extends ChangeNotifier {
 
   /// 造成伤害
   void damage(String fighterId, String enemyId, int dmg, String type) {
-    if (dmg < 0) return; // 未命中
+    Logger.info('⚔️ damage() 被调用: $fighterId -> $enemyId, 伤害=$dmg, 类型=$type');
+
+    // 检查战斗是否已经结束
+    if (fought || won || World().dead) {
+      Logger.info('⚔️ 战斗已结束或玩家已死亡，跳过伤害处理: fought=$fought, won=$won, dead=${World().dead}');
+      return;
+    }
+
+    if (dmg < 0) {
+      Logger.info('⚔️ 伤害为负数，未命中');
+      return; // 未命中
+    }
 
     if (enemyId == 'wanderer') {
       // 对玩家造成伤害
-      final newHp = max(0, World().health - dmg);
+      final oldHp = World().health;
+      final newHp = max(0, oldHp - dmg);
+      Logger.info('⚔️ 玩家受到伤害: $oldHp -> $newHp (伤害=$dmg)');
       World().setHp(newHp);
     } else {
       // 对敌人造成伤害
@@ -713,12 +726,25 @@ class Events extends ChangeNotifier {
 
   /// 检查玩家死亡
   bool checkPlayerDeath() {
-    if (World().health <= 0) {
+    final currentHealth = World().health;
+    final isDead = World().dead;
+    Logger.info('💀 checkPlayerDeath() 被调用 - 当前血量: $currentHealth, 已死亡: $isDead');
+    Logger.info('💀 checkPlayerDeath() 调用栈: ${StackTrace.current}');
+
+    // 如果已经死亡，避免重复处理
+    if (isDead) {
+      Logger.info('💀 玩家已经死亡，跳过重复处理');
+      return true;
+    }
+
+    if (currentHealth <= 0) {
+      Logger.info('💀 血量<=0，触发死亡流程');
       clearTimeouts();
       endEvent();
       World().die();
       return true;
     }
+    Logger.info('💀 血量>0，玩家存活');
     return false;
   }
 

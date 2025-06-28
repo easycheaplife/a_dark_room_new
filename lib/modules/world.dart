@@ -1167,6 +1167,13 @@ class World extends ChangeNotifier {
         '🍖 useSupplies() - foodMove: $foodMove/$movesPerFood, waterMove: $waterMove/$movesPerWater');
     Logger.info('🍖 当前状态 - 饥饿: $starvation, 口渴: $thirst, 水: $water');
 
+    // 详细诊断背包状态
+    Logger.info('🎒 背包状态诊断:');
+    Logger.info('🎒 path.outfit: ${path.outfit}');
+    Logger.info('🎒 熏肉数量: ${path.outfit['cured meat'] ?? 0}');
+    Logger.info('🎒 库存熏肉: ${sm.get('stores["cured meat"]', true) ?? 0}');
+    Logger.info('🎒 StateManager中的outfit熏肉: ${sm.get('outfit["cured meat"]', true) ?? 0}');
+
     // 食物
     int currentMovesPerFood = movesPerFood;
     // 缓慢新陈代谢技能：食物消耗减半
@@ -1205,13 +1212,18 @@ class World extends ChangeNotifier {
             // if (sm.get('character.starved') >= 10 && !sm.hasPerk('slow metabolism')) {
             //   sm.addPerk('slow metabolism');
             // }
-            Logger.info('💀 饥饿死亡！');
+            Logger.info('💀 饥饿死亡！已经处于饥饿状态，熏肉不足');
+            Logger.info('💀 死亡原因：背包熏肉数量 = ${path.outfit['cured meat'] ?? 0}');
             die();
             return false;
           }
         } else {
           starvation = false;
-          setHp(health + meatHealAmount());
+          final healAmount = meatHealAmount();
+          final oldHealth = health;
+          final newHealth = health + healAmount;
+          Logger.info('🍖 消耗熏肉治疗: 当前血量=$oldHealth, 治疗量=$healAmount, 目标血量=$newHealth');
+          setHp(newHealth);
           Logger.info('🍖 消耗了熏肉，剩余: $num，恢复生命值');
         }
 
@@ -1258,7 +1270,8 @@ class World extends ChangeNotifier {
           // if (sm.get('character.dehydrated') >= 10 && !sm.hasPerk('desert rat')) {
           //   sm.addPerk('desert rat');
           // }
-          Logger.info('💀 口渴死亡！');
+          Logger.info('💀 口渴死亡！已经处于口渴状态，水不足');
+          Logger.info('💀 死亡原因：当前水量 = $water');
           die();
           return false;
         }
@@ -1307,12 +1320,18 @@ class World extends ChangeNotifier {
 
   /// 设置生命值
   void setHp(int hp) {
+    final oldHealth = health;
+    Logger.info('🩸 setHp() 被调用: $oldHealth -> $hp');
+
     if (hp.isFinite && !hp.isNaN) {
       health = hp;
       if (health > getMaxHealth()) {
         health = getMaxHealth();
       }
+      Logger.info('🩸 血量更新完成: 最终血量=$health, 最大血量=${getMaxHealth()}');
       notifyListeners();
+    } else {
+      Logger.info('⚠️ setHp() 收到无效血量值: $hp (isFinite=${hp.isFinite}, isNaN=${hp.isNaN})');
     }
   }
 
@@ -1521,10 +1540,14 @@ class World extends ChangeNotifier {
 
   /// 死亡 - 参考原游戏的World.die函数
   void die() {
+    Logger.info('💀 die() 被调用 - 当前状态: dead=$dead, health=$health');
+    Logger.info('💀 调用栈: ${StackTrace.current}');
+
     if (!dead) {
       dead = true;
+      final oldHealth = health;
       health = 0;
-      Logger.info('💀 玩家死亡');
+      Logger.info('💀 玩家死亡 - 血量变化: $oldHealth -> $health');
 
       // 重新启用页签导航 - 参考原游戏 Engine.tabNavigation = true
       final engine = Engine();
