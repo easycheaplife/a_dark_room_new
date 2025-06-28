@@ -910,21 +910,16 @@ class World extends ChangeNotifier {
         Logger.info('🔮 执行者地标已访问，跳过事件');
       }
     } else if (originalTile == tile['outpost']) {
-      // 前哨站特殊处理
+      // 前哨站特殊处理 - 参考原游戏逻辑：if(curTile != World.TILE.OUTPOST || !World.outpostUsed())
       final isUsed = outpostUsed();
       final key = '${curPos[0]},${curPos[1]}';
       Logger.info('🏛️ 到达前哨站: $originalTile (已使用: $isUsed, 已访问: $isVisited)');
       Logger.info('🏛️ 前哨站位置: [${curPos[0]}, ${curPos[1]}], 键: $key');
       Logger.info('🏛️ 当前地形: $curTile, 原始地形: $originalTile');
 
-      // 调试：检查usedOutposts状态
-      Logger.info('🏛️ usedOutposts[$key]: ${usedOutposts[key]}');
-      final sm = StateManager();
-      final persistedUsedOutposts =
-          sm.get('game.world.usedOutposts', true) ?? {};
-      Logger.info('🏛️ 持久化状态[$key]: ${persistedUsedOutposts[key]}');
-
-      if (!isUsed) {
+      // 修复：前哨站访问条件应该同时检查使用状态和访问状态
+      // 只有未访问且未使用的前哨站才能触发事件
+      if (!isVisited && !isUsed) {
         // 前哨站未使用，触发前哨站事件
         final landmarkInfo = landmarks[originalTile];
         if (landmarkInfo != null && landmarkInfo['scene'] != null) {
@@ -945,7 +940,12 @@ class World extends ChangeNotifier {
           useOutpost();
         }
       } else {
-        Logger.info('🏛️ 前哨站已使用或已访问，跳过事件');
+        if (isVisited) {
+          Logger.info('🏛️ 前哨站已访问，跳过事件');
+        } else if (isUsed) {
+          Logger.info('🏛️ 前哨站已使用，跳过事件');
+        }
+        // 已访问或已使用的前哨站不再触发事件
       }
       // 注意：前哨站事件不消耗补给！
     } else if (landmarks.containsKey(originalTile)) {
@@ -1393,11 +1393,9 @@ class World extends ChangeNotifier {
       sm.setM('game.world', state!);
       Logger.info('🏠 保存世界状态完成');
 
-      // 确保前哨站使用状态也被保存
-      if (usedOutposts.isNotEmpty) {
-        sm.set('game.world.usedOutposts', usedOutposts);
-        Logger.info('🏛️ 保存前哨站使用状态: ${usedOutposts.length} 个已使用');
-      }
+      // 参考原游戏：前哨站使用状态是临时的，不保存到持久化存储
+      // 每次出发时会重置usedOutposts = {}
+      Logger.info('🏛️ 前哨站使用状态不持久化（参考原游戏逻辑）');
 
       // 检查并解锁建筑 - 参考原游戏的建筑解锁逻辑
       if (state!['sulphurmine'] == true &&
@@ -1802,10 +1800,11 @@ class World extends ChangeNotifier {
     NotificationManager().notify(
         name, localization.translate('world.notifications.water_replenished'));
 
-    // 同时标记前哨站为已使用和已访问，确保状态同步
+    // 修复：前哨站使用后需要标记为已访问，确保回村庄后显示状态正确
+    // 虽然使用状态会重置，但访问状态是永久的，保证显示一致性
     Logger.info('🏛️ 调用 markOutpostUsed()');
     markOutpostUsed();
-    Logger.info('🏛️ 调用 markVisited()');
+    Logger.info('🏛️ 调用 markVisited() - 确保前哨站使用后显示为灰色');
     markVisited(curPos[0], curPos[1]);
 
     // 验证状态
@@ -1876,7 +1875,7 @@ class World extends ChangeNotifier {
         final oldTile = map[curPos[0]][curPos[1]];
         Logger.info('🏛️ 转换前地形: $oldTile');
 
-        // 确保前哨站不带已访问标记，始终显示为黑色
+        // 参考原游戏：创建的前哨站不带已访问标记，显示为黑色地标
         map[curPos[0]][curPos[1]] = tile['outpost']!;
         Logger.info('🏛️ 设置新地形: ${tile['outpost']}');
 

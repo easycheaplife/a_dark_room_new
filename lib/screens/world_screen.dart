@@ -233,7 +233,8 @@ class _WorldScreenState extends State<WorldScreen> {
       final isVisited = tile.length > 1 && tile.endsWith('!'); // 检查是否已访问
       final isLandmark =
           _isLandmarkTile(originalTile) || originalTile == 'A'; // 村庄也是地标
-      final isUsedOutpost = (originalTile == 'P' && world.outpostUsed());
+      // 修复：使用指定位置检查前哨站是否已使用，而不是当前位置
+      final isUsedOutpost = (originalTile == 'P' && world.outpostUsed(x, y));
 
       if (isLandmark && !isUsedOutpost && !isVisited) {
         // 未访问的地标 - 显示为地标样式（黑色粗体）
