@@ -275,11 +275,11 @@ class _EventsScreenState extends State<EventsScreen> {
     return itemName == 'torch' ||
         itemName == 'cured meat' ||
         itemName == 'bullets' ||
-        itemName == 'medicine' ||
         itemName == 'hypo' ||
         itemName == 'stim' ||
         itemName == 'energy cell' ||
         itemName == 'charm';
+    // 注意：medicine在房间事件中从库存消耗，不是从背包消耗
   }
 
   /// 获取禁用原因

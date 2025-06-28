@@ -1402,11 +1402,11 @@ class Events extends ChangeNotifier {
     return itemName == 'torch' ||
         itemName == 'cured meat' ||
         itemName == 'bullets' ||
-        itemName == 'medicine' ||
         itemName == 'hypo' ||
         itemName == 'stim' ||
         itemName == 'energy cell' ||
         itemName == 'charm';
+    // 注意：medicine在房间事件中从库存消耗，不是从背包消耗
   }
 
   /// 消耗背包资源（专门用于火把等工具）
