@@ -960,39 +960,43 @@
       "rifle": "rifle",
       "leather armor": "leather armor",
       "iron armor": "iron armor"
-    }
-  },
-  "fabricator": {
-    "items": {
-      "energy blade": "energy blade",
-      "fluid recycler": "fluid recycler",
-      "cargo drone": "cargo drone",
-      "kinetic armour": "kinetic armour",
-      "disruptor": "disruptor",
-      "hypo": "hypo",
-      "stim": "stim",
-      "plasma rifle": "plasma rifle",
-      "glowstone": "glowstone"
     },
-    "descriptions": {
-      "energy blade": "the blade hums, crackling with electric sparks.",
-      "fluid recycler": "water in, water out. nothing wasted.",
-      "cargo drone": "the workhorse of the wanderer fleet.",
-      "kinetic armour": "wanderer soldiers succeed by channeling their enemies' fury.",
-      "disruptor": "sometimes it's better not to fight.",
-      "hypo": "a hypodermic. life in a bottle.",
-      "stim": "sometimes it's better to fight without restraint.",
-      "plasma rifle": "the pinnacle of wanderer weapon tech, sleek and deadly.",
-      "glowstone": "a smooth, perfect sphere. its light never dims."
-    },
-    "types": {
-      "weapon": "weapon",
-      "upgrade": "upgrade",
-      "tool": "tool"
-    },
-    "notifications": {
-      "familiar_wanderer_tech": "familiar wanderer tech hums to life. finally, real tools.",
-      "insufficient_resources": "not enough {0}"
+    "fabricator": {
+      "title": "A Whirring Fabricator",
+      "fabricate_title": "fabricate:",
+      "blueprints_title": "blueprints",
+      "no_items_available": "no items available",
+      "items": {
+        "energy blade": "energy blade",
+        "fluid recycler": "fluid recycler",
+        "cargo drone": "cargo drone",
+        "kinetic armour": "kinetic armour",
+        "disruptor": "disruptor",
+        "hypo": "hypo",
+        "stim": "stim",
+        "plasma rifle": "plasma rifle",
+        "glowstone": "glowstone"
+      },
+      "descriptions": {
+        "energy blade": "the blade hums, crackling with electric sparks.",
+        "fluid recycler": "water in, water out. nothing wasted.",
+        "cargo drone": "the workhorse of the wanderer fleet.",
+        "kinetic armour": "wanderer soldiers succeed by channeling their enemies' fury.",
+        "disruptor": "sometimes it's better not to fight.",
+        "hypo": "a hypodermic. life in a bottle.",
+        "stim": "sometimes it's better to fight without restraint.",
+        "plasma rifle": "the pinnacle of wanderer weapon tech, sleek and deadly.",
+        "glowstone": "a smooth, perfect sphere. its light never dims."
+      },
+      "types": {
+        "weapon": "weapon",
+        "upgrade": "upgrade",
+        "tool": "tool"
+      },
+      "notifications": {
+        "familiar_wanderer_tech": "familiar wanderer tech hums to life. finally, real tools.",
+        "insufficient_resources": "not enough {0}"
+      }
     }
   },
   "combat": {

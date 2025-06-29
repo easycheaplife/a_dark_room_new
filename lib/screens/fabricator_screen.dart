@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/localization.dart';
 import '../core/state_manager.dart';
-import '../core/responsive_layout.dart';
 import '../modules/fabricator.dart';
 import '../widgets/game_button.dart';
 import '../widgets/unified_stores_container.dart';
@@ -15,30 +14,59 @@ class FabricatorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final layoutParams = GameLayoutParams.getLayoutParams(context);
-
     return Consumer3<Fabricator, StateManager, Localization>(
       builder: (context, fabricator, stateManager, localization, child) {
-        return SingleChildScrollView(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 库存显示 - 只显示制造器相关的资源
-              UnifiedStoresContainer(
-                width: layoutParams.gameAreaWidth * 0.8,
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.white,
+          child: SingleChildScrollView(
+            // 添加整个页面的滚动支持
+            child: SizedBox(
+              width: double.infinity,
+              height: 800, // 设置足够的高度以容纳所有内容
+              child: Stack(
+                children: [
+                  // 左侧：制造器内容 - 绝对定位，与漫漫尘途保持一致
+                  Positioned(
+                    left: 10,
+                    top: 10,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 标题 - 参考原游戏 "A Whirring Fabricator"
+                        Container(
+                          padding: const EdgeInsets.only(bottom: 20.0),
+                          child: Text(
+                            localization.translate('world.fabricator.title'),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+
+                        // 蓝图部分
+                        _buildBlueprintsSection(fabricator, stateManager, localization),
+
+                        const SizedBox(height: 20),
+
+                        // 制造按钮部分
+                        _buildFabricateSection(fabricator, stateManager, localization),
+                      ],
+                    ),
+                  ),
+
+                  // 库存容器 - 绝对定位，与漫漫尘途完全一致的位置: top: 0px, right: 0px
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: _buildStoresContainer(stateManager, localization),
+                  ),
+                ],
               ),
-
-              const SizedBox(height: 20),
-
-              // 蓝图部分
-              _buildBlueprintsSection(fabricator, stateManager, localization),
-
-              const SizedBox(height: 20),
-
-              // 制造按钮部分
-              _buildFabricateSection(fabricator, stateManager, localization),
-            ],
+            ),
           ),
         );
       },
@@ -60,7 +88,7 @@ class FabricatorScreen extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Text(
-            localization.translate('fabricator.blueprints_title'),
+            localization.translate('world.fabricator.blueprints_title'),
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -102,7 +130,7 @@ class FabricatorScreen extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(16.0),
         child: Text(
-          localization.translate('fabricator.no_items_available'),
+          localization.translate('world.fabricator.no_items_available'),
           style: const TextStyle(
             color: Colors.grey,
             fontStyle: FontStyle.italic,
@@ -118,7 +146,7 @@ class FabricatorScreen extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Text(
-            localization.translate('fabricator.fabricate_title'),
+            localization.translate('world.fabricator.fabricate_title'),
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -152,7 +180,7 @@ class FabricatorScreen extends StatelessWidget {
     final quantity = itemInfo['quantity'] ?? 1;
 
     // 构建物品名称（包含数量）
-    String itemName = localization.translate('fabricator.items.$itemKey');
+    String itemName = localization.translate('world.fabricator.items.$itemKey');
     if (quantity > 1) {
       itemName += ' (x$quantity)';
     }
@@ -171,6 +199,15 @@ class FabricatorScreen extends StatelessWidget {
       width: 150,
       cost: cost.map((key, value) => MapEntry(key, value as int)),
       disabled: !hasEnoughMaterials,
+    );
+  }
+
+  /// 构建库存容器 - 使用统一的库存容器组件，与漫漫尘途页签保持一致
+  Widget _buildStoresContainer(StateManager stateManager, Localization localization) {
+    return UnifiedStoresContainer(
+      showPerks: false,
+      showVillageStatus: false,
+      showBuildings: false, // 显示武器而不是建筑
     );
   }
 }

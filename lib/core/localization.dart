@@ -111,7 +111,22 @@ class Localization with ChangeNotifier {
 
   // Translate a string with support for nested keys
   String translate(String key, [List<dynamic>? args]) {
-    // Try different translation categories
+    // First try direct key lookup (for keys that already include category like "fabricator.title")
+    dynamic directValue = _getNestedValue(key);
+    if (directValue != null && directValue is String) {
+      String result = directValue;
+
+      // Replace placeholders with arguments
+      if (args != null && args.isNotEmpty) {
+        for (int i = 0; i < args.length; i++) {
+          result = result.replaceAll('{$i}', args[i].toString());
+        }
+      }
+
+      return result;
+    }
+
+    // Try different translation categories for keys without category prefix
     List<String> categories = [
       'ui',
       'buildings',
@@ -123,7 +138,8 @@ class Localization with ChangeNotifier {
       'skills',
       'events',
       'messages',
-      'game_states' // 添加游戏状态类别，用于陷阱掉落消息等
+      'game_states', // 添加游戏状态类别，用于陷阱掉落消息等
+      'fabricator' // 添加制造器类别
     ];
 
     for (String category in categories) {
@@ -142,21 +158,6 @@ class Localization with ChangeNotifier {
 
         return result;
       }
-    }
-
-    // Try direct key lookup
-    dynamic directValue = _getNestedValue(key);
-    if (directValue != null && directValue is String) {
-      String result = directValue;
-
-      // Replace placeholders with arguments
-      if (args != null && args.isNotEmpty) {
-        for (int i = 0; i < args.length; i++) {
-          result = result.replaceAll('{$i}', args[i].toString());
-        }
-      }
-
-      return result;
     }
 
     // Return the key itself if no translation found
