@@ -14,6 +14,7 @@ import '../events/global_events.dart';
 import '../events/room_events.dart';
 import '../events/outside_events.dart';
 import '../events/world_events.dart';
+import '../events/executioner_events.dart';
 
 /// 事件模块 - 处理随机事件系统
 /// 包括战斗、故事事件、战利品系统等功能
@@ -866,6 +867,21 @@ class Events extends ChangeNotifier {
     loadScene(firstScene);
   }
 
+  /// 根据事件名称开始事件
+  void startEventByName(String eventName) {
+    Logger.info('🎭 尝试启动事件: $eventName');
+
+    // 检查executioner事件
+    if (ExecutionerEvents.events.containsKey(eventName)) {
+      final event = ExecutionerEvents.events[eventName]!;
+      Logger.info('🔮 启动执行者事件: $eventName');
+      startEvent(event);
+      return;
+    }
+
+    Logger.info('⚠️ 未找到事件: $eventName');
+  }
+
   /// 结束事件
   void endEvent() {
     clearTimeouts();
@@ -1501,6 +1517,15 @@ class Events extends ChangeNotifier {
         } else if (onLoad is String) {
           _handleOnLoadCallback(onLoad);
         }
+      }
+
+      // 检查是否有nextEvent（跳转到其他事件）
+      if (buttonConfig['nextEvent'] != null) {
+        final nextEventName = buttonConfig['nextEvent'] as String;
+        Logger.info('🔘 跳转到下一个事件: $nextEventName');
+        endEvent(); // 结束当前事件
+        startEventByName(nextEventName); // 启动新事件
+        return;
       }
 
       // 跳转到下一个场景

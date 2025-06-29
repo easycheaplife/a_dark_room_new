@@ -6,6 +6,21 @@
 
 本文档记录了 A Dark Room Flutter 移植项目的所有重要更新、修复和优化。所有文档都已添加更新日期，并建立了统一的更新日志系统。
 
+## 2025-06-29 - 执行者地标完整事件系统实现
+
+### 🔧 Bug修复 + 功能实现
+- **执行者地标完整事件系统实现** - 修复X地标访问问题，实现完整的多阶段事件系统
+  - 问题：用户报告访问X地标后没有解锁任何功能，界面显示不正确
+  - 根因：缺少原游戏的完整多阶段事件系统，只有简化的setpiece事件
+  - 修复：实现完整的6个executioner事件（intro、antechamber、engineering、medical、martial、command）
+  - 新增：`lib/events/executioner_events.dart` - 完整的executioner事件系统
+  - 修改：`lib/modules/world.dart` - 修改访问逻辑，根据状态选择不同事件
+  - 修改：`lib/modules/events.dart` - 添加nextEvent支持和startEventByName方法
+  - 修改：`assets/lang/zh.json` - 添加完整的executioner事件本地化文本
+  - 修复：制造器解锁条件从检查executioner状态改为检查command状态
+  - 测试：新增`test/executioner_events_test.dart`，6个测试用例全部通过
+  - 结果：玩家现在可以体验完整的破损战舰探索流程，正确解锁制造器功能
+
 ## 2025-06-29 - 测试系统改进和优化
 
 ### 🧪 测试系统重构

@@ -876,39 +876,22 @@ class World extends ChangeNotifier {
       Logger.info('🏠 触发村庄事件 - 回到小黑屋');
       goHome();
     } else if (originalTile == tile['executioner']) {
-      // 执行者场景 - 检查是否已访问
+      // 执行者场景 - 参考原游戏的两阶段访问逻辑
       Logger.info('🔮 发现执行者装置');
-      // 只有未访问的地标才触发事件
-      if (!isVisited) {
-        // 触发执行者建筑事件
-        final landmarkInfo = landmarks[originalTile];
-        if (landmarkInfo != null && landmarkInfo['scene'] != null) {
-          final setpieces = Setpieces();
-          final sceneName = landmarkInfo['scene'];
 
-          // 检查场景是否存在
-          if (setpieces.isSetpieceAvailable(sceneName)) {
-            Logger.info('🔮 启动执行者Setpiece场景: $sceneName');
-            setpieces.startSetpiece(sceneName);
-          } else {
-            // 为缺失的场景提供默认处理
-            Logger.info('🔮 执行者场景不存在，使用默认处理: $sceneName');
-            final localization = Localization();
-            NotificationManager().notify(
-                name,
-                localization
-                    .translate('world.notifications.mysterious_device'));
-            markVisited(curPos[0], curPos[1]);
-          }
-        } else {
-          Logger.info('🔮 执行者地标信息无效: $landmarkInfo');
-          final localization = Localization();
-          NotificationManager().notify(name,
-              localization.translate('world.notifications.mysterious_device'));
-          markVisited(curPos[0], curPos[1]);
-        }
+      // 检查执行者状态，决定触发哪个事件
+      final executionerCompleted = state!['executioner'] == true;
+
+      if (executionerCompleted) {
+        // 第二阶段：触发executioner-antechamber事件
+        Logger.info('🔮 执行者已完成intro，触发antechamber事件');
+        final events = Events();
+        events.startEventByName('executioner-antechamber');
       } else {
-        Logger.info('🔮 执行者地标已访问，跳过事件');
+        // 第一阶段：触发executioner-intro事件
+        Logger.info('🔮 首次访问执行者，触发intro事件');
+        final events = Events();
+        events.startEventByName('executioner-intro');
       }
     } else if (originalTile == tile['outpost']) {
       // 前哨站特殊处理 - 参考原游戏逻辑：if(curTile != World.TILE.OUTPOST || !World.outpostUsed())
@@ -1439,7 +1422,8 @@ class World extends ChangeNotifier {
         sm.set('features.location.spaceShip', true);
         Logger.info('🏠 解锁星舰');
       }
-      if (state!['executioner'] == true &&
+      // 检查制造器解锁条件 - 需要完成command deck
+      if (state!['command'] == true &&
           !sm.get('features.location.fabricator', true)) {
         // 初始化制造器模块
         final fabricator = Fabricator();
