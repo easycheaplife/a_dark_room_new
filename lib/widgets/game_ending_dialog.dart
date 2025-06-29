@@ -61,17 +61,18 @@ class _GameEndingDialogState extends State<GameEndingDialog>
     final currentScore = _score.totalScore();
     final totalScore = _prestige.getPreviousScore() + currentScore;
 
-    return Dialog(
-      backgroundColor: Colors.black,
-      child: Container(
-        width: 400,
-        height: 500,
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.black,
-          border: Border.all(color: Colors.white, width: 2),
-        ),
-        child: FadeTransition(
+    return Material(
+      color: Colors.black54, // 半透明背景
+      child: Center(
+        child: Container(
+          width: 400,
+          height: 500,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.black,
+            border: Border.all(color: Colors.white, width: 2),
+          ),
+          child: FadeTransition(
           opacity: _fadeAnimation,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -101,6 +102,7 @@ class _GameEndingDialogState extends State<GameEndingDialog>
               _buildButtons(localization),
             ],
           ),
+        ),
         ),
       ),
     );

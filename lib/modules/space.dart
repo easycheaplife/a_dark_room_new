@@ -254,13 +254,17 @@ class Space extends ChangeNotifier {
 
     if (up) {
       dy -= getSpeed();
+      Logger.info('🚀 向上移动: dy=$dy');
     } else if (down) {
       dy += getSpeed();
+      Logger.info('🚀 向下移动: dy=$dy');
     }
     if (left) {
       dx -= getSpeed();
+      Logger.info('🚀 向左移动: dx=$dx');
     } else if (right) {
       dx += getSpeed();
+      Logger.info('🚀 向右移动: dx=$dx');
     }
 
     // 对角线移动时调整速度
@@ -276,8 +280,14 @@ class Space extends ChangeNotifier {
       dy *= dt / 33;
     }
 
+    final oldX = shipX;
+    final oldY = shipY;
     shipX = (shipX + dx).clamp(10.0, 690.0);
     shipY = (shipY + dy).clamp(10.0, 690.0);
+
+    if (dx != 0 || dy != 0) {
+      Logger.info('🚀 飞船位置更新: ($oldX, $oldY) -> ($shipX, $shipY), dx=$dx, dy=$dy');
+    }
 
     lastMove = DateTime.now();
     notifyListeners();
@@ -420,22 +430,27 @@ class Space extends ChangeNotifier {
 
   /// 按键按下处理
   void keyDown(LogicalKeyboardKey key) {
+    Logger.info('🚀 Space.keyDown() 被调用: $key, done=$done');
     switch (key) {
       case LogicalKeyboardKey.arrowUp:
       case LogicalKeyboardKey.keyW:
         up = true;
+        Logger.info('🚀 设置 up = true');
         break;
       case LogicalKeyboardKey.arrowDown:
       case LogicalKeyboardKey.keyS:
         down = true;
+        Logger.info('🚀 设置 down = true');
         break;
       case LogicalKeyboardKey.arrowLeft:
       case LogicalKeyboardKey.keyA:
         left = true;
+        Logger.info('🚀 设置 left = true');
         break;
       case LogicalKeyboardKey.arrowRight:
       case LogicalKeyboardKey.keyD:
         right = true;
+        Logger.info('🚀 设置 right = true');
         break;
     }
     notifyListeners();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../modules/space.dart';
 import '../modules/ship.dart';
@@ -50,27 +51,34 @@ class _SpaceScreenState extends State<SpaceScreen> {
           _checkShowEndingDialog(context, stateManager);
         });
 
-        return Focus(
-          autofocus: true,
-          onKeyEvent: (node, event) => _handleKeyEvent(space, event),
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Colors.black, // 太空背景
-            child: Stack(
-              children: [
-                // 星空背景
-                _buildStarField(space),
+        return GestureDetector(
+          onTap: () {
+            // 确保Focus获得焦点
+            FocusScope.of(context).requestFocus();
+          },
+          child: Focus(
+            autofocus: true,
+            canRequestFocus: true,
+            onKeyEvent: (node, event) => _handleKeyEvent(space, event),
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              color: Colors.black, // 太空背景
+              child: Stack(
+                children: [
+                  // 星空背景
+                  _buildStarField(space),
 
-                // 小行星
-                ..._buildAsteroids(space),
+                  // 小行星
+                  ..._buildAsteroids(space),
 
-                // 飞船
-                _buildShip(space),
+                  // 飞船
+                  _buildShip(space),
 
-                // UI界面
-                _buildUI(space, localization),
-              ],
+                  // UI界面
+                  _buildUI(space, localization),
+                ],
+              ),
             ),
           ),
         );
@@ -80,11 +88,14 @@ class _SpaceScreenState extends State<SpaceScreen> {
 
   /// 处理键盘事件
   KeyEventResult _handleKeyEvent(Space space, KeyEvent event) {
-    if (event.runtimeType.toString().contains('Down')) {
+    // 使用正确的键盘事件类型检查
+    if (event is KeyDownEvent) {
       space.keyDown(event.logicalKey);
+      Logger.info('🎮 按键按下: ${event.logicalKey}');
       return KeyEventResult.handled;
-    } else if (event.runtimeType.toString().contains('Up')) {
+    } else if (event is KeyUpEvent) {
       space.keyUp(event.logicalKey);
+      Logger.info('🎮 按键释放: ${event.logicalKey}');
       return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;

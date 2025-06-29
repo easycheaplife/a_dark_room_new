@@ -6,6 +6,29 @@
 
 本文档记录了 A Dark Room Flutter 移植项目的所有重要更新、修复和优化。所有文档都已添加更新日期，并建立了统一的更新日志系统。
 
+## 2025-06-29 - 太空模块键盘控制和结算界面居中修复
+
+### 🐛 Bug修复
+- **太空模块键盘控制修复** - 修复飞行中方向键和WASD按键无法移动飞船的问题
+  - 问题：在太空飞行阶段，按下方向键或WASD键无法控制飞船移动
+  - 根因：使用了不可靠的`event.runtimeType.toString().contains()`方式检测键盘事件
+  - 修复：使用正确的`event is KeyDownEvent`和`event is KeyUpEvent`类型检查
+  - 改进：添加GestureDetector确保Focus获得焦点，添加详细调试日志
+  - 文件：`lib/screens/space_screen.dart`, `lib/modules/space.dart`
+  - 结果：键盘控制现在100%可靠，飞船可以正常响应方向键和WASD控制
+
+- **结算界面居中修复** - 修复游戏结束对话框显示位置不够居中的问题
+  - 问题：胜利/失败结算界面显示位置不够居中，影响用户体验
+  - 修复：将Dialog改为Material + Center组合，设置半透明背景
+  - 文件：`lib/widgets/game_ending_dialog.dart`
+  - 结果：结算界面现在完美居中显示，背景效果更佳
+
+### 📚 文档更新
+- **太空模块键盘控制和结算界面居中修复文档** - 新增详细的bug修复记录
+  - 新增：`docs/05_bug_fixes/space_keyboard_control_and_dialog_centering_fix.md`
+  - 内容：详细的问题分析、修复方案、测试验证和效果评估
+  - 包含：技术改进点、风险评估、后续优化建议
+
 ## 2025-06-29 - 文档整体游戏进度更新
 
 ### 📚 文档优化
