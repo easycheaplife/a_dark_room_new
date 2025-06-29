@@ -11,6 +11,7 @@ import 'events.dart';
 import 'setpieces.dart';
 import 'room.dart';
 import 'fabricator.dart';
+import 'ship.dart';
 
 /// 世界模块 - 处理世界地图探索
 /// 包括地图生成、移动、战斗、资源消耗等功能
@@ -1417,14 +1418,15 @@ class World extends ChangeNotifier {
         Logger.info('🏠 解锁煤矿');
       }
       if (state!['ship'] == true &&
-          !sm.get('features.location.spaceShip', true)) {
-        // Ship.init(); // 暂时注释掉，需要实现Ship模块
+          (sm.get('features.location.spaceShip', true) != true)) {
+        Logger.info('🚀 检测到ship状态为true，开始初始化Ship模块');
+        Ship().init(); // 启用Ship模块初始化 - 参考原游戏 Ship.init()
         sm.set('features.location.spaceShip', true);
-        Logger.info('🏠 解锁星舰');
+        Logger.info('🏠 解锁星舰页签完成');
       }
       // 检查制造器解锁条件 - 需要完成command deck
       if (state!['command'] == true &&
-          !sm.get('features.location.fabricator', true)) {
+          (sm.get('features.location.fabricator', true) != true)) {
         // 初始化制造器模块
         final fabricator = Fabricator();
         fabricator.init();

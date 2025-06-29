@@ -1390,6 +1390,14 @@ class Events extends ChangeNotifier {
         Logger.info('🔧 调用 Setpieces().clearCity()');
         Setpieces().clearCity();
         break;
+      case 'activateShip':
+        Logger.info('🔧 调用 Setpieces().activateShip()');
+        Setpieces().activateShip();
+        break;
+      case 'activateExecutioner':
+        Logger.info('🔧 调用 Setpieces().activateExecutioner()');
+        Setpieces().activateExecutioner();
+        break;
       case 'endEvent':
         Logger.info('🔧 调用 endEvent()');
         endEvent();

@@ -315,7 +315,7 @@ class Header extends StatelessWidget {
 
   // 检查飞船是否解锁
   bool _isShipUnlocked(StateManager stateManager) {
-    return stateManager.get('features.location.ship') == true;
+    return stateManager.get('features.location.spaceShip') == true;
   }
 
   // 获取房间标题（根据火焰状态）

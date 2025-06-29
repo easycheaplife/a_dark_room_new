@@ -2702,12 +2702,18 @@ class Setpieces extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 激活星舰
+  /// 激活星舰 - 参考原游戏 World.state.ship = true
   void activateShip() {
-    final sm = StateManager();
-    World().markVisited(World().curPos[0], World().curPos[1]);
-    World().drawRoad();
-    sm.set('game.world.ship', true);
+    final world = World();
+    world.markVisited(world.curPos[0], world.curPos[1]);
+    world.drawRoad();
+
+    // 设置世界状态 - 参考原游戏 World.state.ship = true
+    world.state = world.state ?? {};
+    world.state!['ship'] = true;
+
+    Logger.info('🚀 坠毁星舰事件完成，设置 World.state.ship = true');
+    Logger.info('🚀 当前世界状态: ${world.state}');
     notifyListeners();
   }
 

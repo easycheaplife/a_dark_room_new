@@ -6,6 +6,51 @@
 
 本文档记录了 A Dark Room Flutter 移植项目的所有重要更新、修复和优化。所有文档都已添加更新日期，并建立了统一的更新日志系统。
 
+## 2025-06-29 - 破旧星舰页签缺失最终修复
+
+### 🐛 Bug修复
+- **破旧星舰页签缺失最终修复** - 彻底解决星舰页签无法显示的根本问题
+  - 问题：通过逐行对比原游戏代码，发现状态设置和检查不一致的根本原因
+  - 根因：activateShip()设置到StateManager，但检查World.state，Ship.init()被注释
+  - 修复：统一状态设置到World.state，启用Ship模块初始化，确保村庄返回逻辑不受影响
+  - 文件：`lib/modules/setpieces.dart`, `lib/modules/world.dart`
+  - 结果：玩家访问坠毁星舰地标后，返回村庄时正确显示"破旧星舰"页签
+
+- **访问W地标后没有出现破旧星舰页签修复** - 修复onLoad回调处理缺失的问题
+  - 问题：用户访问W地标（坠毁星舰）后，没有出现破旧星舰页签
+  - 根因：Events模块的_handleOnLoadCallback方法中缺少'activateShip'回调的处理
+  - 修复：在_handleOnLoadCallback中添加activateShip和activateExecutioner回调处理
+  - 文件：`lib/modules/events.dart`
+  - 结果：访问W地标时正确触发activateShip回调，星舰页签正常显示
+
+- **破旧星舰页签键值不一致修复** - 修复页签检查键值不匹配的问题
+  - 问题：访问W地标后，onLoad回调正常但页签仍不显示
+  - 根因：world.dart设置features.location.spaceShip，但header.dart检查features.location.ship
+  - 修复：统一页签检查键值为features.location.spaceShip，添加Ship模块初始化日志
+  - 文件：`lib/widgets/header.dart`, `lib/modules/ship.dart`
+  - 结果：页签键值统一，破旧星舰页签正确显示
+
+- **goHome()方法null检查错误修复** - 修复返回村庄时的类型错误
+  - 问题：返回村庄时出现"type 'Null' is not a 'bool' in boolean expression"错误
+  - 根因：goHome()中使用!操作符检查StateManager.get()返回值，但可能为null
+  - 修复：将!sm.get()改为(sm.get() != true)，避免null类型错误
+  - 文件：`lib/modules/world.dart`
+  - 结果：返回村庄时不再出现类型错误，Ship模块正常初始化
+
+- **页签检查键值最终修复** - 确保页签检查使用正确的键值
+  - 问题：Ship模块初始化正常但页签仍不显示
+  - 根因：header.dart中_isShipUnlocked仍检查features.location.ship而非spaceShip
+  - 修复：确保页签检查键值与Ship模块设置的键值一致
+  - 文件：`lib/widgets/header.dart`
+  - 结果：破旧星舰页签正确显示，问题彻底解决
+
+### 📚 文档更新
+- **破旧星舰页签出现机制分析** - 新增详细的原游戏机制分析文档
+  - 新增：`docs/ship_tab_analysis.md` - 完整的破旧星舰页签出现机制分析
+  - 内容：对比原游戏和Flutter项目的实现差异，找出根本问题
+  - 包含：地标生成、场景事件、页签创建、Ship.init()功能的完整分析
+  - 提供：详细的修复方案和验证清单
+
 ## 2025-06-29 - 制造器本地化修复
 
 ### 🐛 Bug修复
