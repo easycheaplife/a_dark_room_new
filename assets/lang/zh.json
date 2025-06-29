@@ -990,7 +990,10 @@
       "notifications": {
         "familiar_wanderer_tech": "熟悉的流浪者机械启动声。终于，真正的工具。",
         "insufficient_resources": "{0}不足"
-      }
+      },
+      "blueprints_title": "蓝图:",
+      "fabricate_title": "制造:",
+      "no_items_available": "没有可制造的物品"
     }
   },
   "combat": {

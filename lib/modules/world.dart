@@ -10,6 +10,7 @@ import 'path.dart';
 import 'events.dart';
 import 'setpieces.dart';
 import 'room.dart';
+import 'fabricator.dart';
 
 /// 世界模块 - 处理世界地图探索
 /// 包括地图生成、移动、战斗、资源消耗等功能
@@ -1440,7 +1441,9 @@ class World extends ChangeNotifier {
       }
       if (state!['executioner'] == true &&
           !sm.get('features.location.fabricator', true)) {
-        // Fabricator.init(); // 暂时注释掉，需要实现Fabricator模块
+        // 初始化制造器模块
+        final fabricator = Fabricator();
+        fabricator.init();
         sm.set('features.location.fabricator', true);
         final localization = Localization();
         NotificationManager().notify(name,

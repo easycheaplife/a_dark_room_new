@@ -2713,10 +2713,19 @@ class Setpieces extends ChangeNotifier {
 
   /// 激活执行者
   void activateExecutioner() {
-    final sm = StateManager();
-    sm.set('game.world.executioner', true);
-    // 执行者完成后也要转换为前哨站
-    World().clearDungeon();
+    final world = World();
+
+    // 设置世界状态 - 参考原游戏 World.state.executioner = true
+    world.state = world.state ?? {};
+    world.state!['executioner'] = true;
+
+    // 标记当前位置为已访问
+    world.markVisited(world.curPos[0], world.curPos[1]);
+
+    // 绘制道路
+    world.drawRoad();
+
+    Logger.info('🔮 执行者事件完成，设置 World.state.executioner = true');
     notifyListeners();
   }
 
