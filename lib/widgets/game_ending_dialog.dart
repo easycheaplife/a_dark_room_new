@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/localization.dart';
 import '../core/engine.dart';
+import '../core/logger.dart';
 import '../modules/score.dart';
 import '../modules/prestige.dart';
 
@@ -231,14 +232,22 @@ class _GameEndingDialogState extends State<GameEndingDialog>
   }
 
   /// 重新开始游戏
-  void _onRestart() {
+  void _onRestart() async {
     Navigator.of(context).pop();
-    
-    // 调用Engine的删除存档方法
-    Engine().deleteSave();
-    
-    if (widget.onRestart != null) {
-      widget.onRestart!();
+
+    Logger.info('🔄 开始重新开始游戏流程');
+
+    try {
+      // 调用Engine的删除存档方法，参考原游戏的deleteSave逻辑
+      await Engine().deleteSave();
+      Logger.info('🔄 存档已清除，游戏已重新初始化');
+
+      // 调用回调（如果有的话）
+      if (widget.onRestart != null) {
+        widget.onRestart!();
+      }
+    } catch (e) {
+      Logger.error('❌ 重新开始游戏失败: $e');
     }
   }
 

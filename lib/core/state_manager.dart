@@ -111,15 +111,16 @@ class StateManager with ChangeNotifier {
 
     // 确保基本配置存在
     if (_state['config'] != null) {
-      final config = _state['config'] as Map<String, dynamic>;
+      final config = _safeMapCast(_state['config']);
       config['lightsOff'] ??= false;
       config['hyperMode'] ??= false;
       config['soundOn'] ??= true;
+      _state['config'] = config;
     }
 
     // 确保游戏状态存在
     if (_state['game'] != null) {
-      final game = _state['game'] as Map<String, dynamic>;
+      final game = _safeMapCast(_state['game']);
       game['fire'] ??= {'value': 0};
       game['temperature'] ??= {'value': 0};
       game['builder'] ??= {'level': -1};
@@ -129,14 +130,17 @@ class StateManager with ChangeNotifier {
       game['thieves'] ??= false;
       game['stolen'] ??= {};
       game['stokeCount'] ??= 0;
+      _state['game'] = game;
     }
 
     // 确保特性状态存在
     if (_state['features'] != null) {
-      final features = _state['features'] as Map<String, dynamic>;
+      final features = _safeMapCast(_state['features']);
       features['location'] ??= {};
-      final location = features['location'] as Map<String, dynamic>;
+      final location = _safeMapCast(features['location']);
       location['room'] ??= true;
+      features['location'] = location;
+      _state['features'] = features;
     }
   }
 
@@ -370,7 +374,7 @@ class StateManager with ChangeNotifier {
         // 检查是否有足够的资源（对于消耗型工人）
         bool canProduce = true;
         if (source != 'thieves' && income['stores'] != null) {
-          final stores = income['stores'] as Map<String, dynamic>;
+          final stores = _safeMapCast(income['stores']);
           for (String store in stores.keys) {
             final cost = stores[store];
             if (cost < 0) {
@@ -390,7 +394,7 @@ class StateManager with ChangeNotifier {
 
         // 如果可以生产，添加/消耗资源
         if (canProduce && income['stores'] != null) {
-          final stores = income['stores'] as Map<String, dynamic>;
+          final stores = _safeMapCast(income['stores']);
           // 使用addM方法，它会自动处理负数检查
           addM('stores', stores, true);
           changed = true;
@@ -480,7 +484,19 @@ class StateManager with ChangeNotifier {
 
       if (jsonState != null && jsonState.isNotEmpty) {
         Logger.info('💾 StateManager: Loading saved game state');
-        final loadedState = jsonDecode(jsonState) as Map<String, dynamic>;
+        final decodedData = jsonDecode(jsonState);
+
+        // 安全的类型转换
+        Map<String, dynamic> loadedState;
+        if (decodedData is Map<String, dynamic>) {
+          loadedState = decodedData;
+        } else if (decodedData is Map) {
+          // 处理LinkedMap等其他Map类型
+          loadedState = Map<String, dynamic>.from(decodedData);
+        } else {
+          Logger.error('❌ StateManager: Invalid data type: ${decodedData.runtimeType}');
+          loadedState = {};
+        }
 
         // 验证加载的状态是否有效
         if (loadedState.isNotEmpty) {
@@ -752,15 +768,16 @@ class StateManager with ChangeNotifier {
 
     // 确保基本配置存在
     if (_state['config'] != null) {
-      final config = _state['config'] as Map<String, dynamic>;
+      final config = _safeMapCast(_state['config']);
       config['lightsOff'] ??= false;
       config['hyperMode'] ??= false;
       config['soundOn'] ??= true;
+      _state['config'] = config;
     }
 
     // 确保游戏状态存在
     if (_state['game'] != null) {
-      final game = _state['game'] as Map<String, dynamic>;
+      final game = _safeMapCast(_state['game']);
       game['fire'] ??= {'value': 0};
       game['temperature'] ??= {'value': 0};
       game['builder'] ??= {'level': -1};
@@ -770,14 +787,17 @@ class StateManager with ChangeNotifier {
       game['thieves'] ??= false;
       game['stolen'] ??= {};
       game['stokeCount'] ??= 0;
+      _state['game'] = game;
     }
 
     // 确保特性状态存在
     if (_state['features'] != null) {
-      final features = _state['features'] as Map<String, dynamic>;
+      final features = _safeMapCast(_state['features']);
       features['location'] ??= {};
-      final location = features['location'] as Map<String, dynamic>;
+      final location = _safeMapCast(features['location']);
       location['room'] ??= true;
+      features['location'] = location;
+      _state['features'] = features;
     }
 
     // 确保stores存在
@@ -811,7 +831,18 @@ class StateManager with ChangeNotifier {
   // 从JSON字符串导入游戏状态 - 兼容原游戏格式
   Future<bool> importGameState(String jsonData) async {
     try {
-      final importedData = jsonDecode(jsonData) as Map<String, dynamic>;
+      final decodedData = jsonDecode(jsonData);
+
+      // 安全的类型转换
+      Map<String, dynamic> importedData;
+      if (decodedData is Map<String, dynamic>) {
+        importedData = decodedData;
+      } else if (decodedData is Map) {
+        importedData = Map<String, dynamic>.from(decodedData);
+      } else {
+        Logger.error('❌ Invalid import data type: ${decodedData.runtimeType}');
+        return false;
+      }
 
       // 验证导入数据的基本结构
       if (!_validateImportData(importedData)) {
@@ -933,6 +964,25 @@ class StateManager with ChangeNotifier {
       if (kDebugMode) {
         Logger.error('❌ Failed to clear game data: $e');
       }
+    }
+  }
+
+  /// 重置StateManager的内存状态（用于重新开始游戏）
+  void reset() {
+    Logger.info('🔄 重置StateManager内存状态');
+    _state = {};
+    Logger.info('🔄 StateManager内存状态已清空');
+  }
+
+  /// 安全的Map类型转换辅助方法
+  Map<String, dynamic> _safeMapCast(dynamic data) {
+    if (data is Map<String, dynamic>) {
+      return data;
+    } else if (data is Map) {
+      return Map<String, dynamic>.from(data);
+    } else {
+      Logger.error('❌ Invalid map data type: ${data.runtimeType}');
+      return {};
     }
   }
 }

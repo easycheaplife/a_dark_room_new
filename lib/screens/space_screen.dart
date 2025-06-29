@@ -6,6 +6,7 @@ import '../modules/ship.dart';
 import '../core/localization.dart';
 import '../core/logger.dart';
 import '../core/state_manager.dart';
+import '../core/engine.dart';
 import '../widgets/game_ending_dialog.dart';
 
 /// 太空界面 - 显示太空飞行和小行星躲避游戏
@@ -46,9 +47,10 @@ class _SpaceScreenState extends State<SpaceScreen> {
   Widget build(BuildContext context) {
     return Consumer3<Space, Localization, StateManager>(
       builder: (context, space, localization, stateManager, child) {
-        // 检查是否需要显示结束对话框
+        // 检查是否需要显示结束对话框或切换页签
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _checkShowEndingDialog(context, stateManager);
+          _checkSwitchToShip(context, stateManager);
         });
 
         return GestureDetector(
@@ -110,9 +112,6 @@ class _SpaceScreenState extends State<SpaceScreen> {
       // 清除标志，避免重复显示
       stateManager.set('game.showEndingDialog', false);
 
-      // 获取Space实例
-      final space = Provider.of<Space>(context, listen: false);
-
       // 显示结束对话框
       showDialog(
         context: context,
@@ -120,12 +119,29 @@ class _SpaceScreenState extends State<SpaceScreen> {
         builder: (context) => GameEndingDialog(
           isVictory: isVictory,
           onRestart: () {
-            // 重置太空模块状态，清空小行星等
-            space.reset();
-            Logger.info('🚀 太空模块已重置，小行星已清空');
+            // 胜利后重新开始：清档重新开始游戏
+            // 不需要额外操作，GameEndingDialog已经处理了deleteSave和重新初始化
+            Logger.info('🚀 胜利后重新开始游戏，已清档重新初始化');
           },
         ),
       );
+    }
+  }
+
+  /// 检查是否需要切换到破旧星舰页签
+  void _checkSwitchToShip(BuildContext context, StateManager stateManager) {
+    final shouldSwitch = stateManager.get('game.switchToShip', false) == true;
+    if (shouldSwitch) {
+      // 清除标志，避免重复切换
+      stateManager.set('game.switchToShip', false);
+
+      // 获取Engine和Ship实例
+      final engine = Provider.of<Engine>(context, listen: false);
+      final ship = Provider.of<Ship>(context, listen: false);
+
+      // 切换到破旧星舰页签
+      engine.travelTo(ship);
+      Logger.info('🚀 已从太空切换到破旧星舰页签');
     }
   }
 

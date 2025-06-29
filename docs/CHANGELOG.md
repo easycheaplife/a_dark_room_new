@@ -30,6 +30,29 @@
   - 文件：`lib/screens/space_screen.dart`, `lib/modules/space.dart`
   - 结果：重新开始后小行星完全清空，游戏状态完整重置，提供全新的游戏体验
 
+- **太空模块结束行为修复** - 修复飞行胜利和失败后的不同处理逻辑
+  - 问题：无论胜利还是失败都显示相同的结束对话框，不符合原游戏逻辑
+  - 预期：胜利显示重新开始选项，失败返回破旧星舰页签继续游戏
+  - 根因：crash方法错误调用showEndingOptions，缺少页签切换逻辑
+  - 修复：失败时设置状态标志切换到破旧星舰页签，胜利时保持显示对话框
+  - 文件：`lib/modules/space.dart`, `lib/screens/space_screen.dart`
+  - 结果：完全符合原游戏逻辑，失败后可继续游戏，胜利后可重新开始
+
+- **太空飞行失败符号清理修复** - 修复多次飞行失败后小行星符号累积的问题
+  - 问题：多次飞行失败后，小行星符号在屏幕上累积，没有正确清理
+  - 根因：onArrival方法中缺少asteroids.clear()调用，每次起飞时没有清空之前的小行星
+  - 修复：在onArrival方法中添加小行星列表清空逻辑，修复crash方法中的日志显示
+  - 文件：`lib/modules/space.dart`
+  - 结果：每次起飞都从干净状态开始，完全解决小行星符号累积问题
+
+- **太空胜利后重新开始功能修复** - 修复胜利后重新开始按钮的清档重新开始功能
+  - 问题：胜利后点击重新开始没有正确清除存档，且没有保留声望数据，StateManager内存状态未重置
+  - 预期：点击重新开始应该清除所有存档数据但保留声望，游戏从头开始（回到小黑屋）
+  - 根因：deleteSave方法清除了所有数据包括声望，StateManager内存状态未重置，onRestart回调错误调用space.reset()
+  - 修复：参考原游戏逻辑保留声望数据，添加StateManager.reset()重置内存状态，添加异步处理，移除错误的space.reset()调用
+  - 文件：`lib/core/engine.dart`, `lib/core/state_manager.dart`, `lib/widgets/game_ending_dialog.dart`, `lib/screens/space_screen.dart`
+  - 结果：胜利后重新开始正确清档并保留声望，完全重置游戏状态，重新初始化到小黑屋，完全符合原游戏逻辑
+
 ### 📚 文档更新
 - **太空模块键盘控制和结算界面居中修复文档** - 新增详细的bug修复记录
   - 新增：`docs/05_bug_fixes/space_keyboard_control_and_dialog_centering_fix.md`

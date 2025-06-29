@@ -13,6 +13,7 @@ import '../modules/room.dart';
 import '../modules/outside.dart';
 import '../modules/path.dart';
 import '../modules/fabricator.dart';
+import '../modules/prestige.dart';
 import '../modules/ship.dart';
 import '../modules/events.dart';
 import 'logger.dart';
@@ -204,13 +205,38 @@ class Engine with ChangeNotifier {
   Future<void> deleteSave({bool noReload = false}) async {
     try {
       final prefs = await SharedPreferences.getInstance();
+
+      // 参考原游戏逻辑：保存声望数据
+      final prestige = Prestige();
+      final prestigeData = prestige.get();
+      Logger.info('🏆 保存声望数据: $prestigeData');
+
+      // 清空所有存档
       await prefs.clear();
       Logger.info('🗑️ Game save state cleared');
+
+      // 重置StateManager的内存状态
+      final sm = StateManager();
+      sm.reset();
+      Logger.info('🔄 StateManager内存状态已重置');
+
+      // 恢复声望数据
+      prestige.set(prestigeData);
+      Logger.info('🏆 声望数据已恢复');
 
       if (!noReload) {
         // 在Web上下文中，这会重新加载页面
         // 在Flutter中，我们将重新初始化游戏
         await init();
+        Logger.info('🔄 游戏已重新初始化');
+
+        // 强制切换到小黑屋页面
+        travelTo(Room());
+        Logger.info('🏠 强制切换到小黑屋页面');
+
+        // 强制通知所有监听器更新UI
+        notifyListeners();
+        Logger.info('🔄 已通知所有监听器更新UI');
       }
     } catch (e) {
       if (kDebugMode) {

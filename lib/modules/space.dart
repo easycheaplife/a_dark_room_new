@@ -89,6 +89,10 @@ class Space extends ChangeNotifier {
     shipX = 350.0;
     shipY = 350.0;
 
+    // 清空小行星列表，确保每次起飞都从干净状态开始
+    asteroids.clear();
+    Logger.info('🚀 起飞时清空小行星列表，开始新的飞行');
+
     startAscent();
 
     // 启动定时器
@@ -343,17 +347,19 @@ class Space extends ChangeNotifier {
     // 播放坠毁音效（暂时注释掉）
     // AudioEngine().playSound(AudioLibrary.crash);
 
-    // 标记游戏失败
-    final sm = StateManager();
-    sm.set('game.completed', true);
-    sm.set('game.won', false);
+    // 清空小行星列表，避免下次起飞时残留
+    final asteroidCount = asteroids.length;
+    asteroids.clear();
+    Logger.info('🚀 坠毁时已清空 $asteroidCount 个小行星');
 
-    // 保存分数（即使失败也要保存）
-    _saveGameScore();
+    Logger.info('🚀 飞船坠毁，返回破旧星舰页签');
 
-    // 显示失败结束界面
+    // 参考原游戏逻辑：失败时返回破旧星舰页签
+    // Engine.activeModule = Ship; Ship.onArrival();
     Timer(Duration(milliseconds: 1000), () {
-      showEndingOptions(false);
+      final sm = StateManager();
+      sm.set('game.switchToShip', true);
+      Logger.info('🚀 已设置切换到破旧星舰页签的标志');
     });
 
     notifyListeners();
