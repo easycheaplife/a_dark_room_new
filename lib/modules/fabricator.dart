@@ -105,7 +105,7 @@ class Fabricator extends ChangeNotifier {
     final sm = StateManager();
     if (sm.get('game.fabricator.seen', true) != true) {
       final localization = Localization();
-      NotificationManager().notify(name, localization.translate('fabricator.notifications.familiar_wanderer_tech'));
+      NotificationManager().notify(name, localization.translate('world.fabricator.notifications.familiar_wanderer_tech'));
       sm.set('game.fabricator.seen', true);
     }
 
@@ -174,7 +174,7 @@ class Fabricator extends ChangeNotifier {
       final have = (sm.get('stores["${entry.key}"]', true) ?? 0) as int;
       if (have < required) {
         final localization = Localization();
-        NotificationManager().notify(name, localization.translate('fabricator.notifications.insufficient_resources', [entry.key]));
+        NotificationManager().notify(name, localization.translate('world.fabricator.notifications.insufficient_resources', [entry.key]));
         return false;
       } else {
         storeMod[entry.key] = have - required;
@@ -192,7 +192,7 @@ class Fabricator extends ChangeNotifier {
 
     // 显示建造消息
     final localization = Localization();
-    final buildMsg = localization.translate('fabricator.descriptions.$itemKey');
+    final buildMsg = localization.translate('world.fabricator.descriptions.$itemKey');
     NotificationManager().notify(name, buildMsg);
 
     // 播放制造音效（暂时注释掉）
@@ -275,19 +275,19 @@ class Fabricator extends ChangeNotifier {
   /// 获取物品类型描述
   String getItemTypeDescription(String type) {
     final localization = Localization();
-    return localization.translate('fabricator.types.$type');
+    return localization.translate('world.fabricator.types.$type');
   }
 
   /// 获取物品名称
   String getItemName(String itemKey) {
     final localization = Localization();
-    return localization.translate('fabricator.items.$itemKey');
+    return localization.translate('world.fabricator.items.$itemKey');
   }
 
   /// 获取物品描述
   String getItemDescription(String itemKey) {
     final localization = Localization();
-    return localization.translate('fabricator.descriptions.$itemKey');
+    return localization.translate('world.fabricator.descriptions.$itemKey');
   }
 
   /// 获取制造成本描述

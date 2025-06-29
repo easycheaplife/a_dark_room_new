@@ -131,6 +131,13 @@
 
 **解决方案**: 将英文文件中的fabricator部分移动到world下面，与中文文件保持一致。
 
+### 第五次修复 - 制造器模块本地化调用
+**问题**: 用户发现制造器界面左上角仍显示键值（如"fabricator.descriptions.cargo_drone"）而不是翻译文本。
+
+**修改文件**: `lib/modules/fabricator.dart`
+
+**根本原因**: 制造器模块中的本地化调用仍使用旧的键值路径。
+
 **修复内容**:
 ```diff
   String translate(String key, [List<dynamic>? args]) {
@@ -234,6 +241,28 @@
    }
 ```
 
+**第五次修复内容**:
+```diff
+// 修复制造器模块中的所有本地化调用
+- localization.translate('fabricator.notifications.familiar_wanderer_tech')
++ localization.translate('world.fabricator.notifications.familiar_wanderer_tech')
+
+- localization.translate('fabricator.notifications.insufficient_resources', [entry.key])
++ localization.translate('world.fabricator.notifications.insufficient_resources', [entry.key])
+
+- localization.translate('fabricator.descriptions.$itemKey')
++ localization.translate('world.fabricator.descriptions.$itemKey')
+
+- localization.translate('fabricator.types.$type')
++ localization.translate('world.fabricator.types.$type')
+
+- localization.translate('fabricator.items.$itemKey')
++ localization.translate('world.fabricator.items.$itemKey')
+
+- localization.translate('fabricator.descriptions.$itemKey')
++ localization.translate('world.fabricator.descriptions.$itemKey')
+```
+
 ## 验证测试
 
 ### 测试步骤
@@ -252,11 +281,14 @@
 
 **第一次修复后**: 仍然显示键值而不是翻译文本
 **第二次修复后**: 仍然显示键值而不是翻译文本
-**第三次修复后**: 中文环境正常，但英文环境可能仍有问题
-**第四次修复后（最终解决）**:
+**第三次修复后**: 界面标题正常，但物品描述仍显示键值
+**第四次修复后**: 中英文本地化文件结构一致，但模块调用仍有问题
+**第五次修复后（最终解决）**:
 - ✅ 中文环境下制造器页面显示"嗡嗡作响的制造器"
 - ✅ 英文环境下制造器页面显示"A Whirring Fabricator"
 - ✅ 制造按钮显示正确的物品名称
+- ✅ 物品描述显示正确的翻译文本
+- ✅ 通知消息显示正确的翻译文本
 - ✅ 其他页面的本地化不受影响
 - ✅ 中英文本地化文件结构完全一致
 
@@ -273,9 +305,10 @@
 - `lib/core/localization.dart` - 修复键值查找顺序
 - `lib/screens/fabricator_screen.dart` - 修复本地化键值路径
 - `assets/lang/en.json` - 修复本地化文件结构不一致
+- `lib/modules/fabricator.dart` - 修复制造器模块本地化调用
 
 ### 相关文件
-- `lib/modules/fabricator.dart` - 制造器模块逻辑
+- 无其他相关文件需要修改
 
 ## 技术细节
 
@@ -313,20 +346,30 @@ fabricator.notifications.{key}      -> 通知消息
 
 ## 总结
 
-经过三次修复，最终解决了制造器页面本地化显示问题：
+经过五次修复，最终彻底解决了制造器页面本地化显示问题：
 
 1. **第一次修复**: 移除了JSON文件中的重复键值定义
 2. **第二次修复**: 优化了本地化系统的键值查找顺序
-3. **第三次修复**: 修正了本地化键值路径（根本原因）
+3. **第三次修复**: 修正了制造器界面的本地化键值路径
+4. **第四次修复**: 统一了中英文本地化文件的结构
+5. **第五次修复**: 修正了制造器模块中的本地化调用
 
-**根本问题**: 代码中使用的键值路径`fabricator.title`与JSON文件中的实际路径`world.fabricator.title`不匹配。
+**根本问题**:
+- 代码中使用的键值路径`fabricator.*`与JSON文件中的实际路径`world.fabricator.*`不匹配
+- 中英文本地化文件结构不一致
+- 多个文件中的本地化调用需要同步修改
 
-**最终解决方案**: 将所有制造器相关的本地化调用从`fabricator.*`修改为`world.fabricator.*`。
+**最终解决方案**:
+- 将英文本地化文件中的fabricator部分移动到world下面
+- 将所有制造器相关的本地化调用从`fabricator.*`修改为`world.fabricator.*`
+- 确保界面文件和模块文件中的调用保持一致
 
 这个修复确保了：
 1. **正确的本地化显示** - 所有文本显示翻译而不是键值
 2. **JSON文件完整性** - 移除了导致解析冲突的重复定义
-3. **键值路径一致性** - 代码调用与JSON结构完全匹配
-4. **一致的用户体验** - 制造器界面与其他界面保持一致的本地化质量
+3. **文件结构一致性** - 中英文本地化文件结构完全一致
+4. **键值路径一致性** - 代码调用与JSON结构完全匹配
+5. **完整的功能覆盖** - 界面、模块、通知等所有功能的本地化都正常工作
+6. **一致的用户体验** - 制造器界面与其他界面保持一致的本地化质量
 
-修复后的制造器界面现在能够正确显示"嗡嗡作响的制造器"标题和所有相关的中文翻译文本。
+修复后的制造器界面现在能够正确显示"嗡嗡作响的制造器"标题、物品名称、物品描述和所有相关的中文翻译文本。
