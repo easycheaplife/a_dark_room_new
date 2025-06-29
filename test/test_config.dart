@@ -1,5 +1,7 @@
+import 'dart:math';
+
 /// A Dark Room 测试配置
-/// 
+///
 /// 定义测试相关的常量和配置
 class TestConfig {
   // 测试超时时间
@@ -143,8 +145,6 @@ class TestUtils {
     };
   }
 }
-
-import 'dart:math';
 
 /// 测试专用日志工具
 ///

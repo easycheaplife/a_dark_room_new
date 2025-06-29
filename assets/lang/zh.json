@@ -309,6 +309,22 @@
     "hull_reinforced": "船体已强化",
     "engine_upgraded": "引擎已升级",
     "lifting_off": "飞船正在起飞...",
+    "status": {
+      "title": "飞船状态",
+      "hull": "船体",
+      "engine": "引擎"
+    },
+    "actions": {
+      "reinforce_hull": "强化船体",
+      "upgrade_engine": "升级引擎",
+      "lift_off": "起飞"
+    },
+    "costs": {
+      "alien_alloy_label": "外星合金"
+    },
+    "requirements": {
+      "hull_needed": "需要强化船体才能起飞"
+    },
     "notifications": {
       "seen_ship": "在碎片云的某处，流浪者舰队在盘旋。在这块岩石上待得太久了。",
       "insufficient_alloy": "外星合金不足",

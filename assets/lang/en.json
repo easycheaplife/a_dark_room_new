@@ -317,6 +317,22 @@
     "hull_reinforced": "hull reinforced",
     "engine_upgraded": "engine upgraded",
     "lifting_off": "ship is lifting off...",
+    "status": {
+      "title": "ship status",
+      "hull": "hull",
+      "engine": "engine"
+    },
+    "actions": {
+      "reinforce_hull": "reinforce hull",
+      "upgrade_engine": "upgrade engine",
+      "lift_off": "lift off"
+    },
+    "costs": {
+      "alien_alloy_label": "alien alloy"
+    },
+    "requirements": {
+      "hull_needed": "hull reinforcement needed to take off"
+    },
     "notifications": {
       "seen_ship": "somewhere above the debris cloud, the wanderer fleet hovers. been on this rock too long.",
       "insufficient_alloy": "not enough alien alloy",
