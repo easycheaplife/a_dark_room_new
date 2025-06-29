@@ -1645,6 +1645,17 @@
       "normal": "normal",
       "hard": "hard",
       "extreme": "extreme"
+    },
+    "ending": {
+      "victory_title": "Victory!",
+      "defeat_title": "Defeat",
+      "current_score": "score for this game: {score}",
+      "total_score": "total score: {score}",
+      "rank": "rank: {rank}",
+      "restart": "restart.",
+      "app_promotion": "expanded story. alternate ending. behind the scenes commentary. get the app.",
+      "ios": "iOS.",
+      "android": "android."
     }
   },
   "logger": {

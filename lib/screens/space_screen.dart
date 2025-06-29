@@ -4,6 +4,8 @@ import '../modules/space.dart';
 import '../modules/ship.dart';
 import '../core/localization.dart';
 import '../core/logger.dart';
+import '../core/state_manager.dart';
+import '../widgets/game_ending_dialog.dart';
 
 /// 太空界面 - 显示太空飞行和小行星躲避游戏
 class SpaceScreen extends StatefulWidget {
@@ -41,30 +43,74 @@ class _SpaceScreenState extends State<SpaceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<Space, Localization>(
-      builder: (context, space, localization, child) {
-        return Container(
-          width: double.infinity,
-          height: double.infinity,
-          color: Colors.black, // 太空背景
-          child: Stack(
-            children: [
-              // 星空背景
-              _buildStarField(space),
-              
-              // 小行星
-              ..._buildAsteroids(space),
-              
-              // 飞船
-              _buildShip(space),
-              
-              // UI界面
-              _buildUI(space, localization),
-            ],
+    return Consumer3<Space, Localization, StateManager>(
+      builder: (context, space, localization, stateManager, child) {
+        // 检查是否需要显示结束对话框
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _checkShowEndingDialog(context, stateManager);
+        });
+
+        return Focus(
+          autofocus: true,
+          onKeyEvent: (node, event) => _handleKeyEvent(space, event),
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.black, // 太空背景
+            child: Stack(
+              children: [
+                // 星空背景
+                _buildStarField(space),
+
+                // 小行星
+                ..._buildAsteroids(space),
+
+                // 飞船
+                _buildShip(space),
+
+                // UI界面
+                _buildUI(space, localization),
+              ],
+            ),
           ),
         );
       },
     );
+  }
+
+  /// 处理键盘事件
+  KeyEventResult _handleKeyEvent(Space space, KeyEvent event) {
+    if (event.runtimeType.toString().contains('Down')) {
+      space.keyDown(event.logicalKey);
+      return KeyEventResult.handled;
+    } else if (event.runtimeType.toString().contains('Up')) {
+      space.keyUp(event.logicalKey);
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
+  /// 检查是否需要显示结束对话框
+  void _checkShowEndingDialog(BuildContext context, StateManager stateManager) {
+    final shouldShowDialog = stateManager.get('game.showEndingDialog', true) == true;
+    if (shouldShowDialog) {
+      final isVictory = stateManager.get('game.endingIsVictory', true) == true;
+
+      // 清除标志，避免重复显示
+      stateManager.set('game.showEndingDialog', false);
+
+      // 显示结束对话框
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => GameEndingDialog(
+          isVictory: isVictory,
+          onRestart: () {
+            // 重新开始游戏的逻辑将在Engine中处理
+          },
+        ),
+      );
+    }
   }
 
   /// 构建星空背景
@@ -85,12 +131,15 @@ class _SpaceScreenState extends State<SpaceScreen> {
         left: asteroid['x'],
         top: asteroid['y'],
         child: SizedBox(
-          width: asteroid['size'],
-          height: asteroid['size'],
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: Colors.grey[400],
-              shape: BoxShape.circle,
+          width: asteroid['width'],
+          height: asteroid['height'],
+          child: Text(
+            asteroid['character'],
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontFamily: 'Times New Roman',
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),

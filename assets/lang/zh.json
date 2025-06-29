@@ -1726,6 +1726,17 @@
       "normal": "普通",
       "hard": "困难",
       "extreme": "极难"
+    },
+    "ending": {
+      "victory_title": "胜利！",
+      "defeat_title": "失败",
+      "current_score": "本局得分: {score}",
+      "total_score": "总分: {score}",
+      "rank": "等级: {rank}",
+      "restart": "重新开始",
+      "app_promotion": "扩展故事。备用结局。幕后评论。获取应用。",
+      "ios": "iOS",
+      "android": "Android"
     }
   },
   "logger": {

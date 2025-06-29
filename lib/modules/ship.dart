@@ -186,7 +186,6 @@ class Ship extends ChangeNotifier {
     // AudioEngine().playSound(AudioLibrary.liftOff);
 
     // 切换到太空模块 - 参考原游戏的Ship.liftOff函数
-    Space().onArrival();
     Engine().travelTo(Space());
 
     notifyListeners();

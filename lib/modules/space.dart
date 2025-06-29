@@ -5,7 +5,10 @@ import 'dart:math';
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/localization.dart';
+import '../core/logger.dart';
 import 'ship.dart';
+import 'score.dart';
+import 'prestige.dart';
 
 /// 太空模块 - 注册太空探索功能
 /// 包括飞船控制、小行星躲避、星空动画等功能
@@ -72,7 +75,7 @@ class Space extends ChangeNotifier {
   }
 
   /// 到达时调用
-  void onArrival() {
+  void onArrival([int transitionDiff = 0]) {
     done = false;
     hull = Ship().getMaxHull();
     altitude = 0;
@@ -296,8 +299,10 @@ class Space extends ChangeNotifier {
       if (altitude % 10 == 0) {
         setTitle();
       }
-      if (altitude > 60) {
+      if (altitude >= 60) {
         timer.cancel();
+        // 达到太空，游戏胜利
+        endGame();
       }
     });
 
@@ -328,16 +333,23 @@ class Space extends ChangeNotifier {
     // 播放坠毁音效（暂时注释掉）
     // AudioEngine().playSound(AudioLibrary.crash);
 
-    // 返回飞船模块
-    Timer(Duration(milliseconds: 300), () {
-      Ship().onArrival();
-      // 设置起飞按钮冷却
+    // 标记游戏失败
+    final sm = StateManager();
+    sm.set('game.completed', true);
+    sm.set('game.won', false);
+
+    // 保存分数（即使失败也要保存）
+    _saveGameScore();
+
+    // 显示失败结束界面
+    Timer(Duration(milliseconds: 1000), () {
+      showEndingOptions(false);
     });
 
     notifyListeners();
   }
 
-  /// 游戏结束
+  /// 游戏结束 - 胜利
   void endGame() {
     if (done) return;
 
@@ -355,19 +367,45 @@ class Space extends ChangeNotifier {
     sm.set('game.completed', true);
     sm.set('game.won', true);
 
-    // 显示结束选项
-    Timer(Duration(seconds: 5), () {
-      showEndingOptions();
+    // 保存分数和声望数据
+    _saveGameScore();
+
+    // 显示胜利动画和结束选项
+    Timer(Duration(seconds: 2), () {
+      showEndingOptions(true);
     });
 
     notifyListeners();
   }
 
+  /// 保存游戏分数
+  void _saveGameScore() {
+    final sm = StateManager();
+    final score = Score();
+    final prestige = Prestige();
+
+    // 计算并保存当前游戏分数
+    final currentScore = score.totalScore();
+    sm.set('game.currentScore', currentScore);
+
+    // 保存到声望系统
+    prestige.save();
+
+    Logger.info('🏆 游戏分数已保存: $currentScore');
+  }
+
   /// 显示结束选项
-  void showEndingOptions() {
-    // 在Flutter中，结束选项将通过对话框显示
+  void showEndingOptions(bool isVictory) {
+    final sm = StateManager();
+    sm.set('game.showEndingDialog', true);
+    sm.set('game.endingIsVictory', isVictory);
+
     final localization = Localization();
-    NotificationManager().notify(name, localization.translate('space.notifications.game_completed'));
+    final message = isVictory
+        ? localization.translate('space.notifications.game_completed')
+        : localization.translate('space.notifications.ship_crashed');
+
+    NotificationManager().notify(name, message);
     notifyListeners();
   }
 
