@@ -1,6 +1,6 @@
 # 游戏机制文档总览
 
-**最后更新**: 2025-06-26
+**最后更新**: 2025-06-29
 
 ## 📋 概述
 
@@ -20,6 +20,15 @@
 - [技能系统实现](skills_system_implementation.md) - 技能获得条件、效果计算、与游戏机制的整合
 - [声望系统指南](prestige_system_guide.md) - 声望系统的完整实现指南
 - [高级游戏指南](advanced_gameplay_guide.md) - 高级游戏策略和技巧
+
+### 资源系统分析 (新增)
+- [熏肉资源分析](cured_meat_analysis.md) - 熏肉的获取来源、用途、战略价值分析
+- [铁资源分析](iron_analysis.md) - 铁的获取来源、用途、重要性分析
+- [移动消耗熏肉机制分析](movement_food_consumption_analysis.md) - 原游戏与Flutter项目的移动消耗机制对比
+
+### 事件触发条件分析 (新增)
+- [制造器解锁条件分析](fabricator_unlock_conditions.md) - 制造器事件的触发条件和解锁机制
+- [宗师事件触发条件分析](master_event_trigger_conditions.md) - 宗师事件的触发条件和实现细节
 
 ## 🎯 系统概览
 

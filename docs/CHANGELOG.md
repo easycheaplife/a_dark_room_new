@@ -6,6 +6,54 @@
 
 本文档记录了 A Dark Room Flutter 移植项目的所有重要更新、修复和优化。所有文档都已添加更新日期，并建立了统一的更新日志系统。
 
+## 2025-06-29 - 文档整理重组
+
+### 📁 文档重组
+- **文档整理重组** - 将最近新增的分析文档移动到合适的分类目录
+  - 移动目标：将根目录下的分析文档移动到 `docs/01_game_mechanics/` 目录
+  - 移动文档：
+    - `cured_meat_analysis.md` → `01_game_mechanics/cured_meat_analysis.md`
+    - `iron_analysis.md` → `01_game_mechanics/iron_analysis.md`
+    - `movement_food_consumption_analysis.md` → `01_game_mechanics/movement_food_consumption_analysis.md`
+    - `fabricator_unlock_conditions.md` → `01_game_mechanics/fabricator_unlock_conditions.md`
+    - `master_event_trigger_conditions.md` → `01_game_mechanics/master_event_trigger_conditions.md`
+  - 更新索引：更新 `01_game_mechanics/README.md` 添加新文档索引
+  - 更新导航：更新 `QUICK_NAVIGATION.md` 添加快速访问链接
+  - 整理计划：创建 `recent_documents_organization_plan.md` 记录整理过程
+  - 效果：文档结构更清晰，便于查找和维护
+
+## 2025-06-29 - 移动消耗熏肉机制分析
+
+### 📚 文档新增
+- **移动消耗熏肉机制分析** - 详细对比原游戏与Flutter项目中的移动消耗熏肉机制
+  - 文档：`docs/movement_food_consumption_analysis.md`
+  - 内容：原游戏机制分析（每2步消耗1个熏肉，恢复8点生命值）
+  - 对比：Flutter项目实现与原游戏的一致性验证
+  - 技能影响：缓慢新陈代谢（消耗减半）、美食家（治疗翻倍）
+  - 结论：我们的实现完全正确，与原游戏机制一致
+  - 改进：增加了错误处理、日志记录、状态同步等功能
+
+## 2025-06-29 - 熏肉资源分析文档
+
+### 📚 文档新增
+- **熏肉资源分析文档** - 详细分析熏肉在游戏中的作用、获取来源和战略价值
+  - 文档：`docs/cured_meat_analysis.md`
+  - 内容：熏肉的获取来源（熏肉师生产、地标探索、战斗掉落）
+  - 用途：探索生存必需品（自动消耗、手动治疗）、工业生产原料（矿工食物）、探索准入条件
+  - 战略分析：不同游戏阶段的重要性和管理策略
+  - 生产链条：猎人→熏肉师→矿工/探索者的完整供应链分析
+  - 代码实现：相关配置和逻辑的详细说明
+
+## 2025-06-29 - 铁资源分析文档
+
+### 📚 文档新增
+- **铁资源分析文档** - 详细分析铁在游戏中的作用、获取来源和战略价值
+  - 文档：`docs/iron_analysis.md`
+  - 内容：铁的获取来源（铁矿工人、贸易站购买、地标探索）
+  - 用途：武器制作（铁剑）、防具制作（铁甲）、建筑建造、钢铁生产
+  - 战略分析：不同游戏阶段的重要性和使用策略
+  - 代码实现：相关配置和逻辑的详细说明
+
 ## 2025-06-29 - 侦察兵地图购买问题修复
 
 ### 🐛 Bug修复
