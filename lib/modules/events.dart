@@ -1517,8 +1517,19 @@ class Events extends ChangeNotifier {
         }
       }
 
-      // 执行onLoad回调
-      if (buttonConfig['onLoad'] != null) {
+      // 执行onChoose回调（优先级高于onLoad）
+      if (buttonConfig['onChoose'] != null) {
+        final onChoose = buttonConfig['onChoose'];
+        if (onChoose is Function) {
+          Logger.info('🔘 执行onChoose回调函数');
+          onChoose();
+        } else if (onChoose is String) {
+          Logger.info('🔘 执行onChoose回调字符串: $onChoose');
+          _handleOnLoadCallback(onChoose);
+        }
+      }
+      // 执行onLoad回调（如果没有onChoose）
+      else if (buttonConfig['onLoad'] != null) {
         final onLoad = buttonConfig['onLoad'];
         if (onLoad is Function) {
           onLoad();

@@ -1703,6 +1703,7 @@
   },
   "space": {
     "module_name": "太空",
+    "hull_remaining": "船体剩余",
     "notifications": {
       "ship_crashed": "飞船坠毁了！",
       "escaped_planet": "成功逃离了星球！",
@@ -1715,6 +1716,10 @@
       "thermosphere": "热层",
       "exosphere": "外逸层",
       "space": "太空"
+    },
+    "controls": {
+      "title": "控制",
+      "wasd": "使用WASD键或方向键移动飞船"
     },
     "difficulty": {
       "easy": "轻松",

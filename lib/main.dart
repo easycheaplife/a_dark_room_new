@@ -20,6 +20,7 @@ import 'modules/path.dart';
 import 'modules/world.dart';
 import 'modules/fabricator.dart';
 import 'modules/ship.dart';
+import 'modules/space.dart';
 import 'modules/events.dart';
 import 'screens/room_screen.dart';
 import 'screens/outside_screen.dart';
@@ -27,6 +28,7 @@ import 'screens/path_screen.dart';
 import 'screens/world_screen.dart';
 import 'screens/fabricator_screen.dart';
 import 'screens/ship_screen.dart';
+import 'screens/space_screen.dart';
 import 'screens/combat_screen.dart';
 import 'screens/events_screen.dart';
 
@@ -60,6 +62,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => World()),
         ChangeNotifierProvider(create: (_) => Fabricator()),
         ChangeNotifierProvider(create: (_) => Ship()),
+        ChangeNotifierProvider(create: (_) => Space()),
         ChangeNotifierProvider(create: (_) => Events()),
       ],
       child: Consumer<Localization>(
@@ -332,6 +335,8 @@ class _GameScreenState extends State<GameScreen> {
       screen = const FabricatorScreen();
     } else if (activeModule is Ship) {
       screen = const ShipScreen();
+    } else if (activeModule is Space) {
+      screen = const SpaceScreen();
     } else {
       // 未知模块类型，显示模块名称
       final moduleName = activeModule.name ?? 'Unknown';

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/localization.dart';
+import '../core/engine.dart';
 import 'events.dart';
+import 'space.dart';
 
 /// 飞船模块 - 注册星际飞船功能
 /// 包括船体强化、引擎升级、起飞等功能
@@ -177,20 +179,15 @@ class Ship extends ChangeNotifier {
 
   /// 起飞
   void liftOff() {
-    // 在Flutter中，起飞动画将通过UI组件处理
     final localization = Localization();
     NotificationManager().notify(name, localization.translate('ship.lifting_off'));
-
-    // 切换到太空模块（暂时注释掉）
-    // Space().onArrival();
-    // Engine().activeModule = Space();
 
     // 播放起飞音效（暂时注释掉）
     // AudioEngine().playSound(AudioLibrary.liftOff);
 
-    // 标记游戏完成
-    final sm = StateManager();
-    sm.set('game.completed', true);
+    // 切换到太空模块 - 参考原游戏的Ship.liftOff函数
+    Space().onArrival();
+    Engine().travelTo(Space());
 
     notifyListeners();
   }

@@ -1622,6 +1622,7 @@
   },
   "space": {
     "module_name": "space",
+    "hull_remaining": "hull remaining",
     "notifications": {
       "ship_crashed": "the ship has crashed!",
       "escaped_planet": "successfully escaped the planet!",
@@ -1634,6 +1635,10 @@
       "thermosphere": "thermosphere",
       "exosphere": "exosphere",
       "space": "space"
+    },
+    "controls": {
+      "title": "controls",
+      "wasd": "use WASD or arrow keys to move the ship"
     },
     "difficulty": {
       "easy": "easy",
