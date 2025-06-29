@@ -13,6 +13,7 @@
 - [玩家进度系统](01_game_mechanics/player_progression.md) - 健康、水容量、背包成长
 - [前哨站系统](01_game_mechanics/outpost_system.md) - 前哨站生成和管理
 - [事件系统](01_game_mechanics/events_system.md) - 所有事件类型和处理
+- [制造器物品效果](01_game_mechanics/fabricator_items_effects.md) - 制造器物品详细效果和策略
 - [熏肉资源分析](01_game_mechanics/cured_meat_analysis.md) - 熏肉获取和使用机制
 - [铁资源分析](01_game_mechanics/iron_analysis.md) - 铁的获取来源和用途
 - [移动消耗机制](01_game_mechanics/movement_food_consumption_analysis.md) - 移动时的食物消耗
@@ -96,6 +97,15 @@
 | 健康 | 10 | 85 | 护甲升级 |
 | 水容量 | 10 | 110 | 容器升级 |
 | 背包 | 10 | 110 | 载具升级 |
+
+### 制造器物品
+| 物品 | 类型 | 效果 | 成本 |
+|------|------|------|------|
+| 流体回收器 | 升级 | 水容量+100 | 外星合金2 |
+| 货运无人机 | 升级 | 背包+100 | 外星合金2 |
+| 动能护甲 | 升级 | 生命值+75 | 外星合金2 |
+| 能量刃 | 武器 | 伤害10 | 外星合金1 |
+| 注射器 | 工具 | 恢复30生命值 | 外星合金1 |
 
 ### 火把需求
 | 地形 | 需要火把 | 数量 |

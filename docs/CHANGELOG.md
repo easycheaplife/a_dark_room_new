@@ -17,6 +17,17 @@
   - 测试：应用启动正常，本地化系统正确初始化
   - 结果：制造器界面现在正确显示中文翻译文本，提升用户体验
 
+### 📚 文档更新
+- **制造器物品效果详解** - 新增制造器物品完整效果说明文档
+  - 新增：`docs/01_game_mechanics/fabricator_items_effects.md`
+  - 内容：详细说明每个制造器物品的具体效果、数值和使用策略
+  - 包含：武器类、升级类、工具类物品的完整信息
+  - 提供：制作优先级建议和使用策略指南
+- **游戏机制文档更新** - 更新多个相关文档
+  - 更新：`docs/GAME_MECHANICS_REFERENCE_CARD.md` - 添加制造器物品速查表
+  - 更新：`docs/01_game_mechanics/advanced_gameplay_guide.md` - 添加制造器策略
+  - 更新：`docs/01_game_mechanics/player_progression.md` - 修正制造器物品获得阶段
+
 ## 2025-06-29 - 制造器界面布局优化
 
 ### 🎨 界面优化
