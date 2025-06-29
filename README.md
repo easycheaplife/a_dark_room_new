@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Web%20%7C%20Mobile%20%7C%20Desktop-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-Open%20Source-green.svg)
 
-**最后更新**: 2025-06-29 (文档整理重组)
+**最后更新**: 2025-06-29 (事件触发频率问题修复)
 
 ## 📋 目录
 
@@ -58,6 +58,27 @@ flutter run -d android    # Android版
 flutter run -d ios        # iOS版
 flutter run -d macos      # macOS版
 flutter run -d linux      # Linux版
+
+# 5. 运行测试
+flutter test test/all_tests.dart
+```
+
+### 🧪 测试系统
+```bash
+# 方法一：使用Shell脚本（推荐）
+./test/run_tests.sh all              # 运行所有测试
+./test/run_tests.sh events           # 事件系统测试
+./test/run_tests.sh map              # 地图系统测试
+./test/run_tests.sh backpack         # 背包系统测试
+./test/run_tests.sh single test_name.dart  # 运行单个测试
+
+# 方法二：使用Dart测试运行器
+dart test/test_runner.dart all       # 运行所有测试
+dart test/test_runner.dart events    # 事件系统测试
+dart test/test_runner.dart report    # 生成测试报告
+
+# 方法三：直接使用Flutter测试
+flutter test test/all_tests.dart     # 运行所有测试
 ```
 
 ### 🎮 立即体验

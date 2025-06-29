@@ -783,10 +783,18 @@ class Events extends ChangeNotifier {
   }
 
   /// 安排下一个事件
-  void scheduleNextEvent() {
+  void scheduleNextEvent([double scale = 1.0]) {
     final random = Random();
-    final delay = random.nextInt(eventTimeRange[1] - eventTimeRange[0] + 1) +
+    var delay = random.nextInt(eventTimeRange[1] - eventTimeRange[0] + 1) +
         eventTimeRange[0];
+
+    // 应用时间缩放（用于重试机制）
+    if (scale != 1.0) {
+      delay = (delay * scale).round();
+      Logger.info('🎭 应用时间缩放 ${scale}x，下次事件安排在 ${delay} 分钟后');
+    } else {
+      Logger.info('🎭 下次事件安排在 ${delay} 分钟后');
+    }
 
     nextEventTimer = VisibilityManager().createTimer(Duration(minutes: delay),
         () => triggerEvent(), 'Events.nextEventTimer');
@@ -794,65 +802,46 @@ class Events extends ChangeNotifier {
 
   /// 触发事件
   void triggerEvent() {
-    // 根据当前场景筛选合适的事件
-    final currentModule = Engine().activeModule?.name ?? 'Room';
-    Logger.info('🎭 当前模块: $currentModule');
-
-    List<Map<String, dynamic>> contextEvents = [];
-
-    // 根据当前场景选择合适的事件类型
-    switch (currentModule) {
-      case 'Room':
-        // 房间中只触发房间事件和全局事件，不触发战斗事件
-        contextEvents = [
-          ...RoomEvents.events,
-          ...GlobalEvents.events,
-        ];
-        break;
-      case 'Outside':
-      case '外部':
-        // 外部场景触发外部事件和全局事件
-        contextEvents = [
-          ...OutsideEvents.events,
-          ...GlobalEvents.events,
-        ];
-        break;
-      case 'World':
-      case '世界':
-        // 世界地图中触发战斗事件（encounters）
-        contextEvents = [
-          ...encounters,
-        ];
-        break;
-      default:
-        // 其他场景使用全局事件
-        contextEvents = [
-          ...GlobalEvents.events,
-        ];
-        break;
+    // 如果当前有活动事件，跳过触发
+    if (activeEvent() != null) {
+      Logger.info('🎭 当前有活动事件，跳过触发');
+      scheduleNextEvent();
+      return;
     }
 
-    if (contextEvents.isNotEmpty) {
-      // 筛选可用的事件
-      final availableEvents = <Map<String, dynamic>>[];
-      for (final event in contextEvents) {
-        if (isEventAvailable(event)) {
-          availableEvents.add(event);
-        }
-      }
+    // 使用全局事件池，参考原游戏逻辑
+    final allEvents = [
+      ...GlobalEvents.events,
+      ...RoomEvents.events,
+      ...OutsideEvents.events,
+      // 世界事件在世界模块中单独处理
+    ];
 
-      Logger.info(
-          '🎭 $currentModule场景可用事件数量: ${availableEvents.length}/${contextEvents.length}');
+    Logger.info('🎭 开始事件触发检查，总事件数量: ${allEvents.length}');
 
-      if (availableEvents.isNotEmpty) {
-        final random = Random();
-        final event = availableEvents[random.nextInt(availableEvents.length)];
-        Logger.info('🎭 触发事件: ${event['title']}');
-        startEvent(event);
-      } else {
-        Logger.info('🎭 $currentModule场景没有可用的事件');
+    // 筛选可用的事件
+    final availableEvents = <Map<String, dynamic>>[];
+    for (final event in allEvents) {
+      if (isEventAvailable(event)) {
+        availableEvents.add(event);
       }
     }
+
+    Logger.info('🎭 可用事件数量: ${availableEvents.length}/${allEvents.length}');
+
+    if (availableEvents.isEmpty) {
+      // 实现原游戏的重试机制：无可用事件时0.5倍时间后重试
+      Logger.info('🎭 没有可用事件，将在较短时间后重试');
+      scheduleNextEvent(0.5);
+      return;
+    }
+
+    // 随机选择一个可用事件
+    final random = Random();
+    final event = availableEvents[random.nextInt(availableEvents.length)];
+    Logger.info('🎭 触发事件: ${event['title']}');
+
+    startEvent(event);
     scheduleNextEvent();
   }
 
