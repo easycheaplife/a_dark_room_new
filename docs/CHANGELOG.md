@@ -1,10 +1,38 @@
 # A Dark Room Flutter 项目更新日志
 
-**最后更新**: 2025-06-28
+**最后更新**: 2025-06-29
 
 ## 概述
 
 本文档记录了 A Dark Room Flutter 移植项目的所有重要更新、修复和优化。所有文档都已添加更新日期，并建立了统一的更新日志系统。
+
+## 2025-06-29 - A Whirring Fabricator 开启条件分析
+
+### 📋 功能分析
+- **A Whirring Fabricator 开启条件分析** - 详细分析破旧星舰的开启条件
+  - 问题：用户询问图片中"A Whirring Fabricator"（破旧星舰）的开启条件
+  - 分析：通过原游戏代码深度分析，确定开启条件
+  - 前置条件：必须先开启 "An Old Starship"
+    - 需要在世界地图上找到并访问 "A Crashed Ship"（坠毁的星舰）地标
+    - 坠毁星舰位置：距离村庄半径28格的固定位置
+  - 核心条件：必须完成 "A Ravaged Battleship" 事件
+    - 需要在世界地图上找到并访问 "A Ravaged Battleship"（破损战舰）地标
+    - 破损战舰位置：距离村庄半径28格的固定位置（与坠毁星舰不同位置）
+    - 必须完成整个破损战舰的探索事件链
+  - 开启流程：
+    1. 探索世界地图，找到距离村庄28格的坠毁星舰
+    2. 访问坠毁星舰，开启星舰功能
+    3. 继续探索世界地图，找到距离村庄28格的破损战舰
+    4. 完成破损战舰的完整探索事件链
+    5. 在事件结束时获得"奇怪装置"，自动开启制造器功能
+  - 相关文件：
+    - `adarkroom/script/world.js` - 地标定义和开启逻辑
+    - `adarkroom/script/events/setpieces.js` - 坠毁星舰事件
+    - `adarkroom/script/events/executioner.js` - 破损战舰事件
+    - `adarkroom/script/fabricator.js` - 制造器功能实现
+    - `adarkroom/script/ship.js` - 星舰功能实现
+  - 文档：创建了详细的开启条件分析文档 `docs/fabricator_unlock_conditions.md`
+  - 更新：同步更新了 README.md 文档数量统计
 
 ## 2025-06-28 - 病人事件药品按钮修复 & 世界地图退出问题调查
 
