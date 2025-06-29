@@ -15,7 +15,7 @@ class RoomEventsExtended {
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final wood = _sm.get('stores.wood', true) ?? 0;
-          return fire > 0 && wood > 0;
+          return wood > 0;
         },
         'scenes': {
           'start': {
@@ -89,7 +89,7 @@ class RoomEventsExtended {
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final fur = _sm.get('stores.fur', true) ?? 0;
-          return fire > 0 && fur > 0;
+          return fur > 0;
         },
         'scenes': {
           'start': {
@@ -155,7 +155,7 @@ class RoomEventsExtended {
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final huts = _sm.get('game.buildings.hut', true) ?? 0;
-          return fire > 0 && huts >= 5 && huts < 20;
+          return huts >= 5 && huts < 20;
         },
         'scenes': {
           'start': {
@@ -251,7 +251,7 @@ class RoomEventsExtended {
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final wood = _sm.get('stores.wood', true) ?? 0;
-          return fire > 0 && wood > 0;
+          return wood > 0;
         },
         'scenes': {
           'start': {
@@ -357,7 +357,7 @@ class RoomEventsExtended {
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final fur = _sm.get('stores.fur', true) ?? 0;
-          return fire > 0 && fur > 0;
+          return fur > 0;
         },
         'scenes': {
           'start': {
@@ -461,10 +461,11 @@ class RoomEventsExtended {
           return localization.translate('events.room_events.scout.title');
         }(),
         'isAvailable': () {
-          final fire = _sm.get('game.fire.value', true) ?? 0;
+          // 原游戏条件：Engine.activeModule == Room && $SM.get('features.location.world')
+          // 只需要世界功能解锁即可，不需要火焰条件
           final worldUnlocked =
               _sm.get('features.location.world', true) ?? false;
-          return fire > 0 && worldUnlocked;
+          return worldUnlocked;
         },
         'scenes': {
           'start': {
@@ -676,7 +677,7 @@ class RoomEventsExtended {
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final medicine = _sm.get('stores.medicine', true) ?? 0;
-          return fire > 0 && medicine > 0;
+          return medicine > 0;
         },
         'scenes': {
           'start': {
@@ -823,7 +824,7 @@ class RoomEventsExtended {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final hasBoxer = _sm.get('character.perks.boxer', true) ?? false;
           final population = _sm.get('game.population', true) ?? 0;
-          return fire > 0 && hasBoxer && population >= 50;
+          return hasBoxer && population >= 50;
         },
         'scenes': {
           'start': {
@@ -932,7 +933,7 @@ class RoomEventsExtended {
           final worldUnlocked =
               _sm.get('features.location.world', true) ?? false;
           final water = _sm.get('stores.water', true) ?? 0;
-          return fire > 0 && worldUnlocked && water >= 100;
+          return worldUnlocked && water >= 100;
         },
         'scenes': {
           'start': {
