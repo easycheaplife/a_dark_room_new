@@ -16,6 +16,11 @@
 - **影响**: 用户体验不佳，界面显示不够美观
 - **严重程度**: 中 - 影响用户体验
 
+### 问题3: 飞行失败后重新开始，需要清空符号
+- **现象**: 点击重新开始按钮后，小行星符号没有被清空，仍然显示在屏幕上
+- **影响**: 新游戏开始时界面混乱，影响游戏体验
+- **严重程度**: 高 - 影响游戏功能
+
 ## 🔍 问题分析
 
 ### 键盘控制问题根因分析
@@ -47,6 +52,23 @@
 
 2. **布局结构问题**
    - 缺少明确的居中容器
+
+### 重新开始清空符号问题分析
+
+1. **重新开始回调为空**
+   ```dart
+   // 原有问题代码
+   onRestart: () {
+     // 重新开始游戏的逻辑将在Engine中处理
+   },
+   ```
+   - SpaceScreen中的onRestart回调没有实际逻辑
+   - 没有调用Space模块的reset()方法
+
+2. **状态重置不完整**
+   - Space模块虽然有reset()方法，但没有被调用
+   - 小行星列表没有被清空
+   - 游戏循环没有重新启动
 
 ## 🔧 修复方案
 
@@ -131,6 +153,73 @@ return Material(
 );
 ```
 
+### 3. 重新开始清空符号修复
+
+#### 3.1 修复SpaceScreen的onRestart回调
+```dart
+// 获取Space实例
+final space = Provider.of<Space>(context, listen: false);
+
+// 显示结束对话框
+showDialog(
+  context: context,
+  barrierDismissible: false,
+  builder: (context) => GameEndingDialog(
+    isVictory: isVictory,
+    onRestart: () {
+      // 重置太空模块状态，清空小行星等
+      space.reset();
+      Logger.info('🚀 太空模块已重置，小行星已清空');
+    },
+  ),
+);
+```
+
+#### 3.2 完善Space模块的reset方法
+```dart
+/// 重置太空状态（用于新游戏）
+void reset() {
+  Logger.info('🚀 开始重置太空模块状态');
+
+  // 停止所有定时器
+  _clearTimers();
+
+  // 重置所有状态
+  done = false;
+  shipX = 350.0;
+  shipY = 350.0;
+  hull = 0;
+  altitude = 0;
+  lastMove = null;
+  up = down = left = right = false;
+
+  // 清空小行星列表
+  asteroids.clear();
+  Logger.info('🚀 已清空 ${asteroids.length} 个小行星');
+
+  // 重新启动游戏循环
+  _startGameLoop();
+
+  Logger.info('🚀 太空模块重置完成');
+  notifyListeners();
+}
+```
+
+#### 3.3 添加游戏循环重启方法
+```dart
+/// 启动游戏循环
+void _startGameLoop() {
+  // 重新启动基本定时器（参考原始的onArrival方法）
+  shipTimer = Timer.periodic(const Duration(milliseconds: 33), (_) => moveShip());
+  volumeTimer = Timer.periodic(const Duration(seconds: 1), (_) => lowerVolume());
+
+  // 启动上升过程
+  startAscent();
+
+  Logger.info('🚀 游戏循环定时器已重新启动');
+}
+```
+
 ## 📝 修复实施
 
 ### 修改的文件
@@ -149,7 +238,9 @@ return Material(
 3. **`lib/modules/space.dart`**
    - 在keyDown方法中添加详细调试日志
    - 在moveShip方法中添加移动和位置更新日志
-   - 帮助诊断键盘控制问题
+   - 完善reset方法，确保完整重置所有状态
+   - 添加_startGameLoop方法，重新启动游戏循环
+   - 帮助诊断键盘控制问题和重新开始功能
 
 ### 技术改进点
 
@@ -157,6 +248,7 @@ return Material(
 2. **焦点管理**: 添加用户交互来确保Focus获得焦点
 3. **调试能力**: 添加详细日志帮助问题诊断
 4. **用户体验**: 改进对话框居中显示效果
+5. **状态管理**: 完整的游戏状态重置和循环重启
 
 ## 🧪 测试验证
 
@@ -177,6 +269,22 @@ return Material(
 4. **日志验证**
    - 检查控制台日志，确认键盘事件被正确接收和处理
 
+### 重新开始功能测试
+1. **状态重置测试**
+   - 游戏失败后点击重新开始，小行星应完全清空
+   - 飞船位置应重置到中心位置
+   - 高度和船体血量应重置为初始值
+
+2. **游戏循环重启测试**
+   - 重新开始后飞船应能正常移动
+   - 新的小行星应正常生成
+   - 高度计时器应重新开始计算
+
+3. **日志验证**
+   - 检查控制台日志，确认reset方法被正确调用
+   - 确认小行星列表被清空
+   - 确认游戏循环定时器重新启动
+
 ### 结算界面测试
 1. **居中显示测试**
    - 胜利结算界面应在屏幕正中央显示
@@ -195,7 +303,8 @@ return Material(
 1. **键盘控制**: 100%可靠的键盘响应
 2. **用户体验**: 流畅的飞船控制体验
 3. **界面美观**: 完美居中的结算界面
-4. **调试能力**: 详细的日志信息便于后续维护
+4. **重新开始**: 完整的状态重置和游戏循环重启
+5. **调试能力**: 详细的日志信息便于后续维护
 
 ### 风险评估
 - **低风险**: 修复使用标准Flutter API，不涉及复杂逻辑

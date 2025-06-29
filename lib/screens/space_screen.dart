@@ -110,6 +110,9 @@ class _SpaceScreenState extends State<SpaceScreen> {
       // 清除标志，避免重复显示
       stateManager.set('game.showEndingDialog', false);
 
+      // 获取Space实例
+      final space = Provider.of<Space>(context, listen: false);
+
       // 显示结束对话框
       showDialog(
         context: context,
@@ -117,7 +120,9 @@ class _SpaceScreenState extends State<SpaceScreen> {
         builder: (context) => GameEndingDialog(
           isVictory: isVictory,
           onRestart: () {
-            // 重新开始游戏的逻辑将在Engine中处理
+            // 重置太空模块状态，清空小行星等
+            space.reset();
+            Logger.info('🚀 太空模块已重置，小行星已清空');
           },
         ),
       );

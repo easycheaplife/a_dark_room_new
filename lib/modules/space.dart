@@ -548,6 +548,12 @@ class Space extends ChangeNotifier {
 
   /// 重置太空状态（用于新游戏）
   void reset() {
+    Logger.info('🚀 开始重置太空模块状态');
+
+    // 停止所有定时器
+    _clearTimers();
+
+    // 重置所有状态
     done = false;
     shipX = 350.0;
     shipY = 350.0;
@@ -555,10 +561,28 @@ class Space extends ChangeNotifier {
     altitude = 0;
     lastMove = null;
     up = down = left = right = false;
-    asteroids.clear();
-    _clearTimers();
 
+    // 清空小行星列表
+    asteroids.clear();
+    Logger.info('🚀 已清空 ${asteroids.length} 个小行星');
+
+    // 重新启动游戏循环
+    _startGameLoop();
+
+    Logger.info('🚀 太空模块重置完成');
     notifyListeners();
+  }
+
+  /// 启动游戏循环
+  void _startGameLoop() {
+    // 重新启动基本定时器（参考原始的onArrival方法）
+    shipTimer = Timer.periodic(const Duration(milliseconds: 33), (_) => moveShip());
+    volumeTimer = Timer.periodic(const Duration(seconds: 1), (_) => lowerVolume());
+
+    // 启动上升过程
+    startAscent();
+
+    Logger.info('🚀 游戏循环定时器已重新启动');
   }
 
   /// 手动控制飞船（用于触摸控制）

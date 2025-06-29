@@ -23,6 +23,13 @@
   - 文件：`lib/widgets/game_ending_dialog.dart`
   - 结果：结算界面现在完美居中显示，背景效果更佳
 
+- **重新开始清空符号修复** - 修复飞行失败后重新开始时小行星符号没有清空的问题
+  - 问题：点击重新开始按钮后，小行星符号仍然显示在屏幕上，影响新游戏体验
+  - 根因：SpaceScreen的onRestart回调为空，没有调用Space模块的reset方法
+  - 修复：在onRestart回调中调用space.reset()，完善reset方法重新启动游戏循环
+  - 文件：`lib/screens/space_screen.dart`, `lib/modules/space.dart`
+  - 结果：重新开始后小行星完全清空，游戏状态完整重置，提供全新的游戏体验
+
 ### 📚 文档更新
 - **太空模块键盘控制和结算界面居中修复文档** - 新增详细的bug修复记录
   - 新增：`docs/05_bug_fixes/space_keyboard_control_and_dialog_centering_fix.md`
