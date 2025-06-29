@@ -38,6 +38,17 @@
   - 更新：同步更新了 README.md 制造器完成度为100%
 
 ### 🐛 Bug修复
+- **宗师事件触发条件修复** - 修复宗师事件从未触发的问题
+  - 问题：用户反映宗师事件从未触发过，经分析发现触发条件与原游戏不一致
+  - 原因：Flutter项目添加了额外的火焰检查条件，而原游戏只需要世界地图已解锁
+  - 原游戏条件：`Engine.activeModule == Room && $SM.get('features.location.world')`
+  - 错误条件：`fire > 0 && worldUnlocked`（多了火焰检查）
+  - 修复：移除多余的火焰检查，只保留世界地图解锁检查
+  - 文件：`lib/events/room_events_extended.dart` 第543-548行
+  - 效果：宗师事件现在能够在世界地图解锁后正常触发
+  - 调试：添加日志"🧙 宗师事件检查 - 世界已解锁: $worldUnlocked"
+  - 影响：玩家现在可以正常获得宗师提供的技能（闪避、精准、力量）
+  - 文档：创建详细修复记录 `docs/05_bug_fixes/master_event_trigger_fix.md`
 - **制造器测试网络连接问题** - 识别并记录测试环境网络连接问题
   - 问题：运行 `flutter test test/fabricator_test.dart` 时出现网络连接错误
   - 原因：Flutter测试环境尝试建立网络连接但连接失败

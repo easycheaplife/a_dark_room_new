@@ -541,10 +541,10 @@ class RoomEventsExtended {
           return localization.translate('events.room_events.master.title');
         }(),
         'isAvailable': () {
-          final fire = _sm.get('game.fire.value', true) ?? 0;
           final worldUnlocked =
               _sm.get('features.location.world', true) ?? false;
-          return fire > 0 && worldUnlocked;
+          Logger.info('🧙 宗师事件检查 - 世界已解锁: $worldUnlocked');
+          return worldUnlocked; // 与原游戏一致，只需要世界已解锁
         },
         'scenes': {
           'start': {
