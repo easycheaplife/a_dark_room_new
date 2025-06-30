@@ -1002,6 +1002,9 @@ class Room with ChangeNotifier {
       AudioEngine().playSound(craftable['audio']);
     }
 
+    // 通知UI更新 - 修复升级物品后需要刷新页面的问题
+    notifyListeners();
+
     return true;
   }
 

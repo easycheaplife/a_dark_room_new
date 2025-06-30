@@ -6,7 +6,17 @@
 
 本文档记录了 A Dark Room Flutter 移植项目的所有重要更新、修复和优化。所有文档都已添加更新日期，并建立了统一的更新日志系统。
 
-## 2025-06-30 - 游戏时间配置集中化管理
+## 2025-06-30 - UI更新问题修复和游戏配置集中化
+
+### 🐛 Bug修复
+- **UI实时更新问题** - 修复升级物品和战利品获取后UI不实时更新的问题
+  - 问题1：升级水容器和背包后需要刷新页面才生效
+  - 问题2：战斗结算时获取的物品在背包不会实时生效
+  - 根因：Room.build()方法和Events.getLoot()方法缺少notifyListeners()调用
+  - 修复：在Room.build()末尾添加notifyListeners()，在Events.getLoot()中添加path.notifyListeners()
+  - 文件：`lib/modules/room.dart`, `lib/modules/events.dart`
+  - 文档：`docs/05_bug_fixes/ui_update_issues.md`
+  - 结果：升级物品和获取战利品后UI立即更新，用户体验显著改善
 
 ### 🔧 优化改进
 - **游戏配置集中化** - 创建统一的游戏配置文件管理所有时间参数

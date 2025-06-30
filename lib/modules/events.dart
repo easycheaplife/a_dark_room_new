@@ -673,7 +673,8 @@ class Events extends ChangeNotifier {
 
     // 检查战斗是否已经结束
     if (fought || won || World().dead) {
-      Logger.info('⚔️ 战斗已结束或玩家已死亡，跳过伤害处理: fought=$fought, won=$won, dead=${World().dead}');
+      Logger.info(
+          '⚔️ 战斗已结束或玩家已死亡，跳过伤害处理: fought=$fought, won=$won, dead=${World().dead}');
       return;
     }
 
@@ -729,7 +730,8 @@ class Events extends ChangeNotifier {
   bool checkPlayerDeath() {
     final currentHealth = World().health;
     final isDead = World().dead;
-    Logger.info('💀 checkPlayerDeath() 被调用 - 当前血量: $currentHealth, 已死亡: $isDead');
+    Logger.info(
+        '💀 checkPlayerDeath() 被调用 - 当前血量: $currentHealth, 已死亡: $isDead');
     Logger.info('💀 checkPlayerDeath() 调用栈: ${StackTrace.current}');
 
     // 如果已经死亡，避免重复处理
@@ -1144,8 +1146,8 @@ class Events extends ChangeNotifier {
       final sm = StateManager();
       sm.set('outfit["$itemName"]', path.outfit[itemName]);
 
-      // 注意：原游戏在拾取战利品时不会调用updateOutfitting
-      // updateOutfitting只在增减补给、到达路径界面、收入更新时调用
+      // 通知Path模块更新UI - 修复战利品获取后背包不实时更新的问题
+      path.notifyListeners();
 
       // 显示获取通知
       final localization = Localization();
