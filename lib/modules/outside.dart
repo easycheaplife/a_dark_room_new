@@ -272,26 +272,29 @@ class Outside extends ChangeNotifier {
     return num;
   }
 
-  /// 增加工人
+  /// 增加工人 - 参考原游戏逻辑，动态计算实际增加数量
   void increaseWorker(String worker, int amount) {
     final sm = StateManager();
-    if (getNumGatherers() > 0) {
-      final increaseAmt = min(getNumGatherers(), amount);
-      // Engine().log('增加 $worker $increaseAmt'); // 暂时注释掉
+    final availableGatherers = getNumGatherers();
+    if (availableGatherers > 0) {
+      final increaseAmt = min(availableGatherers, amount);
+      Logger.info(
+          '👷 增加 $worker: 请求=$amount, 可用采集者=$availableGatherers, 实际增加=$increaseAmt');
       sm.add('game.workers["$worker"]', increaseAmt);
       updateVillageIncome(); // 更新收入
       notifyListeners();
     }
   }
 
-  /// 减少工人
+  /// 减少工人 - 参考原游戏逻辑，动态计算实际减少数量
   void decreaseWorker(String worker, int amount) {
     final sm = StateManager();
     final currentWorkers =
         (sm.get('game.workers["$worker"]', true) ?? 0) as int;
     if (currentWorkers > 0) {
       final decreaseAmt = min<int>(currentWorkers, amount);
-      // Engine().log('减少 $worker $decreaseAmt'); // 暂时注释掉
+      Logger.info(
+          '👷 减少 $worker: 请求=$amount, 当前工人=$currentWorkers, 实际减少=$decreaseAmt');
       sm.add('game.workers["$worker"]', -decreaseAmt);
       updateVillageIncome(); // 更新收入
       notifyListeners();

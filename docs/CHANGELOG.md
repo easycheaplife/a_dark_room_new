@@ -30,6 +30,19 @@
   - 文档：`docs/06_optimizations/game_config_centralization.md`, `docs/game_timing_analysis.md`
   - 结果：所有时间配置与原游戏完全一致，代码维护性大幅提升
 
+- **按钮逻辑改进** - 改进工人管理和背包物品调整的上调下调按钮逻辑
+  - 问题：上调下调按钮只是简单的数量检查，没有考虑原游戏的复杂逻辑
+  - 分析：深入研究原游戏Outside.js和Path.js的按钮逻辑实现
+  - 修复：实现完全符合原游戏的按钮启用/禁用条件检查
+  - 工人管理：正确检查采集者数量限制，支持1个和10个的精确控制
+  - 背包管理：综合考虑重量、空间、库存等所有限制因素
+  - 智能数量调整：实现动态计算实际可操作数量，解决"剩余23个工人，10+按钮智能调整"问题
+  - 日志：添加详细的操作日志便于调试和验证
+  - 文件：`lib/modules/outside.dart`, `lib/screens/outside_screen.dart`, `lib/screens/path_screen.dart`
+  - 文档：`docs/05_bug_fixes/button_logic_improvements.md`
+  - 测试：通过全面的游戏运行测试验证，所有功能正常工作
+  - 结果：按钮状态与原游戏完全一致，操作体验更加准确和智能
+
 ## 2025-06-29 - 太空模块键盘控制和结算界面居中修复
 
 ### 🐛 Bug修复

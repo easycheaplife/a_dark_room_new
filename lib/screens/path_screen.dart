@@ -417,7 +417,7 @@ class PathScreen extends StatelessWidget {
                           'up',
                           10,
                           _canIncreaseSupply(
-                                  itemName, equipped, available, path, 10)
+                                  itemName, equipped, available, path, 1)
                               ? () => _increaseSupply(
                                   itemName, 10, path, stateManager)
                               : null,
@@ -431,7 +431,7 @@ class PathScreen extends StatelessWidget {
                         child: _buildSupplyButton(
                           'down',
                           10,
-                          equipped >= 10
+                          equipped > 0
                               ? () => _decreaseSupply(
                                   itemName, 10, path, stateManager)
                               : null,
@@ -472,41 +472,59 @@ class PathScreen extends StatelessWidget {
     );
   }
 
-  /// 检查是否可以增加供应
+  /// 检查是否可以增加供应 - 参考原游戏逻辑，智能处理数量
   bool _canIncreaseSupply(
       String itemName, int equipped, int available, Path path,
       [int amount = 1]) {
-    return equipped < available &&
-        path.getFreeSpace() >= path.getWeight(itemName) * amount;
+    // 检查是否有库存可用
+    if (equipped >= available) return false;
+
+    // 检查背包空间是否足够
+    final weight = path.getWeight(itemName);
+    if (path.getFreeSpace() < weight) return false;
+
+    // 只要有库存和空间就可以增加，实际数量由_increaseSupply动态计算
+    return true;
   }
 
-  /// 增加供应
+  /// 增加供应 - 参考原游戏逻辑
   void _increaseSupply(
       String itemName, int amount, Path path, StateManager stateManager) {
     final current = path.outfit[itemName] ?? 0;
     final available = stateManager.get('stores["$itemName"]', true) ?? 0;
-    final maxByWeight =
-        (path.getFreeSpace() / path.getWeight(itemName)).floor();
+
+    // 检查背包空间和库存限制
+    final weight = path.getWeight(itemName);
+    final maxByWeight = (path.getFreeSpace() / weight).floor();
     final maxByStore = available - current;
+
+    // 计算实际能增加的数量
     final actualAmount = [amount, maxByWeight, maxByStore]
         .reduce((a, b) => a < b ? a : b)
         .toInt();
 
     if (actualAmount > 0) {
-      path.outfit[itemName] = (current + actualAmount).toInt();
-      stateManager.set('outfit["$itemName"]', path.outfit[itemName]);
+      final newAmount = (current + actualAmount).toInt();
+      path.outfit[itemName] = newAmount;
+      stateManager.set('outfit["$itemName"]', newAmount);
       path.updateOutfitting();
+      Logger.info(
+          '🎒 增加 $itemName: $current -> $newAmount (请求:$amount, 实际:$actualAmount)');
     }
   }
 
-  /// 减少供应
+  /// 减少供应 - 参考原游戏逻辑
   void _decreaseSupply(
       String itemName, int amount, Path path, StateManager stateManager) {
     final current = path.outfit[itemName] ?? 0;
     if (current > 0) {
-      path.outfit[itemName] = (current - amount).clamp(0, current);
-      stateManager.set('outfit["$itemName"]', path.outfit[itemName]);
+      final actualAmount = [amount, current].reduce((a, b) => a < b ? a : b);
+      final newAmount = (current - actualAmount).toInt();
+      path.outfit[itemName] = newAmount;
+      stateManager.set('outfit["$itemName"]', newAmount);
       path.updateOutfitting();
+      Logger.info(
+          '🎒 减少 $itemName: $current -> $newAmount (请求:$amount, 实际:$actualAmount)');
     }
   }
 

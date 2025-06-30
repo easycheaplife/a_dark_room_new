@@ -379,7 +379,7 @@ class OutsideScreen extends StatelessWidget {
                           child: _buildWorkerControlButton(
                             'up',
                             1,
-                            availableWorkers > 0
+                            _canIncreaseWorker(availableWorkers, 1)
                                 ? () => outside.increaseWorker(type, 1)
                                 : null,
                           ),
@@ -392,7 +392,7 @@ class OutsideScreen extends StatelessWidget {
                           child: _buildWorkerControlButton(
                             'down',
                             1,
-                            currentWorkers > 0
+                            _canDecreaseWorker(currentWorkers, 1)
                                 ? () => outside.decreaseWorker(type, 1)
                                 : null,
                           ),
@@ -405,7 +405,7 @@ class OutsideScreen extends StatelessWidget {
                           child: _buildWorkerControlButton(
                             'up',
                             10,
-                            availableWorkers >= 10
+                            _canIncreaseWorker(availableWorkers, 10)
                                 ? () => outside.increaseWorker(type, 10)
                                 : null,
                           ),
@@ -418,7 +418,7 @@ class OutsideScreen extends StatelessWidget {
                           child: _buildWorkerControlButton(
                             'down',
                             10,
-                            currentWorkers >= 10
+                            _canDecreaseWorker(currentWorkers, 10)
                                 ? () => outside.decreaseWorker(type, 10)
                                 : null,
                           ),
@@ -457,6 +457,18 @@ class OutsideScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// 检查是否可以增加工人 - 参考原游戏逻辑，智能处理数量
+  bool _canIncreaseWorker(int availableWorkers, int amount) {
+    // 只要有可用的采集者就可以增加，实际数量由increaseWorker函数动态计算
+    return availableWorkers > 0;
+  }
+
+  /// 检查是否可以减少工人 - 参考原游戏逻辑，智能处理数量
+  bool _canDecreaseWorker(int currentWorkers, int amount) {
+    // 只要有当前工人就可以减少，实际数量由decreaseWorker函数动态计算
+    return currentWorkers > 0;
   }
 
   // 检查工人类型是否已解锁
