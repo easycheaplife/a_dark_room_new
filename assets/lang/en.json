@@ -253,6 +253,7 @@
     "maximum_reached": "maximum reached",
     "go_to_world_map": "go to world map",
     "need_cured_meat_to_embark": "need cured meat to embark",
+    "embark_cooldown_remaining": "embark cooldown, remaining time: {0} seconds",
     "restores_2_health": "restores 2 health",
     "for_use_with_rifle": "for use with rifle",
     "glows_softly_red": "glows softly red",

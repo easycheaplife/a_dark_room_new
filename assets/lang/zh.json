@@ -245,6 +245,7 @@
     "maximum_reached": "已达到最大数量限制",
     "go_to_world_map": "前往世界地图",
     "need_cured_meat_to_embark": "需要携带熏肉才能出发",
+    "embark_cooldown_remaining": "出发冷却中，剩余时间：{0}秒",
     "restores_2_health": "恢复 2 生命值",
     "for_use_with_rifle": "配合步枪使用",
     "glows_softly_red": "发出柔和的红光",

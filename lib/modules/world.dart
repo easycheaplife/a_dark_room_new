@@ -1157,7 +1157,8 @@ class World extends ChangeNotifier {
     Logger.info('🎒 path.outfit: ${path.outfit}');
     Logger.info('🎒 熏肉数量: ${path.outfit['cured meat'] ?? 0}');
     Logger.info('🎒 库存熏肉: ${sm.get('stores["cured meat"]', true) ?? 0}');
-    Logger.info('🎒 StateManager中的outfit熏肉: ${sm.get('outfit["cured meat"]', true) ?? 0}');
+    Logger.info(
+        '🎒 StateManager中的outfit熏肉: ${sm.get('outfit["cured meat"]', true) ?? 0}');
 
     // 食物
     int currentMovesPerFood = movesPerFood;
@@ -1207,7 +1208,8 @@ class World extends ChangeNotifier {
           final healAmount = meatHealAmount();
           final oldHealth = health;
           final newHealth = health + healAmount;
-          Logger.info('🍖 消耗熏肉治疗: 当前血量=$oldHealth, 治疗量=$healAmount, 目标血量=$newHealth');
+          Logger.info(
+              '🍖 消耗熏肉治疗: 当前血量=$oldHealth, 治疗量=$healAmount, 目标血量=$newHealth');
           setHp(newHealth);
           Logger.info('🍖 消耗了熏肉，剩余: $num，恢复生命值');
         }
@@ -1316,7 +1318,8 @@ class World extends ChangeNotifier {
       Logger.info('🩸 血量更新完成: 最终血量=$health, 最大血量=${getMaxHealth()}');
       notifyListeners();
     } else {
-      Logger.info('⚠️ setHp() 收到无效血量值: $hp (isFinite=${hp.isFinite}, isNaN=${hp.isNaN})');
+      Logger.info(
+          '⚠️ setHp() 收到无效血量值: $hp (isFinite=${hp.isFinite}, isNaN=${hp.isNaN})');
     }
   }
 
@@ -1561,20 +1564,23 @@ class World extends ChangeNotifier {
       final sm = StateManager();
       sm.remove('outfit');
 
+      // 设置出发冷却时间 - 参考原游戏 Button.cooldown($('#embarkButton'))
+      path.setEmbarkCooldown();
+      Logger.info('🕐 已设置出发冷却时间');
+
       // 播放死亡音效（暂时注释掉）
       // AudioEngine().playSound(AudioLibrary.death);
 
-      // 延迟后回到小黑屋 - 参考原游戏的动画时序
-      Timer(const Duration(milliseconds: 2000), () {
-        // 回到小黑屋模块
-        final engine = Engine();
-        final room = Room();
-        engine.travelTo(room);
+      // 立即切换到小黑屋 - 参考原游戏逻辑（避免显示"地图未初始化"过渡页面）
+      final room = Room();
+      engine.travelTo(room);
+      Logger.info('🏠 立即切换到小黑屋（避免过渡页面）');
 
+      // 延迟重置死亡状态 - 保持原游戏的2秒延迟效果
+      Timer(const Duration(milliseconds: 2000), () {
         // 重置死亡状态
         dead = false;
-
-        Logger.info('🏠 返回小黑屋');
+        Logger.info('🏠 死亡状态已重置');
       });
 
       notifyListeners();

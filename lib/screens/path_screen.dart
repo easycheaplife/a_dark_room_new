@@ -6,6 +6,7 @@ import '../modules/world.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
 import '../widgets/game_button.dart';
+
 import '../widgets/unified_stores_container.dart';
 import '../core/logger.dart';
 import '../utils/weapon_utils.dart';
@@ -555,11 +556,38 @@ class PathScreen extends StatelessWidget {
   Widget _buildEmbarkButton(
       Path path, StateManager stateManager, Localization localization) {
     final canEmbark = path.canEmbark();
+    final hasCooldown = path.hasEmbarkCooldown();
+    final isFirstEmbark = path.isFirstEmbark();
 
+    // 根据原游戏逻辑：首次出发无冷却，死亡后有冷却
+    final shouldShowCooldown = !isFirstEmbark && hasCooldown;
+
+    String tooltipMessage;
+    if (!canEmbark) {
+      tooltipMessage =
+          localization.translate('messages.need_cured_meat_to_embark');
+    } else if (shouldShowCooldown) {
+      final remaining = path.getEmbarkCooldownRemaining();
+      tooltipMessage = '出发冷却中，剩余时间：$remaining秒';
+    } else {
+      tooltipMessage = localization.translate('messages.go_to_world_map');
+    }
+
+    // 如果有冷却时间，显示禁用状态
+    if (shouldShowCooldown) {
+      return Tooltip(
+        message: tooltipMessage,
+        child: GameButton(
+          text: localization.translate('ui.buttons.embark'),
+          onPressed: null, // 冷却期间禁用
+          width: 80,
+        ),
+      );
+    }
+
+    // 正常情况使用普通按钮
     return Tooltip(
-      message: canEmbark
-          ? localization.translate('messages.go_to_world_map')
-          : localization.translate('messages.need_cured_meat_to_embark'),
+      message: tooltipMessage,
       child: GameButton(
         text: localization.translate('ui.buttons.embark'),
         onPressed: canEmbark

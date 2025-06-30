@@ -7,6 +7,8 @@ import '../core/localization.dart';
 import 'room.dart';
 import 'world.dart';
 import '../core/logger.dart';
+import '../config/game_config.dart';
+import 'dart:async';
 
 /// 路径模块 - 处理装备和出发到世界地图
 /// 包括装备管理、背包空间、物品重量等功能
@@ -47,6 +49,7 @@ class Path extends ChangeNotifier {
   // 状态变量
   Map<String, dynamic> options = {};
   Map<String, int> outfit = {};
+  Timer? _cooldownTimer;
 
   /// 初始化路径模块
   void init([Map<String, dynamic>? options]) {
@@ -279,6 +282,9 @@ class Path extends ChangeNotifier {
     // 播放背景音乐（暂时注释掉）
     // AudioEngine().playBackgroundMusic(AudioLibrary.musicDustyPath);
 
+    // 检查是否有残留的冷却时间
+    _checkResidualCooldown();
+
     notifyListeners();
   }
 
@@ -296,6 +302,9 @@ class Path extends ChangeNotifier {
     final sm = StateManager();
 
     try {
+      // 标记已经出发过（用于后续冷却时间判断）
+      markEmbarked();
+
       // 确保outfit已正确初始化
       if (outfit.isEmpty) {
         Logger.info('⚠️ outfit is empty, reinitializing...');
@@ -394,6 +403,83 @@ class Path extends ChangeNotifier {
     final canGo = curedMeat > 0;
     Logger.info('🔍 canEmbark: cured meat=$curedMeat, can go=$canGo');
     return canGo;
+  }
+
+  /// 检查是否有出发冷却时间
+  bool hasEmbarkCooldown() {
+    final sm = StateManager();
+    final cooldownTime = sm.get('cooldown.embark', true) ?? 0;
+    return cooldownTime > 0;
+  }
+
+  /// 获取剩余冷却时间（秒）
+  int getEmbarkCooldownRemaining() {
+    final sm = StateManager();
+    return (sm.get('cooldown.embark', true) ?? 0).round();
+  }
+
+  /// 设置出发冷却时间
+  void setEmbarkCooldown() {
+    final sm = StateManager();
+    sm.set('cooldown.embark', GameConfig.embarkCooldown.toDouble());
+    Logger.info('🕐 设置出发冷却时间: ${GameConfig.embarkCooldown}秒');
+
+    // 启动倒计时定时器
+    _startCooldownTimer();
+  }
+
+  /// 启动冷却时间倒计时定时器
+  void _startCooldownTimer() {
+    _cooldownTimer?.cancel();
+    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final sm = StateManager();
+      final remaining = sm.get('cooldown.embark', true) ?? 0;
+
+      if (remaining <= 1) {
+        // 冷却时间结束
+        timer.cancel();
+        sm.remove('cooldown.embark');
+        Logger.info('✅ 出发冷却时间结束');
+        notifyListeners();
+      } else {
+        // 减少1秒
+        sm.set('cooldown.embark', remaining - 1, true);
+        notifyListeners();
+      }
+    });
+  }
+
+  /// 检查残留的冷却时间
+  void _checkResidualCooldown() {
+    final sm = StateManager();
+    final remaining = sm.get('cooldown.embark', true) ?? 0;
+
+    if (remaining > 0) {
+      Logger.info('🕐 发现残留冷却时间: $remaining秒');
+      _startCooldownTimer();
+    }
+  }
+
+  /// 清除出发冷却时间
+  void clearEmbarkCooldown() {
+    final sm = StateManager();
+    sm.remove('cooldown.embark');
+    _cooldownTimer?.cancel();
+    Logger.info('✅ 清除出发冷却时间');
+    notifyListeners();
+  }
+
+  /// 检查是否为首次出发
+  bool isFirstEmbark() {
+    final sm = StateManager();
+    return sm.get('game.firstEmbark', true) ?? true;
+  }
+
+  /// 标记已经出发过
+  void markEmbarked() {
+    final sm = StateManager();
+    sm.set('game.firstEmbark', false);
+    Logger.info('📝 标记已出发过');
   }
 
   /// 获取装备信息
