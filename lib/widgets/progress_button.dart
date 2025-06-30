@@ -15,6 +15,7 @@ class ProgressButton extends StatefulWidget {
   final int progressDuration; // 进度持续时间（毫秒）
   final String? tooltip; // 悬停提示
   final bool showCost; // 是否显示成本信息
+  final String? id; // 固定ID，用于进度跟踪
 
   const ProgressButton({
     super.key,
@@ -27,6 +28,7 @@ class ProgressButton extends StatefulWidget {
     this.progressDuration = 2000, // 默认2秒
     this.tooltip,
     this.showCost = true, // 默认显示成本
+    this.id, // 可选的固定ID
   });
 
   @override
@@ -39,7 +41,7 @@ class _ProgressButtonState extends State<ProgressButton> {
   final LayerLink _layerLink = LayerLink();
 
   // 使用ProgressManager管理进度状态
-  String get _progressId => 'ProgressButton.${widget.text}';
+  String get _progressId => widget.id ?? 'ProgressButton.${widget.text}';
 
   ProgressState? get _currentProgress =>
       ProgressManager().getProgress(_progressId);
@@ -142,10 +144,9 @@ class _ProgressButtonState extends State<ProgressButton> {
     return localizedName;
   }
 
-  void _completeProgress() {
-    if (mounted) {
-      widget.onPressed?.call();
-    }
+  void _onCooldownComplete() {
+    // 冷却完成，按钮重新可用（不需要执行动作，动作已在点击时执行）
+    Logger.info('✅ Cooldown completed for $_progressId');
   }
 
   void _startProgress() {
@@ -155,11 +156,15 @@ class _ProgressButtonState extends State<ProgressButton> {
         '🚀 ProgressButton started: ${widget.text}, duration: ${widget.progressDuration}ms');
     Logger.info('🔧 Using ProgressManager for $_progressId');
 
-    // 使用ProgressManager启动进度
+    // 立即执行动作（参考原游戏：点击时立即执行，进度条只是冷却时间）
+    widget.onPressed?.call();
+    Logger.info('✅ Action executed immediately for $_progressId');
+
+    // 使用ProgressManager启动冷却进度
     ProgressManager().startProgress(
       id: _progressId,
       duration: widget.progressDuration,
-      onComplete: _completeProgress,
+      onComplete: _onCooldownComplete,
     );
 
     Logger.info('✅ ProgressManager.startProgress called for $_progressId');

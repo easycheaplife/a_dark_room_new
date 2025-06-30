@@ -6,6 +6,229 @@
 
 本文档记录了 A Dark Room Flutter 移植项目的所有重要更新、修复和优化。所有文档都已添加更新日期，并建立了统一的更新日志系统。
 
+## 2025-01-27 - 战斗中吃肉冷却时间修复
+
+### 🐛 Bug修复
+- **战斗中吃肉冷却机制修复** - 修复战斗中吃肉按钮可以连续点击的问题
+  - 问题：ProgressButton使用动态文本作为进度ID，导致冷却机制失效
+  - 原因：吃肉按钮文本动态变化（'吃肉 (18)' → '吃肉 (17)'），每次都被视为新按钮
+  - 解决：为ProgressButton添加固定ID参数，战斗中物品按钮使用固定ID
+  - 影响文件：`lib/widgets/progress_button.dart`, `lib/screens/combat_screen.dart`
+  - 测试验证：战斗中吃肉现在有正确的5秒冷却时间，无法连续点击
+  - 参考原游戏：Events._EAT_COOLDOWN = 5秒
+
+### 🔧 技术改进
+- **ProgressButton组件增强** - 添加固定ID支持，解决动态文本按钮的进度跟踪问题
+  - 新增：可选的`id`参数用于固定进度跟踪
+  - 逻辑：`String get _progressId => widget.id ?? 'ProgressButton.${widget.text}'`
+  - 兼容性：向后兼容，未设置ID时使用原有文本方式
+  - 扩展性：为其他动态文本按钮提供解决方案
+
+## 2025-01-27 - 战斗动作立即执行修复
+
+### 🐛 重要Bug修复
+- **战斗动作立即执行机制修复** - 修复战斗中吃肉和攻击需要等待进度条的问题
+  - 问题：战斗中的吃肉和攻击动作需要等待进度条结束后才执行
+  - 影响：玩家在紧急情况下无法立即获得治疗效果，不符合原游戏设计
+  - 原因：ProgressButton组件错误地将进度条作为动作执行的前置条件
+  - 修复：将动作执行从进度完成时移动到点击时，进度条只显示冷却时间
+  - 文件：`lib/widgets/progress_button.dart`
+  - 结果：所有战斗动作现在立即执行，完全符合原游戏行为
+
+- **按钮执行时机重构** - 重新设计ProgressButton的执行流程
+  - 修复前：点击 → 开始进度条 → 等待完成 → 执行动作
+  - 修复后：点击 → 立即执行动作 → 开始冷却进度条
+  - 参考：原游戏Button.js中的立即执行机制
+  - 技术：重构_startProgress和_onCooldownComplete方法
+  - 文件：`lib/widgets/progress_button.dart`
+  - 结果：用户体验大幅改善，战斗更加流畅和紧张
+
+### 🎮 游戏体验改进
+- **战斗响应性提升** - 所有战斗动作现在提供即时反馈
+  - 吃肉：点击立即恢复血量，不需要等待5秒
+  - 攻击：点击立即造成伤害，不需要等待2秒
+  - 治疗：紧急情况下可以立即使用药物和注射器
+  - 策略性：玩家可以在关键时刻做出即时反应
+  - 结果：战斗系统完全符合原游戏的设计理念
+
+## 2025-01-27 - 按钮界面改进修复 (第五次更新)
+
+### 🎨 UI/UX改进 (第五次)
+- **战斗结束面板按钮完全统一** - 将所有按钮改为相同的ElevatedButton样式
+  - 问题：战斗结束面板中的按钮样式不一致，影响整体视觉效果
+  - 现状：拿走一切按钮是长条形，离开和吃肉按钮是小按钮
+  - 修复：统一所有按钮为ElevatedButton样式，使用全宽度布局
+  - 效果：所有按钮现在都是相同的长条形样式，视觉效果更加统一
+  - 文件：`lib/screens/combat_screen.dart`
+  - 结果：战斗结束面板界面更加整洁和专业
+
+- **按钮宽度一致性优化** - 实现完全一致的按钮视觉效果
+  - 设计：选择ElevatedButton而不是ProgressButton作为统一样式
+  - 原因：主要操作优先，保持突出的长条形样式
+  - 技术：所有按钮使用width: double.infinity实现全宽度
+  - 样式：统一的白色背景、黑色边框、黑色文字和间距
+  - 文件：`lib/screens/combat_screen.dart`
+  - 结果：整体界面一致性和专业性显著提升
+
+## 2025-01-27 - 按钮界面改进修复 (第四次更新)
+
+### 🐛 Bug修复 (第四次)
+- **战斗结束面板按钮样式统一** - 统一吃肉、离开按钮与其他按钮的风格
+  - 问题：战斗结束面板中的按钮宽度不一致，影响视觉效果
+  - 修复：统一所有按钮使用GameConfig.combatButtonWidth配置
+  - 效果：所有按钮宽度一致，视觉效果更加统一
+  - 文件：`lib/screens/combat_screen.dart`
+  - 结果：战斗结束面板按钮样式完全一致
+
+- **离开按钮BoxConstraints报错修复** - 修复离开按钮的布局错误
+  - 问题：离开按钮使用width: double.infinity导致BoxConstraints NaN错误
+  - 错误：BoxConstraints has NaN values in minWidth and maxWidth
+  - 原因：ProgressButton进度条计算时infinity * progress = NaN
+  - 修复：使用固定宽度GameConfig.combatButtonWidth.toDouble()
+  - 文件：`lib/screens/combat_screen.dart`
+  - 结果：离开按钮正常显示，无布局错误
+
+## 2025-01-27 - 按钮界面改进修复 (第三次更新)
+
+### 🐛 Bug修复 (第三次)
+- **战斗吃肉按钮提示移除** - 移除战斗过程中吃肉按钮的熏肉成本提示
+  - 问题：战斗过程中吃肉按钮显示熏肉成本提示，但原游戏中不显示
+  - 修复：移除ProgressButton的cost参数，只保留功能逻辑
+  - 参考：原游戏战斗界面按钮不显示成本提示
+  - 文件：`lib/screens/combat_screen.dart`
+  - 结果：战斗界面按钮样式完全符合原游戏
+
+- **战斗结束BoxConstraints报错修复** - 修复战斗结束面板的布局错误
+  - 问题：使用width: double.infinity导致BoxConstraints NaN错误
+  - 错误：BoxConstraints has NaN values in minWidth and maxWidth
+  - 修复：使用固定宽度GameConfig.combatButtonWidth避免NaN错误
+  - 文件：`lib/screens/combat_screen.dart`
+  - 结果：战斗结束面板吃肉按钮正常显示，无布局错误
+
+### 🔧 技术改进 (第三次)
+- **冷却时间配置化扩展** - 将所有硬编码的冷却时间移动到配置文件
+  - 新增战斗动画和延迟配置：远程攻击延迟、敌人消失延迟等
+  - 更新Events模块使用GameConfig配置而不是硬编码数值
+  - 统一管理所有时间相关参数，提高可维护性
+  - 文件：`lib/config/game_config.dart`, `lib/modules/events.dart`
+  - 结果：所有时间参数集中管理，便于调整和维护
+
+## 2025-01-27 - 按钮界面改进修复 (第二次更新)
+
+### 🐛 Bug修复 (第二次)
+- **出发按钮熏肉提示移除** - 移除出发按钮的熏肉成本提示，符合原游戏设计
+  - 问题：出发按钮显示熏肉成本提示，但原游戏中不显示成本
+  - 修复：移除ProgressButton的cost参数，只在tooltip中说明需求
+  - 参考：原游戏path.js中embark按钮不显示成本提示
+  - 文件：`lib/screens/path_screen.dart`
+  - 结果：出发按钮样式符合原游戏，无多余成本提示
+
+- **战斗结束吃肉报错修复** - 修复战斗结束面板点击吃肉的状态同步问题
+  - 问题：Events.eatMeat()方法没有通知Path模块更新状态
+  - 修复：在eatMeat方法中添加path.notifyListeners()调用
+  - 原因：Consumer<Path>需要Path模块的状态变化通知
+  - 文件：`lib/modules/events.dart`
+  - 结果：战斗结束后吃肉功能完全正常，无状态同步问题
+
+### 🔧 技术改进 (第二次)
+- **参数配置化扩展** - 将更多参数移动到配置文件统一管理
+  - 新增UI界面配置：按钮宽度、进度时间等
+  - 新增背包和物品配置：默认空间、物品重量等
+  - 新增工人和建筑配置：收入间隔、建筑工人映射等
+  - 更新所有相关文件使用GameConfig配置
+  - 文件：`lib/config/game_config.dart`, `lib/screens/path_screen.dart`, `lib/screens/combat_screen.dart`
+  - 结果：配置管理更加集中，便于统一修改和维护
+
+## 2025-01-27 - 按钮界面改进修复 (第一次)
+
+### 🐛 Bug修复
+- **出发按钮重复tooltip** - 移除出发按钮的重复tooltip显示
+  - 问题：出发按钮同时使用外层Tooltip和ProgressButton内置tooltip
+  - 修复：只使用ProgressButton内置的tooltip，移除外层Tooltip包装
+  - 文件：`lib/screens/path_screen.dart`
+  - 结果：tooltip显示正常，无重复
+
+- **战斗结束面板吃肉报错** - 修复战利品界面点击吃肉按钮的错误
+  - 问题：使用Path().outfit可能没有正确更新，导致状态不同步
+  - 修复：使用Consumer<Path>监听Path状态变化，确保数据同步
+  - 文件：`lib/screens/combat_screen.dart`
+  - 结果：战斗结束后吃肉功能正常，无报错
+
+### 🎨 UI改进
+- **按钮大小标准化** - 统一所有按钮大小，参考原游戏标准
+  - 出发按钮：80px → 130px（与伐木按钮一致）
+  - 战斗按钮：80px/120px → 100px（参考原游戏CSS）
+  - 攻击按钮：80px → 100px
+  - 物品按钮：120px → 100px
+  - 文件：`lib/screens/path_screen.dart`, `lib/screens/combat_screen.dart`
+  - 结果：所有按钮大小符合原游戏标准，视觉一致
+
+- **移除多余界面文字** - 清理战斗界面中不符合原游戏的文字
+  - 移除战斗界面中的"选择武器"提示文字
+  - 参考原游戏，战斗界面应该简洁明了
+  - 文件：`lib/screens/combat_screen.dart`
+  - 结果：战斗界面更加简洁，符合原游戏风格
+
+### 🔧 技术改进
+- **冷却时间配置集中** - 将分散的冷却时间配置统一管理
+  - 将Events模块中的冷却时间常量移动到GameConfig
+  - 统一使用GameConfig.eatCooldown等配置
+  - 避免重复定义，提高可维护性
+  - 文件：`lib/config/game_config.dart`, `lib/screens/combat_screen.dart`
+  - 结果：配置管理更加清晰，便于统一修改
+
+## 2025-01-27 - 统一按钮组件优化
+
+### 🚀 代码优化
+- **统一按钮组件** - 将所有按钮统一使用ProgressButton组件，实现代码复用和样式一致
+  - 问题：游戏中存在多个不同的按钮组件，样式和行为不一致
+  - 用户需求：复用伐木按钮的代码，所有按钮风格样式保持一致
+  - 解决方案：统一使用ProgressButton组件，支持进度条、成本检查、禁用状态
+  - 修改范围：战斗按钮（攻击、吃肉、吃药）、出发按钮
+  - 技术改进：冷却时间转换为进度时间，统一样式规范
+  - 文件：`lib/screens/combat_screen.dart`, `lib/screens/path_screen.dart`
+  - 文档：`docs/06_optimizations/unified_button_component.md`
+  - 效果：所有按钮样式完全一致，代码复用率大幅提升，用户体验更加统一
+
+### 🎨 UI改进
+- **按钮样式统一** - 所有按钮使用Times New Roman字体、黑色边框、白色背景
+  - 进度条显示方式统一
+  - 悬停效果和点击反馈一致
+  - 禁用状态样式统一
+  - 成本提示信息格式一致
+
+### 🔧 技术改进
+- **代码复用优化** - 删除重复的按钮组件实现
+  - 移除多个不同的按钮组件
+  - 统一使用ProgressButton组件
+  - 减少样式定义的重复
+  - 提升代码维护性和性能
+
+## 2025-01-27 - 战斗按钮冷却时间机制实现
+
+### ✨ 新功能
+- **战斗按钮冷却时间** - 为战斗中的所有按钮添加冷却时间机制，完全符合原游戏
+  - 攻击按钮：根据武器类型有不同冷却时间（1-2秒）
+  - 吃肉按钮：5秒冷却时间
+  - 使用药物按钮：7秒冷却时间
+  - 使用注射器按钮：7秒冷却时间
+  - 离开按钮：1秒冷却时间
+  - 文件：`lib/screens/combat_screen.dart`, `lib/modules/events.dart`
+  - 文档：`docs/05_bug_fixes/combat_button_cooldown_implementation.md`
+
+### 🐛 Bug修复
+- **删除逃跑按钮** - 移除战斗中的逃跑按钮，符合原游戏设计
+  - 问题：战斗中有逃跑按钮，但原游戏中没有
+  - 修复：删除逃跑按钮，只在战斗胜利后显示离开按钮
+  - 结果：战斗体验完全符合原游戏逻辑
+
+### 🔧 技术改进
+- **使用GameButton组件** - 将普通按钮替换为带冷却时间的GameButton
+  - 支持冷却时间显示和进度条
+  - 支持成本检查和资源消耗
+  - 支持状态保存，页面刷新后冷却时间仍然有效
+  - 提供更好的用户体验和视觉反馈
+
 ## 2025-01-27 - 地图未初始化过渡页面彻底修复
 
 ### 🐛 Bug修复

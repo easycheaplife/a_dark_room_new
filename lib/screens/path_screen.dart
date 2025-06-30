@@ -5,11 +5,12 @@ import '../modules/path.dart';
 import '../modules/world.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
-import '../widgets/game_button.dart';
+import '../widgets/progress_button.dart';
 
 import '../widgets/unified_stores_container.dart';
 import '../core/logger.dart';
 import '../utils/weapon_utils.dart';
+import '../config/game_config.dart';
 
 /// 漫漫尘途界面 - 显示装备管理和出发准备
 class PathScreen extends StatelessWidget {
@@ -573,32 +574,21 @@ class PathScreen extends StatelessWidget {
       tooltipMessage = localization.translate('messages.go_to_world_map');
     }
 
-    // 如果有冷却时间，显示禁用状态
-    if (shouldShowCooldown) {
-      return Tooltip(
-        message: tooltipMessage,
-        child: GameButton(
-          text: localization.translate('ui.buttons.embark'),
-          onPressed: null, // 冷却期间禁用
-          width: 80,
-        ),
-      );
-    }
-
-    // 正常情况使用普通按钮
-    return Tooltip(
-      message: tooltipMessage,
-      child: GameButton(
-        text: localization.translate('ui.buttons.embark'),
-        onPressed: canEmbark
-            ? () {
-                Logger.info(
-                    '🎯 PathScreen: ${localization.translateLog('embark_button_clicked')}');
-                path.embark();
-              }
-            : null,
-        width: 80,
-      ),
+    // 使用ProgressButton统一样式，与伐木按钮大小一致
+    return ProgressButton(
+      text: localization.translate('ui.buttons.embark'),
+      onPressed: (canEmbark && !shouldShowCooldown)
+          ? () {
+              Logger.info(
+                  '🎯 PathScreen: ${localization.translateLog('embark_button_clicked')}');
+              path.embark();
+            }
+          : null,
+      disabled: !canEmbark || shouldShowCooldown,
+      // 移除成本提示，参考原游戏：按钮不显示成本，只在tooltip中说明
+      width: GameConfig.pathButtonWidth.toDouble(), // 与伐木按钮大小一致
+      progressDuration: GameConfig.embarkProgressDuration, // 出发按钮进度时间
+      tooltip: tooltipMessage, // 只使用ProgressButton内置的tooltip
     );
   }
 

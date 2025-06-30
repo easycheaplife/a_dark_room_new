@@ -6,6 +6,8 @@ import '../modules/world.dart';
 import '../modules/path.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
+import '../widgets/progress_button.dart';
+import '../config/game_config.dart';
 
 /// 战斗界面 - 完整翻译自原游戏的战斗系统
 class CombatScreen extends StatefulWidget {
@@ -308,30 +310,23 @@ class _CombatScreenState extends State<CombatScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          Localization().translate('combat.choose_weapon'),
-          style: const TextStyle(color: Colors.black, fontSize: 13), // 黑色文字
-        ),
-        const SizedBox(height: 6),
+        // 移除"选择武器"文字，参考原游戏
         Wrap(
           spacing: 6,
           runSpacing: 6,
           alignment: WrapAlignment.center,
           children: availableWeapons.map((weaponName) {
-            return ElevatedButton(
+            final weapon = World.weapons[weaponName];
+            final cooldown = weapon?['cooldown'] ?? 2; // 默认2秒冷却
+            final cost = weapon?['cost'] as Map<String, dynamic>?;
+            final costMap =
+                cost?.map((k, v) => MapEntry(k, (v as num).toInt()));
+            return ProgressButton(
+              text: _getWeaponDisplayName(weaponName),
               onPressed: () => events.useWeapon(weaponName),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[200], // 浅灰色背景
-                foregroundColor: Colors.black, // 黑色文字
-                side: const BorderSide(color: Colors.black), // 黑色边框
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                minimumSize: const Size(0, 32), // 减少最小高度
-              ),
-              child: Text(
-                _getWeaponDisplayName(weaponName),
-                style: const TextStyle(fontSize: 11),
-              ),
+              progressDuration: (cooldown * 1000).round(), // 转换为毫秒
+              cost: costMap,
+              width: GameConfig.combatButtonWidth.toDouble(), // 参考原游戏CSS
             );
           }).toList(),
         ),
@@ -347,72 +342,46 @@ class _CombatScreenState extends State<CombatScreen> {
       runSpacing: 6,
       alignment: WrapAlignment.center,
       children: [
-        // 吃肉
+        // 吃肉 - 带冷却时间
         if ((path.outfit['cured meat'] ?? 0) > 0)
-          ElevatedButton(
+          ProgressButton(
+            text:
+                '${Localization().translate('combat.eat_meat')} (${path.outfit['cured meat']})',
             onPressed: () => events.eatMeat(),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.brown[100], // 浅棕色背景
-              foregroundColor: Colors.black, // 黑色文字
-              side: const BorderSide(color: Colors.brown), // 棕色边框
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              minimumSize: const Size(0, 32), // 减少最小高度
-            ),
-            child: Text(
-              '${Localization().translate('combat.eat_meat')} (${path.outfit['cured meat']})',
-              style: const TextStyle(fontSize: 11),
-            ),
+            progressDuration: GameConfig.eatCooldown * 1000, // 转换为毫秒
+            // 移除成本提示，参考原游戏：战斗中按钮不显示成本
+            disabled: (path.outfit['cured meat'] ?? 0) == 0,
+            width: GameConfig.combatButtonWidth.toDouble(), // 参考原游戏CSS
+            id: 'combat.eat_meat', // 固定ID，避免因文本变化导致进度跟踪失效
           ),
 
-        // 使用药物
+        // 使用药物 - 带冷却时间
         if ((path.outfit['medicine'] ?? 0) > 0)
-          ElevatedButton(
+          ProgressButton(
+            text:
+                '${Localization().translate('combat.use_medicine')} (${path.outfit['medicine']})',
             onPressed: () => events.useMeds(),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green[100], // 浅绿色背景
-              foregroundColor: Colors.black, // 黑色文字
-              side: const BorderSide(color: Colors.green), // 绿色边框
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              minimumSize: const Size(0, 32), // 减少最小高度
-            ),
-            child: Text(
-              '${Localization().translate('combat.use_medicine')} (${path.outfit['medicine']})',
-              style: const TextStyle(fontSize: 11),
-            ),
+            progressDuration: GameConfig.medsCooldown * 1000, // 转换为毫秒
+            cost: const {'medicine': 1},
+            disabled: (path.outfit['medicine'] ?? 0) == 0,
+            width: GameConfig.combatButtonWidth.toDouble(), // 参考原游戏CSS
+            id: 'combat.use_medicine', // 固定ID
           ),
 
-        // 使用注射器
+        // 使用注射器 - 带冷却时间
         if ((path.outfit['hypo'] ?? 0) > 0)
-          ElevatedButton(
+          ProgressButton(
+            text:
+                '${Localization().translate('combat.use_hypo')} (${path.outfit['hypo']})',
             onPressed: () => events.useHypo(),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue[100], // 浅蓝色背景
-              foregroundColor: Colors.black, // 黑色文字
-              side: const BorderSide(color: Colors.blue), // 蓝色边框
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              minimumSize: const Size(0, 32), // 减少最小高度
-            ),
-            child: Text(
-              '${Localization().translate('combat.use_hypo')} (${path.outfit['hypo']})',
-              style: const TextStyle(fontSize: 11),
-            ),
+            progressDuration: GameConfig.hypoCooldown * 1000, // 转换为毫秒
+            cost: const {'hypo': 1},
+            disabled: (path.outfit['hypo'] ?? 0) == 0,
+            width: GameConfig.combatButtonWidth.toDouble(), // 参考原游戏CSS
+            id: 'combat.use_hypo', // 固定ID
           ),
 
-        // 逃跑按钮
-        ElevatedButton(
-          onPressed: () => events.endEvent(),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red[100], // 浅红色背景
-            foregroundColor: Colors.black, // 黑色文字
-            side: const BorderSide(color: Colors.red), // 红色边框
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            minimumSize: const Size(0, 32), // 减少最小高度
-          ),
-          child: Text(
-            Localization().translate('combat.flee'),
-            style: const TextStyle(fontSize: 11),
-          ),
-        ),
+        // 原游戏战斗中没有逃跑按钮，只有在胜利后才有离开按钮
       ],
     );
   }
@@ -828,7 +797,7 @@ class _CombatScreenState extends State<CombatScreen> {
             ),
           ),
 
-        // 离开按钮
+        // 离开按钮 - 统一样式
         Container(
           width: double.infinity,
           margin: const EdgeInsets.symmetric(vertical: 2),
@@ -848,28 +817,34 @@ class _CombatScreenState extends State<CombatScreen> {
           ),
         ),
 
-        // 吃肉按钮 - 如果有熏肉的话
-        if (Path().outfit['cured meat'] != null &&
-            Path().outfit['cured meat']! > 0)
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(vertical: 2),
-            child: ElevatedButton(
-              onPressed: () => events.eatMeat(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                side: const BorderSide(color: Colors.black),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                minimumSize: const Size(0, 32),
-              ),
-              child: Text(
-                Localization().translate('combat.eat_meat'),
-                style: const TextStyle(fontSize: 12),
-              ),
-            ),
-          ),
+        // 吃肉按钮 - 统一样式
+        Consumer<Path>(
+          builder: (context, path, child) {
+            final curedMeat = path.outfit['cured meat'] ?? 0;
+            if (curedMeat > 0) {
+              return Container(
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(vertical: 2),
+                child: ElevatedButton(
+                  onPressed: () => events.eatMeat(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    side: const BorderSide(color: Colors.black),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    minimumSize: const Size(0, 32),
+                  ),
+                  child: Text(
+                    Localization().translate('combat.eat_meat'),
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ],
     );
   }

@@ -10,6 +10,7 @@ import 'path.dart';
 import 'world.dart';
 import 'setpieces.dart';
 import '../core/logger.dart';
+import '../config/game_config.dart';
 import '../events/global_events.dart';
 import '../events/room_events.dart';
 import '../events/outside_events.dart';
@@ -523,8 +524,11 @@ class Events extends ChangeNotifier {
     final specials = scene['specials'] as List<Map<String, dynamic>>? ?? [];
     for (final special in specials) {
       final timer = VisibilityManager().createPeriodicTimer(
-          Duration(milliseconds: ((special['delay'] ?? 5.0) * 1000).round()),
-          () {
+          Duration(
+              milliseconds:
+                  ((special['delay'] ?? GameConfig.specialSkillDelay / 1000) *
+                          1000)
+                      .round()), () {
         // 执行特殊技能
         if (special['action'] != null) {
           special['action']();
@@ -559,8 +563,10 @@ class Events extends ChangeNotifier {
     if (scene == null) return;
 
     final sceneDelay = scene['attackDelay'];
-    final attackDelay =
-        delay ?? (sceneDelay != null ? sceneDelay.toDouble() : 2.0);
+    final attackDelay = delay ??
+        (sceneDelay != null
+            ? sceneDelay.toDouble()
+            : GameConfig.defaultAttackDelay / 1000);
     enemyAttackTimer = VisibilityManager().createPeriodicTimer(
         Duration(milliseconds: (attackDelay * 1000).round()),
         () => enemyAttack(),
@@ -656,7 +662,8 @@ class Events extends ChangeNotifier {
     notifyListeners(); // 触发UI更新以显示动画
 
     // 延迟模拟子弹飞行时间
-    VisibilityManager().createTimer(Duration(milliseconds: fightSpeed * 2), () {
+    VisibilityManager()
+        .createTimer(Duration(milliseconds: GameConfig.rangedAttackDelay), () {
       final enemy = fighterId == 'wanderer' ? 'enemy' : 'wanderer';
       damage(fighterId, enemy, dmg, damageType);
 
@@ -1032,7 +1039,8 @@ class Events extends ChangeNotifier {
       // AudioEngine().playSound(AudioLibrary.WIN_FIGHT);
 
       // 敌人消失动画延迟
-      VisibilityManager().createTimer(const Duration(milliseconds: 1000), () {
+      VisibilityManager().createTimer(
+          Duration(milliseconds: GameConfig.enemyDisappearDelay), () {
         Logger.info('🏆 winFight() 第二个定时器执行，准备显示战利品');
         final event = activeEvent();
         if (event == null) {
@@ -1199,6 +1207,9 @@ class Events extends ChangeNotifier {
       World().setHp(newHp);
 
       // AudioEngine().playSound('eat_meat'); // 暂时注释掉
+
+      // 通知Path模块更新
+      path.notifyListeners();
       notifyListeners();
     }
   }

@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Web%20%7C%20Mobile%20%7C%20Desktop-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-Open%20Source-green.svg)
 
-**最后更新**: 2025-01-27 (彻底修复地图未初始化过渡页面问题)
+**最后更新**: 2025-01-27 (战斗中吃肉冷却时间修复)
 
 ## 📋 目录
 

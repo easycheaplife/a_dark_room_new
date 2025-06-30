@@ -128,6 +128,12 @@ class GameConfig {
   /// 战斗延迟 (移动次数)
   static const int fightDelay = 3;
 
+  /// 战斗动画和延迟配置 (毫秒)
+  static const int rangedAttackDelay = 200; // 远程攻击子弹飞行时间
+  static const int enemyDisappearDelay = 1000; // 敌人消失动画延迟
+  static const int defaultAttackDelay = 2000; // 默认攻击间隔
+  static const int specialSkillDelay = 5000; // 特殊技能默认延迟
+
   // ==================== 太空模块配置 ====================
 
   /// 飞船速度
@@ -148,6 +154,46 @@ class GameConfig {
 
   /// 帧延迟
   static const int frameDelay = 100;
+
+  // ==================== UI界面配置 ====================
+
+  /// 按钮宽度配置 (像素)
+  static const int combatButtonWidth = 100; // 战斗按钮宽度，参考原游戏CSS
+  static const int pathButtonWidth = 130; // 出发按钮宽度，与伐木按钮一致
+  static const int defaultButtonWidth = 100; // 默认按钮宽度
+
+  /// 进度时间配置 (毫秒)
+  static const int embarkProgressDuration = 1000; // 出发按钮进度时间
+
+  // ==================== 背包和物品配置 ====================
+
+  /// 默认背包空间
+  static const int defaultBagSpace = 10;
+
+  /// 物品重量配置
+  static const Map<String, double> itemWeights = {
+    'bone spear': 2.0,
+    'iron sword': 3.0,
+    'steel sword': 5.0,
+    'rifle': 5.0,
+    'bullets': 0.1,
+    'energy cell': 0.2,
+    'laser rifle': 5.0,
+    'plasma rifle': 5.0,
+    'bolas': 0.5,
+  };
+
+  // ==================== 工人和建筑配置 ====================
+
+  /// 工人收入间隔 (毫秒)
+  static const int workerIncomeInterval = 10000; // 10秒
+
+  /// 建筑工人配置
+  static const Map<String, List<String>> buildingWorkers = {
+    'lodge': ['hunter', 'trapper'],
+    'smokehouse': ['charcutier'],
+    'tannery': ['tanner'],
+  };
 
   // ==================== UI相关配置 ====================
 
