@@ -8,6 +8,7 @@ import '../core/engine.dart';
 import '../core/localization.dart';
 import '../core/logger.dart';
 import '../widgets/button.dart';
+import '../config/game_config.dart';
 import 'outside.dart';
 import 'path.dart';
 
@@ -21,12 +22,14 @@ class Room with ChangeNotifier {
 
   Room._internal();
 
-  // 常量（时间单位：毫秒）
-  static const int _fireCoolDelay = 5 * 60 * 1000; // 火焰冷却延迟
-  static const int _roomWarmDelay = 30 * 1000; // 房间温度更新延迟
-  static const int _builderStateDelay = 30 * 1000; // 建造者状态更新延迟
-
-  static const int _needWoodDelay = 15 * 1000; // 需要木材的延迟
+  // 常量（时间单位：毫秒）- 从GameConfig获取
+  static int get _fireCoolDelay => GameConfig.fireCoolDelay; // 火焰冷却延迟
+  static int get _roomWarmDelay =>
+      GameConfig.getCurrentRoomWarmDelay(); // 房间温度更新延迟
+  static int get _builderStateDelay =>
+      GameConfig.getCurrentBuilderStateDelay(); // 建造者状态更新延迟
+  static int get _needWoodDelay =>
+      GameConfig.getCurrentNeedWoodDelay(); // 需要木材的延迟
 
   // 模块名称
   final String name = "Room";

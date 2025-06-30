@@ -7,6 +7,7 @@ import '../core/audio_engine.dart';
 import '../core/engine.dart';
 import '../core/localization.dart';
 import '../core/logger.dart';
+import '../config/game_config.dart';
 
 /// 外部区域模块 - 注册户外功能
 /// 包括村庄建设、工人管理、陷阱检查等功能
@@ -24,12 +25,11 @@ class Outside extends ChangeNotifier {
   // 模块名称
   final String name = "Outside";
 
-  // 常量
-  // static const int _storesOffset = 0; // 暂时未使用
-  // static const int _gatherDelay = 60; // 暂时未使用
-  // static const int _trapsDelay = 90; // 暂时未使用
-  static const List<double> _popDelay = [0.5, 3];
-  static const int _hutRoom = 4;
+  // 常量 - 从GameConfig获取
+  static int get _gatherDelay => GameConfig.getCurrentGatherDelay(); // 伐木延迟
+  static int get _trapsDelay => GameConfig.getCurrentTrapsDelay(); // 陷阱检查延迟
+  static List<double> get _popDelay => GameConfig.popDelayRange; // 人口增长延迟范围
+  static int get _hutRoom => GameConfig.hutRoom; // 每个小屋容纳人数
 
   // 收入配置
   static const Map<String, Map<String, dynamic>> _income = {

@@ -8,6 +8,7 @@ import '../core/logger.dart';
 import '../widgets/game_button.dart';
 import '../widgets/progress_button.dart';
 import '../widgets/unified_stores_container.dart';
+import '../config/game_config.dart';
 
 /// 房间界面 - 显示火焰状态、建筑和交易
 class RoomScreen extends StatelessWidget {
@@ -27,7 +28,8 @@ class RoomScreen extends StatelessWidget {
           child: SingleChildScrollView(
             child: layoutParams.useVerticalLayout
                 ? _buildMobileLayout(context, room, stateManager, layoutParams)
-                : _buildDesktopLayout(context, room, stateManager, layoutParams),
+                : _buildDesktopLayout(
+                    context, room, stateManager, layoutParams),
           ),
         );
       },
@@ -35,7 +37,8 @@ class RoomScreen extends StatelessWidget {
   }
 
   /// 移动设备垂直布局
-  Widget _buildMobileLayout(BuildContext context, Room room, StateManager stateManager, GameLayoutParams layoutParams) {
+  Widget _buildMobileLayout(BuildContext context, Room room,
+      StateManager stateManager, GameLayoutParams layoutParams) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -66,7 +69,8 @@ class RoomScreen extends StatelessWidget {
   }
 
   /// 桌面/Web水平布局（保持原有设计）
-  Widget _buildDesktopLayout(BuildContext context, Room room, StateManager stateManager, GameLayoutParams layoutParams) {
+  Widget _buildDesktopLayout(BuildContext context, Room room,
+      StateManager stateManager, GameLayoutParams layoutParams) {
     return SizedBox(
       width: 700,
       height: 1000, // 确保有足够的高度支持滚动
@@ -112,7 +116,8 @@ class RoomScreen extends StatelessWidget {
   }
 
   // 火焰控制按钮
-  Widget _buildFireButtons(Room room, StateManager stateManager, GameLayoutParams layoutParams) {
+  Widget _buildFireButtons(
+      Room room, StateManager stateManager, GameLayoutParams layoutParams) {
     final fireValue = stateManager.get('game.fire.value', true) ?? 0;
     final wood = stateManager.get('stores.wood', true) ?? 0;
     final bool isFree = wood == 0;
@@ -128,7 +133,8 @@ class RoomScreen extends StatelessWidget {
             cost: isFree ? null : {'wood': 5},
             width: layoutParams.buttonWidth,
             free: isFree,
-            progressDuration: 10000, // 10秒点火时间，与原游戏一致
+            progressDuration:
+                GameConfig.lightFireProgressDuration, // 点火时间，与原游戏一致
           );
         } else {
           // 火焰燃烧 - 显示添柴按钮
@@ -138,7 +144,8 @@ class RoomScreen extends StatelessWidget {
             cost: isFree ? null : {'wood': 1},
             width: layoutParams.buttonWidth,
             free: isFree,
-            progressDuration: 10000, // 10秒添柴冷却时间，与原游戏一致
+            progressDuration:
+                GameConfig.stokeFireProgressDuration, // 添柴冷却时间，与原游戏一致
           );
         }
       },
@@ -146,7 +153,8 @@ class RoomScreen extends StatelessWidget {
   }
 
   // 建筑按钮区域
-  Widget _buildBuildButtons(Room room, StateManager stateManager, GameLayoutParams layoutParams) {
+  Widget _buildBuildButtons(
+      Room room, StateManager stateManager, GameLayoutParams layoutParams) {
     final builderLevel = stateManager.get('game.builder.level', true) ?? -1;
 
     // 只有当建造者等级 >= 4 时才显示建造按钮
@@ -157,7 +165,8 @@ class RoomScreen extends StatelessWidget {
     return Consumer<Localization>(
       builder: (context, localization, child) {
         return SizedBox(
-          width: layoutParams.useVerticalLayout ? layoutParams.gameAreaWidth : 140,
+          width:
+              layoutParams.useVerticalLayout ? layoutParams.gameAreaWidth : 140,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -180,8 +189,8 @@ class RoomScreen extends StatelessWidget {
                   room.craftables.entries
                       .where((entry) => entry.value['type'] == 'building')
                       .where((entry) => room.craftUnlocked(entry.key))
-                      .map((entry) => _buildCraftableButton(
-                          entry.key, entry.value, room, stateManager, layoutParams))
+                      .map((entry) => _buildCraftableButton(entry.key,
+                          entry.value, room, stateManager, layoutParams))
                       .toList(),
                   layoutParams,
                 )
@@ -189,8 +198,8 @@ class RoomScreen extends StatelessWidget {
                 // 桌面端：垂直列表
                 ...room.craftables.entries
                     .where((entry) => entry.value['type'] == 'building')
-                    .map((entry) => _buildCraftableButton(
-                        entry.key, entry.value, room, stateManager, layoutParams)),
+                    .map((entry) => _buildCraftableButton(entry.key,
+                        entry.value, room, stateManager, layoutParams)),
             ],
           ),
         );
@@ -199,7 +208,8 @@ class RoomScreen extends StatelessWidget {
   }
 
   // 制作按钮区域
-  Widget _buildCraftButtons(Room room, StateManager stateManager, GameLayoutParams layoutParams) {
+  Widget _buildCraftButtons(
+      Room room, StateManager stateManager, GameLayoutParams layoutParams) {
     final hasWorkshop =
         (stateManager.get('game.buildings.workshop', true) ?? 0) > 0;
 
@@ -211,7 +221,8 @@ class RoomScreen extends StatelessWidget {
     return Consumer<Localization>(
       builder: (context, localization, child) {
         return SizedBox(
-          width: layoutParams.useVerticalLayout ? layoutParams.gameAreaWidth : 140,
+          width:
+              layoutParams.useVerticalLayout ? layoutParams.gameAreaWidth : 140,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -234,8 +245,8 @@ class RoomScreen extends StatelessWidget {
                   room.craftables.entries
                       .where((entry) => room.needsWorkshop(entry.value['type']))
                       .where((entry) => room.craftUnlocked(entry.key))
-                      .map((entry) => _buildCraftableButton(
-                          entry.key, entry.value, room, stateManager, layoutParams))
+                      .map((entry) => _buildCraftableButton(entry.key,
+                          entry.value, room, stateManager, layoutParams))
                       .toList(),
                   layoutParams,
                 )
@@ -243,8 +254,8 @@ class RoomScreen extends StatelessWidget {
                 // 桌面端：垂直列表
                 ...room.craftables.entries
                     .where((entry) => room.needsWorkshop(entry.value['type']))
-                    .map((entry) => _buildCraftableButton(
-                        entry.key, entry.value, room, stateManager, layoutParams)),
+                    .map((entry) => _buildCraftableButton(entry.key,
+                        entry.value, room, stateManager, layoutParams)),
             ],
           ),
         );
@@ -253,7 +264,8 @@ class RoomScreen extends StatelessWidget {
   }
 
   // 购买按钮区域
-  Widget _buildBuyButtons(Room room, StateManager stateManager, GameLayoutParams layoutParams) {
+  Widget _buildBuyButtons(
+      Room room, StateManager stateManager, GameLayoutParams layoutParams) {
     final hasTradingPost =
         (stateManager.get('game.buildings.trading post', true) ?? 0) > 0;
 
@@ -265,7 +277,8 @@ class RoomScreen extends StatelessWidget {
     return Consumer<Localization>(
       builder: (context, localization, child) {
         return SizedBox(
-          width: layoutParams.useVerticalLayout ? layoutParams.gameAreaWidth : 140,
+          width:
+              layoutParams.useVerticalLayout ? layoutParams.gameAreaWidth : 140,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -287,8 +300,8 @@ class RoomScreen extends StatelessWidget {
                 _buildButtonGrid(
                   room.tradeGoods.entries
                       .where((entry) => room.buyUnlocked(entry.key))
-                      .map((entry) => _buildTradeButton(
-                          entry.key, entry.value, room, stateManager, layoutParams))
+                      .map((entry) => _buildTradeButton(entry.key, entry.value,
+                          room, stateManager, layoutParams))
                       .toList(),
                   layoutParams,
                 )
@@ -304,14 +317,13 @@ class RoomScreen extends StatelessWidget {
   }
 
   // 资源存储区域 - 使用统一的库存容器
-  Widget _buildStoresContainer(StateManager stateManager, GameLayoutParams layoutParams) {
+  Widget _buildStoresContainer(
+      StateManager stateManager, GameLayoutParams layoutParams) {
     return const UnifiedStoresContainer(
       showPerks: false,
       showVillageStatus: false,
     );
   }
-
-
 
   // 获取本地化资源名称
   String _getLocalizedResourceName(String resourceKey) {
@@ -324,8 +336,6 @@ class RoomScreen extends StatelessWidget {
     }
     return localizedName;
   }
-
-
 
   // 构建可制作物品按钮
   Widget _buildCraftableButton(String key, Map<String, dynamic> item, Room room,
@@ -388,15 +398,17 @@ class RoomScreen extends StatelessWidget {
 
     return GameButton(
       text: localizedName,
-      onPressed: isEnabled ? () {
-        // 添加调试日志
-        Logger.info('🔨 Building item: $key');
-        final result = room.build(key);
-        Logger.info('🔨 Build result: $result');
-        if (!result) {
-          Logger.error('❌ Build failed for: $key');
-        }
-      } : null,
+      onPressed: isEnabled
+          ? () {
+              // 添加调试日志
+              Logger.info('🔨 Building item: $key');
+              final result = room.build(key);
+              Logger.info('🔨 Build result: $result');
+              if (!result) {
+                Logger.error('❌ Build failed for: $key');
+              }
+            }
+          : null,
       cost: cost,
       width: layoutParams.buttonWidth,
       disabled: !isEnabled,
@@ -474,7 +486,9 @@ class RoomScreen extends StatelessWidget {
     // 将按钮分组
     List<List<Widget>> buttonRows = [];
     for (int i = 0; i < buttons.length; i += buttonsPerRow) {
-      int end = (i + buttonsPerRow < buttons.length) ? i + buttonsPerRow : buttons.length;
+      int end = (i + buttonsPerRow < buttons.length)
+          ? i + buttonsPerRow
+          : buttons.length;
       buttonRows.add(buttons.sublist(i, end));
     }
 
@@ -486,7 +500,8 @@ class RoomScreen extends StatelessWidget {
             children: [
               for (int i = 0; i < row.length; i++) ...[
                 Expanded(child: row[i]),
-                if (i < row.length - 1) SizedBox(width: layoutParams.buttonSpacing),
+                if (i < row.length - 1)
+                  SizedBox(width: layoutParams.buttonSpacing),
               ],
               // 如果这一行按钮数量不足，添加空白占位
               if (row.length < buttonsPerRow)

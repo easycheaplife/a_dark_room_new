@@ -7,6 +7,7 @@ import '../core/logger.dart';
 import '../core/responsive_layout.dart';
 import '../widgets/progress_button.dart';
 import '../widgets/unified_stores_container.dart';
+import '../config/game_config.dart';
 
 /// 外部界面 - 显示村庄状态、建筑和工人管理
 /// 使用与房间界面一致的UI风格
@@ -124,7 +125,8 @@ class OutsideScreen extends StatelessWidget {
               text: localization.translate('ui.buttons.gather_wood'),
               onPressed: () => outside.gatherWood(),
               width: layoutParams.buttonWidth,
-              progressDuration: 1000, // 1秒收集时间
+              progressDuration:
+                  GameConfig.gatherWoodProgressDuration, // 伐木时间，与原游戏一致
             );
           },
         ),
@@ -138,7 +140,8 @@ class OutsideScreen extends StatelessWidget {
                 text: localization.translate('ui.buttons.check_traps'),
                 onPressed: () => outside.checkTraps(),
                 width: layoutParams.buttonWidth,
-                progressDuration: 1500, // 1.5秒检查时间
+                progressDuration:
+                    GameConfig.checkTrapsProgressDuration, // 查看陷阱时间，与原游戏一致
               );
             },
           ),

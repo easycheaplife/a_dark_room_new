@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Web%20%7C%20Mobile%20%7C%20Desktop-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-Open%20Source-green.svg)
 
-**最后更新**: 2025-06-29 (太空模块胜利失败系统实现)
+**最后更新**: 2025-06-30 (游戏时间配置集中化管理)
 
 ## 📋 目录
 

@@ -1,10 +1,24 @@
 # A Dark Room Flutter 项目更新日志
 
-**最后更新**: 2025-06-29
+**最后更新**: 2025-06-30
 
 ## 概述
 
 本文档记录了 A Dark Room Flutter 移植项目的所有重要更新、修复和优化。所有文档都已添加更新日期，并建立了统一的更新日志系统。
+
+## 2025-06-30 - 游戏时间配置集中化管理
+
+### 🔧 优化改进
+- **游戏配置集中化** - 创建统一的游戏配置文件管理所有时间参数
+  - 目标：将分散在各模块中的时间配置集中到一个文件中管理
+  - 分析：详细分析原游戏源代码，确定所有时间配置的准确值
+  - 实现：创建`lib/config/game_config.dart`配置文件，包含所有游戏时间参数
+  - 配置：添柴冷却10秒、伐木60秒、查看陷阱90秒、火焰冷却5分钟等
+  - 更新：修改Room、Outside模块使用配置文件，更新UI进度条时间
+  - 调试：提供调试模式支持，可快速测试游戏功能
+  - 文件：`lib/config/game_config.dart`, `lib/modules/room.dart`, `lib/modules/outside.dart`, `lib/screens/room_screen.dart`, `lib/screens/outside_screen.dart`
+  - 文档：`docs/06_optimizations/game_config_centralization.md`, `docs/game_timing_analysis.md`
+  - 结果：所有时间配置与原游戏完全一致，代码维护性大幅提升
 
 ## 2025-06-29 - 太空模块键盘控制和结算界面居中修复
 
