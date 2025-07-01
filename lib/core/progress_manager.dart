@@ -26,7 +26,8 @@ class ProgressManager extends ChangeNotifier {
     required int duration,
     required VoidCallback onComplete,
   }) {
-    Logger.info('🚀 ProgressManager: Starting progress $id, duration: ${duration}ms');
+    Logger.info(
+        '🚀 ProgressManager: Starting progress $id, duration: ${duration}ms');
 
     // 取消之前的进度（如果存在）
     if (_activeProgresses.containsKey(id)) {
@@ -69,7 +70,8 @@ class ProgressManager extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       // 忽略在dispose时的错误
-      Logger.info('⚠️ ProgressManager: Ignored notifyListeners error during dispose: $e');
+      Logger.info(
+          '⚠️ ProgressManager: Ignored notifyListeners error during dispose: $e');
     }
   }
 
@@ -80,10 +82,9 @@ class ProgressManager extends ChangeNotifier {
     Logger.info('🔄 ProgressManager: Starting global update timer');
 
     _globalUpdateTimer = VisibilityManager().createPeriodicTimer(
-      const Duration(milliseconds: 50),
-      _updateAllProgresses,
-      'ProgressManager.GlobalUpdate'
-    );
+        const Duration(milliseconds: 50),
+        _updateAllProgresses,
+        'ProgressManager.GlobalUpdate');
   }
 
   /// 停止全局更新定时器
@@ -111,7 +112,8 @@ class ProgressManager extends ChangeNotifier {
       final progress = entry.value;
 
       final elapsed = now.difference(progress.startTime);
-      final newProgress = (elapsed.inMilliseconds / progress.duration).clamp(0.0, 1.0);
+      final newProgress =
+          (elapsed.inMilliseconds / progress.duration).clamp(0.0, 1.0);
 
       progress.currentProgress = newProgress;
 
@@ -125,10 +127,10 @@ class ProgressManager extends ChangeNotifier {
     for (final id in completedProgresses) {
       final progress = _activeProgresses[id]!;
       Logger.info('✅ ProgressManager: Progress $id completed');
-      
+
       // 调用完成回调
       progress.onComplete();
-      
+
       // 移除进度
       _activeProgresses.remove(id);
     }

@@ -106,13 +106,14 @@ class NotificationManager with ChangeNotifier {
       final fallbackMessages = {
         'zh': {
           // 基础资源消息
-          'not enough': '不够',
-          'insufficient resources': '资源不足',
+          'not enough': localization.translate('messages.insufficient'),
+          'insufficient resources':
+              localization.translate('messages.not_enough_resources'),
         },
         'en': {
-          // 中文到英文的基础映射
-          '不够': 'not enough',
-          '资源不足': 'insufficient resources',
+          // 基础映射
+          'not enough': 'not enough',
+          'insufficient resources': 'insufficient resources',
         }
       };
 

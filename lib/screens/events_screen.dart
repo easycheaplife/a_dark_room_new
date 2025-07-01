@@ -109,7 +109,7 @@ class _EventsScreenState extends State<EventsScreen> {
                         ] else ...[
                           // 显示正常的战利品界面
                           Text(
-                            _getLocalizedText('发现了：', 'found:'),
+                            _getLocalizedText('messages.found', 'found:'),
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -177,7 +177,8 @@ class _EventsScreenState extends State<EventsScreen> {
                                         ),
                                         child: Text(
                                           _getLocalizedText(
-                                              '带走 所有', 'take all'),
+                                              'ui.buttons.take_all',
+                                              'take all'),
                                           style: const TextStyle(fontSize: 10),
                                         ),
                                       ),
@@ -663,57 +664,33 @@ class _EventsScreenState extends State<EventsScreen> {
   String _getLocalizedButtonText(String text) {
     final localization = Localization();
 
-    // 尝试直接从本地化系统获取翻译
-    String directTranslation = localization.translate(text);
-    if (directTranslation != text) {
-      return directTranslation;
-    }
-
-    // 尝试从事件按钮翻译中获取
-    final buttonKeys = [
-      'events.stranger_event.trade_button',
-      'events.stranger_event.decline_button',
-      'events.stranger_event.continue_button',
-      'events.mysterious_wanderer_event.talk_button',
-      'events.mysterious_wanderer_event.ignore_button',
-      'events.mysterious_wanderer_event.thank_button',
-      'events.mysterious_wanderer_wood.give100_button',
-      'events.mysterious_wanderer_wood.give500_button',
-      'events.mysterious_wanderer_wood.deny_button',
-      'events.mysterious_wanderer_fur.deny_button',
-      'events.mysterious_wanderer.leave_button',
-    ];
-
-    for (final key in buttonKeys) {
-      final translatedText = localization.translate(key);
-      if (translatedText != key && translatedText == text) {
-        return translatedText;
-      }
-    }
-
-    // 尝试从通用按钮翻译中获取
+    // 首先尝试从通用按钮翻译中获取（最常用的情况）
     final translatedButton = localization.translate('ui.buttons.$text');
     if (translatedButton != 'ui.buttons.$text') {
       return translatedButton;
+    }
+
+    // 尝试直接从本地化系统获取翻译（如果text本身就是一个键）
+    String directTranslation = localization.translate(text);
+    if (directTranslation != text) {
+      return directTranslation;
     }
 
     // 如果没有找到翻译，返回原文本
     return text;
   }
 
-  /// 获取本地化文本 - 根据当前语言返回中文或英文
-  String _getLocalizedText(String chineseText, String englishText) {
+  /// 获取本地化文本 - 使用本地化键而不是硬编码文本
+  String _getLocalizedText(String localizationKey, String fallbackText) {
     final localization = Localization();
 
-    // 尝试从本地化系统获取翻译
-    if (chineseText == '发现了：') {
-      return localization.translate('messages.found');
-    }
-    if (chineseText == '带走 所有') {
-      return localization.translate('ui.buttons.take_all');
+    // 直接使用本地化键获取翻译
+    String translation = localization.translate(localizationKey);
+    if (translation != localizationKey) {
+      return translation;
     }
 
-    // 否则根据当前语言返回对应文本
-    return localization.currentLanguage == 'zh' ? chineseText : englishText;
+    // 如果没有找到翻译，返回回退文本
+    return fallbackText;
   }
 }

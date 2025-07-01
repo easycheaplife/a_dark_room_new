@@ -161,8 +161,8 @@ class Header extends StatelessWidget {
                   itemBuilder: (BuildContext context) {
                     // 只支持中文和英文
                     final supportedLanguages = {
-                      'zh': localization.currentLanguage == 'zh' ? '中文' : 'Chinese',
-                      'en': localization.currentLanguage == 'zh' ? '英文' : 'English',
+                      'zh': localization.translate('ui.language.chinese'),
+                      'en': localization.translate('ui.language.english'),
                     };
 
                     return supportedLanguages.entries.map((entry) {
@@ -288,7 +288,8 @@ class Header extends StatelessWidget {
     final fur = stateManager.get('stores.fur', true) ?? 0;
     final scales = stateManager.get('stores.scales', true) ?? 0;
     final teeth = stateManager.get('stores.teeth', true) ?? 0;
-    final hasTradingPost = (stateManager.get('game.buildings["trading post"]', true) ?? 0) > 0;
+    final hasTradingPost =
+        (stateManager.get('game.buildings["trading post"]', true) ?? 0) > 0;
 
     // 如果有指南针，直接解锁
     if (compassCount > 0) {

@@ -89,6 +89,10 @@
       "ship": "ship",
       "special_items": "special items"
     },
+    "language": {
+      "chinese": "Chinese",
+      "english": "English"
+    },
     "modules": {
       "path": "a dusty path",
       "fabricator": "a humming fabricator",
@@ -249,6 +253,7 @@
     "backpack": "backpack",
     "space": "space",
     "full": "full",
+    "found": "found:",
     "empty": "empty",
     "maximum_reached": "maximum reached",
     "go_to_world_map": "go to world map",
@@ -486,12 +491,14 @@
       "turn_away_text3": "you feel somewhat guilty."
     },
     "mysterious_wanderer_wood": {
+      "title": "mysterious wanderer",
       "text1": "a wanderer arrives with an empty cart. says if he leaves with wood, he'll come back with more.",
       "text2": "the builder is not sure he can be trusted.",
       "leave_text": "the wanderer leaves, cart loaded with wood",
       "notification": "a mysterious wanderer arrives"
     },
     "mysterious_wanderer_fur": {
+      "title": "mysterious wanderer",
       "text1": "a wanderer arrives with an empty cart. says if she leaves with fur, she'll come back with more.",
       "text2": "the builder is not sure she can be trusted.",
       "leave_text": "the wanderer leaves, cart loaded with fur",

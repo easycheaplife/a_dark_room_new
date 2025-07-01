@@ -88,6 +88,10 @@
       "ship": "飞船",
       "special_items": "特殊物品"
     },
+    "language": {
+      "chinese": "中文",
+      "english": "英文"
+    },
     "modules": {
       "path": "漫漫尘途",
       "fabricator": "嗡嗡作响的制造器",
@@ -241,6 +245,7 @@
     "backpack": "背包剩余",
     "space": "空间",
     "full": "满了",
+    "found": "发现了：",
     "empty": "空的",
     "maximum_reached": "已达到最大数量限制",
     "go_to_world_map": "前往世界地图",
@@ -613,12 +618,14 @@
       "turn_away_text3": "你感到有些内疚。"
     },
     "mysterious_wanderer_wood": {
+      "title": "神秘流浪者",
       "text1": "一个流浪者带着空车到达。说如果他带着木材离开，他会带着更多回来。",
       "text2": "建造者不确定他是否值得信任。",
       "leave_text": "流浪者离开了，车上装满了木材",
       "notification": "一个神秘的流浪者到达"
     },
     "mysterious_wanderer_fur": {
+      "title": "神秘流浪者",
       "text1": "一个流浪者带着空车到达。说如果她带着毛皮离开，她会带着更多回来。",
       "text2": "建造者不确定她是否值得信任。",
       "leave_text": "流浪者离开了，车上装满了毛皮",

@@ -11,7 +11,7 @@ class RoomEventsExtended {
 
   /// 里面的声音事件
   static Map<String, dynamic> get noisesInside => {
-        'title': 'events.noises_inside.title',
+        'title': 'events.room_events.noises_inside.title',
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final wood = _sm.get('stores.wood', true) ?? 0;
@@ -20,10 +20,10 @@ class RoomEventsExtended {
         'scenes': {
           'start': {
             'text': [
-              'events.noises_inside.text1',
-              'events.noises_inside.text2'
+              'events.room_events.noises_inside.text1',
+              'events.room_events.noises_inside.text2'
             ],
-            'notification': 'events.noises_inside.notification',
+            'notification': 'events.room_events.noises_inside.notification',
             'buttons': {
               'investigate': {
                 'text': 'ui.buttons.investigate',
@@ -34,8 +34,8 @@ class RoomEventsExtended {
           },
           'scales': {
             'text': [
-              'events.noises_inside.wood_missing',
-              'events.noises_inside.scales_found'
+              'events.room_events.noises_inside.wood_missing',
+              'events.room_events.noises_inside.scales_found'
             ],
             'onLoad': () {
               final numWood = _sm.get('stores.wood', true) ?? 0;
@@ -50,8 +50,8 @@ class RoomEventsExtended {
           },
           'teeth': {
             'text': [
-              'events.noises_inside.wood_missing',
-              'events.noises_inside.teeth_found'
+              'events.room_events.noises_inside.wood_missing',
+              'events.room_events.noises_inside.teeth_found'
             ],
             'onLoad': () {
               final numWood = _sm.get('stores.wood', true) ?? 0;
@@ -66,8 +66,8 @@ class RoomEventsExtended {
           },
           'cloth': {
             'text': [
-              'events.noises_inside.wood_missing',
-              'events.noises_inside.cloth_found'
+              'events.room_events.noises_inside.wood_missing',
+              'events.room_events.noises_inside.cloth_found'
             ],
             'onLoad': () {
               final numWood = _sm.get('stores.wood', true) ?? 0;
@@ -247,7 +247,7 @@ class RoomEventsExtended {
 
   /// 神秘流浪者-木材版事件
   static Map<String, dynamic> get mysteriousWandererWood => {
-        'title': '神秘流浪者',
+        'title': 'events.mysterious_wanderer_wood.title',
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final wood = _sm.get('stores.wood', true) ?? 0;
@@ -255,52 +255,27 @@ class RoomEventsExtended {
         },
         'scenes': {
           'start': {
-            'text': () {
-              final localization = Localization();
-              return [
-                localization.translate('events.mysterious_wanderer_wood.text1'),
-                localization.translate('events.mysterious_wanderer_wood.text2')
-              ];
-            }(),
-            'notification': () {
-              final localization = Localization();
-              return localization
-                  .translate('events.mysterious_wanderer_wood.notification');
-            }(),
+            'text': [
+              'events.mysterious_wanderer_wood.text1',
+              'events.mysterious_wanderer_wood.text2'
+            ],
+            'notification': 'events.mysterious_wanderer_wood.notification',
             'buttons': {
               'wood100': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.give_100');
-                }(),
+                'text': 'ui.buttons.give_100',
                 'cost': {'wood': 100},
                 'nextScene': 'wood100'
               },
               'wood500': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.give_500');
-                }(),
+                'text': 'ui.buttons.give_500',
                 'cost': {'wood': 500},
                 'nextScene': 'wood500'
               },
-              'deny': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.deny');
-                }(),
-                'nextScene': 'end'
-              }
+              'deny': {'text': 'ui.buttons.deny', 'nextScene': 'end'}
             }
           },
           'wood100': {
-            'text': () {
-              final localization = Localization();
-              return [
-                localization
-                    .translate('events.mysterious_wanderer_wood.leave_text')
-              ];
-            }(),
+            'text': ['events.mysterious_wanderer_wood.leave_text'],
             'onLoad': () {
               // 50%概率在60秒后返回300木材
               if (Random().nextDouble() < 0.5) {
@@ -315,23 +290,11 @@ class RoomEventsExtended {
               }
             },
             'buttons': {
-              'leave': {
-                'text': () {
-                  final localization = Localization();
-                  return localization.translate('ui.buttons.farewell');
-                }(),
-                'nextScene': 'end'
-              }
+              'leave': {'text': 'ui.buttons.farewell', 'nextScene': 'end'}
             }
           },
           'wood500': {
-            'text': () {
-              final localization = Localization();
-              return [
-                localization
-                    .translate('events.mysterious_wanderer_wood.leave_text')
-              ];
-            }(),
+            'text': ['events.mysterious_wanderer_wood.leave_text'],
             'onLoad': () {
               // 30%概率在60秒后返回1500木材
               if (Random().nextDouble() < 0.3) {
@@ -345,7 +308,7 @@ class RoomEventsExtended {
               }
             },
             'buttons': {
-              'leave': {'text': '告别', 'nextScene': 'end'}
+              'leave': {'text': 'ui.buttons.farewell', 'nextScene': 'end'}
             }
           }
         }
@@ -353,7 +316,7 @@ class RoomEventsExtended {
 
   /// 神秘流浪者-毛皮版事件
   static Map<String, dynamic> get mysteriousWandererFur => {
-        'title': '神秘流浪者',
+        'title': 'events.mysterious_wanderer_fur.title',
         'isAvailable': () {
           final fire = _sm.get('game.fire.value', true) ?? 0;
           final fur = _sm.get('stores.fur', true) ?? 0;
