@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../core/localization.dart';
 import '../core/logger.dart';
 import '../core/progress_manager.dart';
+import '../core/responsive_layout.dart';
 
 /// 带进度条的按钮组件
 class ProgressButton extends StatefulWidget {
@@ -172,6 +173,11 @@ class _ProgressButtonState extends State<ProgressButton> {
     Logger.info('✅ ProgressManager.startProgress called for $_progressId');
   }
 
+  /// 获取布局参数
+  GameLayoutParams _getLayoutParams() {
+    return GameLayoutParams.getLayoutParams(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer2<Localization, ProgressManager>(
@@ -216,8 +222,11 @@ class _ProgressButtonState extends State<ProgressButton> {
                       child: InkWell(
                         onTap: isDisabled ? null : _startProgress,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: _getLayoutParams().useVerticalLayout
+                                  ? 6
+                                  : 4), // 移动端增加垂直内边距
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
@@ -230,7 +239,10 @@ class _ProgressButtonState extends State<ProgressButton> {
                                     color: isDisabled
                                         ? Colors.grey[600]
                                         : Colors.black,
-                                    fontSize: 11,
+                                    fontSize:
+                                        _getLayoutParams().useVerticalLayout
+                                            ? 13
+                                            : 11, // 移动端增大字体
                                     fontFamily: 'Times New Roman',
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -277,9 +289,11 @@ class _ProgressButtonState extends State<ProgressButton> {
                             child: Text(
                               widget.progressText ??
                                   '${_currentProgress?.progressPercent ?? 0}%',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 11,
+                                fontSize: _getLayoutParams().useVerticalLayout
+                                    ? 12
+                                    : 11, // 移动端增大字体
                                 fontFamily: 'Times New Roman',
                                 fontWeight: FontWeight.bold,
                               ),

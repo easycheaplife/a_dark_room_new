@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../core/engine.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
+import '../core/responsive_layout.dart';
 import '../modules/room.dart';
 import '../modules/outside.dart';
 import '../modules/path.dart';
@@ -22,11 +23,12 @@ class Header extends StatelessWidget {
     return Consumer3<Engine, StateManager, Localization>(
       builder: (context, engine, stateManager, localization, child) {
         final activeModule = engine.activeModule;
+        final layoutParams = GameLayoutParams.getLayoutParams(context);
 
         // 检查页签导航是否被禁用（如在世界地图中）
         if (!engine.tabNavigation) {
           return Container(
-            height: 40, // 保持相同高度
+            height: layoutParams.useVerticalLayout ? 50 : 40, // 移动端增加高度
             decoration: const BoxDecoration(
               color: Colors.white,
             ),
@@ -42,10 +44,10 @@ class Header extends StatelessWidget {
                   child: PopupMenuButton<String>(
                     onSelected: (String language) =>
                         _switchLanguage(context, language),
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.language,
                       color: Colors.black,
-                      size: 20,
+                      size: layoutParams.useVerticalLayout ? 24 : 20, // 移动端增大图标
                     ),
                     itemBuilder: (BuildContext context) => [
                       const PopupMenuItem<String>(
@@ -65,10 +67,10 @@ class Header extends StatelessWidget {
                   margin: const EdgeInsets.only(right: 10),
                   child: IconButton(
                     onPressed: () => _openSettings(context),
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.settings,
                       color: Colors.black,
-                      size: 20,
+                      size: layoutParams.useVerticalLayout ? 24 : 20, // 移动端增大图标
                     ),
                   ),
                 ),
@@ -133,33 +135,46 @@ class Header extends StatelessWidget {
         }
 
         return Container(
-          height: 40, // 原游戏header高度
+          height: layoutParams.useVerticalLayout ? 50 : 40, // 移动端增加高度
           decoration: const BoxDecoration(
             color: Colors.white,
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // 页签列表
-              ...tabs,
+          child: layoutParams.useVerticalLayout
+              ? _buildMobileHeader(context, tabs, localization, layoutParams)
+              : _buildDesktopHeader(context, tabs, localization, layoutParams),
+        );
+      },
+    );
+  }
 
-              // 右侧空间填充
-              const Spacer(),
+  /// 移动端Header布局 - 优化移动设备显示
+  Widget _buildMobileHeader(BuildContext context, List<Widget> tabs,
+      Localization localization, GameLayoutParams layoutParams) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // 页签列表 - 可横向滚动
+          ...tabs,
 
-              // 语言切换按钮
-              Container(
-                margin: const EdgeInsets.only(right: 5),
-                child: PopupMenuButton<String>(
+          // 右侧按钮组
+          Container(
+            margin: const EdgeInsets.only(left: 10),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 语言切换按钮
+                PopupMenuButton<String>(
                   onSelected: (String language) =>
                       _switchLanguage(context, language),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.language,
                     color: Colors.black,
-                    size: 20,
+                    size: 24, // 移动端增大图标
                   ),
                   tooltip: localization.translate('ui.menus.language'),
                   itemBuilder: (BuildContext context) {
-                    // 只支持中文和英文
                     final supportedLanguages = {
                       'zh': localization.translate('ui.language.chinese'),
                       'en': localization.translate('ui.language.english'),
@@ -192,39 +207,121 @@ class Header extends StatelessWidget {
                     }).toList();
                   },
                 ),
-              ),
 
-              // 导入/导出按钮
-              Container(
-                margin: const EdgeInsets.only(right: 5),
-                child: IconButton(
+                // 导入/导出按钮
+                IconButton(
                   onPressed: () => _openImportExport(context),
                   icon: const Icon(
                     Icons.save_alt,
                     color: Colors.black,
-                    size: 20,
+                    size: 24, // 移动端增大图标
                   ),
                   tooltip: localization.translate('ui.menus.import_export'),
                 ),
-              ),
 
-              // 设置按钮
-              Container(
-                margin: const EdgeInsets.only(right: 10),
-                child: IconButton(
+                // 设置按钮
+                IconButton(
                   onPressed: () => _openSettings(context),
                   icon: const Icon(
                     Icons.settings,
                     color: Colors.black,
-                    size: 20,
+                    size: 24, // 移动端增大图标
                   ),
                   tooltip: localization.translate('ui.menus.settings'),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        );
-      },
+        ],
+      ),
+    );
+  }
+
+  /// 桌面端Header布局 - 保持原有设计
+  Widget _buildDesktopHeader(BuildContext context, List<Widget> tabs,
+      Localization localization, GameLayoutParams layoutParams) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // 页签列表
+        ...tabs,
+
+        // 右侧空间填充
+        const Spacer(),
+
+        // 语言切换按钮
+        Container(
+          margin: const EdgeInsets.only(right: 5),
+          child: PopupMenuButton<String>(
+            onSelected: (String language) => _switchLanguage(context, language),
+            icon: const Icon(
+              Icons.language,
+              color: Colors.black,
+              size: 20,
+            ),
+            tooltip: localization.translate('ui.menus.language'),
+            itemBuilder: (BuildContext context) {
+              final supportedLanguages = {
+                'zh': localization.translate('ui.language.chinese'),
+                'en': localization.translate('ui.language.english'),
+              };
+
+              return supportedLanguages.entries.map((entry) {
+                return PopupMenuItem<String>(
+                  value: entry.key,
+                  child: Row(
+                    children: [
+                      Text(
+                        entry.value,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: entry.key == localization.currentLanguage
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
+                      ),
+                      if (entry.key == localization.currentLanguage)
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8),
+                          child:
+                              Icon(Icons.check, color: Colors.green, size: 16),
+                        ),
+                    ],
+                  ),
+                );
+              }).toList();
+            },
+          ),
+        ),
+
+        // 导入/导出按钮
+        Container(
+          margin: const EdgeInsets.only(right: 5),
+          child: IconButton(
+            onPressed: () => _openImportExport(context),
+            icon: const Icon(
+              Icons.save_alt,
+              color: Colors.black,
+              size: 20,
+            ),
+            tooltip: localization.translate('ui.menus.import_export'),
+          ),
+        ),
+
+        // 设置按钮
+        Container(
+          margin: const EdgeInsets.only(right: 10),
+          child: IconButton(
+            onPressed: () => _openSettings(context),
+            icon: const Icon(
+              Icons.settings,
+              color: Colors.black,
+              size: 20,
+            ),
+            tooltip: localization.translate('ui.menus.settings'),
+          ),
+        ),
+      ],
     );
   }
 
@@ -350,11 +447,19 @@ class Header extends StatelessWidget {
 
   Widget _buildTab(BuildContext context, String title, bool isSelected,
       {VoidCallback? onTap, bool isFirst = false}) {
+    final layoutParams = GameLayoutParams.getLayoutParams(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        margin: EdgeInsets.only(left: isFirst ? 0 : 10),
+        padding: EdgeInsets.symmetric(
+          horizontal: layoutParams.useVerticalLayout ? 8 : 10, // 移动端减少内边距
+          vertical: layoutParams.useVerticalLayout ? 10 : 8, // 移动端增加垂直内边距
+        ),
+        margin: EdgeInsets.only(
+            left: isFirst
+                ? 0
+                : (layoutParams.useVerticalLayout ? 5 : 10)), // 移动端减少间距
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border(
@@ -367,7 +472,7 @@ class Header extends StatelessWidget {
           title,
           style: TextStyle(
             color: Colors.black,
-            fontSize: 17, // 原游戏字体大小
+            fontSize: layoutParams.useVerticalLayout ? 15 : 17, // 移动端减小字体
             fontFamily: 'Times New Roman',
             decoration: isSelected ? TextDecoration.underline : null,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,

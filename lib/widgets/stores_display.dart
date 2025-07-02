@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
+import '../core/responsive_layout.dart';
 import '../utils/weapon_utils.dart';
 
 /// 库存显示样式枚举
@@ -189,7 +190,9 @@ class _StoresDisplayState extends State<StoresDisplay> {
     final isLight = widget.style == StoresDisplayStyle.light;
     final backgroundColor = isLight ? Colors.white : Colors.black;
     final textColor = isLight ? Colors.black : Colors.white;
-    final containerWidth = widget.width ?? 200.0;
+    final layoutParams = GameLayoutParams.getLayoutParams(context);
+    final containerWidth = widget.width ??
+        (layoutParams.useVerticalLayout ? double.infinity : 200.0); // 移动端全宽
 
     Widget content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,12 +229,14 @@ class _StoresDisplayState extends State<StoresDisplay> {
   /// 构建标题
   Widget _buildTitle(Localization localization, Color textColor) {
     final title = widget.customTitle ?? _getDefaultTitle(localization);
+    final layoutParams = GameLayoutParams.getLayoutParams(context);
 
     if (!widget.collapsible) {
       // 不可折叠的标题
       if (widget.style == StoresDisplayStyle.light) {
         return Container(
-          padding: const EdgeInsets.all(10),
+          padding: EdgeInsets.all(
+              layoutParams.useVerticalLayout ? 8 : 10), // 移动端减少内边距
           child: Container(
             transform: Matrix4.translationValues(8, -13, 0),
             child: Container(
@@ -239,9 +244,9 @@ class _StoresDisplayState extends State<StoresDisplay> {
               padding: const EdgeInsets.symmetric(horizontal: 2),
               child: Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.black,
-                  fontSize: 16,
+                  fontSize: layoutParams.useVerticalLayout ? 14 : 16, // 移动端减小字体
                   fontFamily: 'Times New Roman',
                 ),
               ),
@@ -250,11 +255,13 @@ class _StoresDisplayState extends State<StoresDisplay> {
         );
       } else {
         return Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(
+              layoutParams.useVerticalLayout ? 6 : 8), // 移动端减少内边距
           child: Text(
             title,
             style: TextStyle(
               color: textColor,
+              fontSize: layoutParams.useVerticalLayout ? 14 : 16, // 移动端减小字体
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -314,9 +321,18 @@ class _StoresDisplayState extends State<StoresDisplay> {
     Color textColor,
   ) {
     final isLight = widget.style == StoresDisplayStyle.light;
+    final layoutParams = GameLayoutParams.getLayoutParams(context);
     final padding = isLight
-        ? const EdgeInsets.fromLTRB(10, 0, 10, 10)
-        : const EdgeInsets.symmetric(horizontal: 16, vertical: 4);
+        ? EdgeInsets.fromLTRB(
+            layoutParams.useVerticalLayout ? 8 : 10, // 移动端减少左右内边距
+            0,
+            layoutParams.useVerticalLayout ? 8 : 10, // 移动端减少左右内边距
+            layoutParams.useVerticalLayout ? 8 : 10 // 移动端减少底部内边距
+            )
+        : EdgeInsets.symmetric(
+            horizontal: layoutParams.useVerticalLayout ? 12 : 16, // 移动端减少水平内边距
+            vertical: layoutParams.useVerticalLayout ? 3 : 4 // 移动端减少垂直内边距
+            );
 
     return Container(
       padding: padding,
@@ -397,7 +413,10 @@ class _StoresDisplayState extends State<StoresDisplay> {
     }
 
     final isLight = widget.style == StoresDisplayStyle.light;
-    final fontSize = isLight ? 16.0 : 14.0;
+    final layoutParams = GameLayoutParams.getLayoutParams(context);
+    final fontSize = isLight
+        ? (layoutParams.useVerticalLayout ? 14.0 : 16.0) // 移动端减小字体
+        : (layoutParams.useVerticalLayout ? 12.0 : 14.0); // 移动端减小字体
     final fontFamily = isLight ? 'Times New Roman' : null;
 
     Widget row = Row(

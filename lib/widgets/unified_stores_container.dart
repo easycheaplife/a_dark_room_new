@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
 import '../core/logger.dart';
+import '../core/responsive_layout.dart';
 import 'stores_display.dart';
 
 /// 统一的库存容器组件 - 用于三个页签的库存显示，确保代码复用和一致性
@@ -43,8 +44,13 @@ class UnifiedStoresContainer extends StatelessWidget {
 
     return Consumer2<StateManager, Localization>(
       builder: (context, stateManager, localization, child) {
+        final layoutParams = GameLayoutParams.getLayoutParams(context);
+
         return SizedBox(
-          width: width ?? 200, // 固定宽度，三个页签保持一致
+          width: width ??
+              (layoutParams.useVerticalLayout
+                  ? double.infinity
+                  : 200), // 移动端全宽，桌面端固定宽度
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min, // 根据内容自适应高度，不使用固定高度
