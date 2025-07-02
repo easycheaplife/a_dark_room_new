@@ -1572,6 +1572,7 @@ class World extends ChangeNotifier {
       // AudioEngine().playSound(AudioLibrary.death);
 
       // 立即切换到小黑屋 - 参考原游戏逻辑（避免显示"地图未初始化"过渡页面）
+      // 使用单例实例确保APK版本兼容性
       final room = Room();
       engine.travelTo(room);
       Logger.info('🏠 立即切换到小黑屋（避免过渡页面）');

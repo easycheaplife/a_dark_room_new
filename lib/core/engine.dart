@@ -117,19 +117,23 @@ class Engine with ChangeNotifier {
     final fur = sm.get('stores.fur', true) ?? 0;
     final scales = sm.get('stores.scales', true) ?? 0;
     final teeth = sm.get('stores.teeth', true) ?? 0;
-    final hasTradingPost = (sm.get('game.buildings["trading post"]', true) ?? 0) > 0;
+    final hasTradingPost =
+        (sm.get('game.buildings["trading post"]', true) ?? 0) > 0;
 
-    Logger.info('🧭 Compass count: $compassCount, fur: $fur, scales: $scales, teeth: $teeth, trading post: $hasTradingPost');
+    Logger.info(
+        '🧭 Compass count: $compassCount, fur: $fur, scales: $scales, teeth: $teeth, trading post: $hasTradingPost');
 
     // 如果有指南针或者有足够资源制作指南针，就初始化Path模块
-    final shouldInitPath = compassCount > 0 || (hasTradingPost && fur >= 400 && scales >= 20 && teeth >= 10);
+    final shouldInitPath = compassCount > 0 ||
+        (hasTradingPost && fur >= 400 && scales >= 20 && teeth >= 10);
 
     if (shouldInitPath) {
       Logger.info('🧭 Initializing Path module...');
       Path().init();
       Logger.info('🧭 Path module initialized');
     } else {
-      Logger.info('🧭 Path module not initialized - no compass and insufficient resources');
+      Logger.info(
+          '🧭 Path module not initialized - no compass and insufficient resources');
     }
 
     // 检查是否应该初始化制造机
@@ -144,10 +148,7 @@ class Engine with ChangeNotifier {
 
     // 设置保存计时器 - 使用VisibilityManager管理
     _saveTimer = VisibilityManager().createPeriodicTimer(
-      const Duration(minutes: 1),
-      () => saveGame(),
-      'Engine.saveTimer'
-    );
+        const Duration(minutes: 1), () => saveGame(), 'Engine.saveTimer');
 
     // 启动自动保存功能
     sm.startAutoSave();
@@ -159,11 +160,8 @@ class Engine with ChangeNotifier {
     toggleVolume(sm.get('config.soundOn', true) == true);
 
     // 开始收集收入 - 使用VisibilityManager管理
-    VisibilityManager().createPeriodicTimer(
-      const Duration(seconds: 1),
-      () => sm.collectIncome(),
-      'Engine.incomeTimer'
-    );
+    VisibilityManager().createPeriodicTimer(const Duration(seconds: 1),
+        () => sm.collectIncome(), 'Engine.incomeTimer');
 
     notifyListeners();
   }
@@ -254,15 +252,23 @@ class Engine with ChangeNotifier {
 
   // 前往不同的模块
   void travelTo(dynamic module) {
+    Logger.info('🚀 Engine.travelTo() 被调用，目标模块: ${module.runtimeType}');
+    Logger.info('🔍 当前活动模块: ${activeModule?.runtimeType}');
+
     if (activeModule == module) {
+      Logger.info('⚠️ 目标模块与当前模块相同，跳过切换');
       return;
     }
 
+    Logger.info('🔄 开始切换模块...');
     // 更新活动模块
     activeModule = module;
+    Logger.info('✅ 活动模块已更新为: ${module.runtimeType}');
 
     // 调用新模块的onArrival
+    Logger.info('📞 调用新模块的onArrival方法...');
     module.onArrival(1);
+    Logger.info('✅ onArrival方法调用完成');
 
     // 检查是否需要恢复导航 - 参考原游戏的restoreNavigation逻辑
     if (restoreNavigation) {
@@ -272,9 +278,12 @@ class Engine with ChangeNotifier {
     }
 
     // 打印模块的通知
+    Logger.info('📢 打印模块通知...');
     NotificationManager().printQueue(module.name);
 
+    Logger.info('🔔 通知所有监听器...');
     notifyListeners();
+    Logger.info('✅ Engine.travelTo() 完成');
   }
 
   // 切换游戏音量
@@ -337,24 +346,19 @@ class Engine with ChangeNotifier {
 
     final duration = Duration(milliseconds: interval);
     return VisibilityManager().createPeriodicTimer(
-      duration,
-      () => callback(),
-      description ?? 'Engine.setInterval'
-    );
+        duration, () => callback(), description ?? 'Engine.setInterval');
   }
 
   // 设置超时，支持双倍时间
-  Timer setTimeout(Function callback, int timeout, {bool skipDouble = false, String? description}) {
+  Timer setTimeout(Function callback, int timeout,
+      {bool skipDouble = false, String? description}) {
     if (options['doubleTime'] == true && !skipDouble) {
       timeout = (timeout / 2).round();
     }
 
     final duration = Duration(milliseconds: timeout);
     return VisibilityManager().createTimer(
-      duration,
-      () => callback(),
-      description ?? 'Engine.setTimeout'
-    );
+        duration, () => callback(), description ?? 'Engine.setTimeout');
   }
 
   // 处理按键按下事件

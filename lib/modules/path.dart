@@ -331,16 +331,17 @@ class Path extends ChangeNotifier {
 
       Logger.info(
           '🌍 ${localization.translateLog('initializing_world_module')}...');
-      // 初始化World模块
-      World().init();
+      // 初始化World模块 - 使用单例实例确保APK版本兼容性
+      final worldInstance = World.instance;
+      worldInstance.init();
 
       Logger.info('🌍 Setting world feature as unlocked...');
       // 设置世界功能为已解锁
       sm.set('features.location.world', true);
 
       Logger.info('🌍 Switching to World module...');
-      // 切换到世界模块
-      Engine().travelTo(World());
+      // 切换到世界模块 - 使用单例实例确保APK版本兼容性
+      Engine().travelTo(worldInstance);
 
       // 显示成功消息
       NotificationManager()
