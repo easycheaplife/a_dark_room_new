@@ -165,10 +165,14 @@ class OutsideScreen extends StatelessWidget {
   // 村庄状态区域 - 模拟原游戏的 village 容器
   Widget _buildVillageStatus(Outside outside, StateManager stateManager,
       GameLayoutParams layoutParams) {
-    final numHuts = stateManager.get('game.buildings.hut', true) ?? 0;
+    final gameBuildings = stateManager.get('game.buildings', true) ?? {};
 
-    // 如果没有小屋，不显示村庄状态
-    if (numHuts == 0) {
+    // 检查是否有任何建筑物 - 参考原游戏outside.js第435-449行逻辑
+    bool hasAnyBuildings = gameBuildings.isNotEmpty &&
+        gameBuildings.values.any((count) => (count as int? ?? 0) > 0);
+
+    // 如果没有任何建筑物，不显示村庄状态
+    if (!hasAnyBuildings) {
       return const SizedBox.shrink();
     }
 

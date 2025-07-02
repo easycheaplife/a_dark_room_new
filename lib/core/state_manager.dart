@@ -248,7 +248,8 @@ class StateManager with ChangeNotifier {
     // 重要：stores值不能为负数（按照原游戏逻辑）
     if (path.startsWith('stores') && value is num && value < 0) {
       if (kDebugMode) {
-        Logger.info('⚠️ StateManager: stores value cannot be negative, setting $path from $value to 0');
+        Logger.info(
+            '⚠️ StateManager: stores value cannot be negative, setting $path from $value to 0');
       }
       // 重新设置为0，确保类型一致性
       final zeroValue = value is int ? 0 : 0.0;
@@ -368,7 +369,8 @@ class StateManager with ChangeNotifier {
       if (income['timeLeft'] <= 0) {
         if (kDebugMode) {
           final localization = Localization();
-          Logger.info('🏭 ${localization.translateLog('collecting_income_from')} $source ${localization.translateLog('income_suffix')}');
+          Logger.info(
+              '🏭 ${localization.translateLog('collecting_income_from')} $source ${localization.translateLog('income_suffix')}');
         }
 
         // 检查是否有足够的资源（对于消耗型工人）
@@ -384,7 +386,8 @@ class StateManager with ChangeNotifier {
                 canProduce = false;
                 if (kDebugMode) {
                   final localization = Localization();
-                  Logger.error('⚠️ $source ${localization.translateLog('lacks')} $store ${localization.translateLog('resources_cannot_produce')}');
+                  Logger.error(
+                      '⚠️ $source ${localization.translateLog('lacks')} $store ${localization.translateLog('resources_cannot_produce')}');
                 }
                 break;
               }
@@ -494,7 +497,8 @@ class StateManager with ChangeNotifier {
           // 处理LinkedMap等其他Map类型
           loadedState = Map<String, dynamic>.from(decodedData);
         } else {
-          Logger.error('❌ StateManager: Invalid data type: ${decodedData.runtimeType}');
+          Logger.error(
+              '❌ StateManager: Invalid data type: ${decodedData.runtimeType}');
           loadedState = {};
         }
 
@@ -672,7 +676,8 @@ class StateManager with ChangeNotifier {
       }
     } catch (e) {
       if (kDebugMode) {
-        Logger.error('Warning: Attempting to remove non-existent state \'$path\'.');
+        Logger.error(
+            'Warning: Attempting to remove non-existent state \'$path\'.');
       }
     }
 
@@ -877,7 +882,8 @@ class StateManager with ChangeNotifier {
 
         if (kDebugMode) {
           Logger.info('✅ Game state imported successfully');
-          Logger.info('📊 Wood count after import: ${_state['stores']?['wood']}');
+          Logger.info(
+              '📊 Wood count after import: ${_state['stores']?['wood']}');
         }
 
         return true;
