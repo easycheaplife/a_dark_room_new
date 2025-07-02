@@ -1,7 +1,7 @@
 {
   "ui": {
     "buttons": {
-      "light_fire": "点火",
+      "light_fire": "生火",
       "stoke_fire": "添柴",
       "gather_wood": "伐木",
       "check_traps": "检查陷阱",
@@ -176,7 +176,7 @@
   "buildings": {
     "trap": "陷阱",
     "baited_trap": "有饵陷阱",
-    "cart": "手推车",
+    "cart": "货车",
     "hut": "小屋",
     "lodge": "狩猎小屋",
     "trading post": "贸易站",

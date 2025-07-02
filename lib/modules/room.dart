@@ -7,6 +7,7 @@ import '../core/notifications.dart';
 import '../core/engine.dart';
 import '../core/localization.dart';
 import '../core/logger.dart';
+import '../core/progress_manager.dart';
 import '../widgets/button.dart';
 import '../config/game_config.dart';
 import 'outside.dart';
@@ -679,7 +680,34 @@ class Room with ChangeNotifier {
       setMusic();
     }
 
+    // 处理按钮冷却状态传递 - 参考原游戏room.js:654-662
+    _handleButtonCooldownTransfer(fireValue);
+
     notifyListeners();
+  }
+
+  // 处理按钮冷却状态传递
+  // 参考原游戏room.js:654-662的updateButton函数
+  void _handleButtonCooldownTransfer(int fireValue) {
+    final progressManager = ProgressManager();
+
+    if (fireValue == fireEnum['Dead']!['value']) {
+      // 火焰熄灭，从stokeButton传递冷却状态到lightButton
+      progressManager.transferProgress(
+        'stokeButton',
+        'lightButton',
+        GameConfig.stokeFireProgressDuration,
+        () {}, // 空回调，因为冷却完成不需要额外操作
+      );
+    } else {
+      // 火焰燃烧，从lightButton传递冷却状态到stokeButton
+      progressManager.transferProgress(
+        'lightButton',
+        'stokeButton',
+        GameConfig.stokeFireProgressDuration,
+        () {}, // 空回调，因为冷却完成不需要额外操作
+      );
+    }
   }
 
   // 随时间冷却火焰

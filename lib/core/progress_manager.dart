@@ -57,6 +57,41 @@ class ProgressManager extends ChangeNotifier {
     _cancelProgress(id);
   }
 
+  /// 传递冷却状态从一个按钮到另一个按钮
+  /// 参考原游戏room.js:654-662的冷却状态传递逻辑
+  void transferProgress(
+      String fromId, String toId, int newDuration, VoidCallback onComplete) {
+    final fromProgress = _activeProgresses[fromId];
+    if (fromProgress == null) {
+      Logger.info(
+          '⚠️ ProgressManager: No progress found for $fromId, starting new progress for $toId');
+      startProgress(id: toId, duration: newDuration, onComplete: onComplete);
+      return;
+    }
+
+    Logger.info(
+        '🔄 ProgressManager: Transferring progress from $fromId to $toId');
+
+    // 计算剩余时间
+    final elapsed = DateTime.now().difference(fromProgress.startTime);
+    final remainingMs = (fromProgress.duration - elapsed.inMilliseconds)
+        .clamp(0, fromProgress.duration);
+
+    // 取消原进度
+    _cancelProgress(fromId);
+
+    // 如果还有剩余时间，为新按钮创建进度
+    if (remainingMs > 0) {
+      Logger.info(
+          '⏰ ProgressManager: Remaining time: ${remainingMs}ms for $toId');
+      startProgress(id: toId, duration: remainingMs, onComplete: onComplete);
+    } else {
+      Logger.info('✅ ProgressManager: No remaining time, $toId is ready');
+      // 没有剩余时间，直接完成
+      onComplete();
+    }
+  }
+
   void _cancelProgress(String id) {
     _activeProgresses.remove(id);
 

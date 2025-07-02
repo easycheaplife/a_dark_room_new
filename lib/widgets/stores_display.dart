@@ -86,9 +86,14 @@ class _StoresDisplayState extends State<StoresDisplay> {
         final weapons = <String, num>{};
         final special = <String, num>{};
 
-        // 分类资源
+        // 分类资源 - 参考原游戏：只显示数量大于0的资源
         for (final entry in stores.entries) {
           final value = entry.value as num? ?? 0;
+
+          // 参考原游戏逻辑：只显示数量大于0的资源
+          if (value <= 0) {
+            continue;
+          }
 
           // 根据显示类型过滤
           if (widget.type == StoresDisplayType.weaponsOnly &&

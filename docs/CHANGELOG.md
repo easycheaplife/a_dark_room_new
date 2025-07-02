@@ -1,10 +1,55 @@
 # A Dark Room Flutter 项目更新日志
 
-**最后更新**: 2025-01-02
+**最后更新**: 2025-07-02
 
 ## 概述
 
 本文档记录了 A Dark Room Flutter 移植项目的所有重要更新、修复和优化。所有文档都已添加更新日期，并建立了统一的更新日志系统。
+
+## 2025-07-02 - 木材显示和生火按钮修复
+
+### 🐛 Bug修复
+- **木材显示逻辑修复** - 修复新游戏启动时木材显示问题
+  - 问题：新游戏启动时立即显示"木材: 0"，与原游戏不符
+  - 修复：修改`StoresDisplay`组件，只显示数量>0的资源
+  - 影响文件：`lib/widgets/stores_display.dart`
+  - 参考原游戏：`room.js`的`updateStoresView`函数逻辑
+
+- **生火按钮进度条修复** - 修复生火按钮进度显示问题
+  - 问题：进度过程中显示百分比而非"添柴"文字
+  - 修复：扩展`ProgressButton`组件，支持自定义进度文字
+  - 影响文件：
+    - `lib/widgets/progress_button.dart` - 添加`progressText`参数
+    - `lib/screens/room_screen.dart` - 配置生火按钮进度文字
+  - 参考原游戏：`room.js`的按钮切换逻辑
+
+### 🔍 深入分析和二次修正
+- **原游戏逻辑深入分析** - 发现真实的按钮切换机制
+  - 问题重新定义：用户看到的"文字变成添柴"实际是按钮切换+冷却状态传递
+  - 原游戏真实逻辑：两个独立按钮（lightButton/stokeButton）+ 冷却状态传递
+  - 参考代码：`room.js:654-662`的`updateButton`函数冷却状态传递逻辑
+
+- **实现冷却状态传递机制** - 完全符合原游戏逻辑
+  - 新增：`ProgressManager.transferProgress()`方法
+  - 新增：`Room._handleButtonCooldownTransfer()`方法
+  - 修正：移除错误的`progressText`参数
+  - 影响文件：
+    - `lib/core/progress_manager.dart` - 添加状态传递功能
+    - `lib/modules/room.dart` - 在火焰状态变化时处理传递
+    - `lib/screens/room_screen.dart` - 添加按钮固定ID
+
+### ✅ 二次验证结果
+- **测试环境**: `flutter run -d chrome`，随机端口（56011）
+- **完美实现确认**:
+  - ✅ 新游戏启动时不显示木材项目
+  - ✅ 点击"生火"后立即切换为"添柴"按钮
+  - ✅ 进度条正确在"添柴"按钮上显示
+  - ✅ 游戏流程完整：火焰状态→建造者出现→森林解锁→木材0→4→3
+  - ✅ 与原游戏行为完全一致（不是近似，是完全一致）
+
+### 📝 文档更新
+- **更新文档**: `docs/05_bug_fixes/wood_display_and_fire_button_fix.md` - 添加深入分析和二次修正
+- **更新文档**: `README.md`、`docs/CHANGELOG.md`
 
 ## 2025-01-02 - 完整解锁机制分析与综合开发计划
 

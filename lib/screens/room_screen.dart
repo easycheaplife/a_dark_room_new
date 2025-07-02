@@ -125,6 +125,7 @@ class RoomScreen extends StatelessWidget {
     return Consumer<Localization>(
       builder: (context, localization, child) {
         // 根据原始游戏逻辑：火焰熄灭时显示点火按钮，否则显示添柴按钮
+        // 参考原游戏room.js:648-672的updateButton函数
         if (fireValue == Room.fireEnum['Dead']!['value']) {
           // 火焰熄灭 - 显示点火按钮
           return ProgressButton(
@@ -135,6 +136,7 @@ class RoomScreen extends StatelessWidget {
             free: isFree,
             progressDuration:
                 GameConfig.lightFireProgressDuration, // 点火时间，与原游戏一致
+            id: 'lightButton', // 固定ID，用于状态管理
           );
         } else {
           // 火焰燃烧 - 显示添柴按钮
@@ -146,6 +148,7 @@ class RoomScreen extends StatelessWidget {
             free: isFree,
             progressDuration:
                 GameConfig.stokeFireProgressDuration, // 添柴冷却时间，与原游戏一致
+            id: 'stokeButton', // 固定ID，用于状态管理
           );
         }
       },

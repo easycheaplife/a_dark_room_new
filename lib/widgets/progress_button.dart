@@ -16,6 +16,7 @@ class ProgressButton extends StatefulWidget {
   final String? tooltip; // 悬停提示
   final bool showCost; // 是否显示成本信息
   final String? id; // 固定ID，用于进度跟踪
+  final String? progressText; // 进度过程中显示的文字（如果为null则显示百分比）
 
   const ProgressButton({
     super.key,
@@ -29,6 +30,7 @@ class ProgressButton extends StatefulWidget {
     this.tooltip,
     this.showCost = true, // 默认显示成本
     this.id, // 可选的固定ID
+    this.progressText, // 进度过程中的文字
   });
 
   @override
@@ -270,16 +272,20 @@ class _ProgressButtonState extends State<ProgressButton> {
                             height: double.infinity,
                             color: Colors.blue[300]?.withValues(alpha: 0.7),
                           ),
-                          // 进度文本
+                          // 进度文本 - 支持自定义文字或百分比
                           Center(
                             child: Text(
-                              '${_currentProgress?.progressPercent ?? 0}%',
+                              widget.progressText ??
+                                  '${_currentProgress?.progressPercent ?? 0}%',
                               style: const TextStyle(
                                 color: Colors.black,
-                                fontSize: 12,
+                                fontSize: 11,
                                 fontFamily: 'Times New Roman',
                                 fontWeight: FontWeight.bold,
                               ),
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
