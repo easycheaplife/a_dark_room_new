@@ -24,10 +24,10 @@ class _SpaceScreenState extends State<SpaceScreen> {
   void initState() {
     super.initState();
     _space = Space();
-    
+
     // 监听状态变化
     _space.addListener(_onSpaceStateChanged);
-    
+
     Logger.info('🚀 SpaceScreen initialized');
   }
 
@@ -105,7 +105,8 @@ class _SpaceScreenState extends State<SpaceScreen> {
 
   /// 检查是否需要显示结束对话框
   void _checkShowEndingDialog(BuildContext context, StateManager stateManager) {
-    final shouldShowDialog = stateManager.get('game.showEndingDialog', true) == true;
+    final shouldShowDialog =
+        stateManager.get('game.showEndingDialog', true) == true;
     if (shouldShowDialog) {
       final isVictory = stateManager.get('game.endingIsVictory', true) == true;
 
@@ -224,9 +225,9 @@ class _SpaceScreenState extends State<SpaceScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 10),
-          
+
           // 高度显示
           Container(
             padding: const EdgeInsets.all(10),
@@ -243,9 +244,9 @@ class _SpaceScreenState extends State<SpaceScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // 控制说明
           Container(
             padding: const EdgeInsets.all(10),
@@ -314,12 +315,12 @@ class _StarFieldPainter extends CustomPainter {
 
     // 根据高度绘制不同密度的星星
     final starCount = (altitude * 2).clamp(10, 100);
-    
+
     for (int i = 0; i < starCount; i++) {
       final x = (i * 37) % size.width;
       final y = (i * 73) % size.height;
       final radius = (i % 3 + 1).toDouble();
-      
+
       canvas.drawCircle(Offset(x, y), radius, paint);
     }
   }

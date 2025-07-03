@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,7 @@ import '../modules/path.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
 import '../core/responsive_layout.dart';
+import '../core/logger.dart';
 import '../screens/events_screen.dart';
 import '../screens/combat_screen.dart';
 
@@ -69,6 +71,14 @@ class _WorldScreenState extends State<WorldScreen> {
 
                           // 地图区域 - 固定大小，不滚动
                           _buildMap(world, layoutParams),
+
+                          // APK版本专用：方向按钮
+                          if (!kIsWeb) ...[
+                            SizedBox(
+                                height:
+                                    layoutParams.useVerticalLayout ? 12 : 16),
+                            _buildDirectionButtons(world, layoutParams),
+                          ],
                         ],
                       ),
                     ),
@@ -639,7 +649,13 @@ class _WorldScreenState extends State<WorldScreen> {
     final clickX = localPosition.dx - centreX;
     final clickY = localPosition.dy - centreY;
 
-    // 使用原游戏的象限判断逻辑
+    // APK版本适配：如果不是Web平台，使用简化的移动逻辑
+    if (!kIsWeb) {
+      _handleMobileMapClick(localPosition, curPos, world);
+      return;
+    }
+
+    // Web版本：使用原游戏的象限判断逻辑
     if (clickX > clickY && clickX < -clickY) {
       world.moveNorth();
     } else if (clickX < clickY && clickX > -clickY) {
@@ -650,5 +666,399 @@ class _WorldScreenState extends State<WorldScreen> {
       world.moveEast();
     }
     // 如果点击在玩家位置 (deltaX == 0 && deltaY == 0)，不移动
+  }
+
+  /// APK版本地图点击处理 - 修复坐标系映射问题
+  void _handleMobileMapClick(
+      Offset localPosition, List<int> curPos, World world) {
+    // 获取地图容器的实际尺寸
+    final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+
+    final mapSize = renderBox.size;
+
+    // 计算地图中心点（屏幕中央）
+    final centreX = mapSize.width / 2;
+    final centreY = mapSize.height / 2;
+
+    // 计算相对于中心的点击位置
+    final clickX = localPosition.dx - centreX;
+    final clickY = localPosition.dy - centreY;
+
+    Logger.info(
+        '📱 APK移动: 地图尺寸=${mapSize.width}x${mapSize.height}, 玩家位置=[${curPos[0]}, ${curPos[1]}]');
+    Logger.info(
+        '📱 APK移动: 中心点=($centreX, $centreY), 点击位置=(${localPosition.dx}, ${localPosition.dy})');
+    Logger.info('📱 APK移动: 相对位置=($clickX, $clickY)');
+
+    // APK版本坐标系修正：根据问题描述分析坐标映射
+    // 当前问题现象：
+    // - 点击下方 -> 实际向左移动 (错误，应该向南)
+    // - 点击右方 -> 实际向上移动 (错误，应该向东)
+    // - 点击上方 -> 实际向上移动 (可能正确，应该向北)
+    // - 点击左方 -> 实际向左移动 (可能正确，应该向西)
+
+    final absX = clickX.abs();
+    final absY = clickY.abs();
+
+    Logger.info(
+        '📱 APK坐标分析: clickX=$clickX, clickY=$clickY, absX=$absX, absY=$absY');
+
+    // 根据最新问题现象分析坐标映射
+    // 当前问题现象（第三次更新）：
+    // - 点击下方 -> 实际向左移动 (错误，应该向南)
+    // - 点击右方 -> 实际向上移动 (错误，应该向东)
+    // - 点击上方 -> 实际向上移动 (可能正确，应该向北)
+    // - 点击左方 -> 实际向上移动 (错误，应该向西)
+
+    // 分析：看起来大部分点击都导致向上移动，这很奇怪
+    // 可能是坐标计算本身有问题，或者事件处理有问题
+
+    const int mappingScheme = 10; // 10: 添加方向按钮方案
+
+    switch (mappingScheme) {
+      case 10: // 添加方向按钮方案 - 最直接的解决方案
+        Logger.info('📱 APK方案10: 方向按钮方案');
+        // 这个方案不使用点击移动，而是在界面上添加方向按钮
+        // 点击地图时显示提示信息
+        Logger.info('📱 请使用屏幕上的方向按钮进行移动');
+        break;
+
+      case 9: // 全新的按键式移动方案 - 完全不同的思路
+        Logger.info('📱 APK方案9: 按键式移动方案');
+        _handleKeyboardStyleMovement(localPosition, mapSize, world);
+        break;
+
+      case 7: // 全新的诊断和修复方案
+        Logger.info('📱 APK方案7: 全新诊断方案');
+        Logger.info(
+            '📱 详细坐标: localPosition=(${localPosition.dx}, ${localPosition.dy})');
+        Logger.info('📱 地图尺寸: ${mapSize.width} x ${mapSize.height}');
+        Logger.info('📱 中心点: ($centreX, $centreY)');
+        Logger.info('📱 相对坐标: ($clickX, $clickY)');
+        Logger.info('📱 绝对值: absX=$absX, absY=$absY');
+
+        // 使用更简单直接的方向判断
+        if (clickY > 10) {
+          // 明确点击下方
+          Logger.info('📱 APK方案7: 南 (明确点击下方，clickY=$clickY > 10)');
+          world.moveSouth();
+        } else if (clickY < -10) {
+          // 明确点击上方
+          Logger.info('📱 APK方案7: 北 (明确点击上方，clickY=$clickY < -10)');
+          world.moveNorth();
+        } else if (clickX > 10) {
+          // 明确点击右方
+          Logger.info('📱 APK方案7: 东 (明确点击右方，clickX=$clickX > 10)');
+          world.moveEast();
+        } else if (clickX < -10) {
+          // 明确点击左方
+          Logger.info('📱 APK方案7: 西 (明确点击左方，clickX=$clickX < -10)');
+          world.moveWest();
+        } else {
+          Logger.info(
+              '📱 APK方案7: 点击太接近中心，不移动 (clickX=$clickX, clickY=$clickY)');
+        }
+        break;
+
+      case 8: // 屏幕区域划分方案
+        Logger.info('📱 APK方案8: 屏幕区域划分');
+        // 将屏幕划分为4个区域，直接根据点击位置判断
+        final screenCenterX = mapSize.width / 2;
+        final screenCenterY = mapSize.height / 2;
+
+        Logger.info('📱 屏幕中心: ($screenCenterX, $screenCenterY)');
+        Logger.info('📱 点击位置: (${localPosition.dx}, ${localPosition.dy})');
+
+        if (localPosition.dy > screenCenterY + 50) {
+          // 点击屏幕下半部分
+          Logger.info('📱 APK方案8: 南 (屏幕下半部分)');
+          world.moveSouth();
+        } else if (localPosition.dy < screenCenterY - 50) {
+          // 点击屏幕上半部分
+          Logger.info('📱 APK方案8: 北 (屏幕上半部分)');
+          world.moveNorth();
+        } else if (localPosition.dx > screenCenterX + 50) {
+          // 点击屏幕右半部分
+          Logger.info('📱 APK方案8: 东 (屏幕右半部分)');
+          world.moveEast();
+        } else if (localPosition.dx < screenCenterX - 50) {
+          // 点击屏幕左半部分
+          Logger.info('📱 APK方案8: 西 (屏幕左半部分)');
+          world.moveWest();
+        } else {
+          Logger.info('📱 APK方案8: 点击中心区域，不移动');
+        }
+        break;
+
+      case 5: // 完全重新映射方案
+        Logger.info('📱 APK方案5: 完全重新映射');
+        if (absY > absX) {
+          if (clickY > 0) {
+            // 点击下方 -> 强制向南
+            Logger.info('📱 APK方案5: 南 (点击下方→强制南)');
+            world.moveSouth();
+          } else {
+            // 点击上方 -> 强制向北
+            Logger.info('📱 APK方案5: 北 (点击上方→强制北)');
+            world.moveNorth();
+          }
+        } else if (absX > absY) {
+          if (clickX > 0) {
+            // 点击右方 -> 强制向东
+            Logger.info('📱 APK方案5: 东 (点击右方→强制东)');
+            world.moveEast();
+          } else {
+            // 点击左方 -> 强制向西
+            Logger.info('📱 APK方案5: 西 (点击左方→强制西)');
+            world.moveWest();
+          }
+        }
+        break;
+
+      case 6: // 使用原游戏象限逻辑但修正坐标
+        Logger.info('📱 APK方案6: 使用原游戏象限逻辑');
+        // 尝试使用原游戏的象限判断，但可能需要坐标修正
+        if (clickX > clickY && clickX < -clickY) {
+          Logger.info('📱 APK方案6: 北 (象限判断)');
+          world.moveNorth();
+        } else if (clickX < clickY && clickX > -clickY) {
+          Logger.info('📱 APK方案6: 南 (象限判断)');
+          world.moveSouth();
+        } else if (clickX < clickY && clickX < -clickY) {
+          Logger.info('📱 APK方案6: 西 (象限判断)');
+          world.moveWest();
+        } else if (clickX > clickY && clickX > -clickY) {
+          Logger.info('📱 APK方案6: 东 (象限判断)');
+          world.moveEast();
+        }
+        break;
+
+      default: // 原始方案
+        if (absX > absY) {
+          if (clickX > 0) {
+            Logger.info('📱 APK默认: 东');
+            world.moveEast();
+          } else {
+            Logger.info('📱 APK默认: 西');
+            world.moveWest();
+          }
+        } else if (absY > absX) {
+          if (clickY > 0) {
+            Logger.info('📱 APK默认: 南');
+            world.moveSouth();
+          } else {
+            Logger.info('📱 APK默认: 北');
+            world.moveNorth();
+          }
+        }
+        break;
+    }
+    // 如果点击在中心附近 (absX ≈ absY)，不移动
+  }
+
+  /// 全新的按键式移动方案 - 完全不同的思路
+  void _handleKeyboardStyleMovement(
+      Offset localPosition, Size mapSize, World world) {
+    Logger.info('📱 按键式移动: 开始处理');
+
+    // 将屏幕划分为9个区域，像数字键盘一样
+    final thirdWidth = mapSize.width / 3;
+    final thirdHeight = mapSize.height / 3;
+
+    final x = localPosition.dx;
+    final y = localPosition.dy;
+
+    Logger.info(
+        '📱 按键式移动: 点击位置=($x, $y), 屏幕尺寸=${mapSize.width}x${mapSize.height}');
+    Logger.info('📱 按键式移动: 区域尺寸=${thirdWidth}x${thirdHeight}');
+
+    // 确定点击在哪个区域
+    int col = 0; // 0=左, 1=中, 2=右
+    int row = 0; // 0=上, 1=中, 2=下
+
+    if (x < thirdWidth) {
+      col = 0; // 左
+    } else if (x < thirdWidth * 2) {
+      col = 1; // 中
+    } else {
+      col = 2; // 右
+    }
+
+    if (y < thirdHeight) {
+      row = 0; // 上
+    } else if (y < thirdHeight * 2) {
+      row = 1; // 中
+    } else {
+      row = 2; // 下
+    }
+
+    Logger.info('📱 按键式移动: 区域位置=($col, $row)');
+
+    // 根据区域位置决定移动方向（像数字键盘）
+    // 7 8 9
+    // 4 5 6
+    // 1 2 3
+
+    if (row == 0 && col == 1) {
+      // 上中 (8) -> 北
+      Logger.info('📱 按键式移动: 北 (上中区域)');
+      world.moveNorth();
+    } else if (row == 2 && col == 1) {
+      // 下中 (2) -> 南
+      Logger.info('📱 按键式移动: 南 (下中区域)');
+      world.moveSouth();
+    } else if (row == 1 && col == 0) {
+      // 中左 (4) -> 西
+      Logger.info('📱 按键式移动: 西 (中左区域)');
+      world.moveWest();
+    } else if (row == 1 && col == 2) {
+      // 中右 (6) -> 东
+      Logger.info('📱 按键式移动: 东 (中右区域)');
+      world.moveEast();
+    } else if (row == 1 && col == 1) {
+      // 中心 (5) -> 不移动
+      Logger.info('📱 按键式移动: 中心区域，不移动');
+    } else {
+      // 对角线区域，选择最近的主方向
+      if (row == 0) {
+        // 上排的对角线，优先向北
+        Logger.info('📱 按键式移动: 北 (上排对角线)');
+        world.moveNorth();
+      } else if (row == 2) {
+        // 下排的对角线，优先向南
+        Logger.info('📱 按键式移动: 南 (下排对角线)');
+        world.moveSouth();
+      } else {
+        // 不应该到这里
+        Logger.info('📱 按键式移动: 未知区域，不移动');
+      }
+    }
+  }
+
+  /// 构建方向按钮（仅APK版本）
+  Widget _buildDirectionButtons(World world, GameLayoutParams layoutParams) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        border: Border.all(color: Colors.black, width: 1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        children: [
+          // 标题
+          Text(
+            '移动控制',
+            style: TextStyle(
+              fontSize: layoutParams.useVerticalLayout ? 14 : 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // 方向按钮布局
+          Column(
+            children: [
+              // 上方按钮
+              _buildDirectionButton('↑', '北', () {
+                Logger.info('📱 方向按钮: 北');
+                world.moveNorth();
+              }, layoutParams),
+
+              const SizedBox(height: 8),
+
+              // 中间一行：左、中、右
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildDirectionButton('←', '西', () {
+                    Logger.info('📱 方向按钮: 西');
+                    world.moveWest();
+                  }, layoutParams),
+
+                  const SizedBox(width: 16),
+
+                  // 中间显示当前位置
+                  Container(
+                    width: 60,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.black, width: 1),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '[${world.curPos[0]}, ${world.curPos[1]}]',
+                        style: TextStyle(
+                          fontSize: layoutParams.useVerticalLayout ? 10 : 12,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 16),
+
+                  _buildDirectionButton('→', '东', () {
+                    Logger.info('📱 方向按钮: 东');
+                    world.moveEast();
+                  }, layoutParams),
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              // 下方按钮
+              _buildDirectionButton('↓', '南', () {
+                Logger.info('📱 方向按钮: 南');
+                world.moveSouth();
+              }, layoutParams),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建单个方向按钮
+  Widget _buildDirectionButton(String arrow, String direction,
+      VoidCallback onPressed, GameLayoutParams layoutParams) {
+    return SizedBox(
+      width: 60,
+      height: 40,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          side: const BorderSide(color: Colors.black, width: 1),
+          padding: const EdgeInsets.all(4),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              arrow,
+              style: TextStyle(
+                fontSize: layoutParams.useVerticalLayout ? 14 : 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              direction,
+              style: TextStyle(
+                fontSize: layoutParams.useVerticalLayout ? 8 : 10,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
