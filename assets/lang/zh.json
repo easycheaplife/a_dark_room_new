@@ -343,6 +343,12 @@
       "insufficient_alloy": "外星合金不足",
       "wait_decision": "决定再等等"
     },
+    "liftoff_event": {
+      "title": "准备离开？",
+      "text": "是时候离开这个地方了。不会再回来了。",
+      "lift_off": "起飞",
+      "wait": "等待"
+    },
     "descriptions": {
       "hull_damaged": "飞船需要强化船体才能起飞",
       "hull_poor": "飞船勉强能够飞行",

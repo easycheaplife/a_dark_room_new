@@ -351,6 +351,12 @@
       "insufficient_alloy": "not enough alien alloy",
       "wait_decision": "decide to wait"
     },
+    "liftoff_event": {
+      "title": "ready to leave?",
+      "text": "time to leave this place. won't be coming back.",
+      "lift_off": "lift off",
+      "wait": "wait"
+    },
     "descriptions": {
       "hull_damaged": "ship needs hull reinforcement to take off",
       "hull_poor": "ship can barely fly",

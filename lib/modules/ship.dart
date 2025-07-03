@@ -47,15 +47,13 @@ class Ship extends ChangeNotifier {
 
     if (sm.get('features.location.spaceShip') == null) {
       sm.set('features.location.spaceShip', true);
-      sm.setM('game.spaceShip', {
-        'hull': baseHull,
-        'thrusters': baseThrusters
-      });
+      sm.setM('game.spaceShip', {'hull': baseHull, 'thrusters': baseThrusters});
     }
 
     // 获取当前飞船状态
     hull = (sm.get('game.spaceShip.hull', true) ?? baseHull) as int;
-    thrusters = (sm.get('game.spaceShip.thrusters', true) ?? baseThrusters) as int;
+    thrusters =
+        (sm.get('game.spaceShip.thrusters', true) ?? baseThrusters) as int;
 
     // 初始化太空模块（暂时注释掉，直到Space模块完成）
     // Space().init();
@@ -70,7 +68,8 @@ class Ship extends ChangeNotifier {
 
     if (sm.get('game.spaceShip.seenShip', true) != true) {
       final localization = Localization();
-      NotificationManager().notify(name, localization.translate('ship.notifications.seen_ship'));
+      NotificationManager()
+          .notify(name, localization.translate('ship.notifications.seen_ship'));
       sm.set('game.spaceShip.seenShip', true);
     }
 
@@ -93,7 +92,8 @@ class Ship extends ChangeNotifier {
 
     if (alienAlloy < alloyPerHull) {
       final localization = Localization();
-      NotificationManager().notify(name, localization.translate('ship.notifications.insufficient_alloy'));
+      NotificationManager().notify(name,
+          localization.translate('ship.notifications.insufficient_alloy'));
       return;
     }
 
@@ -105,7 +105,8 @@ class Ship extends ChangeNotifier {
     // AudioEngine().playSound(AudioLibrary.reinforceHull);
 
     final localization = Localization();
-    NotificationManager().notify(name, localization.translate('ship.hull_reinforced'));
+    NotificationManager()
+        .notify(name, localization.translate('ship.hull_reinforced'));
     notifyListeners();
   }
 
@@ -116,7 +117,8 @@ class Ship extends ChangeNotifier {
 
     if (alienAlloy < alloyPerThruster) {
       final localization = Localization();
-      NotificationManager().notify(name, localization.translate('ship.notifications.insufficient_alloy'));
+      NotificationManager().notify(name,
+          localization.translate('ship.notifications.insufficient_alloy'));
       return;
     }
 
@@ -128,7 +130,8 @@ class Ship extends ChangeNotifier {
     // AudioEngine().playSound(AudioLibrary.upgradeEngine);
 
     final localization = Localization();
-    NotificationManager().notify(name, localization.translate('ship.engine_upgraded'));
+    NotificationManager()
+        .notify(name, localization.translate('ship.engine_upgraded'));
     notifyListeners();
   }
 
@@ -142,15 +145,16 @@ class Ship extends ChangeNotifier {
     final sm = StateManager();
 
     if (sm.get('game.spaceShip.seenWarning', true) != true) {
-      // 显示警告事件
+      // 显示警告事件 - 使用本地化文本
+      final localization = Localization();
       final liftOffEvent = {
-        'title': 'ready to leave?',
+        'title': localization.translate('ship.liftoff_event.title'),
         'scenes': {
           'start': {
-            'text': ['time to leave this place. won\'t be coming back.'],
+            'text': [localization.translate('ship.liftoff_event.text')],
             'buttons': {
               'fly': {
-                'text': 'lift off',
+                'text': localization.translate('ship.liftoff_event.lift_off'),
                 'onChoose': () {
                   sm.set('game.spaceShip.seenWarning', true);
                   liftOff();
@@ -158,11 +162,13 @@ class Ship extends ChangeNotifier {
                 'nextScene': 'end'
               },
               'wait': {
-                'text': 'wait',
+                'text': localization.translate('ship.liftoff_event.wait'),
                 'onChoose': () {
                   // 清除起飞按钮冷却
-                  final localization = Localization();
-                  NotificationManager().notify(name, localization.translate('ship.notifications.wait_decision'));
+                  NotificationManager().notify(
+                      name,
+                      localization
+                          .translate('ship.notifications.wait_decision'));
                 },
                 'nextScene': 'end'
               }
@@ -180,7 +186,8 @@ class Ship extends ChangeNotifier {
   /// 起飞
   void liftOff() {
     final localization = Localization();
-    NotificationManager().notify(name, localization.translate('ship.lifting_off'));
+    NotificationManager()
+        .notify(name, localization.translate('ship.lifting_off'));
 
     // 播放起飞音效（暂时注释掉）
     // AudioEngine().playSound(AudioLibrary.liftOff);
@@ -241,7 +248,8 @@ class Ship extends ChangeNotifier {
     final category = event['category'];
     final stateName = event['stateName'];
 
-    if (category == 'stores' && stateName?.toString().contains('alien alloy') == true) {
+    if (category == 'stores' &&
+        stateName?.toString().contains('alien alloy') == true) {
       notifyListeners();
     } else if (stateName?.toString().startsWith('game.spaceShip') == true) {
       // 更新本地状态
@@ -255,10 +263,7 @@ class Ship extends ChangeNotifier {
   /// 重置飞船状态（用于新游戏）
   void reset() {
     final sm = StateManager();
-    sm.setM('game.spaceShip', {
-      'hull': baseHull,
-      'thrusters': baseThrusters
-    });
+    sm.setM('game.spaceShip', {'hull': baseHull, 'thrusters': baseThrusters});
     sm.remove('game.spaceShip.seenShip');
     sm.remove('game.spaceShip.seenWarning');
     sm.remove('game.completed');
