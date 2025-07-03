@@ -6,6 +6,7 @@ import '../modules/world.dart';
 import '../modules/path.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
+import '../core/responsive_layout.dart';
 import '../widgets/progress_button.dart';
 import '../config/game_config.dart';
 
@@ -386,26 +387,28 @@ class _CombatScreenState extends State<CombatScreen> {
     );
   }
 
-  /// 构建战利品界面 - 参考原游戏的战斗胜利界面
+  /// 构建战利品界面 - 参考原游戏的战斗胜利界面，针对APK版本优化
   Widget _buildLootInterface(
       BuildContext context, Events events, Map<String, dynamic> scene) {
+    final layoutParams = GameLayoutParams.getLayoutParams(context);
+
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // 死亡消息
+          // 死亡消息 - 移动端增大字体
           Text(
             scene['deathMessage'] != null
                 ? Localization().translate(scene['deathMessage'])
                 : Localization().translate('combat.enemy_dead'),
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.black,
-              fontSize: 15,
+              fontSize: layoutParams.useVerticalLayout ? 16 : 15, // 移动端增大字体
             ),
             textAlign: TextAlign.center,
           ),
 
-          const SizedBox(height: 12),
+          SizedBox(height: layoutParams.useVerticalLayout ? 16 : 12), // 移动端增加间距
 
           // 主要内容区域 - 根据是否显示丢弃界面来决定布局
           if (_showDropInterface) ...[
@@ -416,95 +419,29 @@ class _CombatScreenState extends State<CombatScreen> {
             if (events.currentLoot.isNotEmpty) ...[
               Text(
                 Localization().translate('messages.gained'),
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.black,
-                  fontSize: 14,
+                  fontSize: layoutParams.useVerticalLayout ? 15 : 14, // 移动端增大字体
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(
+                  height: layoutParams.useVerticalLayout ? 12 : 8), // 移动端增加间距
 
-              // 战利品网格布局 - 左边物品，右边按钮
-              Container(
-                constraints: const BoxConstraints(maxWidth: 400),
-                child: Table(
-                  columnWidths: const {
-                    0: FlexColumnWidth(2), // 物品名称列
-                    1: FlexColumnWidth(1), // 按钮列
-                  },
-                  children: events.currentLoot.entries.map((entry) {
-                    return TableRow(
-                      children: [
-                        // 左列：物品名称和数量
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 4, horizontal: 8),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
-                            color: Colors.white,
-                          ),
-                          child: Text(
-                            '${_getItemDisplayName(entry.key)} [${entry.value}]',
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                        // 右列：带走所有按钮
-                        Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
-                            color: Colors.white,
-                          ),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              events.getLoot(
-                                entry.key,
-                                entry.value,
-                                onBagFull: () {
-                                  setState(() {
-                                    _showDropInterface = true;
-                                    _pendingLootKey = entry.key;
-                                    _pendingLootValue = entry.value;
-                                  });
-                                },
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.black,
-                              side: const BorderSide(color: Colors.black),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              minimumSize: const Size(0, 24),
-                            ),
-                            child: Text(
-                              _showDropInterface
-                                  ? '${Localization().translate('ui.buttons.take_all').split(' ')[0]} 0'
-                                  : Localization()
-                                      .translate('ui.buttons.take_all'),
-                              style: const TextStyle(fontSize: 10),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                ),
-              ),
+              // 战利品布局 - 移动端和桌面端使用不同布局
+              _buildLootItemsList(context, events, layoutParams),
             ] else ...[
               Text(
                 Localization().translate('combat.no_loot'),
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.black,
-                  fontSize: 12,
+                  fontSize: layoutParams.useVerticalLayout ? 14 : 12, // 移动端增大字体
                 ),
               ),
             ],
 
-            const SizedBox(height: 12),
+            SizedBox(
+                height: layoutParams.useVerticalLayout ? 16 : 12), // 移动端增加间距
 
             // 底部按钮区域 - 参考原游戏的按钮布局
             _buildLootActionButtons(context, events, scene),
@@ -514,8 +451,151 @@ class _CombatScreenState extends State<CombatScreen> {
     );
   }
 
-  /// 构建丢弃界面 - 参考原游戏的丢弃物品界面
+  /// 构建战利品物品列表 - 针对不同设备类型优化布局
+  Widget _buildLootItemsList(
+      BuildContext context, Events events, GameLayoutParams layoutParams) {
+    if (layoutParams.useVerticalLayout) {
+      // 移动端：使用垂直列表布局，更适合触摸操作
+      return Column(
+        children: events.currentLoot.entries.map((entry) {
+          return Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black),
+              color: Colors.white,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 物品名称和数量
+                Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  child: Text(
+                    '${_getItemDisplayName(entry.key)} [${entry.value}]',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 14, // 移动端增大字体
+                    ),
+                  ),
+                ),
+                // 按钮区域
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      events.getLoot(
+                        entry.key,
+                        entry.value,
+                        onBagFull: () {
+                          setState(() {
+                            _showDropInterface = true;
+                            _pendingLootKey = entry.key;
+                            _pendingLootValue = entry.value;
+                          });
+                        },
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      side: const BorderSide(color: Colors.black),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12), // 增大触摸区域
+                      minimumSize: const Size(0, 40), // 增大最小高度
+                    ),
+                    child: Text(
+                      _showDropInterface
+                          ? '${Localization().translate('ui.buttons.take_all').split(' ')[0]} 0'
+                          : Localization().translate('ui.buttons.take_all'),
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      );
+    } else {
+      // 桌面端：保持原有的表格布局
+      return Container(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: Table(
+          columnWidths: const {
+            0: FlexColumnWidth(2), // 物品名称列
+            1: FlexColumnWidth(1), // 按钮列
+          },
+          children: events.currentLoot.entries.map((entry) {
+            return TableRow(
+              children: [
+                // 左列：物品名称和数量
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    color: Colors.white,
+                  ),
+                  child: Text(
+                    '${_getItemDisplayName(entry.key)} [${entry.value}]',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+                // 右列：带走所有按钮
+                Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    color: Colors.white,
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      events.getLoot(
+                        entry.key,
+                        entry.value,
+                        onBagFull: () {
+                          setState(() {
+                            _showDropInterface = true;
+                            _pendingLootKey = entry.key;
+                            _pendingLootValue = entry.value;
+                          });
+                        },
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      side: const BorderSide(color: Colors.black),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      minimumSize: const Size(0, 24),
+                    ),
+                    child: Text(
+                      _showDropInterface
+                          ? '${Localization().translate('ui.buttons.take_all').split(' ')[0]} 0'
+                          : Localization().translate('ui.buttons.take_all'),
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
+        ),
+      );
+    }
+  }
+
+  /// 构建丢弃界面 - 参考原游戏的丢弃物品界面，针对APK版本优化
   Widget _buildDropInterface(BuildContext context, Events events) {
+    final layoutParams = GameLayoutParams.getLayoutParams(context);
     final outfitItems =
         Path().outfit.entries.where((e) => e.value > 0).toList();
 
@@ -526,13 +606,13 @@ class _CombatScreenState extends State<CombatScreen> {
         if (_pendingLootKey != null && _pendingLootValue != null) ...[
           Text(
             Localization().translate('messages.gained'),
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.black,
-              fontSize: 14,
+              fontSize: layoutParams.useVerticalLayout ? 15 : 14, // 移动端增大字体
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: layoutParams.useVerticalLayout ? 12 : 8), // 移动端增加间距
           Container(
             constraints: const BoxConstraints(maxWidth: 400),
             child: Table(
@@ -718,9 +798,11 @@ class _CombatScreenState extends State<CombatScreen> {
     );
   }
 
-  /// 构建战利品界面的底部按钮 - 参考原游戏的按钮布局
+  /// 构建战利品界面的底部按钮 - 参考原游戏的按钮布局，针对APK版本优化
   Widget _buildLootActionButtons(
       BuildContext context, Events events, Map<String, dynamic> scene) {
+    final layoutParams = GameLayoutParams.getLayoutParams(context);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -728,7 +810,8 @@ class _CombatScreenState extends State<CombatScreen> {
         if (events.currentLoot.isNotEmpty)
           Container(
             width: double.infinity,
-            margin: const EdgeInsets.symmetric(vertical: 2),
+            margin: EdgeInsets.symmetric(
+                vertical: layoutParams.useVerticalLayout ? 4 : 2), // 移动端增加间距
             child: ElevatedButton(
               onPressed: () {
                 // 拿取所有物品
@@ -764,13 +847,19 @@ class _CombatScreenState extends State<CombatScreen> {
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
                 side: const BorderSide(color: Colors.black),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                minimumSize: const Size(0, 32),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical:
+                      layoutParams.useVerticalLayout ? 12 : 6, // 移动端增大触摸区域
+                ),
+                minimumSize: Size(
+                    0, layoutParams.useVerticalLayout ? 48 : 32), // 移动端增大最小高度
               ),
               child: Text(
                 Localization().translate('combat.take_all_and_leave'),
-                style: const TextStyle(fontSize: 12),
+                style: TextStyle(
+                    fontSize:
+                        layoutParams.useVerticalLayout ? 14 : 12), // 移动端增大字体
               ),
             ),
           ),
@@ -779,20 +868,27 @@ class _CombatScreenState extends State<CombatScreen> {
         if (_hasNextScene(events, scene))
           Container(
             width: double.infinity,
-            margin: const EdgeInsets.symmetric(vertical: 2),
+            margin: EdgeInsets.symmetric(
+                vertical: layoutParams.useVerticalLayout ? 4 : 2), // 移动端增加间距
             child: ElevatedButton(
               onPressed: () => _continueToNextScene(events, scene),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
                 side: const BorderSide(color: Colors.black),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                minimumSize: const Size(0, 32),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical:
+                      layoutParams.useVerticalLayout ? 12 : 6, // 移动端增大触摸区域
+                ),
+                minimumSize: Size(
+                    0, layoutParams.useVerticalLayout ? 48 : 32), // 移动端增大最小高度
               ),
               child: Text(
                 Localization().translate('ui.buttons.continue'),
-                style: const TextStyle(fontSize: 12),
+                style: TextStyle(
+                    fontSize:
+                        layoutParams.useVerticalLayout ? 14 : 12), // 移动端增大字体
               ),
             ),
           ),
@@ -800,19 +896,26 @@ class _CombatScreenState extends State<CombatScreen> {
         // 离开按钮 - 统一样式
         Container(
           width: double.infinity,
-          margin: const EdgeInsets.symmetric(vertical: 2),
+          margin: EdgeInsets.symmetric(
+              vertical: layoutParams.useVerticalLayout ? 4 : 2), // 移动端增加间距
           child: ElevatedButton(
             onPressed: () => events.endEvent(),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
               side: const BorderSide(color: Colors.black),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              minimumSize: const Size(0, 32),
+              padding: EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: layoutParams.useVerticalLayout ? 12 : 6, // 移动端增大触摸区域
+              ),
+              minimumSize: Size(
+                  0, layoutParams.useVerticalLayout ? 48 : 32), // 移动端增大最小高度
             ),
             child: Text(
               Localization().translate('combat.leave'),
-              style: const TextStyle(fontSize: 12),
+              style: TextStyle(
+                  fontSize:
+                      layoutParams.useVerticalLayout ? 14 : 12), // 移动端增大字体
             ),
           ),
         ),
@@ -824,20 +927,29 @@ class _CombatScreenState extends State<CombatScreen> {
             if (curedMeat > 0) {
               return Container(
                 width: double.infinity,
-                margin: const EdgeInsets.symmetric(vertical: 2),
+                margin: EdgeInsets.symmetric(
+                    vertical:
+                        layoutParams.useVerticalLayout ? 4 : 2), // 移动端增加间距
                 child: ElevatedButton(
                   onPressed: () => events.eatMeat(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
                     side: const BorderSide(color: Colors.black),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                    minimumSize: const Size(0, 32),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical:
+                          layoutParams.useVerticalLayout ? 12 : 6, // 移动端增大触摸区域
+                    ),
+                    minimumSize: Size(0,
+                        layoutParams.useVerticalLayout ? 48 : 32), // 移动端增大最小高度
                   ),
                   child: Text(
                     Localization().translate('combat.eat_meat'),
-                    style: const TextStyle(fontSize: 12),
+                    style: TextStyle(
+                        fontSize: layoutParams.useVerticalLayout
+                            ? 14
+                            : 12), // 移动端增大字体
                   ),
                 ),
               );

@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Web%20%7C%20Mobile%20%7C%20Desktop-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-Open%20Source-green.svg)
 
-**最后更新**: 2025-07-03 (APK地图移动异常修复)
+**最后更新**: 2025-07-03 (APK版本战斗结算界面优化)
 
 ## 📋 目录
 
