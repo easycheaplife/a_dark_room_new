@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import '../modules/space.dart';
 import '../modules/ship.dart';
@@ -7,6 +8,7 @@ import '../core/localization.dart';
 import '../core/logger.dart';
 import '../core/state_manager.dart';
 import '../core/engine.dart';
+import '../core/responsive_layout.dart';
 import '../widgets/game_ending_dialog.dart';
 
 /// 太空界面 - 显示太空飞行和小行星躲避游戏
@@ -79,6 +81,9 @@ class _SpaceScreenState extends State<SpaceScreen> {
 
                   // UI界面
                   _buildUI(space, localization),
+
+                  // APK版本的方向控制按钮
+                  if (!kIsWeb) _buildDirectionControls(space),
                 ],
               ),
             ),
@@ -298,6 +303,143 @@ class _SpaceScreenState extends State<SpaceScreen> {
     } else {
       return localization.translate('space.atmosphere_layers.space');
     }
+  }
+
+  /// 构建方向控制按钮（仅APK版本）
+  Widget _buildDirectionControls(Space space) {
+    final layoutParams = GameLayoutParams.getLayoutParams(context);
+
+    return Positioned(
+      bottom: 20,
+      right: 20,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.7),
+          border: Border.all(color: Colors.white),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 标题
+            Text(
+              '飞船控制',
+              style: TextStyle(
+                fontSize: layoutParams.useVerticalLayout ? 12 : 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontFamily: 'Times New Roman',
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // 方向按钮布局
+            Column(
+              children: [
+                // 上方按钮
+                _buildDirectionButton('↑', '上', () {
+                  Logger.info('📱 飞船方向按钮: 上');
+                  space.setShipDirection(up: true);
+                }, () {
+                  space.setShipDirection(up: false);
+                }, layoutParams),
+
+                const SizedBox(height: 8),
+
+                // 中间行：左、中、右
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 左按钮
+                    _buildDirectionButton('←', '左', () {
+                      Logger.info('📱 飞船方向按钮: 左');
+                      space.setShipDirection(left: true);
+                    }, () {
+                      space.setShipDirection(left: false);
+                    }, layoutParams),
+
+                    const SizedBox(width: 8),
+
+                    // 中间占位
+                    SizedBox(
+                      width: layoutParams.useVerticalLayout ? 48 : 56,
+                      height: layoutParams.useVerticalLayout ? 48 : 56,
+                    ),
+
+                    const SizedBox(width: 8),
+
+                    // 右按钮
+                    _buildDirectionButton('→', '右', () {
+                      Logger.info('📱 飞船方向按钮: 右');
+                      space.setShipDirection(right: true);
+                    }, () {
+                      space.setShipDirection(right: false);
+                    }, layoutParams),
+                  ],
+                ),
+
+                const SizedBox(height: 8),
+
+                // 下方按钮
+                _buildDirectionButton('↓', '下', () {
+                  Logger.info('📱 飞船方向按钮: 下');
+                  space.setShipDirection(down: true);
+                }, () {
+                  space.setShipDirection(down: false);
+                }, layoutParams),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 构建单个方向按钮
+  Widget _buildDirectionButton(
+    String arrow,
+    String label,
+    VoidCallback onPressStart,
+    VoidCallback onPressEnd,
+    GameLayoutParams layoutParams,
+  ) {
+    return GestureDetector(
+      onTapDown: (_) => onPressStart(),
+      onTapUp: (_) => onPressEnd(),
+      onTapCancel: () => onPressEnd(),
+      child: Container(
+        width: layoutParams.useVerticalLayout ? 48 : 56,
+        height: layoutParams.useVerticalLayout ? 48 : 56,
+        decoration: BoxDecoration(
+          color: Colors.grey[800],
+          border: Border.all(color: Colors.white, width: 1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              arrow,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: layoutParams.useVerticalLayout ? 16 : 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Times New Roman',
+              ),
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: layoutParams.useVerticalLayout ? 8 : 10,
+                fontFamily: 'Times New Roman',
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
