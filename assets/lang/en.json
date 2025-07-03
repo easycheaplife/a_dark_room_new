@@ -179,7 +179,14 @@
     "bone spear": "bone spear",
     "iron sword": "iron sword",
     "steel sword": "steel sword",
-    "rifle": "rifle"
+    "rifle": "rifle",
+    "energy blade": "energy blade",
+    "plasma rifle": "plasma rifle",
+    "disruptor": "disruptor",
+    "hypo": "hypo",
+    "stim": "stim",
+    "glowstone": "glowstone",
+    "kinetic armour": "kinetic armour"
   },
   "buildings": {
     "trap": "trap",

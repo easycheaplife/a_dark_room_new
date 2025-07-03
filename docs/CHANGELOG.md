@@ -1,10 +1,23 @@
 # A Dark Room Flutter 项目更新日志
 
-**最后更新**: 2025-07-02
+**最后更新**: 2025-07-03
 
 ## 概述
 
 本文档记录了 A Dark Room Flutter 移植项目的所有重要更新、修复和优化。所有文档都已添加更新日期，并建立了统一的更新日志系统。
+
+## 2025-07-03 - Energy Blade 本地化修复
+
+### 🌐 本地化修复
+- **制造器物品本地化补充** - 修复中文环境下部分物品显示英文键值的问题
+  - 在 `assets/lang/zh.json` 的 `resources` 部分添加缺失的制造器物品翻译
+  - 补充物品：energy blade(能量刃)、plasma rifle(等离子步枪)、disruptor(干扰器)、hypo(注射器)、stim(兴奋剂)、glowstone(发光石)、kinetic armour(动能护甲)
+  - 同步更新英文本地化文件 `assets/lang/en.json`
+  - 影响文件：`assets/lang/zh.json`、`assets/lang/en.json`
+
+### 📋 文档更新
+- **新增修复文档** - `docs/05_bug_fixes/energy_blade_localization_fix.md`
+- **更新项目文档** - 同步更新 `README.md` 和 `docs/CHANGELOG.md`
 
 ## 2025-07-02 - APK版本移动端适配优化
 

@@ -84,7 +84,7 @@
       "settings": "游戏设置",
       "import_export": "导入/导出存档",
       "path": "漫漫尘途",
-      "fabricator": "嗡嗡作响的制造器",
+      "fabricator": "嗡鸣制造机",
       "ship": "飞船",
       "special_items": "特殊物品"
     },
@@ -94,7 +94,7 @@
     },
     "modules": {
       "path": "漫漫尘途",
-      "fabricator": "嗡嗡作响的制造器",
+      "fabricator": "嗡鸣制造机",
       "world": "荒芜世界"
     },
     "titles": {
@@ -171,7 +171,14 @@
     "bone spear": "骨枪",
     "iron sword": "铁剑",
     "steel sword": "钢剑",
-    "rifle": "步枪"
+    "rifle": "步枪",
+    "energy blade": "能量刃",
+    "plasma rifle": "等离子步枪",
+    "disruptor": "干扰器",
+    "hypo": "注射器",
+    "stim": "兴奋剂",
+    "glowstone": "发光石",
+    "kinetic armour": "动能护甲"
   },
   "buildings": {
     "trap": "陷阱",
@@ -1033,7 +1040,7 @@
       "iron armor": "铁甲"
     },
     "fabricator": {
-      "title": "嗡嗡作响的制造器",
+      "title": "嗡鸣制造机",
       "fabricate_title": "制造:",
       "blueprints_title": "蓝图",
       "no_items_available": "没有可制造的物品",
