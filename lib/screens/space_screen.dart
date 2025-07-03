@@ -47,10 +47,12 @@ class _SpaceScreenState extends State<SpaceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer3<Space, Localization, StateManager>(
-      builder: (context, space, localization, stateManager, child) {
+    return Consumer<Space>(
+      builder: (context, space, child) {
         // 检查是否需要显示结束对话框或切换页签
         WidgetsBinding.instance.addPostFrameCallback((_) {
+          final stateManager =
+              Provider.of<StateManager>(context, listen: false);
           _checkShowEndingDialog(context, stateManager);
           _checkSwitchToShip(context, stateManager);
         });
@@ -80,7 +82,10 @@ class _SpaceScreenState extends State<SpaceScreen> {
                   _buildShip(space),
 
                   // UI界面
-                  _buildUI(space, localization),
+                  Consumer<Localization>(
+                    builder: (context, localization, child) =>
+                        _buildUI(space, localization),
+                  ),
 
                   // APK版本的方向控制按钮
                   if (!kIsWeb) _buildDirectionControls(space),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'dart:math';
 import '../core/state_manager.dart';
@@ -62,8 +63,35 @@ class Space extends ChangeNotifier {
   Timer? asteroidTimer;
   Timer? panelTimer;
 
+  // 性能优化相关
+  DateTime? _lastNotifyTime;
+  bool _needsNotify = false;
+  static const int _notifyThrottleMs =
+      kIsWeb ? 16 : 33; // Web: 60FPS, Mobile: 30FPS
+
   // 小行星列表
   List<Map<String, dynamic>> asteroids = [];
+
+  /// 节流通知监听器，避免过度重绘
+  void _throttledNotifyListeners() {
+    final now = DateTime.now();
+    if (_lastNotifyTime == null ||
+        now.difference(_lastNotifyTime!).inMilliseconds >= _notifyThrottleMs) {
+      _lastNotifyTime = now;
+      _needsNotify = false;
+      notifyListeners();
+    } else {
+      _needsNotify = true;
+      // 延迟通知，确保最终状态被更新
+      Timer(Duration(milliseconds: _notifyThrottleMs), () {
+        if (_needsNotify) {
+          _lastNotifyTime = DateTime.now();
+          _needsNotify = false;
+          notifyListeners();
+        }
+      });
+    }
+  }
 
   /// 初始化太空模块
   void init([Map<String, dynamic>? options]) {
@@ -71,7 +99,7 @@ class Space extends ChangeNotifier {
       this.options = {...this.options, ...options};
     }
 
-    notifyListeners();
+    _throttledNotifyListeners();
   }
 
   /// 到达时调用
@@ -95,8 +123,10 @@ class Space extends ChangeNotifier {
 
     startAscent();
 
-    // 启动定时器
-    shipTimer = Timer.periodic(Duration(milliseconds: 33), (_) => moveShip());
+    // 启动定时器 - 根据平台调整频率
+    final shipUpdateInterval = kIsWeb ? 33 : 50; // Web: 30FPS, Mobile: 20FPS
+    shipTimer = Timer.periodic(
+        Duration(milliseconds: shipUpdateInterval), (_) => moveShip());
     volumeTimer = Timer.periodic(Duration(seconds: 1), (_) => lowerVolume());
 
     // 播放背景音乐（暂时注释掉）
@@ -122,7 +152,8 @@ class Space extends ChangeNotifier {
     //   title = "太空";
     // }
     // 在Flutter中，标题设置将通过状态管理处理
-    notifyListeners();
+    // 标题变化不需要立即重绘，使用节流通知
+    _throttledNotifyListeners();
   }
 
   /// 获取飞船速度
@@ -134,6 +165,7 @@ class Space extends ChangeNotifier {
 
   /// 更新船体显示
   void updateHull() {
+    // 船体更新是重要状态变化，立即通知
     notifyListeners();
   }
 
@@ -164,7 +196,8 @@ class Space extends ChangeNotifier {
       'y': 0.0,
       'width': 20.0,
       'height': 20.0,
-      'speed': baseAsteroidSpeed - random.nextInt((baseAsteroidSpeed * 0.65).round()),
+      'speed': baseAsteroidSpeed -
+          random.nextInt((baseAsteroidSpeed * 0.65).round()),
       'id': DateTime.now().millisecondsSinceEpoch,
     };
 
@@ -189,7 +222,8 @@ class Space extends ChangeNotifier {
 
       if (!done) {
         final delay = 1000 - (altitude * 10);
-        Timer(Duration(milliseconds: delay.clamp(100, 1000)), () => createAsteroid());
+        Timer(Duration(milliseconds: delay.clamp(100, 1000)),
+            () => createAsteroid());
       }
     }
 
@@ -198,7 +232,9 @@ class Space extends ChangeNotifier {
 
   /// 小行星动画
   void _animateAsteroid(Map<String, dynamic> asteroid) {
-    Timer.periodic(Duration(milliseconds: 16), (timer) {
+    // 根据平台调整动画频率
+    final animationInterval = kIsWeb ? 16 : 33; // Web: 60FPS, Mobile: 30FPS
+    Timer.periodic(Duration(milliseconds: animationInterval), (timer) {
       if (done) {
         timer.cancel();
         return;
@@ -233,9 +269,11 @@ class Space extends ChangeNotifier {
       if (asteroid['y'] > 740) {
         timer.cancel();
         asteroids.remove(asteroid);
+        return;
       }
 
-      notifyListeners();
+      // 使用节流通知，减少重绘频率
+      _throttledNotifyListeners();
     });
   }
 
@@ -247,7 +285,7 @@ class Space extends ChangeNotifier {
     final aHeight = asteroid['height'] as double;
 
     return (aX <= shipX && aX + aWidth >= shipX) &&
-           (aY <= shipY && aY + aHeight >= shipY);
+        (aY <= shipY && aY + aHeight >= shipY);
   }
 
   /// 移动飞船
@@ -255,21 +293,25 @@ class Space extends ChangeNotifier {
     if (done) return;
 
     double dx = 0, dy = 0;
+    bool hasMovement = false;
 
     if (up) {
       dy -= getSpeed();
-      Logger.info('🚀 向上移动: dy=$dy');
+      hasMovement = true;
     } else if (down) {
       dy += getSpeed();
-      Logger.info('🚀 向下移动: dy=$dy');
+      hasMovement = true;
     }
     if (left) {
       dx -= getSpeed();
-      Logger.info('🚀 向左移动: dx=$dx');
+      hasMovement = true;
     } else if (right) {
       dx += getSpeed();
-      Logger.info('🚀 向右移动: dx=$dx');
+      hasMovement = true;
     }
+
+    // 只有在有移动时才进行计算和更新
+    if (!hasMovement) return;
 
     // 对角线移动时调整速度
     if (dx != 0 && dy != 0) {
@@ -280,8 +322,9 @@ class Space extends ChangeNotifier {
     // 时间补偿
     if (lastMove != null) {
       final dt = DateTime.now().difference(lastMove!).inMilliseconds;
-      dx *= dt / 33;
-      dy *= dt / 33;
+      final expectedInterval = kIsWeb ? 33 : 50;
+      dx *= dt / expectedInterval;
+      dy *= dt / expectedInterval;
     }
 
     final oldX = shipX;
@@ -289,12 +332,15 @@ class Space extends ChangeNotifier {
     shipX = (shipX + dx).clamp(10.0, 690.0);
     shipY = (shipY + dy).clamp(10.0, 690.0);
 
-    if (dx != 0 || dy != 0) {
-      Logger.info('🚀 飞船位置更新: ($oldX, $oldY) -> ($shipX, $shipY), dx=$dx, dy=$dy');
+    // 只有位置真正改变时才记录日志和通知
+    if (shipX != oldX || shipY != oldY) {
+      if (kDebugMode) {
+        Logger.info(
+            '🚀 飞船位置更新: ($oldX, $oldY) -> ($shipX, $shipY), dx=$dx, dy=$dy');
+      }
+      lastMove = DateTime.now();
+      _throttledNotifyListeners();
     }
-
-    lastMove = DateTime.now();
-    notifyListeners();
   }
 
   /// 开始上升
@@ -331,7 +377,8 @@ class Space extends ChangeNotifier {
   /// 绘制星空
   void drawStars() {
     // 在Flutter中，星空将通过自定义绘制组件实现
-    notifyListeners();
+    // 星空绘制不需要频繁更新，使用节流通知
+    _throttledNotifyListeners();
   }
 
   /// 坠毁
@@ -342,7 +389,8 @@ class Space extends ChangeNotifier {
     _clearTimers();
 
     final localization = Localization();
-    NotificationManager().notify(name, localization.translate('space.notifications.ship_crashed'));
+    NotificationManager().notify(
+        name, localization.translate('space.notifications.ship_crashed'));
 
     // 播放坠毁音效（暂时注释掉）
     // AudioEngine().playSound(AudioLibrary.crash);
@@ -373,7 +421,8 @@ class Space extends ChangeNotifier {
     _clearTimers();
 
     final localization = Localization();
-    NotificationManager().notify(name, localization.translate('space.notifications.escaped_planet'));
+    NotificationManager().notify(
+        name, localization.translate('space.notifications.escaped_planet'));
 
     // 播放结束音乐（暂时注释掉）
     // AudioEngine().playBackgroundMusic(AudioLibrary.musicEnding);
@@ -436,53 +485,88 @@ class Space extends ChangeNotifier {
 
   /// 按键按下处理
   void keyDown(LogicalKeyboardKey key) {
-    Logger.info('🚀 Space.keyDown() 被调用: $key, done=$done');
+    if (kDebugMode) {
+      Logger.info('🚀 Space.keyDown() 被调用: $key, done=$done');
+    }
+
+    bool stateChanged = false;
     switch (key) {
       case LogicalKeyboardKey.arrowUp:
       case LogicalKeyboardKey.keyW:
-        up = true;
-        Logger.info('🚀 设置 up = true');
+        if (!up) {
+          up = true;
+          stateChanged = true;
+          if (kDebugMode) Logger.info('🚀 设置 up = true');
+        }
         break;
       case LogicalKeyboardKey.arrowDown:
       case LogicalKeyboardKey.keyS:
-        down = true;
-        Logger.info('🚀 设置 down = true');
+        if (!down) {
+          down = true;
+          stateChanged = true;
+          if (kDebugMode) Logger.info('🚀 设置 down = true');
+        }
         break;
       case LogicalKeyboardKey.arrowLeft:
       case LogicalKeyboardKey.keyA:
-        left = true;
-        Logger.info('🚀 设置 left = true');
+        if (!left) {
+          left = true;
+          stateChanged = true;
+          if (kDebugMode) Logger.info('🚀 设置 left = true');
+        }
         break;
       case LogicalKeyboardKey.arrowRight:
       case LogicalKeyboardKey.keyD:
-        right = true;
-        Logger.info('🚀 设置 right = true');
+        if (!right) {
+          right = true;
+          stateChanged = true;
+          if (kDebugMode) Logger.info('🚀 设置 right = true');
+        }
         break;
     }
-    notifyListeners();
+    // 只有状态真正改变时才通知
+    if (stateChanged) {
+      _throttledNotifyListeners();
+    }
   }
 
   /// 按键释放处理
   void keyUp(LogicalKeyboardKey key) {
+    bool stateChanged = false;
     switch (key) {
       case LogicalKeyboardKey.arrowUp:
       case LogicalKeyboardKey.keyW:
-        up = false;
+        if (up) {
+          up = false;
+          stateChanged = true;
+        }
         break;
       case LogicalKeyboardKey.arrowDown:
       case LogicalKeyboardKey.keyS:
-        down = false;
+        if (down) {
+          down = false;
+          stateChanged = true;
+        }
         break;
       case LogicalKeyboardKey.arrowLeft:
       case LogicalKeyboardKey.keyA:
-        left = false;
+        if (left) {
+          left = false;
+          stateChanged = true;
+        }
         break;
       case LogicalKeyboardKey.arrowRight:
       case LogicalKeyboardKey.keyD:
-        right = false;
+        if (right) {
+          right = false;
+          stateChanged = true;
+        }
         break;
     }
-    notifyListeners();
+    // 只有状态真正改变时才通知
+    if (stateChanged) {
+      _throttledNotifyListeners();
+    }
   }
 
   /// 降低音量
@@ -582,8 +666,11 @@ class Space extends ChangeNotifier {
   /// 启动游戏循环
   void _startGameLoop() {
     // 重新启动基本定时器（参考原始的onArrival方法）
-    shipTimer = Timer.periodic(const Duration(milliseconds: 33), (_) => moveShip());
-    volumeTimer = Timer.periodic(const Duration(seconds: 1), (_) => lowerVolume());
+    final shipUpdateInterval = kIsWeb ? 33 : 50; // Web: 30FPS, Mobile: 20FPS
+    shipTimer = Timer.periodic(
+        Duration(milliseconds: shipUpdateInterval), (_) => moveShip());
+    volumeTimer =
+        Timer.periodic(const Duration(seconds: 1), (_) => lowerVolume());
 
     // 启动上升过程
     startAscent();
@@ -593,11 +680,29 @@ class Space extends ChangeNotifier {
 
   /// 手动控制飞船（用于触摸控制）
   void setShipDirection({bool? up, bool? down, bool? left, bool? right}) {
-    if (up != null) this.up = up;
-    if (down != null) this.down = down;
-    if (left != null) this.left = left;
-    if (right != null) this.right = right;
-    notifyListeners();
+    bool stateChanged = false;
+
+    if (up != null && this.up != up) {
+      this.up = up;
+      stateChanged = true;
+    }
+    if (down != null && this.down != down) {
+      this.down = down;
+      stateChanged = true;
+    }
+    if (left != null && this.left != left) {
+      this.left = left;
+      stateChanged = true;
+    }
+    if (right != null && this.right != right) {
+      this.right = right;
+      stateChanged = true;
+    }
+
+    // 只有状态真正改变时才通知
+    if (stateChanged) {
+      _throttledNotifyListeners();
+    }
   }
 
   /// 获取小行星数量
