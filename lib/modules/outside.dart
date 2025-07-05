@@ -26,8 +26,6 @@ class Outside extends ChangeNotifier {
   final String name = "Outside";
 
   // 常量 - 从GameConfig获取
-  static int get _gatherDelay => GameConfig.getCurrentGatherDelay(); // 伐木延迟
-  static int get _trapsDelay => GameConfig.getCurrentTrapsDelay(); // 陷阱检查延迟
   static List<double> get _popDelay => GameConfig.popDelayRange; // 人口增长延迟范围
   static int get _hutRoom => GameConfig.hutRoom; // 每个小屋容纳人数
 

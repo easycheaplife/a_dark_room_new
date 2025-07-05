@@ -31,9 +31,9 @@ void main() {
       final avgInterval = intervals.reduce((a, b) => a + b) / intervals.length;
 
       Logger.info('🎯 事件间隔统计:');
-      Logger.info('  最小间隔: ${minInterval}分钟');
-      Logger.info('  最大间隔: ${maxInterval}分钟');
-      Logger.info('  平均间隔: ${avgInterval.toStringAsFixed(1)}分钟');
+      Logger.info('  最小间隔: $minInterval分钟');
+      Logger.info('  最大间隔: $maxInterval分钟');
+      Logger.info('  平均间隔: $avgInterval.toStringAsFixed(1)分钟');
 
       expect(minInterval, equals(3), reason: '最小间隔应为3分钟');
       expect(maxInterval, equals(6), reason: '最大间隔应为6分钟');
@@ -89,11 +89,11 @@ void main() {
       for (int i = eventTimeRange[0]; i <= eventTimeRange[1]; i++) {
         final count = distribution[i] ?? 0;
         final percentage = (count / testRounds * 100).toStringAsFixed(1);
-        Logger.info('  ${i}分钟: $count次 (${percentage}%)');
+        Logger.info('  $i分钟: $count次 ($percentage%)');
 
         // 每个间隔的出现概率应该大致相等（约25%）
-        expect(percentage, isNot(equals('0.0')), reason: '${i}分钟间隔应该有出现');
-        expect(count, greaterThan(testRounds * 0.15), reason: '${i}分钟间隔出现次数应该合理');
+        expect(percentage, isNot(equals('0.0')), reason: '$i分钟间隔应该有出现');
+        expect(count, greaterThan(testRounds * 0.15), reason: '$i分钟间隔出现次数应该合理');
       }
     });
 

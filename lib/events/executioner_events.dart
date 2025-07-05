@@ -1,13 +1,9 @@
-import '../core/state_manager.dart';
 import '../core/localization.dart';
 import '../core/logger.dart';
 import '../modules/world.dart';
-import '../modules/setpieces.dart';
 
 /// 执行者事件定义 - 参考原游戏executioner.js
 class ExecutionerEvents {
-  static final StateManager _sm = StateManager();
-
   /// 获取所有执行者事件
   static Map<String, Map<String, dynamic>> get events => {
         'executioner-intro': executionerIntro,

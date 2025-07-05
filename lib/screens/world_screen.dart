@@ -871,7 +871,7 @@ class _WorldScreenState extends State<WorldScreen> {
 
     Logger.info(
         '📱 按键式移动: 点击位置=($x, $y), 屏幕尺寸=${mapSize.width}x${mapSize.height}');
-    Logger.info('📱 按键式移动: 区域尺寸=${thirdWidth}x${thirdHeight}');
+    Logger.info('📱 按键式移动: 区域尺寸=${thirdWidth}x$thirdHeight');
 
     // 确定点击在哪个区域
     int col = 0; // 0=左, 1=中, 2=右
