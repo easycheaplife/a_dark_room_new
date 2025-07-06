@@ -3,51 +3,41 @@
 # A Dark Room Web构建脚本
 # 用于构建优化的Web版本，特别针对微信浏览器
 
-set -e  # 遇到错误立即退出
+# 获取脚本目录
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# 颜色定义
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+# 加载共享函数库
+if [ -f "$SCRIPT_DIR/lib/common.sh" ]; then
+    source "$SCRIPT_DIR/lib/common.sh"
+elif [ -f "scripts/lib/common.sh" ]; then
+    source "scripts/lib/common.sh"
+else
+    echo "错误: 无法找到共享函数库 common.sh"
+    exit 1
+fi
 
-# 日志函数
-log_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
-}
+# 初始化共享库
+if command -v init_common_lib >/dev/null 2>&1; then
+    init_common_lib
+else
+    echo "警告: 共享函数库未正确加载，使用基本功能"
+    # 定义基本的日志函数作为后备
+    log_info() { echo "[INFO] $1"; }
+    log_success() { echo "[SUCCESS] $1"; }
+    log_warning() { echo "[WARNING] $1"; }
+    log_error() { echo "[ERROR] $1"; }
+    check_flutter_environment() { return 0; }
+    check_project_environment() { return 0; }
+    check_build_tools() { return 0; }
+    get_project_info() { echo ""; }
+    show_build_stats() { echo "构建统计信息不可用"; }
+fi
 
-log_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
-
-log_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
-log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
-
-# 检查Flutter环境
+# 检查Flutter环境（使用共享函数）
 check_flutter() {
-    log_info "检查Flutter环境..."
-    
-    if ! command -v flutter &> /dev/null; then
-        log_error "Flutter未安装或不在PATH中"
-        exit 1
-    fi
-    
-    local flutter_version=$(flutter --version | head -n 1)
-    log_info "Flutter版本: $flutter_version"
-    
-    # 检查Flutter Web支持
-    if ! flutter config | grep -q "enable-web: true"; then
-        log_warning "Flutter Web支持未启用，正在启用..."
-        flutter config --enable-web
-    fi
-    
-    log_success "Flutter环境检查完成"
+    check_flutter_environment
+    check_project_environment
+    check_build_tools
 }
 
 # 清理构建目录
@@ -66,9 +56,13 @@ clean_build() {
 # 获取依赖
 get_dependencies() {
     log_info "获取项目依赖..."
-    
-    flutter pub get
-    
+
+    # 抑制依赖版本警告信息
+    flutter pub get --suppress-analytics 2>&1 | \
+    grep -v "available)" | \
+    grep -v "Try \`flutter pub outdated\`" | \
+    grep -v "packages have newer versions" || true
+
     log_success "依赖获取完成"
 }
 
@@ -83,16 +77,16 @@ build_web() {
     
     case $build_mode in
         "debug")
-            build_args="--debug --web-renderer html"
+            build_args="--debug --dart-define=flutter.web.use_skia=false"
             ;;
         "profile")
-            build_args="--profile --web-renderer html"
+            build_args="--profile --dart-define=flutter.web.use_skia=false"
             ;;
         "release")
-            build_args="--release --web-renderer html --dart-define=flutter.web.use_skia=false"
+            build_args="--release --dart-define=flutter.web.use_skia=false"
             ;;
         "wechat")
-            build_args="--release --web-renderer html --dart-define=flutter.web.use_skia=false --dart-define=flutter.web.auto_detect=false"
+            build_args="--release --dart-define=flutter.web.use_skia=false --dart-define=flutter.web.auto_detect=false"
             ;;
         *)
             log_error "未知的构建模式: $build_mode"
@@ -100,8 +94,21 @@ build_web() {
             ;;
     esac
     
-    # 执行构建
-    flutter build web $build_args
+    # 执行构建（抑制详细输出）
+    log_info "正在编译，请稍候..."
+
+    # 执行构建并过滤不需要的输出
+    flutter build web $build_args --suppress-analytics 2>&1 | \
+    grep -v "Font asset.*was tree-shaken" | \
+    grep -v "Tree-shaking can be disabled" | \
+    grep -v "⡯\|⠭\|⠅\|⢸\|⣇\|⣀\|⡀\|⢹\|⡏\|⠁\|⠈\|⣯\|⣭\|⡅\|⢕\|⡂" | \
+    grep -E "(Built build/web|Compiling|Error|Failed|✓)" || true
+
+    # 检查构建是否成功
+    if [ ! -d "build/web" ]; then
+        log_error "构建失败，build/web目录不存在"
+        return 1
+    fi
     
     # 如果指定了输出目录，复制构建结果
     if [ -n "$output_dir" ]; then
@@ -158,9 +165,9 @@ optimize_build() {
     # 压缩文件
     if [ "$has_gzip" = true ]; then
         log_info "压缩静态文件..."
-        find "$build_dir" -name "*.js" -exec gzip -k {} \;
-        find "$build_dir" -name "*.css" -exec gzip -k {} \;
-        find "$build_dir" -name "*.html" -exec gzip -k {} \;
+        find "$build_dir" -name "*.js" -exec gzip -f -k {} \; 2>/dev/null || true
+        find "$build_dir" -name "*.css" -exec gzip -f -k {} \; 2>/dev/null || true
+        find "$build_dir" -name "*.html" -exec gzip -f -k {} \; 2>/dev/null || true
         log_success "文件压缩完成"
     else
         log_warning "gzip未安装，跳过文件压缩"
@@ -169,48 +176,41 @@ optimize_build() {
     log_success "构建结果优化完成"
 }
 
-# 生成构建报告
+# 生成构建报告（使用共享函数）
 generate_report() {
     local build_dir="build/web"
     local report_file="build_report.txt"
-    
+
     log_info "生成构建报告..."
-    
+
     {
         echo "A Dark Room Web构建报告"
         echo "========================"
         echo "构建时间: $(date)"
         echo "Flutter版本: $(flutter --version | head -n 1)"
         echo ""
+
+        # 使用共享函数显示项目信息
+        echo "项目信息:"
+        echo "  名称: $(get_project_info name)"
+        echo "  版本: $(get_project_info version)"
+        echo ""
+
         echo "文件大小统计:"
         echo "------------"
-        
+
         if [ -d "$build_dir" ]; then
-            # 总大小
-            local total_size=$(du -sh "$build_dir" | cut -f1)
-            echo "总大小: $total_size"
-            echo ""
-            
-            # 主要文件大小
-            echo "主要文件:"
-            if [ -f "$build_dir/main.dart.js" ]; then
-                ls -lh "$build_dir/main.dart.js" | awk '{print "  main.dart.js: " $5}'
-            fi
-            if [ -f "$build_dir/flutter_service_worker.js" ]; then
-                ls -lh "$build_dir/flutter_service_worker.js" | awk '{print "  flutter_service_worker.js: " $5}'
-            fi
-            if [ -f "$build_dir/flutter.js" ]; then
-                ls -lh "$build_dir/flutter.js" | awk '{print "  flutter.js: " $5}'
-            fi
-            echo ""
-            
+            # 使用共享函数显示构建统计
+            show_build_stats "$build_dir" | sed 's/^//'
+
             # 资源文件统计
+            echo ""
             echo "资源文件统计:"
-            local png_count=$(find "$build_dir" -name "*.png" | wc -l)
-            local jpg_count=$(find "$build_dir" -name "*.jpg" -o -name "*.jpeg" | wc -l)
-            local js_count=$(find "$build_dir" -name "*.js" | wc -l)
-            local css_count=$(find "$build_dir" -name "*.css" | wc -l)
-            
+            local png_count=$(find "$build_dir" -name "*.png" | wc -l | tr -d ' ')
+            local jpg_count=$(find "$build_dir" -name "*.jpg" -o -name "*.jpeg" | wc -l | tr -d ' ')
+            local js_count=$(find "$build_dir" -name "*.js" | wc -l | tr -d ' ')
+            local css_count=$(find "$build_dir" -name "*.css" | wc -l | tr -d ' ')
+
             echo "  PNG文件: $png_count 个"
             echo "  JPEG文件: $jpg_count 个"
             echo "  JavaScript文件: $js_count 个"
@@ -218,14 +218,14 @@ generate_report() {
         else
             echo "构建目录不存在"
         fi
-        
+
         echo ""
         echo "构建完成!"
     } > "$report_file"
-    
+
     # 显示报告内容
     cat "$report_file"
-    
+
     log_success "构建报告已生成: $report_file"
 }
 
