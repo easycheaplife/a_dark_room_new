@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
+import '../core/logger.dart';
 
 // 条件导入：只在Web平台导入Web专用库
-import 'dart:html' as html show window, navigator;
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html show window;
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:js' as js;
 
 /// Web平台工具类
@@ -121,7 +124,7 @@ class WebUtils {
       ]);
     } catch (e) {
       // 如果微信JS-SDK未加载或配置失败，忽略错误
-      print('WeChat share config failed: $e');
+      Logger.error('WeChat share config failed: $e');
     }
   }
 

@@ -67,7 +67,7 @@ void main() {
 
       // 原始逻辑（会导致除零错误）：
       expect(() => xDist.abs() ~/ xDist,
-          throwsA(isA<IntegerDivisionByZeroException>()));
+          throwsA(isA<UnsupportedError>()));
 
       Logger.info('✅ 确认原始代码确实存在除零错误');
     });

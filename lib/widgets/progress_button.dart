@@ -39,7 +39,6 @@ class ProgressButton extends StatefulWidget {
 }
 
 class _ProgressButtonState extends State<ProgressButton> {
-  bool _isHovering = false;
   OverlayEntry? _overlayEntry;
   final LayerLink _layerLink = LayerLink();
 
@@ -192,7 +191,6 @@ class _ProgressButtonState extends State<ProgressButton> {
             link: _layerLink,
             child: MouseRegion(
               onEnter: (_) {
-                setState(() => _isHovering = true);
                 // 显示tooltip（如果有成本信息且不是免费的）
                 if (widget.cost != null &&
                     widget.cost!.isNotEmpty &&
@@ -201,7 +199,6 @@ class _ProgressButtonState extends State<ProgressButton> {
                 }
               },
               onExit: (_) {
-                setState(() => _isHovering = false);
                 _removeTooltip();
               },
               child: Stack(

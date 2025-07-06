@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
+import '../core/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // 条件导入：只在Web平台导入Web专用库
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'dart:convert';
 
@@ -30,7 +32,7 @@ class WebStorage {
         return await _prefs!.setString(key, value);
       }
     } catch (e) {
-      print('WebStorage.setString error: $e');
+      Logger.error('WebStorage.setString error: $e');
       return false;
     }
   }
@@ -47,7 +49,7 @@ class WebStorage {
         return _prefs!.getString(key);
       }
     } catch (e) {
-      print('WebStorage.getString error: $e');
+      Logger.error('WebStorage.getString error: $e');
       return null;
     }
   }
@@ -94,7 +96,7 @@ class WebStorage {
       final jsonString = jsonEncode(value);
       return await setString(key, jsonString);
     } catch (e) {
-      print('WebStorage.setJson error: $e');
+      Logger.error('WebStorage.setJson error: $e');
       return false;
     }
   }
@@ -106,7 +108,7 @@ class WebStorage {
       if (jsonString == null) return null;
       return jsonDecode(jsonString) as Map<String, dynamic>;
     } catch (e) {
-      print('WebStorage.getJson error: $e');
+      Logger.error('WebStorage.getJson error: $e');
       return null;
     }
   }
@@ -124,7 +126,7 @@ class WebStorage {
         return await _prefs!.remove(key);
       }
     } catch (e) {
-      print('WebStorage.remove error: $e');
+      Logger.error('WebStorage.remove error: $e');
       return false;
     }
   }
@@ -142,7 +144,7 @@ class WebStorage {
         return await _prefs!.clear();
       }
     } catch (e) {
-      print('WebStorage.clear error: $e');
+      Logger.error('WebStorage.clear error: $e');
       return false;
     }
   }
@@ -159,7 +161,7 @@ class WebStorage {
         return _prefs!.getKeys();
       }
     } catch (e) {
-      print('WebStorage.getKeys error: $e');
+      Logger.error('WebStorage.getKeys error: $e');
       return <String>{};
     }
   }
@@ -176,7 +178,7 @@ class WebStorage {
         return _prefs!.containsKey(key);
       }
     } catch (e) {
-      print('WebStorage.containsKey error: $e');
+      Logger.error('WebStorage.containsKey error: $e');
       return false;
     }
   }
@@ -193,7 +195,7 @@ class WebStorage {
       }
       return totalSize;
     } catch (e) {
-      print('WebStorage.getStorageSize error: $e');
+      Logger.error('WebStorage.getStorageSize error: $e');
       return 0;
     }
   }
@@ -209,7 +211,7 @@ class WebStorage {
       html.window.localStorage.remove(testKey);
       return true;
     } catch (e) {
-      print('WebStorage.isStorageAvailable error: $e');
+      Logger.error('WebStorage.isStorageAvailable error: $e');
       return false;
     }
   }

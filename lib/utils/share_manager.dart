@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
+import '../core/logger.dart';
 import 'web_utils.dart';
-import 'wechat_adapter.dart';
+
 
 /// 分享管理器
 /// 处理游戏内的分享功能，包括微信分享、成就分享等
@@ -17,9 +18,9 @@ class ShareManager {
       }
       
       _initialized = true;
-      print('ShareManager initialized');
+      Logger.info('ShareManager initialized');
     } catch (e) {
-      print('ShareManager.initialize error: $e');
+      Logger.error('ShareManager.initialize error: $e');
     }
   }
 
@@ -29,7 +30,7 @@ class ShareManager {
       // 配置默认分享内容
       await updateShareContent();
     } catch (e) {
-      print('_initializeWeChatShare error: $e');
+      Logger.error('_initializeWeChatShare error: $e');
     }
   }
 
@@ -57,9 +58,9 @@ class ShareManager {
         imgUrl: shareConfig['imgUrl'],
       );
       
-      print('Share content updated: $shareConfig');
+      Logger.info('Share content updated: $shareConfig');
     } catch (e) {
-      print('updateShareContent error: $e');
+      Logger.error('updateShareContent error: $e');
     }
   }
 
@@ -73,17 +74,17 @@ class ShareManager {
     
     try {
       final resourceText = _formatResources(resources);
-      final title = 'A Dark Room - 第${day}天的冒险';
-      final desc = '我在《黑暗房间》中已经生存了${day}天！当前位置：$currentLocation。$resourceText 快来一起冒险吧！';
+      final title = 'A Dark Room - 第$day天的冒险';
+      final desc = '我在《黑暗房间》中已经生存了$day天！当前位置：$currentLocation。$resourceText 快来一起冒险吧！';
       
       await updateShareContent(
         title: title,
         desc: desc,
       );
       
-      print('Progress shared: Day $day, Location: $currentLocation');
+      Logger.info('Progress shared: Day $day, Location: $currentLocation');
     } catch (e) {
-      print('shareProgress error: $e');
+      Logger.error('shareProgress error: $e');
     }
   }
 
@@ -103,9 +104,9 @@ class ShareManager {
         desc: desc,
       );
       
-      print('Achievement shared: $achievementName');
+      Logger.info('Achievement shared: $achievementName');
     } catch (e) {
-      print('shareAchievement error: $e');
+      Logger.error('shareAchievement error: $e');
     }
   }
 
@@ -125,9 +126,9 @@ class ShareManager {
         desc: desc,
       );
       
-      print('Discovery shared: $locationName');
+      Logger.info('Discovery shared: $locationName');
     } catch (e) {
-      print('shareDiscovery error: $e');
+      Logger.error('shareDiscovery error: $e');
     }
   }
 
@@ -148,9 +149,9 @@ class ShareManager {
         desc: desc,
       );
       
-      print('Combat victory shared: $enemyName');
+      Logger.info('Combat victory shared: $enemyName');
     } catch (e) {
-      print('shareCombatVictory error: $e');
+      Logger.error('shareCombatVictory error: $e');
     }
   }
 
@@ -163,16 +164,16 @@ class ShareManager {
     
     try {
       final title = 'A Dark Room - 游戏完成！';
-      final desc = '我完成了《黑暗房间》的冒险！总共生存了${totalDays}天，获得了"$endingType"结局。这是一段难忘的旅程，推荐给所有喜欢冒险的朋友！';
+      final desc = '我完成了《黑暗房间》的冒险！总共生存了$totalDays天，获得了"$endingType"结局。这是一段难忘的旅程，推荐给所有喜欢冒险的朋友！';
       
       await updateShareContent(
         title: title,
         desc: desc,
       );
       
-      print('Game completion shared: $totalDays days, $endingType ending');
+      Logger.info('Game completion shared: $totalDays days, $endingType ending');
     } catch (e) {
-      print('shareGameCompletion error: $e');
+      Logger.error('shareGameCompletion error: $e');
     }
   }
 
@@ -189,9 +190,9 @@ class ShareManager {
         desc: desc,
       );
       
-      print('Invitation shared');
+      Logger.info('Invitation shared');
     } catch (e) {
-      print('shareInvitation error: $e');
+      Logger.error('shareInvitation error: $e');
     }
   }
 
@@ -253,15 +254,15 @@ class ShareManager {
   /// 测试分享功能
   static Future<void> testShare() async {
     if (!isShareAvailable()) {
-      print('Share not available');
+      Logger.info('Share not available');
       return;
     }
     
     try {
       await shareInvitation();
-      print('Test share completed');
+      Logger.info('Test share completed');
     } catch (e) {
-      print('testShare error: $e');
+      Logger.error('testShare error: $e');
     }
   }
 }

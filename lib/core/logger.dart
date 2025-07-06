@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'dart:developer' as developer;
 import 'localization.dart';
 
 class Logger {
@@ -120,7 +121,7 @@ class Logger {
   static void log(String message, {String tag = 'INFO'}) {
     if (kDebugMode && _shouldShowLog(message)) {
       final localizedMessage = _localizeMessage(message);
-      print('[$tag] $localizedMessage');
+      developer.log(localizedMessage, name: tag);
     }
   }
 

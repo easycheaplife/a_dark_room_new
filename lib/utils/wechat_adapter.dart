@@ -1,8 +1,11 @@
 import 'package:flutter/foundation.dart';
+import '../core/logger.dart';
 import 'web_utils.dart';
 
 // 条件导入：只在Web平台导入Web专用库
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:js' as js;
 
 /// 微信浏览器适配器
@@ -24,7 +27,7 @@ class WeChatAdapter {
       
       _initialized = true;
     } catch (e) {
-      print('WeChatAdapter.initialize error: $e');
+      Logger.error('WeChatAdapter.initialize error: $e');
     }
   }
 
@@ -48,9 +51,9 @@ class WeChatAdapter {
       // 处理微信浏览器的音频限制
       _handleAudioRestrictions();
       
-      print('WeChat browser features initialized');
+      Logger.info('WeChat browser features initialized');
     } catch (e) {
-      print('_initializeWeChatFeatures error: $e');
+      Logger.error('_initializeWeChatFeatures error: $e');
     }
   }
 
@@ -115,7 +118,7 @@ class WeChatAdapter {
         head.appendChild(style);
       }
     } catch (e) {
-      print('_addWeChatStyles error: $e');
+      Logger.error('_addWeChatStyles error: $e');
     }
   }
 
@@ -127,7 +130,7 @@ class WeChatAdapter {
       // 处理微信浏览器的返回按钮
       html.window.addEventListener('popstate', (event) {
         // 可以在这里处理微信浏览器的返回逻辑
-        print('WeChat browser back button pressed');
+        Logger.info('WeChat browser back button pressed');
       });
       
       // 处理微信浏览器的页面可见性变化
@@ -143,15 +146,15 @@ class WeChatAdapter {
       
       // 处理微信浏览器的网络状态变化
       html.window.addEventListener('online', (event) {
-        print('WeChat browser: Network online');
+        Logger.info('WeChat browser: Network online');
       });
-      
+
       html.window.addEventListener('offline', (event) {
-        print('WeChat browser: Network offline');
+        Logger.info('WeChat browser: Network offline');
       });
       
     } catch (e) {
-      print('_handleWeChatEvents error: $e');
+      Logger.error('_handleWeChatEvents error: $e');
     }
   }
 
@@ -173,7 +176,7 @@ class WeChatAdapter {
         js.context.callMethod('configWeChatShare', [js.JsObject.jsify(shareConfig)]);
       }
     } catch (e) {
-      print('_configureWeChatShare error: $e');
+      Logger.error('_configureWeChatShare error: $e');
     }
   }
 
@@ -193,7 +196,7 @@ class WeChatAdapter {
       }, true);
       
     } catch (e) {
-      print('_handleAudioRestrictions error: $e');
+      Logger.error('_handleAudioRestrictions error: $e');
     }
   }
 
@@ -219,10 +222,10 @@ class WeChatAdapter {
         oscillator.callMethod('start', [0]);
         oscillator.callMethod('stop', [0.1]);
         
-        print('Audio unlocked for WeChat browser');
+        Logger.info('Audio unlocked for WeChat browser');
       }
     } catch (e) {
-      print('_unlockAudio error: $e');
+      Logger.error('_unlockAudio error: $e');
     }
   }
 
@@ -230,9 +233,9 @@ class WeChatAdapter {
   static void _pauseGame() {
     try {
       // 这里可以添加暂停游戏的逻辑
-      print('Game paused (WeChat browser hidden)');
+      Logger.info('Game paused (WeChat browser hidden)');
     } catch (e) {
-      print('_pauseGame error: $e');
+      Logger.error('_pauseGame error: $e');
     }
   }
 
@@ -240,9 +243,9 @@ class WeChatAdapter {
   static void _resumeGame() {
     try {
       // 这里可以添加恢复游戏的逻辑
-      print('Game resumed (WeChat browser visible)');
+      Logger.info('Game resumed (WeChat browser visible)');
     } catch (e) {
-      print('_resumeGame error: $e');
+      Logger.error('_resumeGame error: $e');
     }
   }
 

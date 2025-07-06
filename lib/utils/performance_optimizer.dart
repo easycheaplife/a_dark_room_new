@@ -1,10 +1,13 @@
 import 'package:flutter/foundation.dart';
+import '../core/logger.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'dart:async';
 
 // 条件导入：只在Web平台导入Web专用库
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:js' as js;
 
 /// 性能优化工具类
@@ -24,9 +27,9 @@ class PerformanceOptimizer {
       }
       
       _initialized = true;
-      print('PerformanceOptimizer initialized');
+      Logger.info('PerformanceOptimizer initialized');
     } catch (e) {
-      print('PerformanceOptimizer.initialize error: $e');
+      Logger.error('PerformanceOptimizer.initialize error: $e');
     }
   }
 
@@ -48,7 +51,7 @@ class PerformanceOptimizer {
       _monitorPerformance();
       
     } catch (e) {
-      print('_initializeWebOptimizations error: $e');
+      Logger.error('_initializeWebOptimizations error: $e');
     }
   }
 
@@ -72,9 +75,9 @@ class PerformanceOptimizer {
       // 预加载字体（如果有的话）
       // await _preloadFonts();
       
-      print('Critical resources preloaded: ${_preloadedImages.length} images');
+      Logger.info('Critical resources preloaded: ${_preloadedImages.length} images');
     } catch (e) {
-      print('_preloadCriticalResources error: $e');
+      Logger.error('_preloadCriticalResources error: $e');
     }
   }
 
@@ -92,7 +95,7 @@ class PerformanceOptimizer {
       });
       
       img.onError.listen((_) {
-        print('Failed to preload image: $url');
+        Logger.error('Failed to preload image: $url');
         completer.complete();
       });
       
@@ -107,7 +110,7 @@ class PerformanceOptimizer {
       
       await completer.future;
     } catch (e) {
-      print('_preloadImage error for $url: $e');
+      Logger.error('_preloadImage error for $url: $e');
     }
   }
 
@@ -129,11 +132,11 @@ class PerformanceOptimizer {
       if (js.context.hasProperty('navigator') && 
           js.context['navigator'].hasProperty('serviceWorker')) {
         // 这里可以注册Service Worker来实现更精细的缓存控制
-        print('Service Worker available for advanced caching');
+        Logger.info('Service Worker available for advanced caching');
       }
-      
+
     } catch (e) {
-      print('_setupResourceCaching error: $e');
+      Logger.error('_setupResourceCaching error: $e');
     }
   }
 
@@ -173,7 +176,7 @@ class PerformanceOptimizer {
       }
       
     } catch (e) {
-      print('_optimizeRendering error: $e');
+      Logger.error('_optimizeRendering error: $e');
     }
   }
 
@@ -196,7 +199,7 @@ class PerformanceOptimizer {
       }
       
     } catch (e) {
-      print('_monitorPerformance error: $e');
+      Logger.error('_monitorPerformance error: $e');
     }
   }
 
@@ -212,13 +215,13 @@ class PerformanceOptimizer {
           final loadTime = navigation['loadEventEnd'] - navigation['navigationStart'];
           final domReady = navigation['domContentLoadedEventEnd'] - navigation['navigationStart'];
           
-          print('Performance metrics:');
-          print('  - Page load time: ${loadTime}ms');
-          print('  - DOM ready time: ${domReady}ms');
+          Logger.info('Performance metrics:');
+          Logger.info('  - Page load time: ${loadTime}ms');
+          Logger.info('  - DOM ready time: ${domReady}ms');
         }
       }
     } catch (e) {
-      print('_logPerformanceMetrics error: $e');
+      Logger.error('_logPerformanceMetrics error: $e');
     }
   }
 
@@ -234,19 +237,19 @@ class PerformanceOptimizer {
         final total = memory['totalJSHeapSize'];
         final limit = memory['jsHeapSizeLimit'];
         
-        print('Memory usage:');
-        print('  - Used: ${(used / 1024 / 1024).toStringAsFixed(2)}MB');
-        print('  - Total: ${(total / 1024 / 1024).toStringAsFixed(2)}MB');
-        print('  - Limit: ${(limit / 1024 / 1024).toStringAsFixed(2)}MB');
-        
+        Logger.info('Memory usage:');
+        Logger.info('  - Used: ${(used / 1024 / 1024).toStringAsFixed(2)}MB');
+        Logger.info('  - Total: ${(total / 1024 / 1024).toStringAsFixed(2)}MB');
+        Logger.info('  - Limit: ${(limit / 1024 / 1024).toStringAsFixed(2)}MB');
+
         // 如果内存使用超过80%，触发垃圾回收建议
         if (used / limit > 0.8) {
-          print('⚠️ High memory usage detected, consider cleanup');
+          Logger.info('⚠️ High memory usage detected, consider cleanup');
           _suggestMemoryCleanup();
         }
       }
     } catch (e) {
-      print('_logMemoryUsage error: $e');
+      Logger.error('_logMemoryUsage error: $e');
     }
   }
 
@@ -261,9 +264,9 @@ class PerformanceOptimizer {
         js.context.callMethod('gc');
       }
       
-      print('Memory cleanup suggested');
+      Logger.info('Memory cleanup suggested');
     } catch (e) {
-      print('_suggestMemoryCleanup error: $e');
+      Logger.error('_suggestMemoryCleanup error: $e');
     }
   }
 

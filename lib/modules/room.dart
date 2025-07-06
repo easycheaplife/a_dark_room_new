@@ -44,7 +44,8 @@ class Room with ChangeNotifier {
 
   // 计时器
   Timer? _fireTimer;
-  Timer? _tempTimer; // 用于延迟调整房间温度
+  Timer? _tempTimer;
+ // 用于延迟调整房间温度
   Timer? _builderTimer;
 
   // 状态
@@ -781,6 +782,7 @@ class Room with ChangeNotifier {
       changed = true;
     }
 
+    _tempTimer?.cancel();
     _tempTimer = Engine().setTimeout(() => adjustTemp(), _roomWarmDelay);
   }
 
