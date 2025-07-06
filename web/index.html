@@ -20,6 +20,19 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A Dark Room - 一个黑暗房间游戏">
 
+  <!-- 移动端和微信浏览器优化 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#000000">
+
+  <!-- 微信分享优化 -->
+  <meta property="og:title" content="A Dark Room - 黑暗房间">
+  <meta property="og:description" content="一个引人入胜的文字冒险游戏">
+  <meta property="og:image" content="icons/Icon-512.png">
+  <meta property="og:type" content="website">
+
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -31,8 +44,180 @@
 
   <title>A Dark Room</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- 微信JS-SDK -->
+  <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+
+  <!-- 移动端和微信优化CSS -->
+  <style>
+    /* 基础重置和优化 */
+    * {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      -webkit-overflow-scrolling: touch;
+      touch-action: manipulation;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #ffffff;
+    }
+
+    /* 防止移动端缩放和选择 */
+    input, textarea, select {
+      -webkit-user-select: text;
+      user-select: text;
+    }
+
+    /* 优化触摸响应 */
+    button, .clickable, [role="button"] {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      cursor: pointer;
+    }
+
+    /* 微信浏览器特殊优化 */
+    .wechat-optimized {
+      -webkit-overflow-scrolling: touch;
+      transform: translateZ(0);
+    }
+
+    /* 加载动画 */
+    .loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 16px;
+      color: #666;
+    }
+
+    /* 隐藏Flutter的默认加载指示器 */
+    flutter-view {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
 </head>
 <body>
+  <!-- 加载动画 -->
+  <div id="loading" class="loading">
+    正在加载游戏...
+  </div>
+
+  <!-- 微信分享配置脚本 -->
+  <script>
+    // 检测是否为微信浏览器
+    function isWeChatBrowser() {
+      return /MicroMessenger/i.test(navigator.userAgent);
+    }
+
+    // 配置微信分享
+    function configWeChatShare(config) {
+      if (!isWeChatBrowser() || typeof wx === 'undefined') {
+        return;
+      }
+
+      try {
+        wx.config({
+          debug: false,
+          appId: '', // 需要配置微信公众号的AppId
+          timestamp: Math.floor(Date.now() / 1000),
+          nonceStr: Math.random().toString(36).substr(2, 15),
+          signature: '', // 需要后端生成签名
+          jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage', 'updateAppMessageShareData', 'updateTimelineShareData']
+        });
+
+        wx.ready(function() {
+          // 分享到朋友圈
+          wx.updateTimelineShareData({
+            title: config.title,
+            link: config.link,
+            imgUrl: config.imgUrl,
+            success: function() {
+              console.log('分享到朋友圈配置成功');
+            }
+          });
+
+          // 分享给朋友
+          wx.updateAppMessageShareData({
+            title: config.title,
+            desc: config.desc,
+            link: config.link,
+            imgUrl: config.imgUrl,
+            success: function() {
+              console.log('分享给朋友配置成功');
+            }
+          });
+        });
+
+        wx.error(function(res) {
+          console.log('微信JS-SDK配置失败:', res);
+        });
+      } catch (e) {
+        console.log('微信分享配置异常:', e);
+      }
+    }
+
+    // 页面加载完成后的初始化
+    window.addEventListener('load', function() {
+      // 移除加载动画
+      setTimeout(function() {
+        const loading = document.getElementById('loading');
+        if (loading) {
+          loading.style.display = 'none';
+        }
+      }, 2000);
+
+      // 配置默认分享信息
+      if (isWeChatBrowser()) {
+        configWeChatShare({
+          title: 'A Dark Room - 黑暗房间',
+          desc: '一个引人入胜的文字冒险游戏，快来体验吧！',
+          link: window.location.href,
+          imgUrl: window.location.origin + '/icons/Icon-512.png'
+        });
+      }
+
+      // 禁用一些默认行为
+      document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+      });
+
+      document.addEventListener('selectstart', function(e) {
+        e.preventDefault();
+      });
+
+      document.addEventListener('dragstart', function(e) {
+        e.preventDefault();
+      });
+
+      // 防止双击缩放
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', function(event) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+          event.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, false);
+    });
+
+    // 暴露给Flutter使用的全局函数
+    window.configWeChatShare = configWeChatShare;
+    window.isWeChatBrowser = isWeChatBrowser;
+  </script>
+
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
