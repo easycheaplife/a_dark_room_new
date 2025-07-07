@@ -16,7 +16,7 @@ import 'core/web_audio_adapter.dart';
 import 'utils/web_utils.dart';
 import 'utils/wechat_adapter.dart';
 
-import 'utils/performance_optimizer.dart';
+// import 'utils/performance_optimizer.dart'; // 暂时注释掉
 import 'utils/storage_adapter.dart';
 import 'widgets/header.dart';
 import 'widgets/notification_display.dart';
@@ -61,9 +61,9 @@ void main() {
 /// Web平台优化初始化
 void _initializeWebOptimizations() async {
   try {
-    // 初始化性能优化器
-    await PerformanceOptimizer.initialize();
-    Logger.info('⚡ Performance optimizer initialized');
+    // 初始化性能优化器 (暂时注释掉)
+    // await PerformanceOptimizer.initialize();
+    Logger.info('⚡ Performance optimizer skipped (mobile mode)');
 
     // 初始化存储适配器
     await StorageAdapter.initialize();
@@ -109,9 +109,9 @@ void _initializeWebOptimizations() async {
     final storageInfo = await StorageAdapter.getStorageInfo();
     Logger.info('💾 Storage info: $storageInfo');
 
-    // 记录性能统计
-    final performanceStats = PerformanceOptimizer.getPerformanceStats();
-    Logger.info('📊 Performance stats: $performanceStats');
+    // 记录性能统计 (暂时注释掉)
+    // final performanceStats = PerformanceOptimizer.getPerformanceStats();
+    Logger.info('📊 Performance stats: skipped (mobile mode)');
 
     Logger.info('✅ Web optimizations initialized successfully');
   } catch (e) {

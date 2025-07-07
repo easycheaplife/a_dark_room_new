@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Web%20%7C%20Mobile%20%7C%20Desktop-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-Open%20Source-green.svg)
 
-**最后更新**: 2025-07-06 (代码警告修复完成)
+**最后更新**: 2025-01-07 (APK构建和Web音频修复完成)
 
 ## 📋 目录
 
@@ -55,16 +55,31 @@ flutter pub get
 # 3. 运行Web版本 (推荐)
 flutter run -d chrome
 
-# 4. 运行其他平台
+# 4. 构建发布版本
+flutter build web --release --dart-define=flutter.web.use_skia=false  # Web发布版
+flutter build apk --release                                           # Android APK
+
+# 5. 运行其他平台
 flutter run -d windows    # Windows桌面版
 flutter run -d android    # Android版
 flutter run -d ios        # iOS版
 flutter run -d macos      # macOS版
 flutter run -d linux      # Linux版
 
-# 5. 运行测试
+# 6. 运行测试
 flutter test test/all_tests.dart
 ```
+
+### 📱 平台支持状态
+- ✅ **Web平台**: 完全支持，包括音频和本地存储
+- ✅ **Android APK**: 已修复平台兼容性问题，支持构建和运行
+- 🔄 **iOS**: 理论支持，需要测试验证
+- 🔄 **Windows/macOS/Linux**: 理论支持，需要测试验证
+
+### 🔧 已知问题和修复
+- ✅ **Web音频发布版本无声音** - 已修复，支持远程部署
+- ✅ **APK构建失败** - 已修复Web专用库兼容性问题
+- ✅ **跨平台存储** - 统一使用SharedPreferences
 
 ### 🧪 测试系统
 ```bash

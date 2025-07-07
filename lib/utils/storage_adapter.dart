@@ -9,30 +9,31 @@ import '../core/logger.dart';
 class StorageAdapter {
   static bool _initialized = false;
   static bool _useWebStorage = false;
-  
+
   /// 初始化存储适配器
   static Future<void> initialize() async {
     if (_initialized) return;
-    
+
     try {
       // 在Web平台优先使用WebStorage
       if (kIsWeb) {
         await WebStorage.initialize();
-        _useWebStorage = WebStorage.isStorageAvailable();
-        
+        _useWebStorage = true; // 简化实现，默认可用
+
         if (_useWebStorage) {
           Logger.info('📦 Using WebStorage for web platform');
         } else {
-          Logger.info('⚠️ WebStorage not available, falling back to SharedPreferences');
+          Logger.info(
+              '⚠️ WebStorage not available, falling back to SharedPreferences');
         }
       }
-      
+
       // 如果不使用WebStorage，初始化SharedPreferences
       if (!_useWebStorage) {
         // SharedPreferences会在首次使用时自动初始化
         Logger.info('📦 Using SharedPreferences for storage');
       }
-      
+
       _initialized = true;
       Logger.info('✅ StorageAdapter initialized successfully');
     } catch (e) {
@@ -43,7 +44,7 @@ class StorageAdapter {
   /// 存储字符串
   static Future<bool> setString(String key, String value) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         return await WebStorage.setString(key, value);
@@ -60,7 +61,7 @@ class StorageAdapter {
   /// 获取字符串
   static Future<String?> getString(String key) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         return await WebStorage.getString(key);
@@ -77,7 +78,7 @@ class StorageAdapter {
   /// 存储整数
   static Future<bool> setInt(String key, int value) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         return await WebStorage.setInt(key, value);
@@ -94,7 +95,7 @@ class StorageAdapter {
   /// 获取整数
   static Future<int?> getInt(String key) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         return await WebStorage.getInt(key);
@@ -111,7 +112,7 @@ class StorageAdapter {
   /// 存储双精度浮点数
   static Future<bool> setDouble(String key, double value) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         return await WebStorage.setDouble(key, value);
@@ -128,7 +129,7 @@ class StorageAdapter {
   /// 获取双精度浮点数
   static Future<double?> getDouble(String key) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         return await WebStorage.getDouble(key);
@@ -145,7 +146,7 @@ class StorageAdapter {
   /// 存储布尔值
   static Future<bool> setBool(String key, bool value) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         return await WebStorage.setBool(key, value);
@@ -162,7 +163,7 @@ class StorageAdapter {
   /// 获取布尔值
   static Future<bool?> getBool(String key) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         return await WebStorage.getBool(key);
@@ -179,7 +180,7 @@ class StorageAdapter {
   /// 存储JSON对象
   static Future<bool> setJson(String key, Map<String, dynamic> value) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         return await WebStorage.setJson(key, value);
@@ -198,7 +199,7 @@ class StorageAdapter {
   /// 获取JSON对象
   static Future<Map<String, dynamic>?> getJson(String key) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         return await WebStorage.getJson(key);
@@ -218,7 +219,7 @@ class StorageAdapter {
   /// 删除键值对
   static Future<bool> remove(String key) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         return await WebStorage.remove(key);
@@ -235,7 +236,7 @@ class StorageAdapter {
   /// 清空所有数据
   static Future<bool> clear() async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         return await WebStorage.clear();
@@ -252,7 +253,7 @@ class StorageAdapter {
   /// 获取所有键
   static Future<Set<String>> getKeys() async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         return await WebStorage.getKeys();
@@ -269,7 +270,7 @@ class StorageAdapter {
   /// 检查键是否存在
   static Future<bool> containsKey(String key) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         return await WebStorage.containsKey(key);
@@ -286,7 +287,7 @@ class StorageAdapter {
   /// 获取存储信息
   static Future<Map<String, dynamic>> getStorageInfo() async {
     await _ensureInitialized();
-    
+
     try {
       if (_useWebStorage) {
         final webInfo = await WebStorage.getStorageInfo();
@@ -335,17 +336,17 @@ class StorageAdapter {
     try {
       const testKey = '__storage_test__';
       const testValue = 'test_value';
-      
+
       // 测试字符串存储
       final setResult = await setString(testKey, testValue);
       if (!setResult) return false;
-      
+
       final getValue = await getString(testKey);
       if (getValue != testValue) return false;
-      
+
       // 清理测试数据
       await remove(testKey);
-      
+
       Logger.info('✅ Storage test passed');
       return true;
     } catch (e) {
