@@ -29,7 +29,7 @@ class Space extends ChangeNotifier {
     return localization.translate('space.module_name');
   }
 
-  // 常量
+  // 常量 - 参考原游戏 SHIP_SPEED: 3
   static const double shipSpeed = 3.0;
   static const int baseAsteroidDelay = 500;
   static const int baseAsteroidSpeed = 1500;
@@ -188,16 +188,24 @@ class Space extends ChangeNotifier {
       character = 'H';
     }
 
+    // 参考原游戏：x位置在0-700范围内随机生成
     final x = random.nextDouble() * 700;
+
+    // 参考原游戏：速度计算更精确
+    final speed =
+        baseAsteroidSpeed - random.nextInt((baseAsteroidSpeed * 0.65).round());
+
     final asteroid = {
       'character': character,
       'x': x,
       'y': 0.0,
       'width': 20.0,
       'height': 20.0,
-      'speed': baseAsteroidSpeed -
-          random.nextInt((baseAsteroidSpeed * 0.65).round()),
+      'speed': speed,
       'id': DateTime.now().millisecondsSinceEpoch,
+      // 添加碰撞检测用的边界信息
+      'xMin': x,
+      'xMax': x + 20.0,
     };
 
     asteroids.add(asteroid);
@@ -205,28 +213,48 @@ class Space extends ChangeNotifier {
     // 开始小行星动画
     _animateAsteroid(asteroid);
 
+    Logger.info(
+        '🌌 创建小行星: 字符=$character, x=${x.toStringAsFixed(1)}, 速度=$speed, 当前高度=${altitude}km');
+
     if (!noNext) {
-      // 根据高度增加难度
+      // 参考原游戏的难度递增逻辑
       if (altitude > 10) {
         createAsteroid(true);
       }
+      // HARDER - 20km以上增加更多小行星
       if (altitude > 20) {
         createAsteroid(true);
         createAsteroid(true);
       }
+      // HAAAAAARDERRRRR!!!! - 40km以上最高难度
       if (altitude > 40) {
         createAsteroid(true);
         createAsteroid(true);
       }
 
       if (!done) {
-        final delay = 1000 - (altitude * 10);
-        Timer(Duration(milliseconds: delay.clamp(100, 1000)),
-            () => createAsteroid());
+        // 参考原游戏：延迟时间随高度递减，最小100ms
+        final delay = (1000 - (altitude * 10)).clamp(100, 1000);
+        Timer(Duration(milliseconds: delay), () => createAsteroid());
+        Logger.info(
+            '🌌 下一个小行星将在${delay}ms后生成，当前难度等级: ${_getDifficultyLevel()}');
       }
     }
 
     notifyListeners();
+  }
+
+  /// 获取当前难度等级
+  String _getDifficultyLevel() {
+    if (altitude <= 10) {
+      return '简单';
+    } else if (altitude <= 20) {
+      return '中等';
+    } else if (altitude <= 40) {
+      return '困难';
+    } else {
+      return '极难';
+    }
   }
 
   /// 小行星动画
@@ -248,17 +276,14 @@ class Space extends ChangeNotifier {
         hull--;
         updateHull();
 
-        // 播放撞击音效（暂时注释掉）
-        // final r = Random().nextInt(2);
-        // if (altitude > 40) {
-        //   AudioEngine().playSound('asteroid_hit_${r + 6}');
-        // } else if (altitude > 20) {
-        //   AudioEngine().playSound('asteroid_hit_${r + 4}');
-        // } else {
-        //   AudioEngine().playSound('asteroid_hit_${r + 1}');
-        // }
+        Logger.info(
+            '🚀 飞船被小行星击中！小行星: ${asteroid['character']}, 位置: (${asteroid['x'].toStringAsFixed(1)}, ${asteroid['y'].toStringAsFixed(1)}), 飞船位置: ($shipX, $shipY), 剩余船体: $hull');
+
+        // 播放碰撞音效
+        _playCollisionSound();
 
         if (hull <= 0) {
+          Logger.info('🚀 船体血量归零，飞船即将坠毁');
           crash();
         }
         return;
@@ -276,15 +301,42 @@ class Space extends ChangeNotifier {
     });
   }
 
-  /// 碰撞检测
+  /// 碰撞检测 - 参考原游戏精确逻辑
   bool _checkCollision(Map<String, dynamic> asteroid) {
-    final aX = asteroid['x'] as double;
-    final aY = asteroid['y'] as double;
-    final aWidth = asteroid['width'] as double;
-    final aHeight = asteroid['height'] as double;
+    // 使用原游戏的碰撞检测逻辑
+    final asteroidXMin = asteroid['xMin'] as double;
+    final asteroidXMax = asteroid['xMax'] as double;
+    final asteroidY = asteroid['y'] as double;
+    final asteroidHeight = asteroid['height'] as double;
 
-    return (aX <= shipX && aX + aWidth >= shipX) &&
-        (aY <= shipY && aY + aHeight >= shipY);
+    // 参考原游戏：if(t.data('xMin') <= Space.shipX && t.data('xMax') >= Space.shipX)
+    final xCollision = asteroidXMin <= shipX && asteroidXMax >= shipX;
+
+    // 参考原游戏：if(aY <= Space.shipY && aY + t.data('height') >= Space.shipY)
+    final yCollision =
+        asteroidY <= shipY && asteroidY + asteroidHeight >= shipY;
+
+    return xCollision && yCollision;
+  }
+
+  /// 播放碰撞音效 - 参考原游戏根据高度播放不同音效
+  void _playCollisionSound() {
+    // 参考原游戏的音效逻辑
+    final r = Random().nextInt(2);
+
+    // 暂时注释掉音效，等音频系统完善后启用
+    // if (altitude > 40) {
+    //   // 高海拔播放高频音效
+    //   AudioEngine().playSound('asteroid_hit_${r + 6}');
+    // } else if (altitude > 20) {
+    //   // 中海拔播放中频音效
+    //   AudioEngine().playSound('asteroid_hit_${r + 4}');
+    // } else {
+    //   // 低海拔播放低频音效
+    //   AudioEngine().playSound('asteroid_hit_${r + 1}');
+    // }
+
+    Logger.info('🎵 播放碰撞音效: 高度=${altitude}km, 音效索引=$r');
   }
 
   /// 移动飞船
@@ -318,16 +370,31 @@ class Space extends ChangeNotifier {
       dy = dy / sqrt(2);
     }
 
-    // 时间补偿
+    // 参考原游戏的时间补偿逻辑: dx *= dt / 33; dy *= dt / 33;
     if (lastMove != null) {
       final dt = DateTime.now().difference(lastMove!).inMilliseconds;
-      final expectedInterval = kIsWeb ? 33 : 50;
-      dx *= dt / expectedInterval;
-      dy *= dt / expectedInterval;
+      // 原游戏固定使用33ms作为基准，不管实际间隔
+      final normalizedDt = dt / 33.0;
+      // 进一步限制时间补偿倍数，减少移动灵敏度
+      final clampedDt = normalizedDt.clamp(0.3, 1.5);
+      dx *= clampedDt;
+      dy *= clampedDt;
+
+      if (kDebugMode && dt > 50) {
+        Logger.info(
+            '🚀 时间补偿: dt=${dt}ms, 标准化=${normalizedDt.toStringAsFixed(2)}, 限制后=${clampedDt.toStringAsFixed(2)}');
+      }
     }
 
     final oldX = shipX;
     final oldY = shipY;
+
+    // 应用移动平滑处理，减少灵敏度
+    // 参考原游戏，进一步降低移动灵敏度
+    final smoothingFactor = 0.6; // 降低平滑系数，减少移动灵敏度
+    dx *= smoothingFactor;
+    dy *= smoothingFactor;
+
     shipX = (shipX + dx).clamp(10.0, 690.0);
     shipY = (shipY + dy).clamp(10.0, 690.0);
 
@@ -335,7 +402,7 @@ class Space extends ChangeNotifier {
     if (shipX != oldX || shipY != oldY) {
       if (kDebugMode) {
         Logger.info(
-            '🚀 飞船位置更新: ($oldX, $oldY) -> ($shipX, $shipY), dx=$dx, dy=$dy');
+            '🚀 飞船位置更新: ($oldX, $oldY) -> (${shipX.toStringAsFixed(1)}, ${shipY.toStringAsFixed(1)}), dx=${dx.toStringAsFixed(2)}, dy=${dy.toStringAsFixed(2)}');
       }
       lastMove = DateTime.now();
       _throttledNotifyListeners();
@@ -434,12 +501,49 @@ class Space extends ChangeNotifier {
     // 保存分数和声望数据
     _saveGameScore();
 
-    // 显示胜利动画和结束选项
-    Timer(Duration(seconds: 2), () {
-      showEndingOptions(true);
-    });
+    Logger.info('🎉 游戏胜利！玩家成功逃离地球，高度: ${altitude}km');
+
+    // 参考原游戏：开始胜利动画序列
+    _startVictoryAnimation();
 
     notifyListeners();
+  }
+
+  /// 开始胜利动画序列 - 参考原游戏
+  void _startVictoryAnimation() {
+    Logger.info('🎬 开始胜利动画序列');
+
+    // 参考原游戏：$('#hullRemaining', Space.panel).animate({opacity: 0}, 500, 'linear');
+    // 在Flutter中，这将通过UI状态管理处理
+
+    // 参考原游戏：飞船移动动画
+    // Space.ship.animate({ top: '350px', left: '240px' }, 3000, 'linear', function() {
+    Timer(const Duration(seconds: 3), () {
+      Logger.info('🎬 飞船移动动画完成，开始向上飞行');
+
+      // 参考原游戏：飞船向上飞行消失
+      // Space.ship.animate({ top: '-100px' }, 200, 'linear', function() {
+      Timer(const Duration(milliseconds: 200), () {
+        Logger.info('🎬 飞船消失动画完成，开始结束序列');
+        _startEndingSequence();
+      });
+    });
+  }
+
+  /// 开始结束序列 - 参考原游戏
+  void _startEndingSequence() {
+    Logger.info('🎬 开始结束序列');
+
+    // 参考原游戏：重置界面状态
+    // $('#outerSlider').css({'left': '0px', 'top': '0px'});
+    // $('#locationSlider, #worldPanel, #spacePanel, #notifications').remove();
+    // $('#header').empty();
+
+    // 参考原游戏：延迟2秒后显示结束选项
+    Timer(const Duration(seconds: 2), () {
+      Logger.info('🎬 显示胜利结束选项');
+      showEndingOptions(true);
+    });
   }
 
   /// 保存游戏分数
