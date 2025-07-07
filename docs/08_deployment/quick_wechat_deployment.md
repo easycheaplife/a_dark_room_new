@@ -31,8 +31,12 @@
 
 **使用Netlify（免费）**
 1. 注册 [Netlify账号](https://netlify.com)
-2. 拖拽 `build/web` 文件夹到Netlify部署页面
+2. 安装Netlify CLI：
+    npm install -g netlify-cli
+    netlify login
+    netlify deploy --prod --dir=build/web
 3. 获得HTTPS域名，如：`https://adarkroom-xxx.netlify.app`
+
 
 #### 方式B：云服务器部署
 

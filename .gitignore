@@ -74,3 +74,8 @@ adarkroom
 build
 .metadata
 *.txt
+
+.vercel
+
+# Local Netlify folder
+.netlify
