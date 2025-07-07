@@ -4,6 +4,7 @@ import 'dart:math';
 import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/audio_engine.dart';
+import '../core/audio_library.dart';
 import '../core/engine.dart';
 import '../core/localization.dart';
 import '../core/logger.dart';
@@ -482,21 +483,21 @@ class Outside extends ChangeNotifier {
     updateTrapButton();
     updateVillage(true);
 
-    // 设置音乐（暂时注释掉，直到AudioLibrary有这些常量）
-    // final numberOfHuts = (sm.get('game.buildings["hut"]', true) ?? 0) as int;
-    // if (numberOfHuts == 0) {
-    //   AudioEngine().playBackgroundMusic(AudioLibrary.musicSilentForest);
-    // } else if (numberOfHuts == 1) {
-    //   AudioEngine().playBackgroundMusic(AudioLibrary.musicLonelyHut);
-    // } else if (numberOfHuts <= 4) {
-    //   AudioEngine().playBackgroundMusic(AudioLibrary.musicTinyVillage);
-    // } else if (numberOfHuts <= 8) {
-    //   AudioEngine().playBackgroundMusic(AudioLibrary.musicModestVillage);
-    // } else if (numberOfHuts <= 14) {
-    //   AudioEngine().playBackgroundMusic(AudioLibrary.musicLargeVillage);
-    // } else {
-    //   AudioEngine().playBackgroundMusic(AudioLibrary.musicRaucousVillage);
-    // }
+    // 设置音乐
+    final numberOfHuts = (sm.get('game.buildings["hut"]', true) ?? 0) as int;
+    if (numberOfHuts == 0) {
+      AudioEngine().playBackgroundMusic(AudioLibrary.musicSilentForest);
+    } else if (numberOfHuts == 1) {
+      AudioEngine().playBackgroundMusic(AudioLibrary.musicLonelyHut);
+    } else if (numberOfHuts <= 4) {
+      AudioEngine().playBackgroundMusic(AudioLibrary.musicTinyVillage);
+    } else if (numberOfHuts <= 8) {
+      AudioEngine().playBackgroundMusic(AudioLibrary.musicModestVillage);
+    } else if (numberOfHuts <= 14) {
+      AudioEngine().playBackgroundMusic(AudioLibrary.musicLargeVillage);
+    } else {
+      AudioEngine().playBackgroundMusic(AudioLibrary.musicRaucousVillage);
+    }
 
     notifyListeners();
   }
