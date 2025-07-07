@@ -45,7 +45,7 @@ class Room with ChangeNotifier {
   // 计时器
   Timer? _fireTimer;
   Timer? _tempTimer;
- // 用于延迟调整房间温度
+  // 用于延迟调整房间温度
   Timer? _builderTimer;
 
   // 状态
@@ -623,8 +623,10 @@ class Room with ChangeNotifier {
 
     // 按照原始游戏逻辑：如果没有木材，显示提示并返回
     if (wood == 0) {
+      /*
       NotificationManager()
           .notify(name, _localization.translate('room.woodRunOut'));
+      */
       return;
     }
 
