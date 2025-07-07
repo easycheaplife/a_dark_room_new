@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../core/state_manager.dart';
 import '../core/localization.dart';
+import '../core/engine.dart';
 
 /// 设置屏幕 - 包含游戏导入导出功能
 class SettingsScreen extends StatefulWidget {
@@ -58,6 +59,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                 const SizedBox(height: 30),
 
+                // 音频设置
+                _buildAudioSection(stateManager),
+
+                const SizedBox(height: 30),
+
                 // 导入导出提示
                 _buildImportExportHintSection(),
 
@@ -97,8 +103,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 10),
           Text(
             _saveTimeInfo != null
-              ? '${Localization().translate('settings.last_save')}$_saveTimeInfo'
-              : Localization().translate('settings.no_save_record'),
+                ? '${Localization().translate('settings.last_save')}$_saveTimeInfo'
+                : Localization().translate('settings.no_save_record'),
             style: const TextStyle(
               fontSize: 14,
               fontFamily: 'Times New Roman',
@@ -116,6 +122,70 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAudioSection(StateManager stateManager) {
+    return Consumer<Localization>(
+      builder: (context, localization, child) {
+        final soundOn = stateManager.get('config.soundOn', true) == true;
+
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            color: Colors.green[50],
+            border: Border.all(color: Colors.green),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                localization.translate('settings.audio_section'),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Times New Roman',
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                localization.translate('settings.audio_description'),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontFamily: 'Times New Roman',
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 15),
+              Row(
+                children: [
+                  Switch(
+                    value: soundOn,
+                    onChanged: (value) async {
+                      await Engine().toggleVolume(value);
+                    },
+                    activeColor: Colors.green,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    soundOn
+                        ? localization.translate('settings.audio_enabled')
+                        : localization.translate('settings.audio_disabled'),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Times New Roman',
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -228,7 +298,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(localization.translate('settings.confirm_clear_button')),
+            child:
+                Text(localization.translate('settings.confirm_clear_button')),
           ),
         ],
       ),
@@ -258,7 +329,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         final localization = Localization();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${localization.translate('settings.clear_failed')}$e'),
+            content:
+                Text('${localization.translate('settings.clear_failed')}$e'),
             backgroundColor: Colors.red,
           ),
         );
