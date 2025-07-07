@@ -11,19 +11,17 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:a_dark_room_new/core/state_manager.dart';
 import 'package:a_dark_room_new/modules/world.dart';
-import 'package:a_dark_room_new/modules/prestige.dart';
+
 import 'package:a_dark_room_new/core/logger.dart';
 
 void main() {
   group('Cache Landmark Generation Tests', () {
     late StateManager stateManager;
     late World world;
-    late Prestige prestige;
 
     setUp(() {
       stateManager = StateManager();
       world = World();
-      prestige = Prestige();
     });
 
     test('Map landmark statistics without prestige data', () {

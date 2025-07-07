@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -11,6 +12,11 @@ import 'core/localization.dart';
 import 'core/responsive_layout.dart';
 import 'core/logger.dart';
 import 'core/progress_manager.dart';
+import 'utils/web_utils.dart';
+import 'utils/wechat_adapter.dart';
+
+import 'utils/performance_optimizer.dart';
+import 'utils/storage_adapter.dart';
 import 'widgets/header.dart';
 import 'widgets/notification_display.dart';
 
@@ -35,13 +41,78 @@ import 'screens/events_screen.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Set preferred orientations
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  // Web平台初始化
+  if (kIsWeb) {
+    _initializeWebOptimizations();
+  }
+
+  // Set preferred orientations (移动端)
+  if (!kIsWeb) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
 
   runApp(const MyApp());
+}
+
+/// Web平台优化初始化
+void _initializeWebOptimizations() async {
+  try {
+    // 初始化性能优化器
+    await PerformanceOptimizer.initialize();
+    Logger.info('⚡ Performance optimizer initialized');
+
+    // 初始化存储适配器
+    await StorageAdapter.initialize();
+    Logger.info('📦 Storage adapter initialized');
+
+    // 测试存储功能
+    final storageTestResult = await StorageAdapter.testStorage();
+    Logger.info('🧪 Storage test result: $storageTestResult');
+
+    // 获取浏览器信息并记录日志
+    final browserInfo = WebUtils.getBrowserInfo();
+    Logger.info('🌐 Browser info: $browserInfo');
+
+    // 初始化微信适配器
+    await WeChatAdapter.initialize();
+
+    // 配置页面标题
+    WebUtils.setPageTitle('A Dark Room - 黑暗房间');
+
+    // 禁用页面默认行为
+    WebUtils.disablePageDefaults();
+
+    // 添加移动端优化CSS
+    WebUtils.addMobileOptimizations();
+
+    // 如果是微信浏览器，记录详细信息
+    if (WeChatAdapter.isWeChatBrowser) {
+      final wechatInfo = WeChatAdapter.getWeChatInfo();
+      final featureSupport = WeChatAdapter.checkFeatureSupport();
+      Logger.info('🔥 WeChat browser detected: $wechatInfo');
+      Logger.info('🔧 WeChat feature support: $featureSupport');
+
+      WebUtils.configWeChatShare(
+        title: 'A Dark Room - 黑暗房间',
+        desc: '一个引人入胜的文字冒险游戏，快来体验吧！',
+      );
+    }
+
+    // 记录存储信息
+    final storageInfo = await StorageAdapter.getStorageInfo();
+    Logger.info('💾 Storage info: $storageInfo');
+
+    // 记录性能统计
+    final performanceStats = PerformanceOptimizer.getPerformanceStats();
+    Logger.info('📊 Performance stats: $performanceStats');
+
+    Logger.info('✅ Web optimizations initialized successfully');
+  } catch (e) {
+    Logger.error('❌ Failed to initialize web optimizations: $e');
+  }
 }
 
 class MyApp extends StatelessWidget {

@@ -31,7 +31,6 @@ class GameButton extends StatefulWidget {
 }
 
 class _GameButtonState extends State<GameButton> {
-  bool _isHovering = false;
   OverlayEntry? _overlayEntry;
   final LayerLink _layerLink = LayerLink();
 
@@ -221,7 +220,6 @@ class _GameButtonState extends State<GameButton> {
             link: _layerLink,
             child: MouseRegion(
               onEnter: (_) {
-                setState(() => _isHovering = true);
                 // 显示tooltip（如果满足条件）
                 if (widget.cost != null &&
                     widget.cost!.isNotEmpty &&
@@ -235,7 +233,6 @@ class _GameButtonState extends State<GameButton> {
                 }
               },
               onExit: (_) {
-                setState(() => _isHovering = false);
                 _removeTooltip();
               },
               child: GestureDetector(

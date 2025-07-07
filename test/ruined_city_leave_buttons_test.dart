@@ -10,14 +10,12 @@ import 'package:a_dark_room_new/core/logger.dart';
 /// 验证需要火把的场景都有离开按钮，防止玩家被困
 void main() {
   group('废墟城市离开按钮修复测试', () {
-    late Setpieces setpieces;
     late StateManager stateManager;
     late Path path;
 
     setUpAll(() async {
       // 初始化测试环境
       await Localization().init();
-      setpieces = Setpieces();
       stateManager = StateManager();
       path = Path();
       Logger.info('🧪 废墟城市离开按钮测试环境初始化完成');

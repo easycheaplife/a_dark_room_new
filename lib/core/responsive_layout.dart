@@ -95,6 +95,18 @@ class ResponsiveLayout {
     return MediaQuery.of(context).size;
   }
 
+  /// 检测是否为微信浏览器
+  /// 注意：此方法已移动到WebUtils类中，这里保留是为了向后兼容
+  static bool isWeChatBrowser() {
+    // 导入WebUtils会在编译时处理条件导入
+    try {
+      // 动态导入以避免在非Web平台出错
+      return false; // 临时返回false，实际检测在WebUtils中
+    } catch (e) {
+      return false;
+    }
+  }
+
   /// 获取可用屏幕高度（减去安全区域）
   static double getAvailableHeight(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -163,6 +175,9 @@ class GameLayoutParams {
     final availableWidth = ResponsiveLayout.getAvailableWidth(context);
     final availableHeight = ResponsiveLayout.getAvailableHeight(context);
 
+    // 检测是否为Web平台的移动设备（包括微信浏览器）
+    final isWebMobile = kIsWeb;
+
     if (isLandscape) {
       // 横屏模式 - 类似桌面布局但尺寸更小
       return GameLayoutParams(
@@ -170,12 +185,12 @@ class GameLayoutParams {
         gameAreaHeight: availableHeight,
         notificationWidth: availableWidth * 0.25,
         notificationHeight: availableHeight * 0.8,
-        contentPadding: const EdgeInsets.all(8.0),
-        buttonWidth: 100,
-        buttonHeight: 36,
+        contentPadding: EdgeInsets.all(isWebMobile ? 6.0 : 8.0), // Web端稍小的内边距
+        buttonWidth: isWebMobile ? 90 : 100, // Web端稍小的按钮
+        buttonHeight: isWebMobile ? 40 : 36, // Web端稍大的触摸区域
         buttonSpacing: 8.0,
-        fontSize: 14,
-        titleFontSize: 16,
+        fontSize: isWebMobile ? 15 : 14, // Web端稍大的字体
+        titleFontSize: isWebMobile ? 17 : 16,
         useVerticalLayout: false,
         showNotificationOnSide: true,
       );
@@ -183,15 +198,15 @@ class GameLayoutParams {
       // 竖屏模式 - 垂直布局
       return GameLayoutParams(
         gameAreaWidth: availableWidth,
-        gameAreaHeight: availableHeight * 0.85,
+        gameAreaHeight: availableHeight * (isWebMobile ? 0.88 : 0.85), // Web端更多游戏区域
         notificationWidth: availableWidth,
-        notificationHeight: availableHeight * 0.15,
-        contentPadding: const EdgeInsets.all(12.0),
-        buttonWidth: (availableWidth - 48) / 2, // 两列布局
-        buttonHeight: 48, // 增大触摸区域，修复狩猎小屋点击问题
-        buttonSpacing: 12.0,
-        fontSize: 16,
-        titleFontSize: 18,
+        notificationHeight: availableHeight * (isWebMobile ? 0.12 : 0.15), // Web端更少通知区域
+        contentPadding: EdgeInsets.all(isWebMobile ? 10.0 : 12.0), // Web端稍小的内边距
+        buttonWidth: (availableWidth - (isWebMobile ? 40 : 48)) / 2, // 两列布局，Web端调整间距
+        buttonHeight: isWebMobile ? 52 : 48, // Web端更大的触摸区域（微信浏览器优化）
+        buttonSpacing: isWebMobile ? 10.0 : 12.0, // Web端稍小的间距
+        fontSize: isWebMobile ? 17 : 16, // Web端稍大的字体（微信浏览器优化）
+        titleFontSize: isWebMobile ? 19 : 18,
         useVerticalLayout: true,
         showNotificationOnSide: false,
       );

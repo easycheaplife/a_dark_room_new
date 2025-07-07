@@ -801,9 +801,9 @@ class Events extends ChangeNotifier {
     // 应用时间缩放（用于重试机制）
     if (scale != 1.0) {
       delay = (delay * scale).round();
-      Logger.info('🎭 应用时间缩放 ${scale}x，下次事件安排在 ${delay} 分钟后');
+      Logger.info('🎭 应用时间缩放 $scale x，下次事件安排在 $delay 分钟后');
     } else {
-      Logger.info('🎭 下次事件安排在 ${delay} 分钟后');
+      Logger.info('🎭 下次事件安排在 $delay 分钟后');
     }
 
     nextEventTimer = VisibilityManager().createTimer(Duration(minutes: delay),

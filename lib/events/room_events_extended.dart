@@ -13,7 +13,6 @@ class RoomEventsExtended {
   static Map<String, dynamic> get noisesInside => {
         'title': 'events.room_events.noises_inside.title',
         'isAvailable': () {
-          final fire = _sm.get('game.fire.value', true) ?? 0;
           final wood = _sm.get('stores.wood', true) ?? 0;
           return wood > 0;
         },
@@ -87,7 +86,6 @@ class RoomEventsExtended {
   static Map<String, dynamic> get beggar => {
         'title': 'events.room_events.beggar.title',
         'isAvailable': () {
-          final fire = _sm.get('game.fire.value', true) ?? 0;
           final fur = _sm.get('stores.fur', true) ?? 0;
           return fur > 0;
         },
@@ -153,7 +151,6 @@ class RoomEventsExtended {
               .translate('events.room_events.shady_builder.title');
         }(),
         'isAvailable': () {
-          final fire = _sm.get('game.fire.value', true) ?? 0;
           final huts = _sm.get('game.buildings.hut', true) ?? 0;
           return huts >= 5 && huts < 20;
         },
@@ -249,7 +246,6 @@ class RoomEventsExtended {
   static Map<String, dynamic> get mysteriousWandererWood => {
         'title': 'events.mysterious_wanderer_wood.title',
         'isAvailable': () {
-          final fire = _sm.get('game.fire.value', true) ?? 0;
           final wood = _sm.get('stores.wood', true) ?? 0;
           return wood > 0;
         },
@@ -318,7 +314,6 @@ class RoomEventsExtended {
   static Map<String, dynamic> get mysteriousWandererFur => {
         'title': 'events.mysterious_wanderer_fur.title',
         'isAvailable': () {
-          final fire = _sm.get('game.fire.value', true) ?? 0;
           final fur = _sm.get('stores.fur', true) ?? 0;
           return fur > 0;
         },
@@ -638,7 +633,6 @@ class RoomEventsExtended {
           return localization.translate('events.room_events.sick_man.title');
         }(),
         'isAvailable': () {
-          final fire = _sm.get('game.fire.value', true) ?? 0;
           final medicine = _sm.get('stores.medicine', true) ?? 0;
           return medicine > 0;
         },
@@ -784,7 +778,6 @@ class RoomEventsExtended {
               .translate('events.room_events.martial_master.title');
         }(),
         'isAvailable': () {
-          final fire = _sm.get('game.fire.value', true) ?? 0;
           final hasBoxer = _sm.get('character.perks.boxer', true) ?? false;
           final population = _sm.get('game.population', true) ?? 0;
           return hasBoxer && population >= 50;
@@ -892,7 +885,6 @@ class RoomEventsExtended {
               .translate('events.room_events.desert_guide.title');
         }(),
         'isAvailable': () {
-          final fire = _sm.get('game.fire.value', true) ?? 0;
           final worldUnlocked =
               _sm.get('features.location.world', true) ?? false;
           final water = _sm.get('stores.water', true) ?? 0;
