@@ -50,26 +50,68 @@ class AudioEngine {
     if (!kIsWeb || _webAudioUnlocked) return;
 
     try {
-      // 创建并播放一个静音音频来解锁音频上下文
+      if (kDebugMode) {
+        print('🔓 Attempting to unlock web audio...');
+      }
+
+      // 方法1: 尝试调用JavaScript音频解锁函数
+      try {
+        // 调用web/audio_config.js中的解锁函数
+        if (kIsWeb) {
+          // 这里可以通过dart:js调用JavaScript函数
+          // 但为了简化，我们直接使用just_audio的方式
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('⚠️ JavaScript audio unlock failed: $e');
+        }
+      }
+
+      // 方法2: 创建并播放一个静音音频来解锁音频上下文
       final unlockPlayer = AudioPlayer();
       await unlockPlayer.setVolume(0.0);
 
       // 尝试播放一个短暂的静音音频
       await unlockPlayer.setAsset('assets/audio/light-fire.flac');
       await unlockPlayer.play();
+
+      // 等待一小段时间确保音频开始播放
+      await Future.delayed(const Duration(milliseconds: 100));
+
       await unlockPlayer.stop();
       await unlockPlayer.dispose();
 
       _webAudioUnlocked = true;
       if (kDebugMode) {
-        print('🔓 Web audio unlocked');
+        print('🔓 Web audio unlocked successfully');
       }
     } catch (e) {
       if (kDebugMode) {
         print('❌ Failed to unlock web audio: $e');
+        print('❌ Stack trace: ${StackTrace.current}');
       }
-      // 即使失败也标记为已尝试解锁，避免重复尝试
-      _webAudioUnlocked = true;
+
+      // 尝试备用解锁方法
+      try {
+        final backupPlayer = AudioPlayer();
+        await backupPlayer.setVolume(0.01); // 极低音量
+        await backupPlayer.setAsset('assets/audio/light-fire.flac');
+        await backupPlayer.play();
+        await Future.delayed(const Duration(milliseconds: 50));
+        await backupPlayer.stop();
+        await backupPlayer.dispose();
+
+        _webAudioUnlocked = true;
+        if (kDebugMode) {
+          print('🔓 Web audio unlocked via backup method');
+        }
+      } catch (backupError) {
+        if (kDebugMode) {
+          print('❌ Backup unlock method also failed: $backupError');
+        }
+        // 即使失败也标记为已尝试解锁，避免重复尝试
+        _webAudioUnlocked = true;
+      }
     }
   }
 
@@ -89,7 +131,20 @@ class AudioEngine {
         print('🎵 Loading audio file: assets/$src');
       }
 
-      await player.setAsset('assets/$src');
+      // 在Web平台，添加额外的加载策略
+      if (kIsWeb) {
+        // 设置更长的超时时间，适应远程部署环境
+        await player.setAsset('assets/$src').timeout(
+          const Duration(seconds: 10),
+          onTimeout: () {
+            throw TimeoutException(
+                'Audio loading timeout', const Duration(seconds: 10));
+          },
+        );
+      } else {
+        await player.setAsset('assets/$src');
+      }
+
       _audioBufferCache[src] = player;
 
       if (kDebugMode) {
@@ -103,10 +158,29 @@ class AudioEngine {
         print('❌ Stack trace: ${StackTrace.current}');
       }
 
-      // 在Web平台，可能需要特殊处理
+      // 在Web平台，尝试重新加载
       if (kIsWeb) {
         if (kDebugMode) {
-          print('🌐 Web platform detected, creating empty player for: $src');
+          print('🌐 Web platform detected, attempting retry for: $src');
+        }
+
+        try {
+          // 重试一次，使用更短的超时时间
+          final retryPlayer = AudioPlayer();
+          await retryPlayer.setAsset('assets/$src').timeout(
+                const Duration(seconds: 5),
+              );
+          _audioBufferCache[src] = retryPlayer;
+
+          if (kDebugMode) {
+            print('🎵 Successfully loaded audio file on retry: $src');
+          }
+
+          return retryPlayer;
+        } catch (retryError) {
+          if (kDebugMode) {
+            print('❌ Retry also failed for $src: $retryError');
+          }
         }
       }
 
