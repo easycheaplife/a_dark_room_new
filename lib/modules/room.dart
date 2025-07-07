@@ -292,6 +292,7 @@ class Room with ChangeNotifier {
     },
     'rifle': {
       'name': 'rifle',
+      'button': null,
       'type': 'weapon',
       'buildMsg': 'craftables.rifle.buildMsg',
       'cost': (StateManager sm) {
@@ -302,6 +303,7 @@ class Room with ChangeNotifier {
     // 护甲类
     'l armour': {
       'name': 'l armour',
+      'button': null,
       'type': 'upgrade',
       'maximum': 1,
       'buildMsg': 'craftables.l armour.buildMsg',
@@ -312,6 +314,7 @@ class Room with ChangeNotifier {
     },
     'i armour': {
       'name': 'i armour',
+      'button': null,
       'type': 'upgrade',
       'maximum': 1,
       'buildMsg': 'craftables.i armour.buildMsg',
@@ -322,6 +325,7 @@ class Room with ChangeNotifier {
     },
     's armour': {
       'name': 's armour',
+      'button': null,
       'type': 'upgrade',
       'maximum': 1,
       'buildMsg': 'craftables.s armour.buildMsg',
