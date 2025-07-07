@@ -10,7 +10,9 @@
 
 ### 核心管理文档
 - [功能状态完整报告](feature_status.md) - 整合的功能完成度、对比分析、技术实现状态报告
-- [项目总结](project_summary.md) - 项目完整总结，包括82%总体完成度、技术架构对比、开发经验总结
+- [项目总结](project_summary.md) - 项目完整总结，包括88%总体完成度、技术架构对比、开发经验总结
+- [翻译进度总结](translation_progress_summary.md) - 26,760行代码的详细翻译进度分析
+- [文档完成状态报告](documentation_completion_status.md) - 文档系统95%完成度的详细报告
 
 ### 文档管理
 - [文档目录重组计划](docs_structure_reorganization_plan.md) - 详细的文档目录重组计划和实施方案
