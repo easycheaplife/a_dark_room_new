@@ -107,15 +107,14 @@ void main() {
       final citySetpiece = Setpieces.setpieces['city'];
       final c3Scene = citySetpiece!['scenes']['c3'];
 
-      final textFunction = c3Scene['text'] as List<String> Function();
-      final texts = textFunction();
+      final texts = c3Scene['text'] as List<String>;
 
       expect(texts.length, 3, reason: 'c3场景应该有3段文本');
 
       // 检查文本内容（通过本地化键验证）
-      expect(texts[0], contains('地铁站台'), reason: '第一段文本应该提到地铁站台');
-      expect(texts[1], contains('光线'), reason: '第二段文本应该提到光线');
-      expect(texts[2], contains('声音'), reason: '第三段文本应该提到声音');
+      expect(texts[0], equals('setpieces.city_scenes.c3_text1'), reason: '第一段文本应该是正确的本地化键');
+      expect(texts[1], equals('setpieces.city_scenes.c3_text2'), reason: '第二段文本应该是正确的本地化键');
+      expect(texts[2], equals('setpieces.city_scenes.c3_text3'), reason: '第三段文本应该是正确的本地化键');
 
       Logger.info('✅ c3场景文本测试通过');
     });

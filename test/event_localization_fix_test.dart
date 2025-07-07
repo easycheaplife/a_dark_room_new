@@ -32,7 +32,7 @@ void main() {
         final title = event['title'] as String;
 
         // 验证返回的是本地化键而不是翻译后的文本
-        expect(title, equals('events.noises_inside.title'));
+        expect(title, equals('events.room_events.noises_inside.title'));
 
         // 验证是字符串类型，不是函数
         expect(title, isA<String>());
@@ -47,8 +47,8 @@ void main() {
         final textList = startScene['text'] as List<String>;
 
         // 验证返回的是本地化键
-        expect(textList[0], equals('events.noises_inside.text1'));
-        expect(textList[1], equals('events.noises_inside.text2'));
+        expect(textList[0], equals('events.room_events.noises_inside.text1'));
+        expect(textList[1], equals('events.room_events.noises_inside.text2'));
 
         // 验证是字符串数组
         expect(textList, isA<List<String>>());
@@ -85,17 +85,18 @@ void main() {
 
       test('事件可用性函数应该正常工作', () {
         final event = RoomEventsExtended.noisesInside;
-        final isAvailable = event['isAvailable'] as bool Function();
+        final isAvailable = event['isAvailable'] as Function;
 
-        // 测试有火和木材时事件可用
+        // 测试有木材时事件可用
+        stateManager.set('stores.wood', 100);
         expect(isAvailable(), isTrue);
 
-        // 测试没有火时事件不可用
-        stateManager.set('game.fire.value', 0);
+        // 测试没有木材时事件不可用
+        stateManager.set('stores.wood', 0);
         expect(isAvailable(), isFalse);
 
-        // 恢复状态
-        stateManager.set('game.fire.value', 4);
+        // 恢复状态 - 重新设置木材
+        stateManager.set('stores.wood', 50);
         expect(isAvailable(), isTrue);
 
         Logger.info('✅ noisesInside 可用性测试通过');

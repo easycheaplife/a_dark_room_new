@@ -17,6 +17,7 @@ if [ $# -eq 0 ]; then
     echo "  backpack   - 运行背包系统测试"
     echo "  ui         - 运行UI系统测试"
     echo "  resources  - 运行资源系统测试"
+    echo "  space      - 运行太空系统测试"
     echo "  single     - 运行单个测试文件"
     echo ""
     echo "示例:"
@@ -38,6 +39,7 @@ case $COMMAND in
         flutter test test/event_frequency_test.dart
         flutter test test/event_localization_fix_test.dart
         flutter test test/event_trigger_test.dart
+        flutter test test/executioner_events_test.dart
         ;;
     "map")
         echo "🗺️ 运行地图系统测试..."
@@ -53,10 +55,16 @@ case $COMMAND in
     "ui")
         echo "🏛️ 运行UI系统测试..."
         flutter test test/ruined_city_leave_buttons_test.dart
+        flutter test test/armor_button_verification_test.dart
         ;;
     "resources")
         echo "💧 运行资源系统测试..."
         flutter test test/water_capacity_test.dart
+        ;;
+    "space")
+        echo "🚀 运行太空系统测试..."
+        flutter test test/space_movement_sensitivity_test.dart
+        flutter test test/space_optimization_test.dart
         ;;
     "single")
         if [ $# -lt 2 ]; then

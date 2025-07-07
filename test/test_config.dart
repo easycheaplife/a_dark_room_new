@@ -43,6 +43,7 @@ class TestConfig {
     '背包系统',
     'UI系统',
     '资源系统',
+    '太空系统',
   ];
   
   // 测试文件映射
@@ -51,6 +52,7 @@ class TestConfig {
       'event_frequency_test.dart',
       'event_localization_fix_test.dart',
       'event_trigger_test.dart',
+      'executioner_events_test.dart',
     ],
     '地图系统': [
       'landmarks_test.dart',
@@ -63,9 +65,14 @@ class TestConfig {
     ],
     'UI系统': [
       'ruined_city_leave_buttons_test.dart',
+      'armor_button_verification_test.dart',
     ],
     '资源系统': [
       'water_capacity_test.dart',
+    ],
+    '太空系统': [
+      'space_movement_sensitivity_test.dart',
+      'space_optimization_test.dart',
     ],
   };
   

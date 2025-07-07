@@ -2,13 +2,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:a_dark_room_new/core/logger.dart';
 
 // 导入所有测试文件
+import 'armor_button_verification_test.dart' as armor_button_tests;
 import 'event_frequency_test.dart' as event_frequency_tests;
 import 'event_localization_fix_test.dart' as event_localization_tests;
 import 'event_trigger_test.dart' as event_trigger_tests;
+import 'executioner_events_test.dart' as executioner_events_tests;
 import 'landmarks_test.dart' as landmarks_tests;
 import 'original_game_torch_requirements_test.dart' as torch_requirements_tests;
 import 'road_generation_fix_test.dart' as road_generation_tests;
 import 'ruined_city_leave_buttons_test.dart' as ruined_city_tests;
+import 'space_movement_sensitivity_test.dart' as space_movement_tests;
+import 'space_optimization_test.dart' as space_optimization_tests;
 import 'torch_backpack_check_test.dart' as torch_backpack_tests;
 import 'torch_backpack_simple_test.dart' as torch_backpack_simple_tests;
 import 'water_capacity_test.dart' as water_capacity_tests;
@@ -33,11 +37,12 @@ void main() {
       Logger.info('🚀 开始 A Dark Room 完整测试套件');
       Logger.info('=' * 60);
       Logger.info('测试覆盖范围：');
-      Logger.info('  📅 事件系统 - 触发频率、本地化、可用性');
+      Logger.info('  📅 事件系统 - 触发频率、本地化、可用性、刽子手事件');
       Logger.info('  🗺️  地图系统 - 地标生成、道路生成');
       Logger.info('  🎒 背包系统 - 火把检查、容量管理');
-      Logger.info('  🏛️  UI系统 - 按钮状态、界面交互');
+      Logger.info('  🏛️  UI系统 - 按钮状态、界面交互、护甲按钮');
       Logger.info('  💧 资源系统 - 水容量、物品管理');
+      Logger.info('  🚀 太空系统 - 移动敏感度、优化测试');
       Logger.info('=' * 60);
     });
 
@@ -52,6 +57,10 @@ void main() {
 
       group('事件触发机制', () {
         event_trigger_tests.main();
+      });
+
+      group('刽子手事件测试', () {
+        executioner_events_tests.main();
       });
     });
 
@@ -83,11 +92,25 @@ void main() {
       group('废墟城市离开按钮', () {
         ruined_city_tests.main();
       });
+
+      group('护甲按钮验证', () {
+        armor_button_tests.main();
+      });
     });
 
     group('💧 资源系统测试', () {
       group('水容量管理', () {
         water_capacity_tests.main();
+      });
+    });
+
+    group('🚀 太空系统测试', () {
+      group('太空移动敏感度', () {
+        space_movement_tests.main();
+      });
+
+      group('太空优化测试', () {
+        space_optimization_tests.main();
       });
     });
 
@@ -116,22 +139,27 @@ void main() {
       
       final testCategories = [
         '事件系统',
-        '地图系统', 
+        '地图系统',
         '背包系统',
         'UI系统',
-        '资源系统'
+        '资源系统',
+        '太空系统'
       ];
       
       final testFiles = [
+        'armor_button_verification_test.dart',
         'event_frequency_test.dart',
         'event_localization_fix_test.dart',
         'event_trigger_test.dart',
+        'executioner_events_test.dart',
         'landmarks_test.dart',
+        'original_game_torch_requirements_test.dart',
         'road_generation_fix_test.dart',
+        'ruined_city_leave_buttons_test.dart',
+        'space_movement_sensitivity_test.dart',
+        'space_optimization_test.dart',
         'torch_backpack_check_test.dart',
         'torch_backpack_simple_test.dart',
-        'original_game_torch_requirements_test.dart',
-        'ruined_city_leave_buttons_test.dart',
         'water_capacity_test.dart'
       ];
       
