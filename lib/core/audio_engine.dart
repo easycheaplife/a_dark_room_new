@@ -27,6 +27,9 @@ class AudioEngine {
   double _masterVolume = 1.0;
   bool _initialized = false;
 
+  // Web音频解锁状态
+  bool _webAudioUnlocked = false;
+
   /// 初始化音频引擎
   Future<void> init() async {
     try {
@@ -42,26 +45,71 @@ class AudioEngine {
     }
   }
 
+  /// 解锁Web音频（需要用户交互触发）
+  Future<void> unlockWebAudio() async {
+    if (!kIsWeb || _webAudioUnlocked) return;
+
+    try {
+      // 创建并播放一个静音音频来解锁音频上下文
+      final unlockPlayer = AudioPlayer();
+      await unlockPlayer.setVolume(0.0);
+
+      // 尝试播放一个短暂的静音音频
+      await unlockPlayer.setAsset('assets/audio/light-fire.flac');
+      await unlockPlayer.play();
+      await unlockPlayer.stop();
+      await unlockPlayer.dispose();
+
+      _webAudioUnlocked = true;
+      if (kDebugMode) {
+        print('🔓 Web audio unlocked');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Failed to unlock web audio: $e');
+      }
+      // 即使失败也标记为已尝试解锁，避免重复尝试
+      _webAudioUnlocked = true;
+    }
+  }
+
   /// 加载音频文件
   Future<AudioPlayer> loadAudioFile(String src) async {
     if (_audioBufferCache.containsKey(src)) {
+      if (kDebugMode) {
+        print('🎵 Using cached audio file: $src');
+      }
       return _audioBufferCache[src]!;
     }
 
     try {
       final player = AudioPlayer();
+
+      if (kDebugMode) {
+        print('🎵 Loading audio file: assets/$src');
+      }
+
       await player.setAsset('assets/$src');
       _audioBufferCache[src] = player;
 
       if (kDebugMode) {
-        print('🎵 Loaded audio file: $src');
+        print('🎵 Successfully loaded audio file: $src');
       }
 
       return player;
     } catch (e) {
       if (kDebugMode) {
         print('❌ Error loading audio file $src: $e');
+        print('❌ Stack trace: ${StackTrace.current}');
       }
+
+      // 在Web平台，可能需要特殊处理
+      if (kIsWeb) {
+        if (kDebugMode) {
+          print('🌐 Web platform detected, creating empty player for: $src');
+        }
+      }
+
       // 返回一个空的播放器作为占位符
       final player = AudioPlayer();
       _audioBufferCache[src] = player;
@@ -71,7 +119,24 @@ class AudioEngine {
 
   /// 播放音效
   Future<void> playSound(String src) async {
-    if (!_initialized) return;
+    if (!_initialized) {
+      if (kDebugMode) {
+        print('❌ AudioEngine not initialized, cannot play sound: $src');
+      }
+      return;
+    }
+
+    if (kDebugMode) {
+      print('🔊 Attempting to play sound: $src');
+    }
+
+    // Web平台需要先解锁音频
+    if (kIsWeb && !_webAudioUnlocked) {
+      if (kDebugMode) {
+        print('🔓 Web audio not unlocked, attempting to unlock...');
+      }
+      await unlockWebAudio();
+    }
 
     try {
       // 如果当前正在播放相同的音效，不重复播放
@@ -113,6 +178,11 @@ class AudioEngine {
   Future<void> playBackgroundMusic(String src) async {
     if (!_initialized) return;
 
+    // Web平台需要先解锁音频
+    if (kIsWeb && !_webAudioUnlocked) {
+      await unlockWebAudio();
+    }
+
     try {
       final player = await loadAudioFile(src);
 
@@ -145,6 +215,11 @@ class AudioEngine {
   /// 播放事件音乐
   Future<void> playEventMusic(String src) async {
     if (!_initialized) return;
+
+    // Web平台需要先解锁音频
+    if (kIsWeb && !_webAudioUnlocked) {
+      await unlockWebAudio();
+    }
 
     try {
       final player = await loadAudioFile(src);

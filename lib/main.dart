@@ -12,6 +12,7 @@ import 'core/localization.dart';
 import 'core/responsive_layout.dart';
 import 'core/logger.dart';
 import 'core/progress_manager.dart';
+import 'core/web_audio_adapter.dart';
 import 'utils/web_utils.dart';
 import 'utils/wechat_adapter.dart';
 
@@ -78,6 +79,9 @@ void _initializeWebOptimizations() async {
 
     // 初始化微信适配器
     await WeChatAdapter.initialize();
+
+    // 初始化Web音频适配器
+    await WebAudioAdapter.initialize();
 
     // 配置页面标题
     WebUtils.setPageTitle('A Dark Room - 黑暗房间');
@@ -227,7 +231,8 @@ class _GameScreenState extends State<GameScreen> {
     // 添加调试日志
     final screenSize = MediaQuery.of(context).size;
     final deviceType = ResponsiveLayout.getDeviceType(context);
-    Logger.info('📱 Device info - Screen size: ${screenSize.width}x${screenSize.height}, Device type: $deviceType, Vertical layout: ${layoutParams.useVerticalLayout}');
+    Logger.info(
+        '📱 Device info - Screen size: ${screenSize.width}x${screenSize.height}, Device type: $deviceType, Vertical layout: ${layoutParams.useVerticalLayout}');
 
     return Scaffold(
       backgroundColor: Colors.white, // 原游戏使用白色背景
@@ -241,12 +246,20 @@ class _GameScreenState extends State<GameScreen> {
           }
         },
         child: SafeArea(
-          child: SizedBox(
-            width: double.infinity,
-            height: double.infinity,
-            child: layoutParams.useVerticalLayout
-                ? _buildMobileLayout(context, layoutParams)
-                : _buildDesktopLayout(context, layoutParams),
+          child: GestureDetector(
+            onTap: () {
+              // 处理用户交互以解锁Web音频
+              if (kIsWeb) {
+                WebAudioAdapter.handleUserInteraction();
+              }
+            },
+            child: SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: layoutParams.useVerticalLayout
+                  ? _buildMobileLayout(context, layoutParams)
+                  : _buildDesktopLayout(context, layoutParams),
+            ),
           ),
         ),
       ),
@@ -254,7 +267,8 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   /// 移动设备垂直布局
-  Widget _buildMobileLayout(BuildContext context, GameLayoutParams layoutParams) {
+  Widget _buildMobileLayout(
+      BuildContext context, GameLayoutParams layoutParams) {
     return Consumer<Engine>(
       builder: (context, engine, child) {
         final isWorldMode = engine.activeModule?.name == 'World';
@@ -317,12 +331,16 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   /// 桌面/Web布局（保持原有设计）
-  Widget _buildDesktopLayout(BuildContext context, GameLayoutParams layoutParams) {
+  Widget _buildDesktopLayout(
+      BuildContext context, GameLayoutParams layoutParams) {
     final screenSize = MediaQuery.of(context).size;
 
     // 计算居中位置 - 参考原游戏的布局
     // 原游戏总宽度是 700px + 220px padding = 920px
-    final totalGameWidth = layoutParams.gameAreaWidth + (layoutParams.showNotificationOnSide ? layoutParams.notificationWidth + 20 : 0);
+    final totalGameWidth = layoutParams.gameAreaWidth +
+        (layoutParams.showNotificationOnSide
+            ? layoutParams.notificationWidth + 20
+            : 0);
     final leftOffset = (screenSize.width - totalGameWidth) / 2;
 
     return Stack(
@@ -339,7 +357,10 @@ class _GameScreenState extends State<GameScreen> {
 
         // 主内容区域 - 居中显示
         Positioned(
-          left: leftOffset + (layoutParams.showNotificationOnSide ? layoutParams.notificationWidth + 20 : 0),
+          left: leftOffset +
+              (layoutParams.showNotificationOnSide
+                  ? layoutParams.notificationWidth + 20
+                  : 0),
           top: 0,
           width: layoutParams.gameAreaWidth,
           height: layoutParams.gameAreaHeight,
