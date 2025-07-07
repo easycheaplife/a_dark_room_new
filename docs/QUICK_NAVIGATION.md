@@ -55,9 +55,8 @@
 3. [事件系统](01_game_mechanics/events_system.md) - 事件相关开发
 
 #### 🧪 测试验证
-1. [一致性验证报告](terrain_analysis_consistency_verification_report.md) - 地形系统验证
-2. [火把需求验证](torch_requirements_consistency_verification_report.md) - 火把系统验证
-3. [地标转换验证](landmark_conversion_consistency_verification_report.md) - 转换机制验证
+1. [地标转换验证](landmark_conversion_consistency_verification_report.md) - 转换机制验证
+2. [游戏机制验证](game_mechanics_consistency_verification_report.md) - 综合验证报告
 
 #### 📝 文档维护
 1. [文档整理报告](docs_organization_completion_report.md) - 文档整理情况
