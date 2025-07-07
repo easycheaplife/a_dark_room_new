@@ -46,8 +46,8 @@
 ### 安装步骤
 ```bash
 # 1. 克隆项目
-git clone https://github.com/your-username/a_dark_room_flutter.git
-cd a_dark_room_flutter
+git clone https://github.com/easycheaplife/a_dark_room_new.git
+cd a_dark_room_new
 
 # 2. 安装依赖
 flutter pub get
@@ -100,9 +100,9 @@ flutter test test/all_tests.dart     # 运行所有测试
 ```
 
 ### 🎮 立即体验
-- **Web版本**: [在线试玩](https://your-demo-url.com) (即将上线)
-- **下载**: [发布页面](https://github.com/your-username/a_dark_room_flutter/releases)
-- **源码**: [GitHub仓库](https://github.com/your-username/a_dark_room_flutter)
+- **Web版本**: [在线试玩](https://a-dark-room-ebxf3b49q-sams-projects-56819ca6.vercel.app/)
+- **下载**: [发布页面](https://github.com/easycheaplife/a_dark_room_new/releases)
+- **源码**: [GitHub仓库](https://github.com/easycheaplife/a_dark_room_new)
 
 ## 🎮 游戏特色
 
