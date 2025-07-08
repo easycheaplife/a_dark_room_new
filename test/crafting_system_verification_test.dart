@@ -25,7 +25,12 @@ void main() {
     });
 
     tearDownAll(() {
-      stateManager.clearGameData();
+      // 安全地清理状态管理器
+      try {
+        StateManager().clearGameData();
+      } catch (e) {
+        Logger.info('⚠️ 测试清理时出错: $e');
+      }
     });
 
     test('验证所有可制作物品都有完整的button属性配置', () {

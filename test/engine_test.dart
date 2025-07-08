@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:a_dark_room_new/core/engine.dart';
 import 'package:a_dark_room_new/core/state_manager.dart';
 import 'package:a_dark_room_new/core/logger.dart';
+import 'package:a_dark_room_new/core/audio_engine.dart';
 import 'package:a_dark_room_new/modules/room.dart';
 import 'package:a_dark_room_new/modules/outside.dart';
 
@@ -31,10 +32,19 @@ void main() {
       engine.activeModule = null;
       engine.tabNavigation = true;
       engine.restoreNavigation = false;
+      // 在测试环境中启用音频引擎测试模式
+      AudioEngine().setTestMode(true);
     });
 
     tearDown(() {
-      engine.dispose();
+      try {
+        engine.dispose();
+      } catch (e) {
+        // 忽略已释放对象的错误
+        if (!e.toString().contains('was used after being disposed')) {
+          Logger.info('⚠️ 测试清理时出错: $e');
+        }
+      }
     });
 
     group('🔧 引擎初始化测试', () {

@@ -117,8 +117,9 @@ class Engine with ChangeNotifier {
     final fur = sm.get('stores.fur', true) ?? 0;
     final scales = sm.get('stores.scales', true) ?? 0;
     final teeth = sm.get('stores.teeth', true) ?? 0;
-    final hasTradingPost =
-        (sm.get('game.buildings["trading post"]', true) ?? 0) > 0;
+    final buildingsData = sm.get('game.buildings', true);
+    final buildings = (buildingsData is Map<String, dynamic>) ? buildingsData : <String, dynamic>{};
+    final hasTradingPost = (buildings['trading post'] ?? 0) > 0;
 
     Logger.info(
         '🧭 Compass count: $compassCount, fur: $fur, scales: $scales, teeth: $teeth, trading post: $hasTradingPost');

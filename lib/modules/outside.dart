@@ -272,6 +272,14 @@ class Outside extends ChangeNotifier {
     return num;
   }
 
+  /// 获取指定工人的数量
+  int _getWorkerCount(String worker) {
+    final sm = StateManager();
+    final workersData = sm.get('game.workers', true);
+    final workers = (workersData is Map<String, dynamic>) ? workersData : <String, dynamic>{};
+    return (workers[worker] ?? 0) as int;
+  }
+
   /// 增加工人 - 参考原游戏逻辑，动态计算实际增加数量
   void increaseWorker(String worker, int amount) {
     final sm = StateManager();
@@ -394,7 +402,7 @@ class Outside extends ChangeNotifier {
       final income = _income[worker]!;
       final num = worker == 'gatherer'
           ? getNumGatherers()
-          : ((sm.get('game.workers["$worker"]', true) ?? 0) as int);
+          : _getWorkerCount(worker);
 
       if (num >= 0) {
         final stores = <String, dynamic>{};

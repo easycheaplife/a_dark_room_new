@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:a_dark_room_new/modules/outside.dart';
 import 'package:a_dark_room_new/core/state_manager.dart';
 import 'package:a_dark_room_new/core/engine.dart';
+import 'package:a_dark_room_new/core/audio_engine.dart';
 import 'package:a_dark_room_new/core/logger.dart';
 
 /// Outside 外部世界模块测试
@@ -31,6 +32,8 @@ void main() {
       outside = Outside();
 
       // 初始化核心系统
+      // 在测试环境中启用音频引擎测试模式
+      AudioEngine().setTestMode(true);
       await engine.init();
       stateManager.init();
 
@@ -381,13 +384,15 @@ void main() {
 
         // 设置人口和工人
         stateManager.set('game.population', 10);
-        stateManager.set('game.workers["gatherer"]', 3);
-        stateManager.set('game.workers["trapper"]', 2);
+        stateManager.set('game.workers', {
+          'builder': 3,
+          'trapper': 2,
+        });
 
         // 获取采集者数量（使用getNumGatherers方法）
         final numGatherers = outside.getNumGatherers();
 
-        // 验证计算正确
+        // 验证计算正确 - 从总人口中减去所有分配的工人
         expect(numGatherers, equals(5)); // 10 - 3 - 2 = 5
 
         Logger.info('✅ 采集者数量获取测试通过');

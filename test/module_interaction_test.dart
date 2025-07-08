@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:a_dark_room_new/core/engine.dart';
 import 'package:a_dark_room_new/core/state_manager.dart';
 import 'package:a_dark_room_new/core/localization.dart';
+import 'package:a_dark_room_new/core/audio_engine.dart';
 import 'package:a_dark_room_new/modules/room.dart';
 import 'package:a_dark_room_new/modules/outside.dart';
 import 'package:a_dark_room_new/modules/path.dart';
@@ -37,6 +38,8 @@ void main() {
       localization = Localization();
       
       // 初始化系统
+      // 在测试环境中启用音频引擎测试模式
+      AudioEngine().setTestMode(true);
       await engine.init();
       await localization.init();
       stateManager.init();
