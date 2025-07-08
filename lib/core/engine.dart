@@ -261,6 +261,13 @@ class Engine with ChangeNotifier {
     }
 
     Logger.info('🔄 开始切换模块...');
+
+    // 清理当前模块状态（特别是Space模块的音频）
+    if (activeModule != null) {
+      Logger.info('🧹 清理当前模块状态: ${activeModule.runtimeType}');
+      _cleanupCurrentModule();
+    }
+
     // 更新活动模块
     activeModule = module;
     Logger.info('✅ 活动模块已更新为: ${module.runtimeType}');
@@ -286,6 +293,34 @@ class Engine with ChangeNotifier {
     Logger.info('✅ Engine.travelTo() 完成');
   }
 
+  /// 清理当前模块状态
+  void _cleanupCurrentModule() {
+    if (activeModule == null) return;
+
+    // 特别处理Space模块的音频清理
+    if (activeModule.runtimeType.toString() == 'Space') {
+      Logger.info('🎵 清理Space模块音频状态');
+      // 异步停止所有音频，避免阻塞UI
+      AudioEngine().stopAllAudio().catchError((e) {
+        Logger.info('⚠️ 清理Space模块音频时出错: $e');
+      });
+      AudioEngine().setMasterVolume(1.0);
+
+      // 如果Space模块有reset方法，调用它
+      try {
+        final space = activeModule as dynamic;
+        if (space.done != null && !space.done) {
+          space.done = true; // 标记为完成，停止所有定时器
+          Logger.info('🚀 已标记Space模块为完成状态');
+        }
+      } catch (e) {
+        Logger.info('⚠️ 清理Space模块状态时出错: $e');
+      }
+    }
+
+    Logger.info('🧹 当前模块状态清理完成');
+  }
+
   // 切换游戏音量
   Future<void> toggleVolume([bool? enabled]) async {
     final sm = StateManager();
@@ -294,10 +329,18 @@ class Engine with ChangeNotifier {
 
     sm.set('config.soundOn', enabled);
 
+    // 使用新的音频控制方法
+    AudioEngine().setAudioEnabled(enabled);
+
     if (enabled) {
       await AudioEngine().setMasterVolume(1.0);
     } else {
-      await AudioEngine().setMasterVolume(0.0);
+      // 使用异步方式停止音频，避免阻塞UI
+      AudioEngine().stopAllAudio().catchError((e) {
+        if (kDebugMode) {
+          print('⚠️ Error stopping audio in toggleVolume: $e');
+        }
+      });
     }
 
     notifyListeners();

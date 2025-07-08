@@ -2,6 +2,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'dart:math';
+import 'audio_library.dart';
 
 /// AudioEngine handles all sound effects and music in the game
 /// 完整移植自原游戏的音频引擎
@@ -26,6 +27,7 @@ class AudioEngine {
   // 音量设置
   double _masterVolume = 1.0;
   bool _initialized = false;
+  bool _audioEnabled = true;
 
   // Web音频解锁状态
   bool _webAudioUnlocked = false;
@@ -193,9 +195,10 @@ class AudioEngine {
 
   /// 播放音效
   Future<void> playSound(String src) async {
-    if (!_initialized) {
+    if (!_initialized || !_audioEnabled) {
       if (kDebugMode) {
-        print('❌ AudioEngine not initialized, cannot play sound: $src');
+        print(
+            '❌ AudioEngine not initialized or disabled, cannot play sound: $src');
       }
       return;
     }
@@ -250,7 +253,7 @@ class AudioEngine {
 
   /// 播放背景音乐
   Future<void> playBackgroundMusic(String src) async {
-    if (!_initialized) return;
+    if (!_initialized || !_audioEnabled) return;
 
     // Web平台需要先解锁音频
     if (kIsWeb && !_webAudioUnlocked) {
@@ -258,21 +261,33 @@ class AudioEngine {
     }
 
     try {
-      final player = await loadAudioFile(src);
+      // 立即停止当前背景音乐
+      if (_currentBackgroundMusic != null) {
+        if (kDebugMode) {
+          print(
+              '🎵 Stopping current background music before playing new one...');
+        }
+        await _currentBackgroundMusic!.stop();
+        _currentBackgroundMusic = null;
+      }
 
-      // 淡出当前背景音乐
-      if (_currentBackgroundMusic != null && _currentBackgroundMusic!.playing) {
-        await _fadeOutAndStop(_currentBackgroundMusic!);
+      // 为背景音乐创建新的播放器实例，不使用缓存
+      final player = AudioPlayer();
+
+      if (kIsWeb) {
+        await player.setUrl(
+          'assets/$src',
+          preload: true,
+        );
+      } else {
+        await player.setAsset('assets/$src');
       }
 
       // 设置新的背景音乐
       await player.setLoopMode(LoopMode.one);
-      await player.setVolume(0.0);
+      await player.setVolume(_masterVolume);
       await player.seek(Duration.zero);
       await player.play();
-
-      // 淡入新音乐
-      await _fadeIn(player, _masterVolume);
 
       _currentBackgroundMusic = player;
 
@@ -348,6 +363,190 @@ class AudioEngine {
         print('❌ Error stopping event music: $e');
       }
     }
+  }
+
+  /// 停止背景音乐
+  Future<void> stopBackgroundMusic() async {
+    if (!_initialized) return;
+
+    try {
+      // 立即停止背景音乐，不使用淡出效果
+      if (_currentBackgroundMusic != null) {
+        if (kDebugMode) {
+          print('🎵 Stopping background music immediately...');
+        }
+
+        // 立即停止播放器
+        await _currentBackgroundMusic!.stop();
+        await _currentBackgroundMusic!.dispose();
+        _currentBackgroundMusic = null;
+
+        if (kDebugMode) {
+          print('🎵 Background music stopped and disposed successfully');
+        }
+      }
+
+      // 额外安全措施：停止并销毁所有可能播放太空音乐的缓存播放器
+      final spaceAudioFiles = [
+        'audio/space.flac',
+        AudioLibrary.musicSpace,
+      ];
+
+      for (final audioFile in spaceAudioFiles) {
+        if (_audioBufferCache.containsKey(audioFile)) {
+          try {
+            await _audioBufferCache[audioFile]!.stop();
+            await _audioBufferCache[audioFile]!.dispose();
+            _audioBufferCache.remove(audioFile);
+            if (kDebugMode) {
+              print('🔇 Stopped and removed cached space audio: $audioFile');
+            }
+          } catch (e) {
+            if (kDebugMode) {
+              print('⚠️ Error stopping cached space audio $audioFile: $e');
+            }
+          }
+        }
+      }
+
+      if (kDebugMode) {
+        print('🎵 Stopped background music completely');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error stopping background music: $e');
+      }
+    }
+  }
+
+  /// 停止所有音频
+  Future<void> stopAllAudio() async {
+    if (!_initialized) return;
+
+    try {
+      if (kDebugMode) {
+        print('🔇 Stopping all audio...');
+      }
+
+      // 停止背景音乐 - 使用更安全的方式
+      if (_currentBackgroundMusic != null) {
+        try {
+          await _currentBackgroundMusic!.stop();
+          await _currentBackgroundMusic!.dispose();
+        } catch (e) {
+          if (kDebugMode) {
+            print('⚠️ Error stopping background music: $e');
+          }
+        }
+        _currentBackgroundMusic = null;
+      }
+
+      // 停止事件音乐
+      if (_currentEventAudio != null) {
+        try {
+          await _currentEventAudio!.stop();
+          await _currentEventAudio!.dispose();
+        } catch (e) {
+          if (kDebugMode) {
+            print('⚠️ Error stopping event audio: $e');
+          }
+        }
+        _currentEventAudio = null;
+      }
+
+      // 停止音效
+      if (_currentSoundEffectAudio != null) {
+        try {
+          await _currentSoundEffectAudio!.stop();
+          await _currentSoundEffectAudio!.dispose();
+        } catch (e) {
+          if (kDebugMode) {
+            print('⚠️ Error stopping sound effect: $e');
+          }
+        }
+        _currentSoundEffectAudio = null;
+      }
+
+      // 停止并销毁所有缓存的播放器
+      if (kDebugMode) {
+        print('🔇 Stopping and disposing all cached audio players...');
+      }
+      final cacheKeys = _audioBufferCache.keys.toList();
+      for (final key in cacheKeys) {
+        try {
+          final player = _audioBufferCache[key];
+          if (player != null) {
+            await player.stop();
+            await player.dispose();
+            _audioBufferCache.remove(key);
+            if (kDebugMode) {
+              print('🔇 Stopped and disposed cached player: $key');
+            }
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('⚠️ Error stopping cached player $key: $e');
+          }
+        }
+      }
+
+      // 清空缓存
+      _audioBufferCache.clear();
+
+      if (kDebugMode) {
+        print('🔇 All audio stopped and cache cleared successfully');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error in stopAllAudio: $e');
+      }
+    }
+  }
+
+  /// 设置音频启用状态
+  void setAudioEnabled(bool enabled) {
+    _audioEnabled = enabled;
+    if (!enabled) {
+      // 使用同步方式立即停止音频
+      stopAllAudioSync();
+    }
+    if (kDebugMode) {
+      print('🔊 Audio enabled: $enabled');
+    }
+  }
+
+  /// 同步停止所有音频（用于紧急情况）
+  void stopAllAudioSync() {
+    if (!_initialized) return;
+
+    try {
+      if (kDebugMode) {
+        print('🔇 Stopping all audio synchronously...');
+      }
+
+      // 同步停止所有播放器
+      _currentBackgroundMusic?.stop();
+      _currentBackgroundMusic = null;
+
+      _currentEventAudio?.stop();
+      _currentEventAudio = null;
+
+      _currentSoundEffectAudio?.stop();
+      _currentSoundEffectAudio = null;
+
+      if (kDebugMode) {
+        print('🔇 All audio stopped synchronously');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error in stopAllAudioSync: $e');
+      }
+    }
+  }
+
+  /// 检查音频是否启用
+  bool isAudioEnabled() {
+    return _audioEnabled;
   }
 
   /// 设置主音量

@@ -6,6 +6,9 @@ import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/localization.dart';
 import '../core/logger.dart';
+import '../core/audio_engine.dart';
+import '../core/audio_library.dart';
+import '../core/engine.dart';
 import 'ship.dart';
 import 'score.dart';
 import 'prestige.dart';
@@ -103,6 +106,10 @@ class Space extends ChangeNotifier {
 
   /// 到达时调用
   void onArrival([int transitionDiff = 0]) {
+    Logger.info('🚀 Space.onArrival() 被调用，done状态: $done');
+
+    // 重置done状态，允许重新开始太空飞行
+    Logger.info('🚀 重置done状态，开始新的太空飞行');
     done = false;
     hull = Ship().getMaxHull();
     altitude = 0;
@@ -128,8 +135,9 @@ class Space extends ChangeNotifier {
         Duration(milliseconds: shipUpdateInterval), (_) => moveShip());
     volumeTimer = Timer.periodic(Duration(seconds: 1), (_) => lowerVolume());
 
-    // 播放背景音乐（暂时注释掉）
-    // AudioEngine().playBackgroundMusic(AudioLibrary.musicSpace);
+    // 播放背景音乐
+    Logger.info('🎵 Space.onArrival() 播放太空背景音乐');
+    AudioEngine().playBackgroundMusic(AudioLibrary.musicSpace);
 
     notifyListeners();
   }
@@ -324,17 +332,17 @@ class Space extends ChangeNotifier {
     // 参考原游戏的音效逻辑
     final r = Random().nextInt(2);
 
-    // 暂时注释掉音效，等音频系统完善后启用
-    // if (altitude > 40) {
-    //   // 高海拔播放高频音效
-    //   AudioEngine().playSound('asteroid_hit_${r + 6}');
-    // } else if (altitude > 20) {
-    //   // 中海拔播放中频音效
-    //   AudioEngine().playSound('asteroid_hit_${r + 4}');
-    // } else {
-    //   // 低海拔播放低频音效
-    //   AudioEngine().playSound('asteroid_hit_${r + 1}');
-    // }
+    // 根据高度播放不同频率的音效
+    if (altitude > 40) {
+      // 高海拔播放高频音效
+      AudioEngine().playSound(AudioLibrary.getRandomAsteroidHitSound());
+    } else if (altitude > 20) {
+      // 中海拔播放中频音效
+      AudioEngine().playSound(AudioLibrary.getRandomAsteroidHitSound());
+    } else {
+      // 低海拔播放低频音效
+      AudioEngine().playSound(AudioLibrary.getRandomAsteroidHitSound());
+    }
 
     Logger.info('🎵 播放碰撞音效: 高度=${altitude}km, 音效索引=$r');
   }
@@ -449,17 +457,27 @@ class Space extends ChangeNotifier {
 
   /// 坠毁
   void crash() {
-    if (done) return;
+    if (done) {
+      Logger.info('🚀 Space模块已完成，跳过crash()');
+      return;
+    }
 
+    Logger.info('🚀 开始执行crash()，设置done=true');
     done = true;
     _clearTimers();
+
+    // 彻底停止所有音频并恢复音量
+    Logger.info('🎵 坠毁时彻底停止所有音频...');
+    AudioEngine().stopAllAudio();
+    AudioEngine().setMasterVolume(1.0);
+    Logger.info('🎵 坠毁时音频彻底停止完成');
 
     final localization = Localization();
     NotificationManager().notify(
         name, localization.translate('space.notifications.ship_crashed'));
 
-    // 播放坠毁音效（暂时注释掉）
-    // AudioEngine().playSound(AudioLibrary.crash);
+    // 播放坠毁音效
+    AudioEngine().playSound(AudioLibrary.crash);
 
     // 清空小行星列表，避免下次起飞时残留
     final asteroidCount = asteroids.length;
@@ -470,28 +488,46 @@ class Space extends ChangeNotifier {
 
     // 参考原游戏逻辑：失败时返回破旧星舰页签
     // Engine.activeModule = Ship; Ship.onArrival();
-    Timer(Duration(milliseconds: 1000), () {
-      final sm = StateManager();
-      sm.set('game.switchToShip', true);
-      Logger.info('🚀 已设置切换到破旧星舰页签的标志');
-    });
+    Logger.info('🚀 立即切换到破旧星舰页签（不使用延迟）...');
+
+    // 立即切换，不使用Timer
+    final sm = StateManager();
+    sm.set('game.switchFromSpace', true); // 标记是从太空切换过来的
+    Logger.info('🚀 已设置 switchFromSpace 标志');
+
+    // 直接调用Engine切换
+    final engine = Engine();
+    final ship = Ship();
+    Logger.info('🚀 直接调用 engine.travelTo(ship)...');
+    engine.travelTo(ship);
+    Logger.info('🚀 已完成切换到破旧星舰页签');
 
     notifyListeners();
   }
 
   /// 游戏结束 - 胜利
   void endGame() {
-    if (done) return;
+    if (done) {
+      Logger.info('🚀 Space模块已完成，跳过endGame()');
+      return;
+    }
 
+    Logger.info('🚀 开始执行endGame()，设置done=true');
     done = true;
     _clearTimers();
+
+    // 彻底停止所有音频并恢复音量
+    Logger.info('🎵 胜利时彻底停止所有音频...');
+    AudioEngine().stopAllAudio();
+    AudioEngine().setMasterVolume(1.0);
+    Logger.info('🎵 胜利时音频彻底停止完成');
 
     final localization = Localization();
     NotificationManager().notify(
         name, localization.translate('space.notifications.escaped_planet'));
 
-    // 播放结束音乐（暂时注释掉）
-    // AudioEngine().playBackgroundMusic(AudioLibrary.musicEnding);
+    // 播放结束音乐
+    AudioEngine().playBackgroundMusic(AudioLibrary.musicEnding);
 
     // 标记游戏完成
     final sm = StateManager();
@@ -677,10 +713,11 @@ class Space extends ChangeNotifier {
     if (done) return;
 
     // 随着飞船进入太空降低音量
-    // final progress = altitude / 60.0;
-    // final newVolume = 1.0 - progress;
+    final progress = altitude / 60.0;
+    final newVolume = (1.0 - progress).clamp(0.0, 1.0);
 
-    // AudioEngine().setBackgroundMusicVolume(newVolume, 0.3); // 暂时注释掉
+    // 使用主音量控制来实现音量渐变
+    AudioEngine().setMasterVolume(newVolume);
   }
 
   /// 获取太空状态
@@ -745,6 +782,10 @@ class Space extends ChangeNotifier {
 
     // 停止所有定时器
     _clearTimers();
+
+    // 停止音频并恢复音量
+    AudioEngine().stopBackgroundMusic();
+    AudioEngine().setMasterVolume(1.0);
 
     // 重置所有状态
     done = false;
@@ -826,6 +867,9 @@ class Space extends ChangeNotifier {
   @override
   void dispose() {
     _clearTimers();
+    // 停止音频并恢复音量
+    AudioEngine().stopBackgroundMusic();
+    AudioEngine().setMasterVolume(1.0);
     super.dispose();
   }
 }

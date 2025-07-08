@@ -142,15 +142,23 @@ class _SpaceScreenState extends State<SpaceScreen> {
   /// 检查是否需要切换到破旧星舰页签
   void _checkSwitchToShip(BuildContext context, StateManager stateManager) {
     final shouldSwitch = stateManager.get('game.switchToShip', false) == true;
+    Logger.info(
+        '🔍 SpaceScreen._checkSwitchToShip() 被调用，shouldSwitch: $shouldSwitch');
+
     if (shouldSwitch) {
+      Logger.info('🚀 检测到需要切换到破旧星舰页签，开始切换...');
+
       // 清除标志，避免重复切换
       stateManager.set('game.switchToShip', false);
+      Logger.info('🚀 已清除 game.switchToShip 标志');
 
       // 获取Engine和Ship实例
       final engine = Provider.of<Engine>(context, listen: false);
       final ship = Provider.of<Ship>(context, listen: false);
+      Logger.info('🚀 已获取Engine和Ship实例');
 
       // 切换到破旧星舰页签
+      Logger.info('🚀 调用 engine.travelTo(ship)...');
       engine.travelTo(ship);
       Logger.info('🚀 已从太空切换到破旧星舰页签');
     }

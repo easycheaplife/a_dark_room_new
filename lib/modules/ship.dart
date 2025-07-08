@@ -3,6 +3,9 @@ import '../core/state_manager.dart';
 import '../core/notifications.dart';
 import '../core/localization.dart';
 import '../core/engine.dart';
+import '../core/audio_engine.dart';
+import '../core/audio_library.dart';
+import '../core/logger.dart';
 import 'events.dart';
 import 'space.dart';
 
@@ -55,14 +58,15 @@ class Ship extends ChangeNotifier {
     thrusters =
         (sm.get('game.spaceShip.thrusters', true) ?? baseThrusters) as int;
 
-    // 初始化太空模块（暂时注释掉，直到Space模块完成）
-    // Space().init();
+    // 初始化太空模块
+    Space().init();
 
     notifyListeners();
   }
 
   /// 到达时调用
   void onArrival([int transitionDiff = 0]) {
+    Logger.info('🚀 Ship.onArrival() 被调用');
     setTitle();
     final sm = StateManager();
 
@@ -73,8 +77,11 @@ class Ship extends ChangeNotifier {
       sm.set('game.spaceShip.seenShip', true);
     }
 
-    // 播放背景音乐（暂时注释掉）
-    // AudioEngine().playBackgroundMusic(AudioLibrary.musicShip);
+    // 完全禁用背景音乐播放，避免与太空音频冲突
+    Logger.info('🎵 Ship.onArrival() - 完全禁用星舰音乐播放，避免音频冲突');
+
+    // 不播放任何背景音乐，彻底解决太空音频停止问题
+    // AudioEngine().playBackgroundMusic(AudioLibrary.musicShip); // 已禁用
 
     notifyListeners();
   }
@@ -101,8 +108,8 @@ class Ship extends ChangeNotifier {
     sm.add('game.spaceShip.hull', 1);
     hull = (sm.get('game.spaceShip.hull', true) ?? 0) as int;
 
-    // 播放音效（暂时注释掉）
-    // AudioEngine().playSound(AudioLibrary.reinforceHull);
+    // 播放音效
+    AudioEngine().playSound(AudioLibrary.reinforceHull);
 
     final localization = Localization();
     NotificationManager()
@@ -126,8 +133,8 @@ class Ship extends ChangeNotifier {
     sm.add('game.spaceShip.thrusters', 1);
     thrusters = (sm.get('game.spaceShip.thrusters', true) ?? 0) as int;
 
-    // 播放音效（暂时注释掉）
-    // AudioEngine().playSound(AudioLibrary.upgradeEngine);
+    // 播放音效
+    AudioEngine().playSound(AudioLibrary.upgradeEngine);
 
     final localization = Localization();
     NotificationManager()
@@ -189,8 +196,8 @@ class Ship extends ChangeNotifier {
     NotificationManager()
         .notify(name, localization.translate('ship.lifting_off'));
 
-    // 播放起飞音效（暂时注释掉）
-    // AudioEngine().playSound(AudioLibrary.liftOff);
+    // 播放起飞音效
+    AudioEngine().playSound(AudioLibrary.liftOff);
 
     // 切换到太空模块 - 参考原游戏的Ship.liftOff函数
     Engine().travelTo(Space());
