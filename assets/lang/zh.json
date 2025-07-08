@@ -342,6 +342,9 @@
     "requirements": {
       "hull_needed": "需要强化船体才能起飞"
     },
+    "cooldown": {
+      "remaining": "冷却时间剩余: {0}秒"
+    },
     "notifications": {
       "seen_ship": "在碎片云的某处，流浪者舰队在盘旋。在这块岩石上待得太久了。",
       "insufficient_alloy": "外星合金不足",

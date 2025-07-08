@@ -498,6 +498,11 @@ class Space extends ChangeNotifier {
     // 直接调用Engine切换
     final engine = Engine();
     final ship = Ship();
+
+    // 设置起飞冷却时间 - 参考原游戏Button.cooldown($('#liftoffButton'))
+    ship.setLiftoffCooldown();
+    Logger.info('🚀 坠毁后设置起飞冷却时间');
+
     Logger.info('🚀 直接调用 engine.travelTo(ship)...');
     engine.travelTo(ship);
     Logger.info('🚀 已完成切换到破旧星舰页签');

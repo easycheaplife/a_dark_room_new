@@ -100,7 +100,8 @@ class _ShipScreenState extends State<ShipScreen> {
   }
 
   // 飞船状态显示区域 - 参考漫漫尘途页签的装备区域样式
-  Widget _buildShipStatusSection(Localization localization, Map<String, dynamic> shipStatus) {
+  Widget _buildShipStatusSection(
+      Localization localization, Map<String, dynamic> shipStatus) {
     return Container(
       width: 300, // 固定宽度，与漫漫尘途装备区域保持一致
       padding: const EdgeInsets.all(10),
@@ -194,7 +195,8 @@ class _ShipScreenState extends State<ShipScreen> {
   }
 
   // 飞船操作按钮区域 - 参考漫漫尘途页签的出发按钮样式
-  Widget _buildShipActionsSection(Localization localization, Map<String, dynamic> shipStatus) {
+  Widget _buildShipActionsSection(
+      Localization localization, Map<String, dynamic> shipStatus) {
     return SizedBox(
       width: 300, // 与状态区域保持一致的宽度
       child: Column(
@@ -203,8 +205,11 @@ class _ShipScreenState extends State<ShipScreen> {
           // 强化船体按钮
           _buildActionButton(
             text: localization.translate('ship.actions.reinforce_hull'),
-            onPressed: shipStatus['canReinforceHull'] ? () => _ship.reinforceHull() : null,
-            cost: '${localization.translate('ship.costs.alien_alloy_label')}: ${Ship.alloyPerHull}',
+            onPressed: shipStatus['canReinforceHull']
+                ? () => _ship.reinforceHull()
+                : null,
+            cost:
+                '${localization.translate('ship.costs.alien_alloy_label')}: ${Ship.alloyPerHull}',
             enabled: shipStatus['canReinforceHull'],
           ),
 
@@ -213,8 +218,11 @@ class _ShipScreenState extends State<ShipScreen> {
           // 升级引擎按钮
           _buildActionButton(
             text: localization.translate('ship.actions.upgrade_engine'),
-            onPressed: shipStatus['canUpgradeEngine'] ? () => _ship.upgradeEngine() : null,
-            cost: '${localization.translate('ship.costs.alien_alloy_label')}: ${Ship.alloyPerThruster}',
+            onPressed: shipStatus['canUpgradeEngine']
+                ? () => _ship.upgradeEngine()
+                : null,
+            cost:
+                '${localization.translate('ship.costs.alien_alloy_label')}: ${Ship.alloyPerThruster}',
             enabled: shipStatus['canUpgradeEngine'],
           ),
 
@@ -223,14 +231,28 @@ class _ShipScreenState extends State<ShipScreen> {
           // 起飞按钮
           _buildActionButton(
             text: localization.translate('ship.actions.lift_off'),
-            onPressed: shipStatus['canLiftOff'] ? () => _ship.checkLiftOff() : null,
-            cost: shipStatus['canLiftOff'] ? '' : localization.translate('ship.requirements.hull_needed'),
+            onPressed:
+                shipStatus['canLiftOff'] ? () => _ship.checkLiftOff() : null,
+            cost: _getLiftoffCostText(shipStatus, localization),
             enabled: shipStatus['canLiftOff'],
             isSpecial: true,
           ),
         ],
       ),
     );
+  }
+
+  // 获取起飞按钮的成本文本
+  String _getLiftoffCostText(
+      Map<String, dynamic> shipStatus, Localization localization) {
+    if (shipStatus['isLiftoffOnCooldown']) {
+      final remaining = shipStatus['remainingCooldown'] as int;
+      return localization
+          .translate('ship.cooldown.remaining', [remaining.toString()]);
+    } else if (!shipStatus['canLiftOff'] && shipStatus['hull'] <= 0) {
+      return localization.translate('ship.requirements.hull_needed');
+    }
+    return '';
   }
 
   // 构建操作按钮 - 参考原游戏风格

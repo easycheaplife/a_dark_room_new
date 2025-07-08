@@ -40,6 +40,12 @@ class Ship extends ChangeNotifier {
   int hull = 0;
   int thrusters = 1;
 
+  // 冷却时间管理
+  DateTime? liftoffCooldownEnd;
+  bool get isLiftoffOnCooldown =>
+      liftoffCooldownEnd != null &&
+      DateTime.now().isBefore(liftoffCooldownEnd!);
+
   /// 初始化飞船模块
   void init([Map<String, dynamic>? options]) {
     if (options != null) {
@@ -108,6 +114,10 @@ class Ship extends ChangeNotifier {
     sm.add('game.spaceShip.hull', 1);
     hull = (sm.get('game.spaceShip.hull', true) ?? 0) as int;
 
+    // 确保本地状态与StateManager同步
+    Logger.info(
+        '🚀 强化船体后，hull: $hull, StateManager中的值: ${sm.get('game.spaceShip.hull', true)}');
+
     // 播放音效
     AudioEngine().playSound(AudioLibrary.reinforceHull);
 
@@ -132,6 +142,10 @@ class Ship extends ChangeNotifier {
     sm.add('stores["alien alloy"]', -alloyPerThruster);
     sm.add('game.spaceShip.thrusters', 1);
     thrusters = (sm.get('game.spaceShip.thrusters', true) ?? 0) as int;
+
+    // 确保本地状态与StateManager同步
+    Logger.info(
+        '🚀 升级引擎后，thrusters: $thrusters, StateManager中的值: ${sm.get('game.spaceShip.thrusters', true)}');
 
     // 播放音效
     AudioEngine().playSound(AudioLibrary.upgradeEngine);
@@ -171,7 +185,8 @@ class Ship extends ChangeNotifier {
               'wait': {
                 'text': localization.translate('ship.liftoff_event.wait'),
                 'onChoose': () {
-                  // 清除起飞按钮冷却
+                  // 清除起飞按钮冷却 - 参考原游戏Button.clearCooldown
+                  clearLiftoffCooldown();
                   NotificationManager().notify(
                       name,
                       localization
@@ -207,7 +222,30 @@ class Ship extends ChangeNotifier {
 
   /// 检查是否可以起飞
   bool canLiftOff() {
-    return hull > 0;
+    return hull > 0 && !isLiftoffOnCooldown;
+  }
+
+  /// 设置起飞冷却时间
+  void setLiftoffCooldown() {
+    liftoffCooldownEnd = DateTime.now().add(Duration(seconds: liftoffCooldown));
+    Logger.info('🚀 设置起飞冷却时间: $liftoffCooldown秒');
+    notifyListeners();
+  }
+
+  /// 清除起飞冷却时间
+  void clearLiftoffCooldown() {
+    liftoffCooldownEnd = null;
+    Logger.info('🚀 清除起飞冷却时间');
+    notifyListeners();
+  }
+
+  /// 获取剩余冷却时间（秒）
+  int getRemainingCooldown() {
+    if (!isLiftoffOnCooldown) return 0;
+    return liftoffCooldownEnd!
+        .difference(DateTime.now())
+        .inSeconds
+        .clamp(0, liftoffCooldown);
   }
 
   /// 检查是否可以强化船体
@@ -239,6 +277,8 @@ class Ship extends ChangeNotifier {
       'seenShip': sm.get('game.spaceShip.seenShip', true) == true,
       'seenWarning': sm.get('game.spaceShip.seenWarning', true) == true,
       'completed': sm.get('game.completed', true) == true,
+      'isLiftoffOnCooldown': isLiftoffOnCooldown,
+      'remainingCooldown': getRemainingCooldown(),
     };
   }
 
@@ -277,6 +317,9 @@ class Ship extends ChangeNotifier {
 
     hull = baseHull;
     thrusters = baseThrusters;
+
+    // 清除冷却时间
+    liftoffCooldownEnd = null;
 
     notifyListeners();
   }

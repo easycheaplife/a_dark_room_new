@@ -350,6 +350,9 @@
     "requirements": {
       "hull_needed": "hull reinforcement needed to take off"
     },
+    "cooldown": {
+      "remaining": "cooldown remaining: {0}s"
+    },
     "notifications": {
       "seen_ship": "somewhere above the debris cloud, the wanderer fleet hovers. been on this rock too long.",
       "insufficient_alloy": "not enough alien alloy",
