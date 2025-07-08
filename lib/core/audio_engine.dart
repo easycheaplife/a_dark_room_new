@@ -1,7 +1,6 @@
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
-import 'dart:math';
 import 'audio_library.dart';
 
 /// AudioEngine handles all sound effects and music in the game
@@ -32,6 +31,22 @@ class AudioEngine {
   // Web音频解锁状态
   bool _webAudioUnlocked = false;
 
+  // 音频预加载状态
+  bool _preloadCompleted = false;
+  final Set<String> _preloadedAudio = {};
+
+  // 音频池管理 - 参考原游戏的音频缓存机制
+  static const int maxCachedPlayers = 20;
+  final Map<String, List<AudioPlayer>> _audioPool = {};
+
+  // 测试模式标志 - 在测试环境中禁用预加载
+  bool _testMode = false;
+
+  /// 设置测试模式（禁用预加载）
+  void setTestMode(bool testMode) {
+    _testMode = testMode;
+  }
+
   /// 初始化音频引擎
   Future<void> init() async {
     try {
@@ -39,11 +54,81 @@ class AudioEngine {
       if (kDebugMode) {
         print('🎵 AudioEngine initialized');
       }
+
+      // 开始预加载音频 - 参考原游戏Engine.init()
+      // 在测试模式下跳过预加载
+      if (!_testMode) {
+        _startPreloading();
+      } else if (kDebugMode) {
+        print('🧪 Test mode: skipping audio preloading');
+      }
     } catch (e) {
       if (kDebugMode) {
         print('❌ Error initializing audio engine: $e');
       }
       _initialized = false;
+    }
+  }
+
+  /// 开始预加载音频 - 参考原游戏的预加载逻辑
+  void _startPreloading() {
+    if (!_initialized) return;
+
+    // 异步预加载，不阻塞初始化
+    Future.microtask(() async {
+      try {
+        if (kDebugMode) {
+          print('🎵 Starting audio preloading...');
+        }
+
+        // 预加载音乐文件
+        for (final audioPath in AudioLibrary.PRELOAD_MUSIC) {
+          await _preloadAudioFile(audioPath);
+        }
+
+        // 预加载事件音频
+        for (final audioPath in AudioLibrary.PRELOAD_EVENTS) {
+          await _preloadAudioFile(audioPath);
+        }
+
+        // 预加载常用音效
+        for (final audioPath in AudioLibrary.PRELOAD_SOUNDS) {
+          await _preloadAudioFile(audioPath);
+        }
+
+        _preloadCompleted = true;
+        if (kDebugMode) {
+          print(
+              '🎵 Audio preloading completed. Loaded ${_preloadedAudio.length} files.');
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('⚠️ Audio preloading error: $e');
+        }
+      }
+    });
+  }
+
+  /// 预加载单个音频文件
+  Future<void> _preloadAudioFile(String src) async {
+    if (_preloadedAudio.contains(src)) return;
+
+    try {
+      // 创建音频播放器但不播放
+      final player = AudioPlayer();
+      await player.setAsset('assets/$src');
+
+      // 添加到缓存
+      _audioBufferCache[src] = player;
+      _preloadedAudio.add(src);
+
+      if (kDebugMode) {
+        print('🎵 Preloaded: $src');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('⚠️ Failed to preload $src: $e');
+      }
     }
   }
 
@@ -117,13 +202,24 @@ class AudioEngine {
     }
   }
 
-  /// 加载音频文件
+  /// 加载音频文件 - 优化版本，支持音频池
   Future<AudioPlayer> loadAudioFile(String src) async {
+    // 检查预加载缓存
     if (_audioBufferCache.containsKey(src)) {
       if (kDebugMode) {
         print('🎵 Using cached audio file: $src');
       }
       return _audioBufferCache[src]!;
+    }
+
+    // 检查音频池
+    if (_audioPool.containsKey(src) && _audioPool[src]!.isNotEmpty) {
+      final player = _audioPool[src]!.removeAt(0);
+      if (kDebugMode) {
+        print(
+            '🎵 Reused from pool: $src (remaining: ${_audioPool[src]!.length})');
+      }
+      return player;
     }
 
     try {
@@ -147,7 +243,10 @@ class AudioEngine {
         await player.setAsset('assets/$src');
       }
 
-      _audioBufferCache[src] = player;
+      // 如果不是预加载的文件，添加到缓存
+      if (!_preloadedAudio.contains(src)) {
+        _audioBufferCache[src] = player;
+      }
 
       if (kDebugMode) {
         print('🎵 Successfully loaded audio file: $src');
@@ -193,6 +292,42 @@ class AudioEngine {
     }
   }
 
+  /// 回收音频播放器到池中
+  void _recycleAudioPlayer(String src, AudioPlayer player) {
+    if (!_audioPool.containsKey(src)) {
+      _audioPool[src] = [];
+    }
+
+    // 限制池大小
+    if (_audioPool[src]!.length < maxCachedPlayers) {
+      // 重置播放器状态
+      player.stop().catchError((e) {
+        if (kDebugMode) {
+          print('⚠️ Error stopping player for recycling: $e');
+        }
+      });
+      player.seek(Duration.zero).catchError((e) {
+        if (kDebugMode) {
+          print('⚠️ Error seeking player for recycling: $e');
+        }
+      });
+
+      _audioPool[src]!.add(player);
+
+      if (kDebugMode) {
+        print(
+            '♻️ Recycled player for: $src (pool size: ${_audioPool[src]!.length})');
+      }
+    } else {
+      // 池已满，释放播放器
+      player.dispose().catchError((e) {
+        if (kDebugMode) {
+          print('⚠️ Error disposing excess player: $e');
+        }
+      });
+    }
+  }
+
   /// 播放音效
   Future<void> playSound(String src) async {
     if (!_initialized || !_audioEnabled) {
@@ -232,12 +367,14 @@ class AudioEngine {
 
       _currentSoundEffectAudio = player;
 
-      // 播放完成后清理引用
+      // 播放完成后清理引用并回收到池中
       player.playerStateStream.listen((state) {
         if (state.processingState == ProcessingState.completed) {
           if (_currentSoundEffectAudio == player) {
             _currentSoundEffectAudio = null;
           }
+          // 回收播放器到池中以便重用
+          _recycleAudioPlayer(src, player);
         }
       });
 
@@ -576,6 +713,73 @@ class AudioEngine {
   /// 检查音频上下文是否运行
   bool isAudioContextRunning() {
     return _initialized;
+  }
+
+  /// 获取音频系统状态信息
+  Map<String, dynamic> getAudioSystemStatus() {
+    final poolSizes = <String, int>{};
+    for (final entry in _audioPool.entries) {
+      poolSizes[entry.key] = entry.value.length;
+    }
+
+    return {
+      'initialized': _initialized,
+      'audioEnabled': _audioEnabled,
+      'webAudioUnlocked': _webAudioUnlocked,
+      'preloadCompleted': _preloadCompleted,
+      'preloadedCount': _preloadedAudio.length,
+      'cachedCount': _audioBufferCache.length,
+      'poolSizes': poolSizes,
+      'masterVolume': _masterVolume,
+      'hasBackgroundMusic': _currentBackgroundMusic != null,
+      'hasEventAudio': _currentEventAudio != null,
+      'hasSoundEffect': _currentSoundEffectAudio != null,
+    };
+  }
+
+  /// 清理音频缓存和池（用于内存管理）
+  Future<void> cleanupAudioCache() async {
+    if (kDebugMode) {
+      print('🧹 Cleaning up audio cache and pools...');
+    }
+
+    // 清理音频池
+    for (final entry in _audioPool.entries) {
+      for (final player in entry.value) {
+        try {
+          await player.dispose();
+        } catch (e) {
+          if (kDebugMode) {
+            print('⚠️ Error disposing pooled player: $e');
+          }
+        }
+      }
+    }
+    _audioPool.clear();
+
+    // 清理非预加载的缓存
+    final toRemove = <String>[];
+    for (final entry in _audioBufferCache.entries) {
+      if (!_preloadedAudio.contains(entry.key)) {
+        toRemove.add(entry.key);
+        try {
+          await entry.value.dispose();
+        } catch (e) {
+          if (kDebugMode) {
+            print('⚠️ Error disposing cached player: $e');
+          }
+        }
+      }
+    }
+
+    for (final key in toRemove) {
+      _audioBufferCache.remove(key);
+    }
+
+    if (kDebugMode) {
+      print(
+          '🧹 Audio cleanup completed. Removed ${toRemove.length} cached players.');
+    }
   }
 
   /// 尝试恢复音频上下文

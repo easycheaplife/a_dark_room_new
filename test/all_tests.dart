@@ -3,6 +3,7 @@ import 'package:a_dark_room_new/core/logger.dart';
 
 // 导入所有测试文件
 import 'armor_button_verification_test.dart' as armor_button_tests;
+import 'audio_system_optimization_test.dart' as audio_system_tests;
 import 'event_frequency_test.dart' as event_frequency_tests;
 import 'event_localization_fix_test.dart' as event_localization_tests;
 import 'event_trigger_test.dart' as event_trigger_tests;
@@ -18,12 +19,12 @@ import 'torch_backpack_simple_test.dart' as torch_backpack_simple_tests;
 import 'water_capacity_test.dart' as water_capacity_tests;
 
 /// A Dark Room 完整测试套件
-/// 
+///
 /// 这个文件整合了所有的单元测试，提供一键测试所有功能的能力
-/// 
+///
 /// 运行方式：
 /// flutter test test/all_tests.dart
-/// 
+///
 /// 测试覆盖范围：
 /// 1. 事件系统测试
 /// 2. 本地化测试
@@ -43,6 +44,7 @@ void main() {
       Logger.info('  🏛️  UI系统 - 按钮状态、界面交互、护甲按钮');
       Logger.info('  💧 资源系统 - 水容量、物品管理');
       Logger.info('  🚀 太空系统 - 移动敏感度、优化测试');
+      Logger.info('  🎵 音频系统 - 预加载、音频池、性能监控');
       Logger.info('=' * 60);
     });
 
@@ -114,6 +116,12 @@ void main() {
       });
     });
 
+    group('🎵 音频系统测试', () {
+      group('音频系统优化', () {
+        audio_system_tests.main();
+      });
+    });
+
     tearDownAll(() {
       Logger.info('=' * 60);
       Logger.info('🎉 A Dark Room 完整测试套件执行完成');
@@ -124,30 +132,32 @@ void main() {
   group('🔧 测试工具和实用程序', () {
     test('测试环境验证', () {
       Logger.info('🧪 验证测试环境...');
-      
+
       // 验证Logger工作正常
       expect(Logger.info, isA<Function>());
-      
+
       // 验证测试框架工作正常
       expect(true, isTrue);
-      
+
       Logger.info('✅ 测试环境验证通过');
     });
 
     test('测试覆盖率统计', () {
       Logger.info('📊 统计测试覆盖率...');
-      
+
       final testCategories = [
         '事件系统',
         '地图系统',
         '背包系统',
         'UI系统',
         '资源系统',
-        '太空系统'
+        '太空系统',
+        '音频系统'
       ];
-      
+
       final testFiles = [
         'armor_button_verification_test.dart',
+        'audio_system_optimization_test.dart',
         'event_frequency_test.dart',
         'event_localization_fix_test.dart',
         'event_trigger_test.dart',
@@ -162,11 +172,12 @@ void main() {
         'torch_backpack_simple_test.dart',
         'water_capacity_test.dart'
       ];
-      
+
       Logger.info('测试分类数量: ${testCategories.length}');
       Logger.info('测试文件数量: ${testFiles.length}');
-      Logger.info('平均每分类测试文件: ${(testFiles.length / testCategories.length).toStringAsFixed(1)}');
-      
+      Logger.info(
+          '平均每分类测试文件: ${(testFiles.length / testCategories.length).toStringAsFixed(1)}');
+
       expect(testFiles.length, greaterThan(5), reason: '应该有足够的测试文件');
       expect(testCategories.length, greaterThan(3), reason: '应该覆盖多个测试分类');
     });
