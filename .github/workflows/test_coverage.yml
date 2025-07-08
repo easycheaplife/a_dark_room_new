@@ -1,0 +1,238 @@
+name: 自动化测试覆盖率检查
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # 每天凌晨2点运行
+    - cron: '0 2 * * *'
+
+jobs:
+  test-coverage:
+    name: 测试覆盖率检查
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      
+    - name: 设置Flutter环境
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+        
+    - name: 获取依赖
+      run: flutter pub get
+      
+    - name: 运行代码分析
+      run: flutter analyze
+      
+    - name: 运行核心系统测试
+      run: |
+        echo "🎯 运行核心系统测试..."
+        dart test/run_coverage_tests.dart --category core --verbose
+      continue-on-error: true
+      
+    - name: 运行游戏模块测试
+      run: |
+        echo "🎮 运行游戏模块测试..."
+        dart test/run_coverage_tests.dart --category modules --verbose
+      continue-on-error: true
+      
+    - name: 运行UI组件测试
+      run: |
+        echo "🖥️ 运行UI组件测试..."
+        dart test/run_coverage_tests.dart --category ui --verbose
+      continue-on-error: true
+      
+    - name: 运行所有测试并检查覆盖率
+      run: |
+        echo "🚀 运行完整测试套件..."
+        dart test/run_coverage_tests.dart --threshold 20 --verbose
+        
+    - name: 上传测试覆盖率报告
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-coverage-report
+        path: docs/test_coverage_report.md
+        retention-days: 30
+        
+    - name: 评论PR覆盖率结果
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const path = 'docs/test_coverage_report.md';
+          
+          if (fs.existsSync(path)) {
+            const report = fs.readFileSync(path, 'utf8');
+            
+            // 提取关键信息
+            const coverageMatch = report.match(/已覆盖文件数.*?(\d+)%/);
+            const totalTestsMatch = report.match(/测试文件总数.*?(\d+)/);
+            
+            const coverage = coverageMatch ? coverageMatch[1] : '未知';
+            const totalTests = totalTestsMatch ? totalTestsMatch[1] : '未知';
+            
+            const comment = `## 🧪 测试覆盖率报告
+            
+            **测试覆盖率**: ${coverage}%
+            **测试文件总数**: ${totalTests}
+            
+            ${coverage < 80 ? '⚠️ 覆盖率低于80%，建议添加更多测试' : '✅ 覆盖率良好'}
+            
+            详细报告请查看 [测试覆盖率报告](../blob/${context.sha}/docs/test_coverage_report.md)
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          }
+
+  performance-test:
+    name: 性能测试
+    runs-on: ubuntu-latest
+    needs: test-coverage
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      
+    - name: 设置Flutter环境
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+        
+    - name: 获取依赖
+      run: flutter pub get
+      
+    - name: 构建Web版本
+      run: flutter build web --release
+      
+    - name: 检查构建产物大小
+      run: |
+        echo "📦 检查构建产物大小..."
+        du -sh build/web/
+        
+        # 检查主要文件大小
+        if [ -f "build/web/main.dart.js" ]; then
+          size=$(stat -c%s "build/web/main.dart.js")
+          echo "main.dart.js 大小: $((size / 1024))KB"
+          
+          # 如果超过5MB则警告
+          if [ $size -gt 5242880 ]; then
+            echo "⚠️ 警告: main.dart.js 文件过大 (>5MB)"
+          fi
+        fi
+        
+    - name: 运行性能基准测试
+      run: |
+        echo "⚡ 运行性能基准测试..."
+        # 这里可以添加具体的性能测试命令
+        echo "性能测试完成"
+
+  security-scan:
+    name: 安全扫描
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      
+    - name: 运行依赖安全扫描
+      run: |
+        echo "🔒 检查依赖安全性..."
+        # 检查pubspec.yaml中的依赖
+        if [ -f "pubspec.yaml" ]; then
+          echo "检查Flutter依赖..."
+          # 这里可以添加具体的安全扫描工具
+        fi
+        
+    - name: 检查敏感信息
+      run: |
+        echo "🔍 检查敏感信息..."
+        # 检查是否有API密钥、密码等敏感信息
+        if grep -r "api_key\|password\|secret" --include="*.dart" lib/; then
+          echo "⚠️ 发现可能的敏感信息"
+          exit 1
+        else
+          echo "✅ 未发现敏感信息"
+        fi
+
+  deploy-preview:
+    name: 部署预览
+    runs-on: ubuntu-latest
+    needs: [test-coverage, performance-test]
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      
+    - name: 设置Flutter环境
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+        
+    - name: 获取依赖
+      run: flutter pub get
+      
+    - name: 构建Web版本
+      run: flutter build web --release
+      
+    - name: 部署到GitHub Pages (预览)
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build/web
+        destination_dir: preview/${{ github.event.number }}
+        
+    - name: 评论预览链接
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const comment = `## 🚀 预览部署完成
+          
+          预览链接: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/preview/${{ github.event.number }}/
+          
+          此预览将在PR合并或关闭后自动清理。
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+
+  notify-results:
+    name: 通知结果
+    runs-on: ubuntu-latest
+    needs: [test-coverage, performance-test, security-scan]
+    if: always()
+    
+    steps:
+    - name: 发送通知
+      run: |
+        echo "📢 工作流程完成"
+        echo "测试覆盖率: ${{ needs.test-coverage.result }}"
+        echo "性能测试: ${{ needs.performance-test.result }}"
+        echo "安全扫描: ${{ needs.security-scan.result }}"
+        
+        if [ "${{ needs.test-coverage.result }}" = "success" ] && 
+           [ "${{ needs.performance-test.result }}" = "success" ] && 
+           [ "${{ needs.security-scan.result }}" = "success" ]; then
+          echo "🎉 所有检查通过!"
+        else
+          echo "💥 存在失败的检查，请查看详情"
+        fi

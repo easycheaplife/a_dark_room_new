@@ -7,37 +7,38 @@ class TestConfig {
   // 测试超时时间
   static const Duration defaultTimeout = Duration(seconds: 30);
   static const Duration longTimeout = Duration(minutes: 2);
-  
+
   // 测试数据量
   static const int smallSampleSize = 100;
   static const int mediumSampleSize = 500;
   static const int largeSampleSize = 1000;
-  
+
   // 事件测试配置
   static const List<int> eventTimeRange = [3, 6]; // 分钟
   static const double retryScale = 0.5;
   static const double expectedSuccessRate = 0.8;
-  
+
   // 地图测试配置
   static const int mapSize = 61;
   static const int mapCenter = 30;
   static const int maxLandmarkDistance = 20;
-  
+
   // 背包测试配置
   static const int maxBackpackCapacity = 10;
   static const int defaultTorchCount = 5;
-  
+
   // 资源测试配置
   static const int defaultWoodAmount = 100;
   static const int defaultFurAmount = 200;
   static const int defaultWaterCapacity = 10;
-  
+
   // 测试环境配置
   static const bool enableDetailedLogging = true;
   static const bool enablePerformanceTests = false;
-  
+
   // 测试分类
   static const List<String> testCategories = [
+    '核心系统',
     '事件系统',
     '地图系统',
     '背包系统',
@@ -45,9 +46,16 @@ class TestConfig {
     '资源系统',
     '太空系统',
   ];
-  
+
   // 测试文件映射
   static const Map<String, List<String>> categoryTestFiles = {
+    '核心系统': [
+      'state_manager_test.dart',
+      'engine_test.dart',
+      'localization_test.dart',
+      'notification_manager_test.dart',
+      'audio_engine_test.dart',
+    ],
     '事件系统': [
       'event_frequency_test.dart',
       'event_localization_fix_test.dart',
@@ -75,7 +83,7 @@ class TestConfig {
       'space_optimization_test.dart',
     ],
   };
-  
+
   // 获取所有测试文件
   static List<String> getAllTestFiles() {
     final allFiles = <String>[];
@@ -84,12 +92,12 @@ class TestConfig {
     }
     return allFiles;
   }
-  
+
   // 获取特定分类的测试文件
   static List<String> getTestFilesForCategory(String category) {
     return categoryTestFiles[category] ?? [];
   }
-  
+
   // 验证测试配置
   static bool validateConfig() {
     // 检查基本配置
@@ -97,15 +105,15 @@ class TestConfig {
     if (eventTimeRange[0] >= eventTimeRange[1]) return false;
     if (retryScale <= 0 || retryScale >= 1) return false;
     if (expectedSuccessRate <= 0 || expectedSuccessRate > 1) return false;
-    
+
     // 检查地图配置
     if (mapSize <= 0) return false;
     if (mapCenter < 0 || mapCenter >= mapSize) return false;
-    
+
     // 检查背包配置
     if (maxBackpackCapacity <= 0) return false;
     if (defaultTorchCount < 0) return false;
-    
+
     return true;
   }
 }
@@ -115,26 +123,27 @@ class TestUtils {
   /// 生成随机事件间隔
   static int generateEventInterval() {
     final random = Random();
-    return random.nextInt(TestConfig.eventTimeRange[1] - TestConfig.eventTimeRange[0] + 1) +
+    return random.nextInt(
+            TestConfig.eventTimeRange[1] - TestConfig.eventTimeRange[0] + 1) +
         TestConfig.eventTimeRange[0];
   }
-  
+
   /// 生成重试间隔
   static double generateRetryInterval(int baseInterval) {
     return baseInterval * TestConfig.retryScale;
   }
-  
+
   /// 计算成功率
   static double calculateSuccessRate(int successful, int total) {
     if (total == 0) return 0.0;
     return successful / total;
   }
-  
+
   /// 验证成功率是否合理
   static bool isSuccessRateAcceptable(double rate) {
     return rate >= TestConfig.expectedSuccessRate;
   }
-  
+
   /// 生成测试状态
   static Map<String, dynamic> generateTestGameState({
     int fire = 4,

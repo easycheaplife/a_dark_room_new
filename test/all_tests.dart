@@ -2,6 +2,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:a_dark_room_new/core/logger.dart';
 
 // 导入所有测试文件
+// 核心系统测试
+import 'state_manager_test.dart' as state_manager_tests;
+import 'engine_test.dart' as engine_tests;
+import 'localization_test.dart' as localization_tests;
+import 'notification_manager_test.dart' as notification_manager_tests;
+import 'audio_engine_test.dart' as audio_engine_tests;
+
+// 游戏模块测试
+import 'room_module_test.dart' as room_module_tests;
+import 'outside_module_test.dart' as outside_module_tests;
+
+// 现有测试文件
 import 'armor_button_verification_test.dart' as armor_button_tests;
 import 'audio_system_optimization_test.dart' as audio_system_tests;
 import 'crafting_system_verification_test.dart' as crafting_system_tests;
@@ -22,6 +34,12 @@ import 'space_optimization_test.dart' as space_optimization_tests;
 import 'torch_backpack_check_test.dart' as torch_backpack_tests;
 import 'torch_backpack_simple_test.dart' as torch_backpack_simple_tests;
 import 'water_capacity_test.dart' as water_capacity_tests;
+import 'progress_button_test.dart' as progress_button_tests;
+import 'header_test.dart' as header_tests;
+import 'notification_display_test.dart' as notification_display_tests;
+import 'game_flow_integration_test.dart' as game_flow_integration_tests;
+import 'module_interaction_test.dart' as module_interaction_tests;
+import 'performance_test.dart' as performance_tests;
 
 /// A Dark Room 完整测试套件
 ///
@@ -43,6 +61,7 @@ void main() {
       Logger.info('🚀 开始 A Dark Room 完整测试套件');
       Logger.info('=' * 60);
       Logger.info('测试覆盖范围：');
+      Logger.info('  🎯 核心系统 - 引擎、状态管理、本地化、通知、音频');
       Logger.info('  📅 事件系统 - 触发频率、本地化、可用性、刽子手事件、Boss战斗');
       Logger.info('  🗺️  地图系统 - 地标生成、道路生成');
       Logger.info('  🎒 背包系统 - 火把检查、容量管理');
@@ -52,6 +71,38 @@ void main() {
       Logger.info('  🎵 音频系统 - 预加载、音频池、性能监控');
       Logger.info('  🔧 制作系统 - 制作验证、系统完整性');
       Logger.info('=' * 60);
+    });
+
+    group('🎯 核心系统测试', () {
+      group('状态管理器', () {
+        state_manager_tests.main();
+      });
+
+      group('游戏引擎', () {
+        engine_tests.main();
+      });
+
+      group('本地化系统', () {
+        localization_tests.main();
+      });
+
+      group('通知管理器', () {
+        notification_manager_tests.main();
+      });
+
+      group('音频引擎', () {
+        audio_engine_tests.main();
+      });
+    });
+
+    group('🎮 游戏模块测试', () {
+      group('房间模块', () {
+        room_module_tests.main();
+      });
+
+      group('外部世界模块', () {
+        outside_module_tests.main();
+      });
     });
 
     group('📅 事件系统测试', () {
@@ -116,6 +167,18 @@ void main() {
       group('护甲按钮验证', () {
         armor_button_tests.main();
       });
+
+      group('进度按钮组件', () {
+        progress_button_tests.main();
+      });
+
+      group('页面头部组件', () {
+        header_tests.main();
+      });
+
+      group('通知显示组件', () {
+        notification_display_tests.main();
+      });
     });
 
     group('💧 资源系统测试', () {
@@ -144,9 +207,25 @@ void main() {
       });
     });
 
-    group('🔧 制作系统测试', () {
+    group('� 集成测试', () {
+      group('游戏流程集成', () {
+        game_flow_integration_tests.main();
+      });
+
+      group('模块交互测试', () {
+        module_interaction_tests.main();
+      });
+    });
+
+    group('�🔧 制作系统测试', () {
       group('制作系统完整性验证', () {
         crafting_system_tests.main();
+      });
+    });
+
+    group('⚡ 性能测试', () {
+      group('系统性能基准', () {
+        performance_tests.main();
       });
     });
 
@@ -174,6 +253,7 @@ void main() {
       Logger.info('📊 统计测试覆盖率...');
 
       final testCategories = [
+        '核心系统',
         '事件系统',
         '地图系统',
         '背包系统',
@@ -184,6 +264,13 @@ void main() {
       ];
 
       final testFiles = [
+        // 核心系统测试
+        'state_manager_test.dart',
+        'engine_test.dart',
+        'localization_test.dart',
+        'notification_manager_test.dart',
+        'audio_engine_test.dart',
+        // 现有测试文件
         'armor_button_verification_test.dart',
         'audio_system_optimization_test.dart',
         'event_frequency_test.dart',
@@ -198,7 +285,16 @@ void main() {
         'space_optimization_test.dart',
         'torch_backpack_check_test.dart',
         'torch_backpack_simple_test.dart',
-        'water_capacity_test.dart'
+        'water_capacity_test.dart',
+        // UI组件测试
+        'progress_button_test.dart',
+        'header_test.dart',
+        'notification_display_test.dart',
+        // 集成测试
+        'game_flow_integration_test.dart',
+        'module_interaction_test.dart',
+        // 性能测试
+        'performance_test.dart'
       ];
 
       Logger.info('测试分类数量: ${testCategories.length}');

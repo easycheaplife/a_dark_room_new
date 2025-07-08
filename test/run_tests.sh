@@ -12,6 +12,7 @@ if [ $# -eq 0 ]; then
     echo ""
     echo "命令:"
     echo "  all        - 运行所有测试"
+    echo "  core       - 运行核心系统测试"
     echo "  events     - 运行事件系统测试"
     echo "  map        - 运行地图系统测试"
     echo "  backpack   - 运行背包系统测试"
@@ -33,6 +34,14 @@ case $COMMAND in
     "all")
         echo "🚀 运行所有测试..."
         flutter test test/all_tests.dart
+        ;;
+    "core")
+        echo "🎯 运行核心系统测试..."
+        flutter test test/state_manager_test.dart
+        flutter test test/engine_test.dart
+        flutter test test/localization_test.dart
+        flutter test test/notification_manager_test.dart
+        flutter test test/audio_engine_test.dart
         ;;
     "events")
         echo "📅 运行事件系统测试..."

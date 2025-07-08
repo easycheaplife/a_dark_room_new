@@ -82,25 +82,43 @@ flutter test test/all_tests.dart
 - ✅ **跨平台存储** - 统一使用SharedPreferences
 
 ### 🧪 测试系统
+
+项目包含完整的自动化测试体系，当前测试覆盖率：**24%** (35个测试文件，63个源文件)
+
 ```bash
-# 方法一：使用Shell脚本（推荐）
+# 自动化测试覆盖率检查（推荐）
+dart test/run_coverage_tests.dart --category all --threshold 80
+
+# 按分类运行测试
+dart test/run_coverage_tests.dart --category core     # 核心系统测试
+dart test/run_coverage_tests.dart --category modules  # 游戏模块测试
+dart test/run_coverage_tests.dart --category ui       # UI组件测试
+
+# 生成测试覆盖率报告
+dart test/simple_coverage_tool.dart
+
+# 传统测试运行方式
 ./test/run_tests.sh all              # 运行所有测试
-./test/run_tests.sh events           # 事件系统测试
-./test/run_tests.sh map              # 地图系统测试
-./test/run_tests.sh backpack         # 背包系统测试
-./test/run_tests.sh single test_name.dart  # 运行单个测试
-
-# 方法二：使用Dart测试运行器
-dart test/test_runner.dart all       # 运行所有测试
-dart test/test_runner.dart events    # 事件系统测试
-dart test/test_runner.dart report    # 生成测试报告
-
-# 方法三：直接使用Flutter测试
-flutter test test/all_tests.dart     # 运行所有测试
+dart test/test_runner.dart all       # 使用测试运行器
+flutter test test/all_tests.dart     # 直接运行测试
 ```
 
+**测试分类统计**:
+- 🎯 核心系统: 8个测试 (StateManager, Engine, Localization, NotificationDisplay等)
+- 🎮 游戏模块: 3个测试 (Room, Outside, Ship等)
+- 📅 事件系统: 3个测试 (事件触发、本地化等)
+- 🗺️ 地图系统: 2个测试 (地标、道路生成等)
+- 🎒 背包系统: 3个测试 (火把检查、容量管理等)
+- 🏛️ UI系统: 5个测试 (按钮验证、界面交互、ProgressButton、Header等)
+- 💧 资源系统: 2个测试 (水容量、制作系统等)
+- 🚀 太空系统: 2个测试 (移动敏感度、优化等)
+- 🎵 音频系统: 1个测试 (音频优化等)
+- 🔗 集成测试: 2个测试 (游戏流程、模块交互等)
+- ⚡ 性能测试: 1个测试 (系统性能基准等)
+- 🔧 其他测试: 3个测试 (洞穴、Boss战斗等)
+
 ### 🎮 立即体验
-- **Web版本**: [在线试玩](https://a-dark-room-ebxf3b49q-sams-projects-56819ca6.vercel.app/)
+- **Web版本**: [在线试玩](https://unrivaled-genie-818ab8.netlify.app/)
 - **下载**: [发布页面](https://github.com/easycheaplife/a_dark_room_new/releases)
 - **源码**: [GitHub仓库](https://github.com/easycheaplife/a_dark_room_new)
 
@@ -134,6 +152,8 @@ flutter test test/all_tests.dart     # 运行所有测试
 | [📊 项目管理](./docs/04_project_management/) | 项目状态和管理 | 7个 | ✅ 100% |
 | [🐛 Bug修复](./docs/05_bug_fixes/) | 问题修复记录 | 96个 | ✅ 100% |
 | [⚡ 优化记录](./docs/06_optimizations/) | 性能优化记录 | 13个 | ✅ 100% |
+| [🧪 测试指南](./docs/07_testing_guide.md) | 测试开发指南 | 1个 | ✅ 100% |
+| [📋 测试覆盖率报告](./docs/test_coverage_report.md) | 自动化测试覆盖率 | 1个 | ✅ 100% |
 | [📚 归档文档](./docs/07_archives/) | 历史文档存档 | 6个 | ✅ 100% |
 | [🚀 部署文档](./docs/08_deployment/) | Web部署和微信优化 | 6个 | ✅ 100% |
 | [🔄 平台迁移](./docs/09_platform_migration/) | 跨平台迁移方案 | 3个 | ✅ 100% |
