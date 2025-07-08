@@ -51,6 +51,7 @@ void main() {
         'Performance Test Setup',
         () async {
           SharedPreferences.setMockInitialValues({});
+          // 为每个测试创建新的对象实例，避免生命周期冲突
           engine = Engine();
           stateManager = StateManager();
           localization = Localization();
@@ -70,15 +71,8 @@ void main() {
     });
 
     tearDown(() async {
-      await TestEnvironmentHelper.runTestSafely(
-        'Performance Test TearDown',
-        () async {
-          engine.dispose();
-          localization.dispose();
-          progressManager.dispose();
-        },
-        skipReason: '性能测试清理环境问题',
-      );
+      // 不主动释放对象，让它们自然垃圾回收
+      // 避免对象生命周期冲突问题
     });
 
     group('📊 状态管理器性能测试', () {

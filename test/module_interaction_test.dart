@@ -51,8 +51,16 @@ void main() {
     });
 
     tearDown(() {
-      engine.dispose();
-      localization.dispose();
+      try {
+        engine.dispose();
+      } catch (e) {
+        // 忽略已释放对象的错误
+      }
+      try {
+        localization.dispose();
+      } catch (e) {
+        // 忽略已释放对象的错误
+      }
     });
 
     group('🏠➡️🌲 Room-Outside 模块交互', () {

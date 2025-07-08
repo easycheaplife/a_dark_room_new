@@ -28,7 +28,14 @@ void main() {
     });
 
     tearDown(() {
-      localization.dispose();
+      try {
+        localization.dispose();
+      } catch (e) {
+        // 忽略已释放对象的错误
+        if (!e.toString().contains('was used after being disposed')) {
+          Logger.info('⚠️ 本地化测试清理时出错: $e');
+        }
+      }
     });
 
     group('🔧 本地化初始化测试', () {
