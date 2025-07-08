@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../lib/core/notifications.dart';
-import '../lib/core/localization.dart';
-import '../lib/core/logger.dart';
-import 'test_config.dart';
+import 'package:a_dark_room_new/core/notifications.dart';
+import 'package:a_dark_room_new/core/localization.dart';
+import 'package:a_dark_room_new/core/logger.dart';
 
 /// NotificationManager 通知系统测试
 ///

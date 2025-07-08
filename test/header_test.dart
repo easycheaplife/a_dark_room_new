@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../lib/widgets/header.dart';
-import '../lib/core/engine.dart';
-import '../lib/core/state_manager.dart';
-import '../lib/core/localization.dart';
-import '../lib/modules/room.dart';
-import '../lib/modules/outside.dart';
-import '../lib/modules/path.dart';
-import '../lib/core/logger.dart';
-import 'test_config.dart';
+import 'package:a_dark_room_new/widgets/header.dart';
+import 'package:a_dark_room_new/core/engine.dart';
+import 'package:a_dark_room_new/core/state_manager.dart';
+import 'package:a_dark_room_new/core/localization.dart';
+import 'package:a_dark_room_new/modules/room.dart';
+import 'package:a_dark_room_new/modules/outside.dart';
+import 'package:a_dark_room_new/core/logger.dart';
 
 /// Header 页面头部组件测试
 /// 
@@ -43,10 +41,10 @@ void main() {
       stateManager.init();
     });
 
-    tearDown() {
+    tearDown(() {
       engine.dispose();
       localization.dispose();
-    }
+    });
 
     /// 创建测试用的Widget包装器
     Widget createTestWidget(Widget child) {

@@ -1,9 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../lib/core/state_manager.dart';
-import '../lib/core/logger.dart';
-import 'test_config.dart';
+import 'package:a_dark_room_new/core/state_manager.dart';
+import 'package:a_dark_room_new/core/logger.dart';
 
 /// StateManager 核心状态管理系统测试
 ///
@@ -140,9 +138,9 @@ void main() {
         Logger.info('🧪 测试默认值处理');
 
         // 测试不存在的路径
-        expect(stateManager.get('nonexistent.path'), isNull);
-        expect(stateManager.get('nonexistent.path', true), equals(0));
-        expect(stateManager.get('another.path', false), isNull);
+        expect(stateManager.get('nonexistent.path'), equals(0)); // 默认返回0
+        expect(stateManager.get('nonexistent.path', true), isNull); // nullIfMissing=true返回null
+        expect(stateManager.get('another.path', false), equals(0)); // nullIfMissing=false返回0
 
         Logger.info('✅ 默认值处理测试通过');
       });
@@ -189,10 +187,10 @@ void main() {
         // 执行批量修改
         stateManager.setM('stores', modifications);
 
-        // 验证结果
-        expect(stateManager.get('stores.wood'), equals(10));
-        expect(stateManager.get('stores.fur'), equals(5));
-        expect(stateManager.get('stores.meat'), equals(15));
+        // 验证结果 - setM直接设置值，stores负值会被设为0
+        expect(stateManager.get('stores.wood'), equals(0)); // 设置为-10，但stores不能为负，所以是0
+        expect(stateManager.get('stores.fur'), equals(0)); // 设置为-5，但stores不能为负，所以是0
+        expect(stateManager.get('stores.meat'), equals(15)); // 设置为15
 
         Logger.info('✅ setM批量操作测试通过');
       });
@@ -203,9 +201,9 @@ void main() {
         // 设置初始值
         stateManager.set('stores.wood', 5);
 
-        // 测试减法导致负值
+        // 测试减法导致负值 - stores不能为负数，会被设为0
         stateManager.add('stores.wood', -10);
-        expect(stateManager.get('stores.wood'), equals(-5));
+        expect(stateManager.get('stores.wood'), equals(0)); // 5 + (-10) = -5，但stores不能为负，所以是0
 
         // 测试零值
         stateManager.set('stores.fur', 0);
@@ -224,9 +222,15 @@ void main() {
       test('应该正确计算和收集收入', () {
         Logger.info('🧪 测试收入计算和收集');
 
-        // 设置收入源
-        stateManager.set('income.wood', 5);
-        stateManager.set('income.fur', 2);
+        // 设置收入源 - 使用正确的收入格式
+        stateManager.setIncome('gatherer', {
+          'timeLeft': 0,
+          'stores': {'wood': 5}
+        });
+        stateManager.setIncome('trapper', {
+          'timeLeft': 0,
+          'stores': {'fur': 2}
+        });
         stateManager.set('stores.wood', 10);
         stateManager.set('stores.fur', 3);
 
@@ -242,6 +246,9 @@ void main() {
 
       test('应该正确处理空收入', () {
         Logger.info('🧪 测试空收入处理');
+
+        // 清理之前的收入设置
+        stateManager.set('income', {});
 
         // 设置初始存储但无收入
         stateManager.set('stores.wood', 10);

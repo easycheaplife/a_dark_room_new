@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../lib/widgets/notification_display.dart';
-import '../lib/core/notifications.dart';
-import '../lib/core/localization.dart';
-import '../lib/core/logger.dart';
-import 'test_config.dart';
+import 'package:a_dark_room_new/widgets/notification_display.dart';
+import 'package:a_dark_room_new/core/notifications.dart';
+import 'package:a_dark_room_new/core/localization.dart';
+import 'package:a_dark_room_new/core/logger.dart';
 
 /// NotificationDisplay 通知显示组件测试
 ///
@@ -36,10 +35,10 @@ void main() {
       notificationManager.init();
     });
 
-    tearDown() {
+    tearDown(() {
       notificationManager.dispose();
       localization.dispose();
-    }
+    });
 
     /// 创建测试用的Widget包装器
     Widget createTestWidget(Widget child) {

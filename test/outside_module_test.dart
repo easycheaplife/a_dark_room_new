@@ -1,11 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../lib/modules/outside.dart';
-import '../lib/core/state_manager.dart';
-import '../lib/core/engine.dart';
-import '../lib/core/logger.dart';
-import 'test_config.dart';
+import 'package:a_dark_room_new/modules/outside.dart';
+import 'package:a_dark_room_new/core/state_manager.dart';
+import 'package:a_dark_room_new/core/engine.dart';
+import 'package:a_dark_room_new/core/logger.dart';
 
 /// Outside 外部世界模块测试
 ///

@@ -264,9 +264,10 @@ class Outside extends ChangeNotifier {
   int getNumGatherers() {
     final sm = StateManager();
     var num = sm.get('game.population', true) ?? 0;
-    final workers = sm.get('game.workers', true) ?? {};
+    final workersData = sm.get('game.workers', true);
+    final workers = (workersData is Map<String, dynamic>) ? workersData : <String, dynamic>{};
     for (final k in workers.keys) {
-      num -= sm.get('game.workers["$k"]', true) ?? 0;
+      num -= (workers[k] ?? 0) as int;
     }
     return num;
   }
@@ -309,11 +310,12 @@ class Outside extends ChangeNotifier {
   /// 更新村庄
   void updateVillage([bool ignoreStores = false]) {
     final sm = StateManager();
-    final buildings = sm.get('game.buildings', true) ?? {};
+    final buildingsData = sm.get('game.buildings', true);
+    final buildings = (buildingsData is Map<String, dynamic>) ? buildingsData : <String, dynamic>{};
 
     for (final k in buildings.keys) {
       if (k == 'trap') {
-        final numTraps = (sm.get('game.buildings["$k"]', true) ?? 0) as int;
+        final numTraps = (buildings[k] ?? 0) as int;
         final numBait = (sm.get('stores.bait', true) ?? 0) as int;
         final traps = max<int>(0, numTraps - numBait);
         updateVillageRow(k, traps);
@@ -322,13 +324,13 @@ class Outside extends ChangeNotifier {
         if (checkWorker(k)) {
           updateWorkersView();
         }
-        updateVillageRow(k, (sm.get('game.buildings["$k"]', true) ?? 0) as int);
+        updateVillageRow(k, (buildings[k] ?? 0) as int);
       }
     }
 
     setTitle();
 
-    final hasPeeps = (sm.get('game.buildings["hut"]', true) ?? 0) > 0;
+    final hasPeeps = (buildings['hut'] != null && buildings['hut'] > 0);
     if (hasPeeps && _popTimeout == null) {
       schedulePopIncrease();
     }

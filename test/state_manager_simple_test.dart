@@ -1,9 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../lib/core/state_manager.dart';
-import '../lib/core/logger.dart';
-import 'test_config.dart';
+import 'package:a_dark_room_new/core/state_manager.dart';
+import 'package:a_dark_room_new/core/logger.dart';
 
 /// StateManager 简化测试
 ///

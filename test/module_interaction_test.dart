@@ -1,13 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../lib/core/engine.dart';
-import '../lib/core/state_manager.dart';
-import '../lib/core/localization.dart';
-import '../lib/modules/room.dart';
-import '../lib/modules/outside.dart';
-import '../lib/modules/path.dart';
-import '../lib/core/logger.dart';
-import 'test_config.dart';
+import 'package:a_dark_room_new/core/engine.dart';
+import 'package:a_dark_room_new/core/state_manager.dart';
+import 'package:a_dark_room_new/core/localization.dart';
+import 'package:a_dark_room_new/modules/room.dart';
+import 'package:a_dark_room_new/modules/outside.dart';
+import 'package:a_dark_room_new/modules/path.dart';
+import 'package:a_dark_room_new/core/logger.dart';
 
 /// 模块交互测试
 /// 
@@ -48,10 +47,10 @@ void main() {
       path = Path();
     });
 
-    tearDown() {
+    tearDown(() {
       engine.dispose();
       localization.dispose();
-    }
+    });
 
     group('🏠➡️🌲 Room-Outside 模块交互', () {
       test('应该正确处理从房间到外部的资源传递', () async {

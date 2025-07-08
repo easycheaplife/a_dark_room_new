@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../lib/widgets/progress_button.dart';
-import '../lib/core/progress_manager.dart';
-import '../lib/core/localization.dart';
-import '../lib/core/state_manager.dart';
-import '../lib/core/logger.dart';
-import 'test_config.dart';
+import 'package:a_dark_room_new/widgets/progress_button.dart';
+import 'package:a_dark_room_new/core/progress_manager.dart';
+import 'package:a_dark_room_new/core/localization.dart';
+import 'package:a_dark_room_new/core/state_manager.dart';
+import 'package:a_dark_room_new/core/logger.dart';
 
 /// ProgressButton 进度按钮组件测试
 /// 
@@ -39,10 +38,10 @@ void main() {
       stateManager.init();
     });
 
-    tearDown() {
+    tearDown(() {
       // 清理进度管理器状态
       progressManager.dispose();
-    }
+    });
 
     /// 创建测试用的Widget包装器
     Widget createTestWidget(Widget child) {

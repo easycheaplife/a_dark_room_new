@@ -1,10 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../lib/core/audio_engine.dart';
-import '../lib/core/audio_library.dart';
-import '../lib/core/logger.dart';
-import 'test_config.dart';
+import 'package:a_dark_room_new/core/audio_engine.dart';
+import 'package:a_dark_room_new/core/audio_library.dart';
+import 'package:a_dark_room_new/core/logger.dart';
 
 /// AudioEngine 音频引擎测试
 ///

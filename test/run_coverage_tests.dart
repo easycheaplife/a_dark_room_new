@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:convert';
 import 'package:a_dark_room_new/core/logger.dart';
 
 /// 自动化测试覆盖率运行工具
@@ -137,7 +136,7 @@ Future<Map<String, dynamic>> runTests(Map<String, dynamic> options) async {
 
   for (final testFile in testFiles) {
     if (verbose) {
-      print('  运行: $testFile');
+      Logger.info('  运行: $testFile');
     }
 
     final result = await Process.run(
