@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'localization.dart';
+import 'logger.dart';
 
 /// Notification represents a single game notification message
 class Notification {
@@ -159,7 +160,7 @@ class NotificationManager with ChangeNotifier {
     // For now, we'll just log them in debug mode
     if (kDebugMode) {
       for (final notification in queue) {
-        print('[$module] ${notification.message}');
+        Logger.info('[$module] ${notification.message}');
       }
     }
 

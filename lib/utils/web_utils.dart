@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import '../core/logger.dart';
 import 'platform_adapter.dart';
 
 /// Web平台工具类

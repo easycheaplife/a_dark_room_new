@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:a_dark_room_new/modules/room.dart';
 import 'package:a_dark_room_new/core/state_manager.dart';
 import 'package:a_dark_room_new/core/localization.dart';
+import 'package:a_dark_room_new/core/logger.dart';
+import 'package:a_dark_room_new/core/audio_engine.dart';
 
 void main() {
   group('制作系统完整性验证', () {
@@ -17,6 +19,9 @@ void main() {
       room = Room();
       stateManager = StateManager();
       stateManager.clearGameData(); // 清理状态
+
+      // 设置AudioEngine测试模式，避免音频插件异常
+      AudioEngine().setTestMode(true);
     });
 
     tearDownAll(() {
@@ -24,7 +29,7 @@ void main() {
     });
 
     test('验证所有可制作物品都有完整的button属性配置', () {
-      print('🔧 验证制作系统button属性配置...');
+      Logger.info('🔧 验证制作系统button属性配置...');
 
       final craftables = room.craftables;
       expect(craftables.isNotEmpty, isTrue, reason: '可制作物品列表不应为空');
@@ -50,15 +55,15 @@ void main() {
         expect(itemConfig['button'], isNull,
             reason: '$itemName 的button属性应该初始化为null');
 
-        print('✅ $itemName: 所有属性配置正确');
+        Logger.info('✅ $itemName: 所有属性配置正确');
         verifiedCount++;
       }
 
-      print('🎉 制作系统验证完成！共验证 $verifiedCount 个可制作物品');
+      Logger.info('🎉 制作系统验证完成！共验证 $verifiedCount 个可制作物品');
     });
 
     test('验证护甲类物品的特殊属性', () {
-      print('🛡️ 验证护甲类物品特殊属性...');
+      Logger.info('🛡️ 验证护甲类物品特殊属性...');
 
       final armorItems = ['l armour', 'i armour', 's armour'];
 
@@ -81,14 +86,14 @@ void main() {
         expect(cost, isA<Map<String, dynamic>>(),
             reason: '$armorName 的成本应返回Map');
 
-        print('✅ $armorName: 护甲属性配置正确');
+        Logger.info('✅ $armorName: 护甲属性配置正确');
       }
 
-      print('🎉 护甲类物品验证通过！');
+      Logger.info('🎉 护甲类物品验证通过！');
     });
 
     test('验证制作解锁逻辑', () {
-      print('🔓 验证制作解锁逻辑...');
+      Logger.info('🔓 验证制作解锁逻辑...');
 
       // 设置基础条件
       stateManager.set('game.builder.level', 4); // 建造者等级足够
@@ -110,14 +115,14 @@ void main() {
         final isUnlocked = room.craftUnlocked(itemName);
         expect(isUnlocked, isTrue, reason: '$itemName 在满足条件时应该解锁');
 
-        print('✅ $itemName: 解锁逻辑正常');
+        Logger.info('✅ $itemName: 解锁逻辑正常');
       }
 
-      print('🎉 制作解锁逻辑验证通过！');
+      Logger.info('🎉 制作解锁逻辑验证通过！');
     });
 
     test('验证制作功能执行', () {
-      print('🔨 验证制作功能执行...');
+      Logger.info('🔨 验证制作功能执行...');
 
       // 设置基础条件
       stateManager.set('game.builder.level', 4);
@@ -136,12 +141,12 @@ void main() {
       final finalTorches = stateManager.get('stores.torch', true) ?? 0;
       expect(finalTorches, equals(initialTorches + 1), reason: '制作后火把数量应该增加1');
 
-      print('✅ 制作功能执行正常');
-      print('🎉 制作系统功能验证通过！');
+      Logger.info('✅ 制作功能执行正常');
+      Logger.info('🎉 制作系统功能验证通过！');
     });
 
     test('验证制作系统与原游戏的一致性', () {
-      print('🔍 验证与原游戏的一致性...');
+      Logger.info('🔍 验证与原游戏的一致性...');
 
       // 验证护甲成本与原游戏一致
       final expectedCosts = {
@@ -161,10 +166,10 @@ void main() {
         expect(actualCost, equals(expectedCost),
             reason: '$itemName 的成本应与原游戏一致');
 
-        print('✅ $itemName: 成本与原游戏一致');
+        Logger.info('✅ $itemName: 成本与原游戏一致');
       }
 
-      print('🎉 与原游戏一致性验证通过！');
+      Logger.info('🎉 与原游戏一致性验证通过！');
     });
   });
 }

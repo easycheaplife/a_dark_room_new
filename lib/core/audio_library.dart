@@ -1,8 +1,13 @@
 /// 音频库 - 定义所有音频文件路径
 /// 对应原始游戏的 AudioLibrary 模块
 /// 参考原游戏 AudioLibrary 常量定义
+///
+/// 注意：此类中的UPPER_CASE常量是为了与原游戏JavaScript保持一致
+/// 虽然不符合Dart命名规范，但为了保持原游戏的兼容性而保留
+/// 同时提供了lowerCamelCase别名以符合Dart规范
 class AudioLibrary {
   // 原游戏常量映射 - 与原游戏JavaScript保持一致
+  // ignore_for_file: constant_identifier_names
 
   // 背景音乐常量 (MUSIC_*)
   static const String MUSIC_DUSTY_PATH = 'audio/dusty-path.flac';

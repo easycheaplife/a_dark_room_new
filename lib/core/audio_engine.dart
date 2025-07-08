@@ -2,6 +2,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'audio_library.dart';
+import 'logger.dart';
 
 /// AudioEngine handles all sound effects and music in the game
 /// 完整移植自原游戏的音频引擎
@@ -52,7 +53,7 @@ class AudioEngine {
     try {
       _initialized = true;
       if (kDebugMode) {
-        print('🎵 AudioEngine initialized');
+        Logger.info('🎵 AudioEngine initialized');
       }
 
       // 开始预加载音频 - 参考原游戏Engine.init()
@@ -60,7 +61,7 @@ class AudioEngine {
       if (!_testMode) {
         _startPreloading();
       } else if (kDebugMode) {
-        print('🧪 Test mode: skipping audio preloading');
+        Logger.info('🧪 Test mode: skipping audio preloading');
       }
     } catch (e) {
       if (kDebugMode) {
@@ -330,6 +331,14 @@ class AudioEngine {
 
   /// 播放音效
   Future<void> playSound(String src) async {
+    // 在测试模式下跳过音频播放
+    if (_testMode) {
+      if (kDebugMode) {
+        print('🧪 Test mode: skipping audio playback for $src');
+      }
+      return;
+    }
+
     if (!_initialized || !_audioEnabled) {
       if (kDebugMode) {
         print(

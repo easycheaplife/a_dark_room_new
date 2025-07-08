@@ -3,6 +3,7 @@ import 'package:a_dark_room_new/modules/space.dart';
 import 'package:a_dark_room_new/modules/ship.dart';
 import 'package:a_dark_room_new/core/state_manager.dart';
 import 'package:a_dark_room_new/core/localization.dart';
+import 'package:a_dark_room_new/core/logger.dart';
 
 /// Space模块优化验证测试
 ///
@@ -33,7 +34,7 @@ void main() {
     });
 
     test('验证小行星创建逻辑优化', () {
-      print('🌌 开始验证小行星创建逻辑...');
+      Logger.info('🌌 开始验证小行星创建逻辑...');
 
       // 初始化太空模块
       space.onArrival();
@@ -74,11 +75,11 @@ void main() {
       expect(asteroid['xMin'], equals(x), reason: 'xMin应该等于x坐标');
       expect(asteroid['xMax'], equals(x + 20.0), reason: 'xMax应该等于x坐标+宽度');
 
-      print('✅ 小行星创建逻辑验证通过');
+      Logger.info('✅ 小行星创建逻辑验证通过');
     });
 
     test('验证难度递增逻辑', () {
-      print('🎯 验证难度递增逻辑...');
+      Logger.info('🎯 验证难度递增逻辑...');
 
       space.onArrival();
 
@@ -96,11 +97,11 @@ void main() {
       space.altitude = 50;
       space.createAsteroid(true);
 
-      print('✅ 难度递增逻辑验证通过');
+      Logger.info('✅ 难度递增逻辑验证通过');
     });
 
     test('验证碰撞检测优化', () {
-      print('💥 验证碰撞检测优化...');
+      Logger.info('💥 验证碰撞检测优化...');
 
       space.onArrival();
 
@@ -146,11 +147,11 @@ void main() {
       // 通过getAsteroidCount方法验证
       expect(space.getAsteroidCount(), equals(2), reason: '小行星数量应该为2');
 
-      print('✅ 碰撞检测优化验证通过');
+      Logger.info('✅ 碰撞检测优化验证通过');
     });
 
     test('验证飞船移动逻辑', () {
-      print('🚀 验证飞船移动逻辑...');
+      Logger.info('🚀 验证飞船移动逻辑...');
 
       space.onArrival();
 
@@ -183,11 +184,11 @@ void main() {
       expect(space.shipX, greaterThanOrEqualTo(10.0), reason: 'X坐标不应该小于10');
       expect(space.shipY, greaterThanOrEqualTo(10.0), reason: 'Y坐标不应该小于10');
 
-      print('✅ 飞船移动逻辑验证通过');
+      Logger.info('✅ 飞船移动逻辑验证通过');
     });
 
     test('验证胜利条件和结束逻辑', () {
-      print('🎉 验证胜利条件和结束逻辑...');
+      Logger.info('🎉 验证胜利条件和结束逻辑...');
 
       space.onArrival();
 
@@ -204,11 +205,11 @@ void main() {
       space.altitude = 45;
       expect(space.getProgress(), equals(0.75), reason: '45km应该是75%进度');
 
-      print('✅ 胜利条件和结束逻辑验证通过');
+      Logger.info('✅ 胜利条件和结束逻辑验证通过');
     });
 
     test('验证太空状态获取', () {
-      print('📊 验证太空状态获取...');
+      Logger.info('📊 验证太空状态获取...');
 
       space.onArrival();
 
@@ -229,11 +230,11 @@ void main() {
       expect(status['hull'], equals(5), reason: '船体应该等于最大值');
       expect(status['done'], isFalse, reason: '游戏应该未完成');
 
-      print('✅ 太空状态获取验证通过');
+      Logger.info('✅ 太空状态获取验证通过');
     });
 
     test('验证重置功能', () async {
-      print('🔄 验证重置功能...');
+      Logger.info('🔄 验证重置功能...');
 
       space.onArrival();
 
@@ -262,7 +263,7 @@ void main() {
       expect(asteroidCount, lessThanOrEqualTo(1),
           reason: '重置后小行星列表应该为空或只有很少的小行星');
 
-      print('✅ 重置功能验证通过');
+      Logger.info('✅ 重置功能验证通过');
     });
   });
 }

@@ -3,6 +3,7 @@ import 'package:a_dark_room_new/modules/space.dart';
 import 'package:a_dark_room_new/modules/ship.dart';
 import 'package:a_dark_room_new/core/state_manager.dart';
 import 'package:a_dark_room_new/core/localization.dart';
+import 'package:a_dark_room_new/core/logger.dart';
 
 /// Space模块飞船移动灵敏度测试
 ///
@@ -33,7 +34,7 @@ void main() {
     });
 
     test('验证基础移动速度计算', () {
-      print('🚀 验证基础移动速度计算...');
+      Logger.info('🚀 验证基础移动速度计算...');
 
       space.onArrival();
 
@@ -42,11 +43,11 @@ void main() {
       final expectedSpeed = 3.0 + 3; // shipSpeed + thrusters
       expect(speed, equals(expectedSpeed), reason: '速度应该等于基础速度+推进器等级');
 
-      print('✅ 基础速度: $speed (预期: $expectedSpeed)');
+      Logger.info('✅ 基础速度: $speed (预期: $expectedSpeed)');
     });
 
     test('验证单次移动距离', () {
-      print('🚀 验证单次移动距离...');
+      Logger.info('🚀 验证单次移动距离...');
 
       space.onArrival();
 
@@ -69,11 +70,11 @@ void main() {
       expect(deltaX, lessThan(10), reason: '单次移动距离不应该过大');
       expect(deltaY, equals(0), reason: '只向右移动，Y坐标不应该改变');
 
-      print('✅ 单次移动距离: deltaX=$deltaX, deltaY=$deltaY');
+      Logger.info('✅ 单次移动距离: deltaX=$deltaX, deltaY=$deltaY');
     });
 
     test('验证时间补偿限制', () {
-      print('🚀 验证时间补偿限制...');
+      Logger.info('🚀 验证时间补偿限制...');
 
       space.onArrival();
 
@@ -100,16 +101,14 @@ void main() {
       expect(ratio, lessThan(3.0), reason: '长时间间隔的移动距离应该被限制');
       expect(ratio, greaterThan(1.0), reason: '长时间间隔应该有一定补偿');
 
-      print(
+      Logger.info(
           '✅ 时间补偿限制: 正常移动=$normalDelta, 长间隔移动=$longDelta, 比例=${ratio.toStringAsFixed(2)}');
     });
 
     test('验证移动平滑处理', () {
-      print('🚀 验证移动平滑处理...');
+      Logger.info('🚀 验证移动平滑处理...');
 
       space.onArrival();
-
-      final initialX = space.shipX;
 
       // 连续移动多次，验证平滑效果
       final movements = <double>[];
@@ -129,13 +128,13 @@ void main() {
         expect(deviation, lessThan(0.5), reason: '移动距离应该相对稳定');
       }
 
-      print('✅ 移动平滑处理: 平均移动距离=${avgMovement.toStringAsFixed(2)}');
-      print(
+      Logger.info('✅ 移动平滑处理: 平均移动距离=${avgMovement.toStringAsFixed(2)}');
+      Logger.info(
           '   移动序列: ${movements.map((m) => m.toStringAsFixed(2)).join(', ')}');
     });
 
     test('验证对角线移动速度调整', () {
-      print('🚀 验证对角线移动速度调整...');
+      Logger.info('🚀 验证对角线移动速度调整...');
 
       space.onArrival();
 
@@ -170,13 +169,13 @@ void main() {
       expect(diagonalDeltaY, closeTo(expectedDiagonal, tolerance),
           reason: '对角线移动Y分量应该约为单方向的1/√2');
 
-      print(
+      Logger.info(
           '✅ 对角线移动: 单方向=$singleDeltaX, 对角线X=$diagonalDeltaX, 对角线Y=$diagonalDeltaY');
-      print('   预期对角线=${expectedDiagonal.toStringAsFixed(2)}');
+      Logger.info('   预期对角线=${expectedDiagonal.toStringAsFixed(2)}');
     });
 
     test('验证边界限制', () {
-      print('🚀 验证边界限制...');
+      Logger.info('🚀 验证边界限制...');
 
       space.onArrival();
 
@@ -204,11 +203,11 @@ void main() {
 
       expect(space.shipX, lessThanOrEqualTo(690.0), reason: 'X坐标不应该大于右边界690');
 
-      print('✅ 边界限制: 最终X坐标=${space.shipX}');
+      Logger.info('✅ 边界限制: 最终X坐标=${space.shipX}');
     });
 
     test('验证移动响应性', () {
-      print('🚀 验证移动响应性...');
+      Logger.info('🚀 验证移动响应性...');
 
       space.onArrival();
 
@@ -228,15 +227,13 @@ void main() {
 
       expect(space.shipX, equals(moveX), reason: '按键释放应该立即停止移动');
 
-      print('✅ 移动响应性验证通过');
+      Logger.info('✅ 移动响应性验证通过');
     });
 
     test('验证移动灵敏度修复效果', () {
-      print('🚀 验证移动灵敏度修复效果...');
+      Logger.info('🚀 验证移动灵敏度修复效果...');
 
       space.onArrival();
-
-      final initialX = space.shipX;
 
       // 测试连续移动10次的总距离
       space.right = true;
@@ -258,9 +255,9 @@ void main() {
       expect(totalDistance, lessThan(80.0), reason: '10次移动总距离不应该过大');
       expect(totalDistance, greaterThan(20.0), reason: '10次移动总距离不应该过小');
 
-      print(
+      Logger.info(
           '✅ 移动灵敏度修复效果: 平均移动距离=${avgDistance.toStringAsFixed(2)}, 总距离=${totalDistance.toStringAsFixed(2)}');
-      print('   修复前问题: 移动过于灵敏，现在已通过平滑处理和时间补偿限制得到改善');
+      Logger.info('   修复前问题: 移动过于灵敏，现在已通过平滑处理和时间补偿限制得到改善');
     });
   });
 }
