@@ -15,6 +15,8 @@ import 'original_game_torch_requirements_test.dart' as torch_requirements_tests;
 import 'road_generation_fix_test.dart' as road_generation_tests;
 import 'ruined_city_leave_buttons_test.dart' as ruined_city_tests;
 import 'ship_building_upgrade_system_test.dart' as ship_building_tests;
+import 'cave_setpiece_test.dart' as cave_setpiece_tests;
+import 'cave_landmark_integration_test.dart' as cave_integration_tests;
 import 'space_movement_sensitivity_test.dart' as space_movement_tests;
 import 'space_optimization_test.dart' as space_optimization_tests;
 import 'torch_backpack_check_test.dart' as torch_backpack_tests;
@@ -71,6 +73,14 @@ void main() {
 
       group('执行者Boss战斗测试', () {
         executioner_boss_fight_tests.main();
+      });
+
+      group('洞穴Setpiece事件测试', () {
+        cave_setpiece_tests.main();
+      });
+
+      group('洞穴地标集成测试', () {
+        cave_integration_tests.main();
       });
     });
 
