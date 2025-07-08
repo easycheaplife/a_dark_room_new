@@ -80,6 +80,10 @@ class Events extends ChangeNotifier {
   int maxEnemyHealth = 0;
   bool enemyStunned = false; // 敌人眩晕状态
 
+  // 敌人状态管理
+  String? enemyStatus; // 当前敌人状态：shield, enraged, meditation等
+  String? lastSpecialStatus; // 上次使用的特殊状态，用于避免重复
+
   // 战斗胜利状态
   bool showingLoot = false;
   Map<String, int> currentLoot = {};
@@ -1662,6 +1666,52 @@ class Events extends ChangeNotifier {
       timer.cancel();
     }
     _delayedRewards.clear();
+  }
+
+  /// 设置战斗状态 - 参考原游戏Events.setStatus
+  void setStatus(String fighter, String status) {
+    Logger.info('🔮 设置状态: $fighter -> $status');
+
+    if (fighter == 'enemy') {
+      enemyStatus = status;
+
+      // 根据状态类型设置效果
+      switch (status) {
+        case 'shield':
+          Logger.info('🛡️ 敌人获得护盾状态');
+          break;
+        case 'enraged':
+          Logger.info('😡 敌人进入狂暴状态');
+          break;
+        case 'meditation':
+          Logger.info('🧘 敌人进入冥想状态');
+          break;
+        case 'energised':
+          Logger.info('⚡ 敌人获得充能状态');
+          break;
+        case 'venomous':
+          Logger.info('☠️ 敌人获得毒性状态');
+          break;
+        default:
+          Logger.info('❓ 未知状态: $status');
+      }
+    } else if (fighter == 'wanderer') {
+      // 玩家状态处理
+      Logger.info('👤 玩家获得状态: $status');
+    }
+
+    notifyListeners();
+  }
+
+  /// 获取敌人当前状态
+  String? getEnemyStatus() {
+    return enemyStatus;
+  }
+
+  /// 清除敌人状态
+  void clearEnemyStatus() {
+    enemyStatus = null;
+    notifyListeners();
   }
 
   /// 处理状态更新

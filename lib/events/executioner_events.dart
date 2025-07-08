@@ -1,6 +1,8 @@
+import 'dart:math';
 import '../core/localization.dart';
 import '../core/logger.dart';
 import '../modules/world.dart';
+import '../modules/events.dart';
 
 /// 执行者事件定义 - 参考原游戏executioner.js
 class ExecutionerEvents {
@@ -21,7 +23,8 @@ class ExecutionerEvents {
       'title': localization.translate('events.executioner.intro.title'),
       'scenes': {
         'start': {
-          'notification': localization.translate('events.executioner.intro.notification'),
+          'notification':
+              localization.translate('events.executioner.intro.notification'),
           'text': [
             localization.translate('events.executioner.intro.text1'),
             localization.translate('events.executioner.intro.text2'),
@@ -68,7 +71,8 @@ class ExecutionerEvents {
           },
           'buttons': {
             'leave': {
-              'text': localization.translate('events.executioner.intro.take_device_and_leave'),
+              'text': localization
+                  .translate('events.executioner.intro.take_device_and_leave'),
               'nextScene': 'end'
             }
           }
@@ -90,7 +94,8 @@ class ExecutionerEvents {
           ],
           'buttons': {
             'engineering': {
-              'text': localization.translate('events.executioner.antechamber.engineering'),
+              'text': localization
+                  .translate('events.executioner.antechamber.engineering'),
               'available': () {
                 final world = World();
                 return world.state!['engineering'] != true;
@@ -98,7 +103,8 @@ class ExecutionerEvents {
               'nextEvent': 'executioner-engineering'
             },
             'medical': {
-              'text': localization.translate('events.executioner.antechamber.medical'),
+              'text': localization
+                  .translate('events.executioner.antechamber.medical'),
               'available': () {
                 final world = World();
                 return world.state!['medical'] != true;
@@ -106,7 +112,8 @@ class ExecutionerEvents {
               'nextEvent': 'executioner-medical'
             },
             'martial': {
-              'text': localization.translate('events.executioner.antechamber.martial'),
+              'text': localization
+                  .translate('events.executioner.antechamber.martial'),
               'available': () {
                 final world = World();
                 return world.state!['martial'] != true;
@@ -114,12 +121,13 @@ class ExecutionerEvents {
               'nextEvent': 'executioner-martial'
             },
             'command': {
-              'text': localization.translate('events.executioner.antechamber.command_deck'),
+              'text': localization
+                  .translate('events.executioner.antechamber.command_deck'),
               'available': () {
                 final world = World();
-                return world.state!['engineering'] == true && 
-                       world.state!['medical'] == true && 
-                       world.state!['martial'] == true;
+                return world.state!['engineering'] == true &&
+                    world.state!['medical'] == true &&
+                    world.state!['martial'] == true;
               },
               'nextEvent': 'executioner-command'
             },
@@ -157,7 +165,8 @@ class ExecutionerEvents {
         },
         'complete': {
           'text': [
-            localization.translate('events.executioner.engineering.complete_text')
+            localization
+                .translate('events.executioner.engineering.complete_text')
           ],
           'onLoad': () {
             final world = World();
@@ -262,7 +271,7 @@ class ExecutionerEvents {
     };
   }
 
-  /// 指挥部事件 - 最终解锁制造器
+  /// 指挥部事件 - 最终Boss战斗
   static Map<String, dynamic> get executionerCommand {
     final localization = Localization();
     return {
@@ -276,19 +285,103 @@ class ExecutionerEvents {
           'buttons': {
             'continue': {
               'text': localization.translate('ui.buttons.continue'),
-              'nextScene': 'complete'
+              'nextScene': 'approach'
+            },
+            'leave': {
+              'text': localization.translate('ui.buttons.leave'),
+              'nextScene': 'end'
             }
           }
         },
-        'complete': {
+        'approach': {
           'text': [
-            localization.translate('events.executioner.command.complete_text')
+            localization.translate('events.executioner.command.approach_text1'),
+            localization.translate('events.executioner.command.approach_text2')
+          ],
+          'buttons': {
+            'continue': {
+              'text': localization.translate('ui.buttons.continue'),
+              'nextScene': 'encounter'
+            }
+          }
+        },
+        'encounter': {
+          'text': [
+            localization
+                .translate('events.executioner.command.encounter_text1'),
+            localization
+                .translate('events.executioner.command.encounter_text2'),
+            localization.translate('events.executioner.command.encounter_text3')
+          ],
+          'buttons': {
+            'observe': {
+              'text':
+                  localization.translate('events.executioner.command.observe'),
+              'nextScene': 'boss_fight'
+            }
+          }
+        },
+        'boss_fight': {
+          'combat': true,
+          'notification': localization
+              .translate('events.executioner.command.boss_notification'),
+          'enemy': 'immortal wanderer',
+          'enemyName':
+              localization.translate('events.executioner.command.boss_name'),
+          'chara': '@',
+          'damage': 12,
+          'hit': 0.8,
+          'attackDelay': 2.0,
+          'health': 500,
+          'specials': [
+            {
+              'delay': 7,
+              'action': () {
+                // 参考原游戏的特殊技能循环逻辑
+                final events = Events();
+                final lastSpecial = events.lastSpecialStatus ?? 'none';
+                final possibleStatuses = ['shield', 'enraged', 'meditation']
+                    .where((status) => status != lastSpecial)
+                    .toList();
+
+                if (possibleStatuses.isNotEmpty) {
+                  final random = Random();
+                  final selectedStatus =
+                      possibleStatuses[random.nextInt(possibleStatuses.length)];
+                  events.setStatus('enemy', selectedStatus);
+                  events.lastSpecialStatus = selectedStatus;
+                  Logger.info('🔮 不朽流浪者使用特殊技能: $selectedStatus');
+                  return selectedStatus;
+                }
+                return null;
+              }
+            }
+          ],
+          'loot': {
+            'fleet beacon': {'min': 1, 'max': 1, 'chance': 1.0},
+            'alien alloy': {'min': 3, 'max': 8, 'chance': 0.8},
+            'energy cell': {'min': 5, 'max': 15, 'chance': 0.9}
+          },
+          'buttons': {
+            'continue': {
+              'text': localization.translate('ui.buttons.continue'),
+              'nextScene': 'victory'
+            }
+          }
+        },
+        'victory': {
+          'text': [
+            localization.translate('events.executioner.command.victory_text1'),
+            localization.translate('events.executioner.command.victory_text2'),
+            localization.translate('events.executioner.command.victory_text3')
           ],
           'onLoad': () {
             final world = World();
             world.state = world.state ?? {};
             world.state!['command'] = true;
-            Logger.info('🎖️ 指挥部完成，制造器将在返回村庄时解锁');
+            // 清理地牢 - 参考原游戏 World.clearDungeon()
+            world.clearDungeon();
+            Logger.info('🎖️ 指挥部完成，击败最终Boss，制造器将在返回村庄时解锁');
           },
           'buttons': {
             'leave': {
