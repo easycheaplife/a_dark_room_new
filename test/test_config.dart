@@ -47,56 +47,11 @@ class TestConfig {
     '太空系统',
   ];
 
-  // 测试文件映射
-  static const Map<String, List<String>> categoryTestFiles = {
-    '核心系统': [
-      'state_manager_test.dart',
-      'engine_test.dart',
-      'localization_test.dart',
-      'notification_manager_test.dart',
-      'audio_engine_test.dart',
-    ],
-    '事件系统': [
-      'event_frequency_test.dart',
-      'event_localization_fix_test.dart',
-      'event_trigger_test.dart',
-      'executioner_events_test.dart',
-    ],
-    '地图系统': [
-      'landmarks_test.dart',
-      'road_generation_fix_test.dart',
-    ],
-    '背包系统': [
-      'torch_backpack_check_test.dart',
-      'torch_backpack_simple_test.dart',
-      'original_game_torch_requirements_test.dart',
-    ],
-    'UI系统': [
-      'ruined_city_leave_buttons_test.dart',
-      'armor_button_verification_test.dart',
-    ],
-    '资源系统': [
-      'water_capacity_test.dart',
-    ],
-    '太空系统': [
-      'space_movement_sensitivity_test.dart',
-      'space_optimization_test.dart',
-    ],
-  };
+  // 注意：具体的测试文件映射请参考 all_tests.dart
+  // 这里只保留测试分类，避免维护重复的文件列表
 
-  // 获取所有测试文件
-  static List<String> getAllTestFiles() {
-    final allFiles = <String>[];
-    for (final files in categoryTestFiles.values) {
-      allFiles.addAll(files);
-    }
-    return allFiles;
-  }
-
-  // 获取特定分类的测试文件
-  static List<String> getTestFilesForCategory(String category) {
-    return categoryTestFiles[category] ?? [];
-  }
+  // 注意：测试文件管理已移至 all_tests.dart 和 run_tests.dart
+  // 如需获取测试文件列表，请参考这些文件
 
   // 验证测试配置
   static bool validateConfig() {
@@ -162,31 +117,5 @@ class TestUtils {
   }
 }
 
-/// 测试专用日志工具
-///
-/// 避免在测试中使用print产生lint警告
-class TestLogger {
-  /// 输出信息日志
-  static void info(String message) {
-    // ignore: avoid_print
-    print(message);
-  }
-
-  /// 输出错误日志
-  static void error(String message) {
-    // ignore: avoid_print
-    print('ERROR: $message');
-  }
-
-  /// 输出警告日志
-  static void warning(String message) {
-    // ignore: avoid_print
-    print('WARNING: $message');
-  }
-
-  /// 输出调试日志
-  static void debug(String message) {
-    // ignore: avoid_print
-    print('DEBUG: $message');
-  }
-}
+/// 注意：测试中应使用 Logger.info 而不是 print
+/// 这样可以保持日志输出的一致性

@@ -316,7 +316,6 @@ void main() {
       final testFiles = [
         // 核心系统测试
         'state_manager_test.dart',
-        'state_manager_simple_test.dart',
         'engine_test.dart',
         'localization_test.dart',
         'notification_manager_test.dart',
@@ -338,7 +337,6 @@ void main() {
         'road_generation_fix_test.dart',
         // 背包系统测试
         'torch_backpack_check_test.dart',
-        'torch_backpack_simple_test.dart',
         'original_game_torch_requirements_test.dart',
         // UI系统测试
         'armor_button_verification_test.dart',
