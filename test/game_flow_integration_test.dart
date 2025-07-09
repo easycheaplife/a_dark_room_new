@@ -4,6 +4,7 @@ import 'package:a_dark_room_new/core/engine.dart';
 import 'package:a_dark_room_new/core/state_manager.dart';
 import 'package:a_dark_room_new/core/localization.dart';
 import 'package:a_dark_room_new/core/notifications.dart';
+import 'package:a_dark_room_new/core/audio_engine.dart';
 import 'package:a_dark_room_new/modules/room.dart';
 import 'package:a_dark_room_new/modules/outside.dart';
 import 'package:a_dark_room_new/modules/path.dart';
@@ -31,6 +32,10 @@ void main() {
 
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
+
+      // 设置音频引擎测试模式
+      AudioEngine().setTestMode(true);
+
       engine = Engine();
       stateManager = StateManager();
       localization = Localization();

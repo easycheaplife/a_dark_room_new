@@ -316,33 +316,49 @@ void main() {
       final testFiles = [
         // 核心系统测试
         'state_manager_test.dart',
+        'state_manager_simple_test.dart',
         'engine_test.dart',
         'localization_test.dart',
         'notification_manager_test.dart',
         'audio_engine_test.dart',
-        // 现有测试文件
-        'armor_button_verification_test.dart',
         'audio_system_optimization_test.dart',
+        // 游戏模块测试
+        'room_module_test.dart',
+        'outside_module_test.dart',
+        // 事件系统测试
         'event_frequency_test.dart',
         'event_localization_fix_test.dart',
         'event_trigger_test.dart',
         'executioner_events_test.dart',
+        'executioner_boss_fight_test.dart',
+        'cave_setpiece_test.dart',
+        'cave_landmark_integration_test.dart',
+        // 地图系统测试
         'landmarks_test.dart',
-        'original_game_torch_requirements_test.dart',
         'road_generation_fix_test.dart',
-        'ruined_city_leave_buttons_test.dart',
-        'space_movement_sensitivity_test.dart',
-        'space_optimization_test.dart',
+        // 背包系统测试
         'torch_backpack_check_test.dart',
         'torch_backpack_simple_test.dart',
-        'water_capacity_test.dart',
-        // UI组件测试
+        'original_game_torch_requirements_test.dart',
+        // UI系统测试
+        'armor_button_verification_test.dart',
         'progress_button_test.dart',
         'header_test.dart',
         'notification_display_test.dart',
+        'ruined_city_leave_buttons_test.dart',
+        // 资源系统测试
+        'water_capacity_test.dart',
+        // 太空系统测试
+        'space_movement_sensitivity_test.dart',
+        'space_optimization_test.dart',
+        'ship_building_upgrade_system_test.dart',
+        // 制作系统测试
+        'crafting_system_verification_test.dart',
         // 集成测试
         'game_flow_integration_test.dart',
         'module_interaction_test.dart',
+        'simple_integration_test.dart',
+        'quick_test_suite.dart',
         // 性能测试
         'performance_test.dart'
       ];
