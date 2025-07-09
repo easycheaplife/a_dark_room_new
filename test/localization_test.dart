@@ -19,54 +19,99 @@ void main() {
     setUpAll(() {
       TestWidgetsFlutterBinding.ensureInitialized();
       Logger.info('🚀 开始 Localization 测试套件');
+
+      // 设置统一的 mock 翻译数据，供所有测试使用
+      const String mockTranslationJson = '''
+      {
+        "ui": {
+          "buttons": {
+            "light_fire": "点火",
+            "stoke_fire": "添柴"
+          },
+          "modules": {
+            "room": "房间",
+            "outside": "外部"
+          }
+        },
+        "buildings": {
+          "trap": "陷阱",
+          "cart": "手推车"
+        },
+        "crafting": {
+          "wood_needed": "需要 {0} 个木材",
+          "multiple_items": "制作 {0} 个 {1}"
+        },
+        "messages": {
+          "welcome": "欢迎来到黑暗房间"
+        },
+        "logs": {
+          "start": "开始",
+          "complete": "完成",
+          "error": "错误"
+        }
+      }
+      ''';
+
+      // 设置英文翻译数据
+      const String mockEnglishJson = '''
+      {
+        "ui": {
+          "buttons": {
+            "light_fire": "Light Fire",
+            "stoke_fire": "Stoke Fire"
+          },
+          "modules": {
+            "room": "Room",
+            "outside": "Outside"
+          }
+        },
+        "buildings": {
+          "trap": "Trap",
+          "cart": "Cart"
+        },
+        "crafting": {
+          "wood_needed": "Need {0} wood",
+          "multiple_items": "Craft {0} {1}"
+        },
+        "messages": {
+          "welcome": "Welcome to A Dark Room"
+        },
+        "logs": {
+          "start": "Start",
+          "complete": "Complete",
+          "error": "Error"
+        }
+      }
+      ''';
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMessageHandler('flutter/assets', (message) async {
+        final String key = utf8.decode(message!.buffer.asUint8List());
+        if (key == 'assets/lang/zh.json') {
+          return utf8.encode(mockTranslationJson).buffer.asByteData();
+        } else if (key == 'assets/lang/en.json') {
+          return utf8.encode(mockEnglishJson).buffer.asByteData();
+        }
+        return null;
+      });
     });
 
     setUp(() {
       SharedPreferences.setMockInitialValues({});
+      // 重置单例实例以确保每个测试都有干净的状态
+      Localization.resetInstance();
       localization = Localization();
       // 本地化状态会在init()时设置
     });
 
     tearDown(() {
-      try {
-        localization.dispose();
-      } catch (e) {
-        // 忽略已释放对象的错误
-        if (!e.toString().contains('was used after being disposed')) {
-          Logger.info('⚠️ 本地化测试清理时出错: $e');
-        }
-      }
+      // 在测试结束时重置单例实例
+      Localization.resetInstance();
     });
 
     group('🔧 本地化初始化测试', () {
       test('应该正确初始化本地化系统', () async {
         Logger.info('🧪 测试本地化系统初始化');
-
-        // 模拟中文语言文件
-        const String mockChineseJson = '''
-        {
-          "ui": {
-            "buttons": {
-              "light_fire": "点火",
-              "stoke_fire": "添柴"
-            }
-          },
-          "buildings": {
-            "trap": "陷阱",
-            "cart": "手推车"
-          }
-        }
-        ''';
-
-        // 设置mock资源加载
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMessageHandler('flutter/assets', (message) async {
-          final String key = utf8.decode(message!.buffer.asUint8List());
-          if (key == 'assets/lang/zh.json') {
-            return utf8.encode(mockChineseJson).buffer.asByteData();
-          }
-          return null;
-        });
 
         // 执行初始化
         await localization.init();
@@ -119,32 +164,6 @@ void main() {
 
     group('🔄 语言切换测试', () {
       setUp(() async {
-        // 设置mock语言文件
-        const String mockChineseJson = '''
-        {
-          "ui": {"buttons": {"light_fire": "点火"}},
-          "buildings": {"trap": "陷阱"}
-        }
-        ''';
-
-        const String mockEnglishJson = '''
-        {
-          "ui": {"buttons": {"light_fire": "Light Fire"}},
-          "buildings": {"trap": "Trap"}
-        }
-        ''';
-
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMessageHandler('flutter/assets', (message) async {
-          final String key = utf8.decode(message!.buffer.asUint8List());
-          if (key == 'assets/lang/zh.json') {
-            return utf8.encode(mockChineseJson).buffer.asByteData();
-          } else if (key == 'assets/lang/en.json') {
-            return utf8.encode(mockEnglishJson).buffer.asByteData();
-          }
-          return null;
-        });
-
         await localization.init();
       });
 
@@ -198,41 +217,6 @@ void main() {
 
     group('📝 翻译功能测试', () {
       setUp(() async {
-        const String mockTranslationJson = '''
-        {
-          "ui": {
-            "buttons": {
-              "light_fire": "点火",
-              "stoke_fire": "添柴"
-            },
-            "modules": {
-              "room": "房间",
-              "outside": "外部"
-            }
-          },
-          "buildings": {
-            "trap": "陷阱",
-            "cart": "手推车"
-          },
-          "crafting": {
-            "wood_needed": "需要 {0} 个木材",
-            "multiple_items": "制作 {0} 个 {1}"
-          },
-          "messages": {
-            "welcome": "欢迎来到黑暗房间"
-          }
-        }
-        ''';
-
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMessageHandler('flutter/assets', (message) async {
-          final String key = utf8.decode(message!.buffer.asUint8List());
-          if (key == 'assets/lang/zh.json') {
-            return utf8.encode(mockTranslationJson).buffer.asByteData();
-          }
-          return null;
-        });
-
         await localization.init();
       });
 
@@ -297,25 +281,6 @@ void main() {
 
     group('🔧 工具方法测试', () {
       setUp(() async {
-        const String mockTranslationJson = '''
-        {
-          "logs": {
-            "start": "开始",
-            "complete": "完成",
-            "error": "错误"
-          }
-        }
-        ''';
-
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMessageHandler('flutter/assets', (message) async {
-          final String key = utf8.decode(message!.buffer.asUint8List());
-          if (key == 'assets/lang/zh.json') {
-            return utf8.encode(mockTranslationJson).buffer.asByteData();
-          }
-          return null;
-        });
-
         await localization.init();
       });
 
@@ -346,7 +311,7 @@ void main() {
 
         // 通过translate方法检查翻译是否存在
         // 如果翻译存在，返回值应该不等于键名
-        final existingKey = 'ui.buttons.light_fire';
+        final existingKey = 'logs.start';
         final nonExistingKey = 'nonexistent.key';
 
         // 对于存在的键，翻译结果应该不等于键名

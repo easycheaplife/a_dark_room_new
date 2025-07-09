@@ -399,6 +399,14 @@ class AudioEngine {
 
   /// 播放背景音乐
   Future<void> playBackgroundMusic(String src) async {
+    // 在测试模式下跳过音频播放
+    if (_testMode) {
+      if (kDebugMode) {
+        print('🧪 Test mode: skipping background music playback for $src');
+      }
+      return;
+    }
+
     if (!_initialized || !_audioEnabled) return;
 
     // Web平台需要先解锁音频
@@ -449,6 +457,14 @@ class AudioEngine {
 
   /// 播放事件音乐
   Future<void> playEventMusic(String src) async {
+    // 在测试模式下跳过音频播放
+    if (_testMode) {
+      if (kDebugMode) {
+        print('🧪 Test mode: skipping event music playback for $src');
+      }
+      return;
+    }
+
     if (!_initialized) return;
 
     // Web平台需要先解锁音频

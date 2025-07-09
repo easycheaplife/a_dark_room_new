@@ -5,13 +5,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Localization handles translations and language settings
 class Localization with ChangeNotifier {
-  static final Localization _instance = Localization._internal();
+  static Localization? _instance;
 
   factory Localization() {
-    return _instance;
+    _instance ??= Localization._internal();
+    return _instance!;
   }
 
   Localization._internal();
+
+  /// 重置单例实例（仅用于测试）
+  static void resetInstance() {
+    _instance?.dispose();
+    _instance = null;
+  }
 
   // Current language
   String _currentLanguage = 'zh';
@@ -128,6 +135,7 @@ class Localization with ChangeNotifier {
 
     // Try different translation categories for keys without category prefix
     List<String> categories = [
+      'ui.buttons',
       'ui',
       'buildings',
       'crafting',
@@ -138,6 +146,7 @@ class Localization with ChangeNotifier {
       'skills',
       'events',
       'messages',
+      'logs',
       'game_states', // 添加游戏状态类别，用于陷阱掉落消息等
       'fabricator' // 添加制造器类别
     ];
@@ -188,5 +197,11 @@ class Localization with ChangeNotifier {
   // Shorthand for translate
   String call(String key, [List<dynamic>? args]) {
     return translate(key, args);
+  }
+
+  @override
+  void dispose() {
+    _translations.clear();
+    super.dispose();
   }
 }
