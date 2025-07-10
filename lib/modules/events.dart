@@ -1269,12 +1269,7 @@ class Events extends ChangeNotifier {
       if (weaponName != 'fists' && (path.outfit[weaponName] ?? 0) > 0) {
         final weapon = World.weapons[weaponName]!;
 
-        // 检查武器是否有效（有伤害）
-        if (weapon['damage'] == null || weapon['damage'] == 0) {
-          continue; // 无伤害武器不计入
-        }
-
-        // 检查是否有足够的弹药
+        // 首先检查是否有足够的弹药
         bool canUse = true;
         if (weapon['cost'] != null) {
           final cost = weapon['cost'] as Map<String, dynamic>;
@@ -1289,16 +1284,25 @@ class Events extends ChangeNotifier {
         }
 
         if (canUse) {
-          numWeapons++;
           availableWeapons.add(weaponName);
+
+          // 检查武器是否有数值伤害 - 参考原游戏逻辑
+          // 原游戏中，伤害为字符串（如'stun'）的武器不计入numWeapons
+          final damage = weapon['damage'];
+          if (damage != null && damage != 0 && damage is int) {
+            numWeapons++; // 只有数值伤害的武器才计入numWeapons
+          }
         }
       }
     }
 
-    // 如果没有可用武器，显示拳头
+    // 如果没有数值伤害武器，添加拳头 - 参考原游戏逻辑
     if (numWeapons == 0) {
-      availableWeapons.clear();
-      availableWeapons.add('fists');
+      // 不清空availableWeapons，因为可能已经包含了非数值伤害武器（如bolas）
+      // 只在列表开头添加拳头，参考原游戏的prependTo逻辑
+      if (!availableWeapons.contains('fists')) {
+        availableWeapons.insert(0, 'fists');
+      }
     }
 
     return availableWeapons;
