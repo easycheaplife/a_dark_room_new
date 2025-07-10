@@ -134,6 +134,76 @@ class GameConfig {
   static const int defaultAttackDelay = 2000; // 默认攻击间隔
   static const int specialSkillDelay = 5000; // 特殊技能默认延迟
 
+  // ==================== 武器伤害配置 ====================
+
+  /// 武器伤害数值 - 参考原游戏World.Weapons
+  static const Map<String, int> weaponDamage = {
+    'fists': 1,
+    'bone spear': 2,
+    'iron sword': 4,
+    'steel sword': 6,
+    'bayonet': 8,
+    'rifle': 5,
+    'laser rifle': 8,
+    'grenade': 15,
+    'plasma rifle': 12,
+    'energy blade': 10,
+  };
+
+  /// 武器冷却时间 (秒) - 参考原游戏World.Weapons
+  static const Map<String, int> weaponCooldown = {
+    'fists': 2,
+    'bone spear': 2,
+    'iron sword': 2,
+    'steel sword': 2,
+    'bayonet': 2,
+    'rifle': 1,
+    'laser rifle': 1,
+    'grenade': 5,
+    'bolas': 15,
+    'plasma rifle': 1,
+    'energy blade': 2,
+    'disruptor': 15,
+  };
+
+  // ==================== 敌人数据配置 ====================
+
+  /// 敌人血量配置 - 参考原游戏事件配置
+  static const Map<String, int> enemyHealth = {
+    'bandit': 15,
+    'bandit_group': 30,
+    'soldiers': 35,
+    'alien': 45,
+    'warband': 60,
+  };
+
+  /// 敌人伤害配置 - 参考原游戏事件配置
+  static const Map<String, int> enemyDamage = {
+    'bandit': 4,
+    'bandit_group': 5,
+    'soldiers': 6,
+    'alien': 10,
+    'warband': 7,
+  };
+
+  /// 敌人命中率配置 - 参考原游戏事件配置
+  static const Map<String, double> enemyHitChance = {
+    'bandit': 0.6,
+    'bandit_group': 0.7,
+    'soldiers': 0.8,
+    'alien': 0.7,
+    'warband': 0.8,
+  };
+
+  /// 敌人攻击延迟配置 (秒) - 参考原游戏事件配置
+  static const Map<String, double> enemyAttackDelay = {
+    'bandit': 3.0,
+    'bandit_group': 2.5,
+    'soldiers': 2.0,
+    'alien': 2.5,
+    'warband': 2.0,
+  };
+
   // ==================== 太空模块配置 ====================
 
   /// 飞船速度

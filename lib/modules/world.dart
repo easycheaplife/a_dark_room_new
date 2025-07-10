@@ -82,76 +82,86 @@ class World extends ChangeNotifier {
   // 地标配置
   Map<String, Map<String, dynamic>> landmarks = {};
 
-  // 武器配置 - 参考原游戏World.Weapons
-  static const Map<String, Map<String, dynamic>> weapons = {
-    'fists': {'verb': 'punch', 'type': 'unarmed', 'damage': 1, 'cooldown': 2},
-    'bone spear': {
-      'verb': 'stab',
-      'type': 'melee',
-      'damage': 2,
-      'cooldown': 2
-    }, // 注意：骨枪没有cost，不消耗
-    'iron sword': {
-      'verb': 'swing', // 修正：原游戏是swing不是slash
-      'type': 'melee',
-      'damage': 4,
-      'cooldown': 2
-    },
-    'steel sword': {
-      'verb': 'slash', // 修正：原游戏是slash不是strike
-      'type': 'melee',
-      'damage': 6,
-      'cooldown': 2
-    },
-    'bayonet': {'verb': 'thrust', 'type': 'melee', 'damage': 8, 'cooldown': 2},
-    'rifle': {
-      'verb': 'shoot',
-      'type': 'ranged',
-      'damage': 5,
-      'cooldown': 1,
-      'cost': {'bullets': 1}
-    },
-    'laser rifle': {
-      'verb': 'blast', // 修正：原游戏是blast不是laser
-      'type': 'ranged',
-      'damage': 8,
-      'cooldown': 1,
-      'cost': {'energy cell': 1}
-    },
-    'grenade': {
-      'verb': 'lob', // 修正：原游戏是lob不是throw
-      'type': 'ranged',
-      'damage': 15,
-      'cooldown': 5,
-      'cost': {'grenade': 1}
-    },
-    'bolas': {
-      'verb': 'tangle', // 修正：原游戏是tangle不是entangle
-      'type': 'ranged',
-      'damage': 'stun',
-      'cooldown': 15,
-      'cost': {'bolas': 1}
-    },
-    'plasma rifle': {
-      'verb': 'disintigrate', // 修正：原游戏是disintigrate不是disintegrate
-      'type': 'ranged',
-      'damage': 12,
-      'cooldown': 1,
-      'cost': {'energy cell': 1}
-    },
-    'energy blade': {
-      'verb': 'slice',
-      'type': 'melee',
-      'damage': 10,
-      'cooldown': 2
-    },
-    'disruptor': {
-      'verb': 'stun',
-      'type': 'ranged',
-      'damage': 'stun',
-      'cooldown': 15
-    }
-  };
+  // 武器配置 - 参考原游戏World.Weapons，数值从GameConfig获取
+  static Map<String, Map<String, dynamic>> get weapons => {
+        'fists': {
+          'verb': 'punch',
+          'type': 'unarmed',
+          'damage': GameConfig.weaponDamage['fists'] ?? 1,
+          'cooldown': GameConfig.weaponCooldown['fists'] ?? 2
+        },
+        'bone spear': {
+          'verb': 'stab',
+          'type': 'melee',
+          'damage': GameConfig.weaponDamage['bone spear'] ?? 2,
+          'cooldown': GameConfig.weaponCooldown['bone spear'] ?? 2
+        }, // 注意：骨枪没有cost，不消耗
+        'iron sword': {
+          'verb': 'swing', // 修正：原游戏是swing不是slash
+          'type': 'melee',
+          'damage': GameConfig.weaponDamage['iron sword'] ?? 4,
+          'cooldown': GameConfig.weaponCooldown['iron sword'] ?? 2
+        },
+        'steel sword': {
+          'verb': 'slash', // 修正：原游戏是slash不是strike
+          'type': 'melee',
+          'damage': GameConfig.weaponDamage['steel sword'] ?? 6,
+          'cooldown': GameConfig.weaponCooldown['steel sword'] ?? 2
+        },
+        'bayonet': {
+          'verb': 'thrust',
+          'type': 'melee',
+          'damage': GameConfig.weaponDamage['bayonet'] ?? 8,
+          'cooldown': GameConfig.weaponCooldown['bayonet'] ?? 2
+        },
+        'rifle': {
+          'verb': 'shoot',
+          'type': 'ranged',
+          'damage': GameConfig.weaponDamage['rifle'] ?? 5,
+          'cooldown': GameConfig.weaponCooldown['rifle'] ?? 1,
+          'cost': {'bullets': 1}
+        },
+        'laser rifle': {
+          'verb': 'blast', // 修正：原游戏是blast不是laser
+          'type': 'ranged',
+          'damage': GameConfig.weaponDamage['laser rifle'] ?? 8,
+          'cooldown': GameConfig.weaponCooldown['laser rifle'] ?? 1,
+          'cost': {'energy cell': 1}
+        },
+        'grenade': {
+          'verb': 'lob', // 修正：原游戏是lob不是throw
+          'type': 'ranged',
+          'damage': GameConfig.weaponDamage['grenade'] ?? 15,
+          'cooldown': GameConfig.weaponCooldown['grenade'] ?? 5,
+          'cost': {'grenade': 1}
+        },
+        'bolas': {
+          'verb': 'tangle', // 修正：原游戏是tangle不是entangle
+          'type': 'ranged',
+          'damage': 'stun',
+          'cooldown': GameConfig.weaponCooldown['bolas'] ?? 15,
+          'cost': {'bolas': 1}
+        },
+        'plasma rifle': {
+          'verb': 'disintigrate', // 修正：原游戏是disintigrate不是disintegrate
+          'type': 'ranged',
+          'damage': GameConfig.weaponDamage['plasma rifle'] ?? 12,
+          'cooldown': GameConfig.weaponCooldown['plasma rifle'] ?? 1,
+          'cost': {'energy cell': 1}
+        },
+        'energy blade': {
+          'verb': 'slice',
+          'type': 'melee',
+          'damage': GameConfig.weaponDamage['energy blade'] ?? 10,
+          'cooldown': GameConfig.weaponCooldown['energy blade'] ?? 2
+        },
+        'disruptor': {
+          'verb': 'stun',
+          'type': 'ranged',
+          'damage': 'stun',
+          'cooldown': GameConfig.weaponCooldown['disruptor'] ?? 15
+        }
+      };
 
   // 状态变量
   Map<String, dynamic> options = {};

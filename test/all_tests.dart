@@ -356,6 +356,7 @@ void main() {
         'game_config_verification_test.dart',
         // 战斗系统测试
         'combat_fists_availability_test.dart',
+        'combat_damage_config_test.dart',
         // 集成测试
         'game_flow_integration_test.dart',
         'module_interaction_test.dart',

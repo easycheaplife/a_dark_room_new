@@ -1,6 +1,7 @@
 import '../core/state_manager.dart';
 import '../core/logger.dart';
 import '../core/localization.dart';
+import '../config/game_config.dart';
 import '../modules/world.dart';
 
 /// 世界地图事件定义
@@ -168,10 +169,10 @@ class WorldEvents {
               final localization = Localization();
               return localization.translate('world_events.bandit.enemy');
             }(),
-            'health': 15,
-            'damage': 4,
-            'hit': 0.6,
-            'attackDelay': 3.0,
+            'health': GameConfig.enemyHealth['bandit'] ?? 15,
+            'damage': GameConfig.enemyDamage['bandit'] ?? 4,
+            'hit': GameConfig.enemyHitChance['bandit'] ?? 0.6,
+            'attackDelay': GameConfig.enemyAttackDelay['bandit'] ?? 3.0,
             'loot': {
               'leather': [2, 4],
               'cloth': [1, 3],
@@ -255,10 +256,10 @@ class WorldEvents {
               final localization = Localization();
               return localization.translate('world_events.bandit_group.enemy');
             }(),
-            'health': 30,
-            'damage': 5,
-            'hit': 0.7,
-            'attackDelay': 2.5,
+            'health': GameConfig.enemyHealth['bandit_group'] ?? 30,
+            'damage': GameConfig.enemyDamage['bandit_group'] ?? 5,
+            'hit': GameConfig.enemyHitChance['bandit_group'] ?? 0.7,
+            'attackDelay': GameConfig.enemyAttackDelay['bandit_group'] ?? 2.5,
             'loot': {
               'leather': [5, 10],
               'cloth': [3, 6],
@@ -369,10 +370,10 @@ class WorldEvents {
               final localization = Localization();
               return localization.translate('world_events.soldiers.enemy');
             }(),
-            'health': 35,
-            'damage': 6,
-            'hit': 0.8,
-            'attackDelay': 2.0,
+            'health': GameConfig.enemyHealth['soldiers'] ?? 35,
+            'damage': GameConfig.enemyDamage['soldiers'] ?? 6,
+            'hit': GameConfig.enemyHitChance['soldiers'] ?? 0.8,
+            'attackDelay': GameConfig.enemyAttackDelay['soldiers'] ?? 2.0,
             'ranged': true,
             'loot': {
               'bullets': [10, 25],
@@ -398,10 +399,10 @@ class WorldEvents {
               final localization = Localization();
               return localization.translate('world_events.alien.enemy');
             }(),
-            'health': 45,
-            'damage': 10,
-            'hit': 0.7,
-            'attackDelay': 2.5,
+            'health': GameConfig.enemyHealth['alien'] ?? 45,
+            'damage': GameConfig.enemyDamage['alien'] ?? 10,
+            'hit': GameConfig.enemyHitChance['alien'] ?? 0.7,
+            'attackDelay': GameConfig.enemyAttackDelay['alien'] ?? 2.5,
             'ranged': true,
             'loot': {
               'alien alloy': [1, 3],
@@ -454,10 +455,10 @@ class WorldEvents {
               final localization = Localization();
               return localization.translate('world_events.warband.enemy');
             }(),
-            'health': 60,
-            'damage': 7,
-            'hit': 0.8,
-            'attackDelay': 2.0,
+            'health': GameConfig.enemyHealth['warband'] ?? 60,
+            'damage': GameConfig.enemyDamage['warband'] ?? 7,
+            'hit': GameConfig.enemyHitChance['warband'] ?? 0.8,
+            'attackDelay': GameConfig.enemyAttackDelay['warband'] ?? 2.0,
             'loot': {
               'bullets': [15, 30],
               'steel': [5, 12],
