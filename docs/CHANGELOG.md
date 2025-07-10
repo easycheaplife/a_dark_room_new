@@ -1,10 +1,40 @@
 # A Dark Room Flutter 项目更新日志
 
-**最后更新**: 2025-01-09
+**最后更新**: 2025-01-27
 
 ## 概述
 
 本文档记录了 A Dark Room Flutter 移植项目的所有重要更新、修复和优化。所有文档都已添加更新日期，并建立了统一的更新日志系统。
+
+## 2025-01-27 - GameConfig 配置项生效修复
+
+### 🐛 Bug修复
+- **GameConfig 配置项未生效问题修复** - 修复多个模块未正确使用配置文件的问题
+  - 问题：`GameConfig.baseHealth` 等配置项没有生效，模块使用硬编码常量
+  - 根本原因：部分模块未导入 GameConfig 或未使用配置项
+  - 修复范围：
+    - ✅ **World 模块**: 添加 GameConfig 导入，更新 15+ 个配置项
+    - ✅ **Space 模块**: 添加 GameConfig 导入，更新太空相关配置
+    - ✅ **Path 模块**: 更新背包和物品重量配置
+  - 修复的关键配置项：
+    - `baseHealth`: 10 → 使用 `GameConfig.baseHealth`
+    - `meatHeal/medsHeal/hypoHeal`: 治疗数值现在可配置
+    - `fightChance/baseHitChance`: 战斗参数现在可配置
+    - `shipSpeed/starWidth`: 太空参数现在可配置
+    - `defaultBagSpace/itemWeights`: 背包系统现在可配置
+  - 技术改进：将 `static const` 改为 `static get` 以支持动态配置
+  - 验证测试：新增 `game_config_verification_test.dart` 验证所有配置项
+  - 测试结果：✅ 全部通过 (12/12 测试)
+  - 文档：`docs/05_bug_fixes/game_config_not_effective_fix.md`
+
+### 🔧 技术改进
+- **配置集中管理优化** - 实现真正的配置文件统一管理
+  - 统一配置源：所有数值配置都从 GameConfig 获取
+  - 易于调整：修改配置只需要在一个地方进行
+  - 调试支持：支持调试模式下的快速配置切换
+  - 版本一致性：确保所有模块使用相同的配置值
+  - 影响模块：World, Space, Path, Outside, Room, Events
+  - 配置项数量：20+ 个配置项现在正确生效
 
 ## 2025-01-09 - 测试运行器重新定位优化
 

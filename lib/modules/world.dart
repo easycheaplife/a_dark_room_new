@@ -6,6 +6,7 @@ import '../core/notifications.dart';
 import '../core/engine.dart';
 import '../core/logger.dart';
 import '../core/localization.dart';
+import '../config/game_config.dart';
 import 'path.dart';
 import 'events.dart';
 import 'setpieces.dart';
@@ -29,22 +30,22 @@ class World extends ChangeNotifier {
   // 模块名称
   String get name => Localization().translate('world.title');
 
-  // 常量
-  static const int radius = 30;
-  static const List<int> villagePos = [30, 30];
-  static const double stickiness = 0.5; // 0 <= x <= 1
-  static const int lightRadius = 2;
-  static const int baseWater = 10;
-  static const int movesPerFood = 2;
-  static const int movesPerWater = 1;
-  static const int deathCooldown = 120;
-  static const double fightChance = 0.20;
-  static const int baseHealth = 10;
-  static const double baseHitChance = 0.8;
-  static const int meatHeal = 8;
-  static const int medsHeal = 20;
-  static const int hypoHeal = 30;
-  static const int fightDelay = 3; // 战斗之间至少三次移动
+  // 常量 - 从GameConfig获取
+  static int get radius => GameConfig.worldRadius;
+  static List<int> get villagePos => GameConfig.villagePosition;
+  static double get stickiness => GameConfig.stickiness; // 0 <= x <= 1
+  static int get lightRadius => GameConfig.lightRadius;
+  static int get baseWater => GameConfig.baseWater;
+  static int get movesPerFood => GameConfig.movesPerFood;
+  static int get movesPerWater => GameConfig.movesPerWater;
+  static int get deathCooldown => GameConfig.deathCooldown;
+  static double get fightChance => GameConfig.fightChance;
+  static int get baseHealth => GameConfig.baseHealth;
+  static double get baseHitChance => GameConfig.baseHitChance;
+  static int get meatHeal => GameConfig.meatHeal;
+  static int get medsHeal => GameConfig.medsHeal;
+  static int get hypoHeal => GameConfig.hypoHeal;
+  static int get fightDelay => GameConfig.fightDelay; // 战斗之间至少三次移动
 
   // 方向常量 (与原游戏完全一致)
   static const List<int> north = [0, -1];

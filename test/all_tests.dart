@@ -352,6 +352,8 @@ void main() {
         'ship_building_upgrade_system_test.dart',
         // 制作系统测试
         'crafting_system_verification_test.dart',
+        // 配置系统测试
+        'game_config_verification_test.dart',
         // 集成测试
         'game_flow_integration_test.dart',
         'module_interaction_test.dart',

@@ -29,22 +29,12 @@ class Path extends ChangeNotifier {
     return localization.translate('ui.modules.path');
   }
 
-  // 常量
-  static const int defaultBagSpace = 10;
+  // 常量 - 从GameConfig获取
+  static int get defaultBagSpace => GameConfig.defaultBagSpace;
   static const int storesOffset = 0;
 
-  // 物品重量配置
-  static const Map<String, double> weight = {
-    'bone spear': 2.0,
-    'iron sword': 3.0,
-    'steel sword': 5.0,
-    'rifle': 5.0,
-    'bullets': 0.1,
-    'energy cell': 0.2,
-    'laser rifle': 5.0,
-    'plasma rifle': 5.0,
-    'bolas': 0.5,
-  };
+  // 物品重量配置 - 从GameConfig获取
+  static Map<String, double> get weight => GameConfig.itemWeights;
 
   // 状态变量
   Map<String, dynamic> options = {};

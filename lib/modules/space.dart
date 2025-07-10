@@ -9,6 +9,7 @@ import '../core/logger.dart';
 import '../core/audio_engine.dart';
 import '../core/audio_library.dart';
 import '../core/engine.dart';
+import '../config/game_config.dart';
 import 'ship.dart';
 import 'score.dart';
 import 'prestige.dart';
@@ -32,16 +33,16 @@ class Space extends ChangeNotifier {
     return localization.translate('space.module_name');
   }
 
-  // 常量 - 参考原游戏 SHIP_SPEED: 3
-  static const double shipSpeed = 3.0;
-  static const int baseAsteroidDelay = 500;
-  static const int baseAsteroidSpeed = 1500;
-  static const int ftbSpeed = 60000;
-  static const int starWidth = 3000;
-  static const int starHeight = 3000;
-  static const int numStars = 200;
-  static const int starSpeed = 60000;
-  static const int frameDelay = 100;
+  // 常量 - 从GameConfig获取
+  static double get shipSpeed => GameConfig.shipSpeed;
+  static int get baseAsteroidDelay => GameConfig.baseAsteroidDelay;
+  static int get baseAsteroidSpeed => GameConfig.baseAsteroidSpeed;
+  static int get ftbSpeed => GameConfig.ftbSpeed;
+  static int get starWidth => GameConfig.starWidth;
+  static int get starHeight => GameConfig.starHeight;
+  static int get numStars => GameConfig.numStars;
+  static int get starSpeed => GameConfig.starSpeed;
+  static int get frameDelay => GameConfig.frameDelay;
 
   // 状态变量
   Map<String, dynamic> options = {};
