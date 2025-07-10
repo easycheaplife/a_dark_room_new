@@ -89,7 +89,22 @@ class _StoresDisplayState extends State<StoresDisplay> {
 
         // 分类资源 - 参考原游戏：只显示数量大于0的资源
         for (final entry in stores.entries) {
-          final value = entry.value as num? ?? 0;
+          // 安全地处理值类型 - 只处理数字类型的值
+          final rawValue = entry.value;
+          num value = 0;
+
+          if (rawValue is num) {
+            value = rawValue;
+          } else if (rawValue is Map && rawValue.containsKey('value')) {
+            // 处理像 {'value': 10} 这样的结构
+            final nestedValue = rawValue['value'];
+            if (nestedValue is num) {
+              value = nestedValue;
+            }
+          } else {
+            // 跳过非数字类型的条目（如嵌套的Map对象）
+            continue;
+          }
 
           // 参考原游戏逻辑：只显示数量大于0的资源
           if (value <= 0) {

@@ -30,6 +30,7 @@ import 'package:a_dark_room_new/core/logger.dart';
 /// 10. 集成测试 - 游戏流程、模块交互
 /// 11. 制作系统测试 - 制作验证、系统完整性
 /// 12. 性能测试 - 系统性能基准
+/// 13. Bug修复测试 - 铁矿访问修复、库存UI类型错误修复
 void main() {
   group('🎮 A Dark Room 完整测试套件', () {
     setUpAll(() {
@@ -51,6 +52,7 @@ void main() {
       Logger.info('  🔗 集成测试 - 游戏流程、模块交互');
       Logger.info('  🔧 制作系统 - 制作验证、系统完整性');
       Logger.info('  ⚡ 性能测试 - 系统性能基准');
+      Logger.info('  🐛 Bug修复测试 - 铁矿访问修复、库存UI类型错误修复');
       Logger.info('=' * 60);
     });
 
