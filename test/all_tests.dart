@@ -357,6 +357,8 @@ void main() {
         'module_interaction_test.dart',
         'simple_integration_test.dart',
         'quick_test_suite.dart',
+        // 测试工具验证
+        'test_runner_functionality_test.dart',
         // 性能测试
         'performance_test.dart'
       ];

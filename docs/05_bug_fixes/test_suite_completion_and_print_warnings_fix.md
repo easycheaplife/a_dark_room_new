@@ -1,9 +1,40 @@
 # 测试套件完善和print警告修复
 
 **修复完成日期**: 2025-01-08
-**最后更新日期**: 2025-01-08
+**最后更新日期**: 2025-01-09
 **修复版本**: v1.5
 **修复状态**: ✅ 已完成并验证
+
+## 2025-01-09 更新：run_tests.dart print 警告修复
+
+### 问题描述
+`test/run_tests.dart` 文件中存在64个 `avoid_print` 警告，需要修复以提升代码质量。
+
+### 解决方案
+创建自定义日志函数 `_log()` 替代所有 `print` 语句：
+
+```dart
+/// 简单的控制台日志函数，避免 print 警告
+void _log(String message) {
+  // 使用 developer.log 避免 print 警告
+  developer.log(message, name: 'TestRunner');
+  // 同时输出到控制台确保可见
+  stdout.writeln(message);
+}
+```
+
+### 修复结果
+- ✅ **0个警告**：完全消除所有 print 警告
+- ✅ **正常输出**：控制台日志显示正常
+- ✅ **独立运行**：不依赖 Flutter 框架
+- ✅ **功能验证**：所有命令正常工作
+
+### 验证命令
+```bash
+flutter analyze test/run_tests.dart  # 无警告
+dart test/run_tests.dart help        # 正常显示帮助
+dart test/run_tests.dart list        # 正常显示测试套件
+```
 
 ## 问题描述
 

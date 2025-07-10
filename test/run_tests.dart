@@ -1,14 +1,23 @@
 import 'dart:io';
+import 'dart:developer' as developer;
+
+/// 简单的控制台日志函数，避免 print 警告
+void _log(String message) {
+  // 使用 developer.log 避免 print 警告
+  developer.log(message, name: 'TestRunner');
+  // 同时输出到控制台确保可见
+  stdout.writeln(message);
+}
 
 /// A Dark Room 简化测试运行器
 ///
 /// 这是项目的主要测试入口，提供简单直观的测试运行功能
 ///
 /// 使用方法：
-/// dart run_tests.dart [命令]
+/// dart test/run_tests.dart [命令]
 void main(List<String> args) async {
-  print('🎮 A Dark Room 简化测试运行器');
-  print('=' * 60);
+  _log('🎮 A Dark Room 简化测试运行器');
+  _log('=' * 60);
 
   if (args.isEmpty) {
     _printUsage();
@@ -40,40 +49,40 @@ void main(List<String> args) async {
         _printUsage();
         break;
       default:
-        print('❌ 未知命令: $command');
+        _log('❌ 未知命令: $command');
         _printUsage();
         exit(1);
     }
   } catch (e) {
-    print('❌ 测试运行失败: $e');
+    _log('❌ 测试运行失败: $e');
     exit(1);
   }
 }
 
 /// 打印使用说明
 void _printUsage() {
-  print('');
-  print('用法: dart run_tests.dart <命令>');
-  print('');
-  print('命令:');
-  print('  quick        - 运行快速测试套件 (推荐日常使用)');
-  print('  core         - 运行核心系统测试');
-  print('  integration  - 运行集成测试');
-  print('  all          - 运行所有测试');
-  print('  list         - 列出所有可用的测试套件');
-  print('  help         - 显示此帮助信息');
-  print('');
-  print('示例:');
-  print('  dart run_tests.dart quick');
-  print('  dart run_tests.dart core');
-  print('  dart run_tests.dart all');
+  _log('');
+  _log('用法: dart test/run_tests.dart <命令>');
+  _log('');
+  _log('命令:');
+  _log('  quick        - 运行快速测试套件 (推荐日常使用)');
+  _log('  core         - 运行核心系统测试');
+  _log('  integration  - 运行集成测试');
+  _log('  all          - 运行所有测试');
+  _log('  list         - 列出所有可用的测试套件');
+  _log('  help         - 显示此帮助信息');
+  _log('');
+  _log('示例:');
+  _log('  dart test/run_tests.dart quick');
+  _log('  dart test/run_tests.dart core');
+  _log('  dart test/run_tests.dart all');
 }
 
 /// 运行快速测试套件
 Future<void> _runQuickTests() async {
-  print('⚡ 运行快速测试套件');
-  print('这是日常开发推荐的测试套件，运行时间约30秒');
-  print('');
+  _log('⚡ 运行快速测试套件');
+  _log('这是日常开发推荐的测试套件，运行时间约30秒');
+  _log('');
 
   final testFiles = [
     'test/quick_test_suite.dart',
@@ -85,9 +94,9 @@ Future<void> _runQuickTests() async {
 
 /// 运行核心系统测试
 Future<void> _runCoreTests() async {
-  print('🎯 运行核心系统测试');
-  print('测试所有核心系统功能');
-  print('');
+  _log('🎯 运行核心系统测试');
+  _log('测试所有核心系统功能');
+  _log('');
 
   final testFiles = [
     'test/state_manager_test.dart',
@@ -102,9 +111,9 @@ Future<void> _runCoreTests() async {
 
 /// 运行集成测试
 Future<void> _runIntegrationTests() async {
-  print('🔗 运行集成测试');
-  print('测试模块间交互和游戏流程');
-  print('');
+  _log('🔗 运行集成测试');
+  _log('测试模块间交互和游戏流程');
+  _log('');
 
   final testFiles = [
     'test/simple_integration_test.dart',
@@ -118,11 +127,11 @@ Future<void> _runIntegrationTests() async {
 
 /// 运行所有测试
 Future<void> _runAllTests() async {
-  print('🚀 运行所有测试');
-  print('这将运行项目中的所有测试，可能需要几分钟时间');
-  print('⚠️  注意：测试中会出现音频插件错误，这是正常的（测试环境无音频支持）');
-  print('📊 关注实际的逻辑错误，忽略 MissingPluginException 音频错误');
-  print('');
+  _log('🚀 运行所有测试');
+  _log('这将运行项目中的所有测试，可能需要几分钟时间');
+  _log('⚠️  注意：测试中会出现音频插件错误，这是正常的（测试环境无音频支持）');
+  _log('📊 关注实际的逻辑错误，忽略 MissingPluginException 音频错误');
+  _log('');
 
   final result = await Process.run(
       'C:\\Users\\PC\\Downloads\\flutter\\bin\\flutter.bat', ['test']);
@@ -131,8 +140,8 @@ Future<void> _runAllTests() async {
 
 /// 列出所有测试套件
 void _listTestSuites() {
-  print('📋 可用的测试套件:');
-  print('');
+  _log('📋 可用的测试套件:');
+  _log('');
 
   final suites = {
     'quick': '快速测试套件 - 日常开发验证（30秒）',
@@ -142,9 +151,9 @@ void _listTestSuites() {
   };
 
   for (final entry in suites.entries) {
-    print('${entry.key}:');
-    print('  描述: ${entry.value}');
-    print('');
+    _log('${entry.key}:');
+    _log('  描述: ${entry.value}');
+    _log('');
   }
 }
 
@@ -159,12 +168,12 @@ Future<void> _runTestFiles(List<String> testFiles, String suiteName) async {
     // 检查文件是否存在
     final file = File(testFile);
     if (!await file.exists()) {
-      print('⚠️ 跳过不存在的文件: $testFile');
+      _log('⚠️ 跳过不存在的文件: $testFile');
       continue;
     }
 
     totalFiles++;
-    print('🧪 运行: ${testFile.split('/').last}');
+    _log('🧪 运行: ${testFile.split('/').last}');
 
     final result = await Process.run(
         'C:\\Users\\PC\\Downloads\\flutter\\bin\\flutter.bat',
@@ -172,67 +181,67 @@ Future<void> _runTestFiles(List<String> testFiles, String suiteName) async {
 
     if (result.exitCode == 0) {
       passedFiles++;
-      print('  ✅ 通过');
+      _log('  ✅ 通过');
     } else {
       failedFiles++;
       failedFilesList.add(testFile);
-      print('  ❌ 失败');
+      _log('  ❌ 失败');
     }
   }
 
   // 打印总结
-  print('');
-  print('📊 $suiteName 结果:');
-  print('  总文件数: $totalFiles');
-  print('  通过: $passedFiles');
-  print('  失败: $failedFiles');
+  _log('');
+  _log('📊 $suiteName 结果:');
+  _log('  总文件数: $totalFiles');
+  _log('  通过: $passedFiles');
+  _log('  失败: $failedFiles');
 
   if (failedFilesList.isNotEmpty) {
-    print('');
-    print('❌ 失败的测试文件:');
+    _log('');
+    _log('❌ 失败的测试文件:');
     for (final file in failedFilesList) {
-      print('  - ${file.split('/').last}');
+      _log('  - ${file.split('/').last}');
     }
   }
 
   if (failedFiles == 0) {
-    print('');
-    print('🎉 $suiteName 全部通过!');
+    _log('');
+    _log('🎉 $suiteName 全部通过!');
   } else {
-    print('');
-    print('💥 $suiteName 存在失败，请检查并修复');
+    _log('');
+    _log('💥 $suiteName 存在失败，请检查并修复');
     exit(1);
   }
 }
 
 /// 打印测试结果
 void _printTestResult(String testName, ProcessResult result) {
-  print('');
-  print('📊 $testName 结果:');
+  _log('');
+  _log('📊 $testName 结果:');
 
   if (result.exitCode == 0) {
-    print('✅ 测试通过');
+    _log('✅ 测试通过');
 
     final output = result.stdout as String;
     final lines = output.split('\n');
     for (final line in lines) {
       if (line.contains('All tests passed!') || line.contains('+')) {
-        print('  $line');
+        _log('  $line');
         break;
       }
     }
   } else {
-    print('❌ 测试失败');
-    print('退出代码: ${result.exitCode}');
+    _log('❌ 测试失败');
+    _log('退出代码: ${result.exitCode}');
 
     if (result.stderr != null && result.stderr.toString().isNotEmpty) {
-      print('错误信息:');
-      print(result.stderr);
+      _log('错误信息:');
+      _log(result.stderr.toString());
     }
 
     if (result.stdout != null && result.stdout.toString().isNotEmpty) {
-      print('输出信息:');
-      print(result.stdout);
+      _log('输出信息:');
+      _log(result.stdout.toString());
     }
 
     exit(1);
