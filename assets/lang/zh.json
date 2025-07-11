@@ -267,7 +267,6 @@
     "stim_desc": "提供临时增益效果",
     "glowstone_desc": "永不熄灭的光源",
     "backpack_full": "背包空间不足",
-    "found": "发现了：",
     "drop": "丢弃:"
   },
   "import_export": {
@@ -1044,9 +1043,7 @@
       "laser": "激光",
       "throw": "投掷",
       "entangle": "缠绕",
-      "disintegrate": "分解",
-      "slice": "切割",
-      "stun": "眩晕"
+      "disintegrate": "分解"
     },
     "crafting": {
       "torch": "火把",
