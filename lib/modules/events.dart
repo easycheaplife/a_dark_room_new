@@ -1588,7 +1588,7 @@ class Events extends ChangeNotifier {
           return;
         }
 
-        if (nextScene == 'finish') {
+        if (nextScene == 'finish' || nextScene == 'end') {
           Logger.info('🔘 结束事件');
           endEvent();
         } else {
@@ -1596,8 +1596,10 @@ class Events extends ChangeNotifier {
           loadScene(nextScene);
         }
       } else {
-        Logger.info('🔘 没有nextScene配置，结束事件');
-        endEvent();
+        // 没有nextScene配置，保持在当前场景，允许继续交互
+        // 这是原游戏的行为：购买地图、学习技能等按钮不会结束事件
+        Logger.info('🔘 没有nextScene配置，保持在当前场景继续交互');
+        notifyListeners(); // 刷新UI以反映状态变化
       }
     } catch (e, stackTrace) {
       Logger.error('❌ handleButtonClick异常: $e');

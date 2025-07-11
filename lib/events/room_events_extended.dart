@@ -463,6 +463,7 @@ class RoomEventsExtended {
                   world.applyMap();
                   Logger.info('🗺️ Map purchased and applied');
                 }
+                // 注意：没有nextScene，允许多次购买
               },
               'learn': {
                 'text': () {
@@ -480,6 +481,7 @@ class RoomEventsExtended {
                   _sm.set('character.perks.scout', true);
                   Logger.info('🎯 Learned scouting skill');
                 }
+                // 注意：没有nextScene，允许多次交互
               },
               'leave': {
                 'text': () {
