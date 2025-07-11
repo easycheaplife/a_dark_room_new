@@ -7,6 +7,7 @@ import '../modules/path.dart';
 import '../core/state_manager.dart';
 import '../core/localization.dart';
 import '../core/responsive_layout.dart';
+import '../core/logger.dart';
 import '../widgets/progress_button.dart';
 import '../config/game_config.dart';
 
@@ -893,13 +894,13 @@ class _CombatScreenState extends State<CombatScreen> {
             ),
           ),
 
-        // 离开按钮 - 统一样式
+        // 离开按钮 - 统一样式，修复：正确处理场景中的leave按钮逻辑
         Container(
           width: double.infinity,
           margin: EdgeInsets.symmetric(
               vertical: layoutParams.useVerticalLayout ? 4 : 2), // 移动端增加间距
           child: ElevatedButton(
-            onPressed: () => events.endEvent(),
+            onPressed: () => _handleLeaveButton(events, scene),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
@@ -1021,6 +1022,22 @@ class _CombatScreenState extends State<CombatScreen> {
       // 直接调用Events的按钮点击处理逻辑
       events.handleButtonClick('continue', continueButton);
     } else {
+      events.endEvent();
+    }
+  }
+
+  /// 处理离开按钮 - 修复铁矿访问问题
+  void _handleLeaveButton(Events events, Map<String, dynamic> scene) {
+    final buttons = scene['buttons'] as Map<String, dynamic>? ?? {};
+    final leaveButton = buttons['leave'] as Map<String, dynamic>?;
+
+    if (leaveButton != null && leaveButton['nextScene'] != null) {
+      // 处理场景中配置的leave按钮逻辑，确保正确跳转到下一个场景
+      Logger.info('🔘 战斗胜利后处理leave按钮，跳转到下一个场景');
+      events.handleButtonClick('leave', leaveButton);
+    } else {
+      // 如果没有配置leave按钮或nextScene，则直接结束事件
+      Logger.info('🔘 没有leave按钮配置，直接结束事件');
       events.endEvent();
     }
   }
