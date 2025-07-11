@@ -351,6 +351,7 @@ void main() {
         // Bug修复测试
         'stores_display_fix_test.dart',
         'iron_mine_combat_fix_test.dart',
+        'iron_mine_take_all_leave_fix_test.dart',
         // 太空系统测试
         'space_movement_sensitivity_test.dart',
         'space_optimization_test.dart',

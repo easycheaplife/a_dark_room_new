@@ -840,7 +840,8 @@ class _CombatScreenState extends State<CombatScreen> {
                 // 只有在背包没满的情况下才离开
                 if (!bagFull) {
                   Timer(const Duration(milliseconds: 500), () {
-                    events.endEvent();
+                    // 修复：使用相同的离开按钮处理逻辑，确保setpiece事件正确完成
+                    _handleLeaveButton(events, scene);
                   });
                 }
               },
