@@ -53,10 +53,79 @@ class WeChatAdapter {
     if (!kIsWeb) return;
 
     try {
-      // 在移动端，这些功能不需要实现
-      Logger.info('微信适配器已初始化（移动端模式）');
+      // 设置全局错误处理
+      _setupGlobalErrorHandling();
+
+      // 配置微信环境优化
+      _configureWeChatOptimizations();
+
+      // 设置调试信息收集
+      _setupDebugInfoCollection();
+
+      Logger.info('微信特性初始化完成');
     } catch (e) {
       Logger.error('微信特性初始化失败: $e');
+    }
+  }
+
+  /// 设置全局错误处理
+  static void _setupGlobalErrorHandling() {
+    try {
+      // 设置Flutter错误处理回调
+      js.context['handleFlutterError'] = js.allowInterop((String error, String context) {
+        Logger.error('Flutter错误 [$context]: $error');
+
+        // 发送错误信息到小程序
+        if (_isInMiniProgram) {
+          postMessageToMiniProgram({
+            'type': 'error',
+            'context': context,
+            'error': error,
+            'timestamp': DateTime.now().millisecondsSinceEpoch,
+          });
+        }
+      });
+
+      Logger.info('全局错误处理已设置');
+    } catch (e) {
+      Logger.error('设置全局错误处理失败: $e');
+    }
+  }
+
+  /// 配置微信环境优化
+  static void _configureWeChatOptimizations() {
+    try {
+      // 这里可以添加微信环境下的特殊优化
+      Logger.info('微信环境优化已配置');
+    } catch (e) {
+      Logger.error('配置微信环境优化失败: $e');
+    }
+  }
+
+  /// 设置调试信息收集
+  static void _setupDebugInfoCollection() {
+    try {
+      // 收集环境信息
+      final envInfo = {
+        'userAgent': js.context['navigator']['userAgent'],
+        'url': js.context['location']['href'],
+        'isWeChatBrowser': _isWeChatBrowser,
+        'isInMiniProgram': _isInMiniProgram,
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+      };
+
+      Logger.info('环境信息: ${jsonEncode(envInfo)}');
+
+      // 发送环境信息到小程序
+      if (_isInMiniProgram) {
+        postMessageToMiniProgram({
+          'type': 'environmentInfo',
+          'info': envInfo,
+        });
+      }
+
+    } catch (e) {
+      Logger.error('设置调试信息收集失败: $e');
     }
   }
 

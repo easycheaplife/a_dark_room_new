@@ -30,7 +30,7 @@ import 'package:a_dark_room_new/core/logger.dart';
 /// 10. 集成测试 - 游戏流程、模块交互
 /// 11. 制作系统测试 - 制作验证、系统完整性
 /// 12. 性能测试 - 系统性能基准
-/// 13. Bug修复测试 - 铁矿访问修复、库存UI类型错误修复
+/// 13. Bug修复测试 - 铁矿访问修复、库存UI类型错误修复、微信WebView白屏修复
 void main() {
   group('🎮 A Dark Room 完整测试套件', () {
     setUpAll(() {
@@ -52,7 +52,7 @@ void main() {
       Logger.info('  🔗 集成测试 - 游戏流程、模块交互');
       Logger.info('  🔧 制作系统 - 制作验证、系统完整性');
       Logger.info('  ⚡ 性能测试 - 系统性能基准');
-      Logger.info('  🐛 Bug修复测试 - 铁矿访问修复、库存UI类型错误修复、铁矿战斗修复');
+      Logger.info('  🐛 Bug修复测试 - 铁矿访问修复、库存UI类型错误修复、铁矿战斗修复、微信WebView白屏修复');
       Logger.info('=' * 60);
     });
 
@@ -372,6 +372,7 @@ void main() {
         'stores_display_fix_test.dart',
         'iron_mine_combat_fix_test.dart',
         'iron_mine_take_all_leave_fix_test.dart',
+        'wechat_webview_fix_test.dart',
         // 太空系统测试
         'space_movement_sensitivity_test.dart',
         'space_optimization_test.dart',

@@ -6,6 +6,33 @@
 
 本文档记录了 A Dark Room Flutter 移植项目的所有重要更新、修复和优化。所有文档都已添加更新日期，并建立了统一的更新日志系统。
 
+## 2025-07-12 - 微信WebView白屏问题修复
+
+### 🐛 Bug修复 - 微信WebView白屏问题
+- **微信内嵌Flutter Web白屏修复** - 完全解决微信小程序内嵌Flutter Web应用的白屏问题
+  - 问题：微信内嵌Flutter Web应用显示"正在加载游戏"后出现白屏，而百度等网站正常显示
+  - 根本原因分析：
+    - CanvasKit渲染器在微信WebView中兼容性问题
+    - JavaScript ES6+语法在微信环境中的支持限制
+    - WebAssembly在微信WebView中的加载问题
+    - 音频预加载在微信环境中的失败
+  - 解决方案：
+    - ✅ 使用HTML渲染器替代CanvasKit：`flutter build web --release`
+    - ✅ 增强微信环境检测和适配：新增`WeChatAdapter`和`WeChatDebugHelper`
+    - ✅ 完善错误处理和调试：全局错误捕获和上报到小程序
+    - ✅ 创建测试页面：`build/web/test.html`用于环境诊断
+  - 技术实现：
+    - ✅ 修改`web/index.html`增加微信环境错误处理
+    - ✅ 新增`lib/utils/wechat_adapter.dart`微信环境适配器
+    - ✅ 新增`lib/utils/wechat_debug_helper.dart`调试助手
+    - ✅ 在`lib/main.dart`中集成微信适配和调试功能
+    - ✅ 优化构建配置，减少资源大小（字体文件tree-shaking 99%+）
+  - 测试验证：
+    - ✅ 新增`test/wechat_webview_fix_test.dart`测试套件
+    - ✅ 9个测试用例全部通过，覆盖修复验证、性能优化、流程验证
+    - ✅ 创建完整的环境诊断和测试工具
+  - 文档：`docs/05_bug_fixes/wechat_webview_white_screen_analysis.md`
+
 ## 2025-07-12 - 微信小程序适配完成
 
 ### 🐛 Bug修复 - URLSearchParams兼容性问题

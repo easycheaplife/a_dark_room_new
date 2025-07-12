@@ -15,6 +15,7 @@ import 'core/progress_manager.dart';
 import 'core/web_audio_adapter.dart';
 import 'utils/web_utils.dart';
 import 'utils/wechat_adapter.dart';
+import 'utils/wechat_debug_helper.dart';
 import 'utils/miniprogram_adapter.dart';
 
 // import 'utils/performance_optimizer.dart'; // 暂时注释掉
@@ -79,10 +80,20 @@ void _initializeWebOptimizations() async {
     Logger.info('🌐 Browser info: $browserInfo');
 
     // 初始化微信适配器
-    await WeChatAdapter.initialize();
+    try {
+      await WeChatAdapter.initialize();
+      Logger.info('🔗 WeChat adapter initialized successfully');
+    } catch (e) {
+      Logger.error('❌ WeChat adapter initialization failed: $e');
+    }
 
     // 初始化微信小程序适配器
-    await MiniProgramAdapter.initialize();
+    try {
+      await MiniProgramAdapter.initialize();
+      Logger.info('📱 MiniProgram adapter initialized successfully');
+    } catch (e) {
+      Logger.error('❌ MiniProgram adapter initialization failed: $e');
+    }
 
     // 初始化Web音频适配器
     await WebAudioAdapter.initialize();
@@ -102,6 +113,10 @@ void _initializeWebOptimizations() async {
       final featureSupport = WeChatAdapter.checkFeatureSupport();
       Logger.info('🔥 WeChat browser detected: $wechatInfo');
       Logger.info('🔧 WeChat feature support: $featureSupport');
+
+      // 收集详细的诊断信息
+      WeChatDebugHelper.printDiagnosticReport();
+      WeChatDebugHelper.sendDiagnosticToMiniProgram();
 
       WebUtils.configWeChatShare(
         title: 'A Dark Room - 黑暗房间',

@@ -125,6 +125,28 @@
       return /MicroMessenger/i.test(navigator.userAgent);
     }
 
+    // 微信环境错误处理
+    function handleWeChatError(error, context) {
+      console.error('微信环境错误 [' + context + ']:', error);
+
+      // 发送错误信息到小程序（如果在小程序webview中）
+      if (window.wx && window.wx.miniProgram) {
+        try {
+          window.wx.miniProgram.postMessage({
+            data: {
+              type: 'error',
+              context: context,
+              error: error.toString(),
+              userAgent: navigator.userAgent,
+              timestamp: Date.now()
+            }
+          });
+        } catch (e) {
+          console.error('发送错误信息到小程序失败:', e);
+        }
+      }
+    }
+
     // 配置微信分享
     function configWeChatShare(config) {
       if (!isWeChatBrowser() || typeof wx === 'undefined') {
@@ -165,15 +187,18 @@
         });
 
         wx.error(function(res) {
-          console.log('微信JS-SDK配置失败:', res);
+          handleWeChatError(res, 'JS-SDK配置');
         });
       } catch (e) {
-        console.log('微信分享配置异常:', e);
+        handleWeChatError(e, '分享配置');
       }
     }
 
     // 页面加载完成后的初始化
     window.addEventListener('load', function() {
+      console.log('页面加载完成，用户代理:', navigator.userAgent);
+      console.log('是否为微信浏览器:', isWeChatBrowser());
+
       // 移除加载动画
       setTimeout(function() {
         const loading = document.getElementById('loading');
@@ -219,6 +244,22 @@
     // 暴露给Flutter使用的全局函数
     window.configWeChatShare = configWeChatShare;
     window.isWeChatBrowser = isWeChatBrowser;
+    window.handleWeChatError = handleWeChatError;
+
+    // 全局错误处理
+    window.addEventListener('error', function(event) {
+      console.error('全局错误:', event.error);
+      if (isWeChatBrowser()) {
+        handleWeChatError(event.error, '全局错误');
+      }
+    });
+
+    window.addEventListener('unhandledrejection', function(event) {
+      console.error('未处理的Promise拒绝:', event.reason);
+      if (isWeChatBrowser()) {
+        handleWeChatError(event.reason, 'Promise拒绝');
+      }
+    });
   </script>
 
   <script src="flutter_bootstrap.js" async></script>
