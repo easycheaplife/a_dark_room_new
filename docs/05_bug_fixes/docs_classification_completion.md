@@ -18,7 +18,7 @@
 ### 文档重新分类
 
 #### 测试系统文档 → `docs/10_testing/`
-- ✅ `07_testing_guide.md` → `10_testing/07_testing_guide.md`
+- ✅ `testing_guide.md` → `10_testing/testing_guide.md`
 - ✅ `test_coverage_implementation_summary.md` → `10_testing/test_coverage_implementation_summary.md`
 - ✅ `test_coverage_report.md` → `10_testing/test_coverage_report.md`
 - ✅ `test_suite_comprehensive_fix_summary.md` → `10_testing/test_suite_comprehensive_fix_summary.md`

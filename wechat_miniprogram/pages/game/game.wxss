@@ -1,0 +1,85 @@
+/* A Dark Room 游戏页面样式 */
+.container {
+  width: 100%;
+  height: 100vh;
+  background-color: #000000;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 加载状态样式 */
+.loading-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #000000;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #333333;
+  border-top: 3px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: #ffffff;
+  font-size: 16px;
+  text-align: center;
+}
+
+/* 错误状态样式 */
+.error-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #000000;
+  padding: 40px;
+}
+
+.error-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: #ffffff;
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+.retry-button {
+  background-color: #333333;
+  color: #ffffff;
+  border: 1px solid #666666;
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-size: 16px;
+}
+
+.retry-button:hover {
+  background-color: #444444;
+}
+
+/* web-view样式 */
+web-view {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+}

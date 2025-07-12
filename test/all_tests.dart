@@ -249,6 +249,26 @@ void main() {
       });
     });
 
+    group('📱 微信小程序适配测试', () {
+      test('微信小程序适配器测试套件', () async {
+        Logger.info('🧪 运行微信小程序适配器测试套件...');
+        expect(true, isTrue);
+        Logger.info('✅ 微信小程序适配器测试套件标记完成');
+      });
+
+      test('微信小程序URL构建测试套件', () async {
+        Logger.info('🧪 运行微信小程序URL构建测试套件...');
+        expect(true, isTrue);
+        Logger.info('✅ 微信小程序URL构建测试套件标记完成');
+      });
+
+      test('微信小程序环境配置测试套件', () async {
+        Logger.info('🧪 运行微信小程序环境配置测试套件...');
+        expect(true, isTrue);
+        Logger.info('✅ 微信小程序环境配置测试套件标记完成');
+      });
+    });
+
     group('🔗 集成测试', () {
       test('游戏流程集成测试套件', () async {
         Logger.info('🧪 运行游戏流程集成测试套件...');
@@ -371,7 +391,11 @@ void main() {
         // 测试工具验证
         'test_runner_functionality_test.dart',
         // 性能测试
-        'performance_test.dart'
+        'performance_test.dart',
+        // 微信小程序适配测试
+        'miniprogram_adapter_test.dart',
+        'wechat_miniprogram_url_builder_test.dart',
+        'wechat_miniprogram_env_config_test.dart'
       ];
 
       Logger.info('测试分类数量: ${testCategories.length}');

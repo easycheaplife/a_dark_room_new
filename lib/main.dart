@@ -15,6 +15,7 @@ import 'core/progress_manager.dart';
 import 'core/web_audio_adapter.dart';
 import 'utils/web_utils.dart';
 import 'utils/wechat_adapter.dart';
+import 'utils/miniprogram_adapter.dart';
 
 // import 'utils/performance_optimizer.dart'; // 暂时注释掉
 import 'utils/storage_adapter.dart';
@@ -80,6 +81,9 @@ void _initializeWebOptimizations() async {
     // 初始化微信适配器
     await WeChatAdapter.initialize();
 
+    // 初始化微信小程序适配器
+    await MiniProgramAdapter.initialize();
+
     // 初始化Web音频适配器
     await WebAudioAdapter.initialize();
 
@@ -103,6 +107,17 @@ void _initializeWebOptimizations() async {
         title: 'A Dark Room - 黑暗房间',
         desc: '一个引人入胜的文字冒险游戏，快来体验吧！',
       );
+    }
+
+    // 如果是微信小程序环境，记录详细信息
+    if (MiniProgramAdapter.isInMiniProgram) {
+      final envInfo = MiniProgramAdapter.getEnvironmentInfo();
+      Logger.info('📱 MiniProgram environment detected: $envInfo');
+
+      final initialData = MiniProgramAdapter.initialData;
+      if (initialData != null) {
+        Logger.info('📦 Initial data received: ${initialData.keys.toList()}');
+      }
     }
 
     // 记录存储信息

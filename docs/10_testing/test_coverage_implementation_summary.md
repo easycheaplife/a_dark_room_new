@@ -89,7 +89,7 @@
    - 预览部署
 
 ### 文档和指南
-1. **`docs/07_testing_guide.md`** - 完整测试开发指南
+1. **`docs/10_testing/testing_guide.md`** - 完整测试开发指南
 2. **`docs/test_coverage_report.md`** - 自动生成的覆盖率报告
 3. **`docs/05_bug_fixes/test_coverage_analysis.md`** - 测试覆盖缺口分析
 
@@ -166,7 +166,7 @@ cat docs/test_coverage_report.md
 
 ## 🔗 相关文档
 
-- [测试开发指南](07_testing_guide.md)
+- [测试开发指南](testing_guide.md)
 - [测试覆盖率报告](test_coverage_report.md)
 - [测试覆盖缺口分析](05_bug_fixes/test_coverage_analysis.md)
 - [项目README](../README.md)
