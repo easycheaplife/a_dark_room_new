@@ -51,6 +51,9 @@
   <!-- Web音频配置脚本 -->
   <script src="audio_config.js"></script>
 
+  <!-- 微信兼容性配置脚本 -->
+  <script src="wechat_compatibility.js"></script>
+
   <!-- 移动端和微信优化CSS -->
   <style>
     /* 基础重置和优化 */
@@ -258,6 +261,108 @@
       console.error('未处理的Promise拒绝:', event.reason);
       if (isWeChatBrowser()) {
         handleWeChatError(event.reason, 'Promise拒绝');
+      }
+    });
+  </script>
+
+  <!-- Flutter Web微信兼容性配置 -->
+  <script>
+    // 微信环境检测和配置
+    function configureFlutterForWeChat() {
+      const isWeChat = /MicroMessenger/i.test(navigator.userAgent);
+      const isMiniProgram = window.wx && window.wx.miniProgram;
+
+      console.log('Flutter Web环境检测:', {
+        isWeChat: isWeChat,
+        isMiniProgram: isMiniProgram,
+        userAgent: navigator.userAgent
+      });
+
+      if (isWeChat) {
+        console.log('检测到微信环境，应用兼容性配置');
+
+        // 禁用Service Worker（微信环境可能不支持）
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for(let registration of registrations) {
+              registration.unregister().then(function() {
+                console.log('已禁用Service Worker for 微信环境');
+              });
+            }
+          }).catch(function(error) {
+            console.log('Service Worker处理失败:', error);
+          });
+        }
+
+        // 设置Flutter配置为微信优化模式
+        window._flutter = window._flutter || {};
+        window._flutter.buildConfig = window._flutter.buildConfig || {};
+
+        // 强制使用HTML渲染器（微信环境更兼容）
+        if (window._flutter.buildConfig.builds) {
+          window._flutter.buildConfig.builds.forEach(function(build) {
+            if (build.renderer === 'canvaskit') {
+              build.renderer = 'html';
+              console.log('已切换到HTML渲染器for微信环境');
+            }
+          });
+        }
+      }
+
+      return { isWeChat: isWeChat, isMiniProgram: isMiniProgram };
+    }
+
+    // 页面加载前配置
+    const wechatConfig = configureFlutterForWeChat();
+
+    // 增强错误处理
+    window.addEventListener('error', function(event) {
+      console.error('Flutter Web全局错误:', event.error);
+
+      if (wechatConfig.isWeChat) {
+        handleWeChatError(event.error, 'Flutter全局错误');
+
+        // 如果在小程序环境中，发送错误信息
+        if (wechatConfig.isMiniProgram) {
+          try {
+            window.wx.miniProgram.postMessage({
+              data: {
+                type: 'flutter_error',
+                error: event.error ? event.error.toString() : 'Unknown error',
+                message: event.message,
+                filename: event.filename,
+                lineno: event.lineno,
+                colno: event.colno,
+                timestamp: Date.now()
+              }
+            });
+          } catch (e) {
+            console.error('发送错误信息到小程序失败:', e);
+          }
+        }
+      }
+    });
+
+    // Promise错误处理
+    window.addEventListener('unhandledrejection', function(event) {
+      console.error('Flutter Web未处理的Promise拒绝:', event.reason);
+
+      if (wechatConfig.isWeChat) {
+        handleWeChatError(event.reason, 'Promise拒绝');
+
+        if (wechatConfig.isMiniProgram) {
+          try {
+            window.wx.miniProgram.postMessage({
+              data: {
+                type: 'flutter_promise_error',
+                reason: event.reason ? event.reason.toString() : 'Unknown promise rejection',
+                timestamp: Date.now()
+              }
+            });
+          } catch (e) {
+            console.error('发送Promise错误信息到小程序失败:', e);
+          }
+        }
       }
     });
   </script>
