@@ -64,17 +64,35 @@
   line-height: 1.5;
 }
 
-.retry-button {
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.retry-button, .test-button {
   background-color: #333333;
   color: #ffffff;
   border: 1px solid #666666;
   border-radius: 4px;
   padding: 12px 24px;
   font-size: 16px;
+  width: 100%;
 }
 
-.retry-button:hover {
+.retry-button:hover, .test-button:hover {
   background-color: #444444;
+}
+
+.test-button {
+  background-color: #1a4d80;
+  border-color: #2e6da4;
+}
+
+.test-button:hover {
+  background-color: #2e6da4;
 }
 
 /* web-view样式 */

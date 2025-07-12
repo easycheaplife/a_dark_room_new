@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web-view 测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .status {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success {
+            background-color: #2d5a2d;
+            border: 1px solid #4a8a4a;
+        }
+        .info {
+            background-color: #2d4a5a;
+            border: 1px solid #4a7a8a;
+        }
+        button {
+            background-color: #444;
+            color: #fff;
+            border: 1px solid #666;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Web-view 测试页面</h1>
+        
+        <div class="status success">
+            <h2>✅ 页面加载成功！</h2>
+            <p>如果你能看到这个页面，说明微信小程序的web-view组件工作正常。</p>
+        </div>
+
+        <div class="status info">
+            <h3>📱 环境信息</h3>
+            <p>用户代理: <span id="userAgent"></span></p>
+            <p>页面URL: <span id="pageUrl"></span></p>
+            <p>加载时间: <span id="loadTime"></span></p>
+        </div>
+
+        <div class="status">
+            <h3>🔧 功能测试</h3>
+            <button onclick="testAlert()">测试弹窗</button>
+            <button onclick="testConsole()">测试控制台</button>
+            <button onclick="testLocalStorage()">测试本地存储</button>
+            <button onclick="sendMessage()">发送消息到小程序</button>
+        </div>
+
+        <div class="status">
+            <h3>📝 测试日志</h3>
+            <div id="log" style="text-align: left; font-family: monospace; font-size: 12px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成后执行
+        window.onload = function() {
+            // 显示环境信息
+            document.getElementById('userAgent').textContent = navigator.userAgent;
+            document.getElementById('pageUrl').textContent = window.location.href;
+            document.getElementById('loadTime').textContent = new Date().toLocaleString();
+            
+            log('页面加载完成');
+            log('检测到微信环境: ' + (isWechat() ? '是' : '否'));
+        };
+
+        // 日志函数
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${time}] ${message}<br>`;
+            console.log(`[${time}] ${message}`);
+        }
+
+        // 检测是否在微信环境
+        function isWechat() {
+            return /micromessenger/i.test(navigator.userAgent);
+        }
+
+        // 测试弹窗
+        function testAlert() {
+            try {
+                alert('这是一个测试弹窗');
+                log('弹窗测试成功');
+            } catch (e) {
+                log('弹窗测试失败: ' + e.message);
+            }
+        }
+
+        // 测试控制台
+        function testConsole() {
+            console.log('这是一条测试日志');
+            console.warn('这是一条警告日志');
+            console.error('这是一条错误日志');
+            log('控制台测试完成，请查看开发者工具');
+        }
+
+        // 测试本地存储
+        function testLocalStorage() {
+            try {
+                localStorage.setItem('test', 'hello world');
+                const value = localStorage.getItem('test');
+                log('本地存储测试成功: ' + value);
+                localStorage.removeItem('test');
+            } catch (e) {
+                log('本地存储测试失败: ' + e.message);
+            }
+        }
+
+        // 发送消息到小程序
+        function sendMessage() {
+            try {
+                if (typeof wx !== 'undefined' && wx.miniProgram) {
+                    wx.miniProgram.postMessage({
+                        data: {
+                            type: 'test',
+                            message: 'Hello from web-view!',
+                            timestamp: Date.now()
+                        }
+                    });
+                    log('消息发送成功');
+                } else {
+                    log('微信小程序环境未检测到');
+                }
+            } catch (e) {
+                log('消息发送失败: ' + e.message);
+            }
+        }
+    </script>
+</body>
+</html>
